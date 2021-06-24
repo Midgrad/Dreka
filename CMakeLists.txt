@@ -1,4 +1,6 @@
 # Dreka
+# Project
+project(Dreka)
 
 # CMake version string
 cmake_minimum_required(VERSION 3.16)
@@ -14,7 +16,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Minimum Qt version
-set(QT_REQUIRED_VERSION 6.1.0)
+set(QT_REQUIRED_VERSION 5.12.8)
 
 # Executable app target
 add_subdirectory(app)

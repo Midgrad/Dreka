@@ -2,7 +2,7 @@
 project(Dreka LANGUAGES CXX)
 
 # Find Qt libraries
-find_package(Qt5 COMPONENTS Core Quick REQUIRED)
+find_package(Qt5 COMPONENTS Core Quick WebEngine REQUIRED)
 
 # Executable target
 add_executable(${PROJECT_NAME} "")
@@ -15,4 +15,4 @@ file(GLOB SOURCES "include/*" "src/*")
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
 
 # Link with libraries
-target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Quick)
+target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Quick Qt5::WebEngine)

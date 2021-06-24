@@ -1,14 +1,17 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QQmlContext>
+#include <QtWebEngine>
 
 int main(int argc, char* argv[]) {
-  QGuiApplication::setAttribute(Qt::AA_DisableHighDpiScaling, true);
+  QCoreApplication::setOrganizationName("Midgrad");
+  QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+  QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 
   QGuiApplication app(argc, argv);
-  QQmlApplicationEngine engine;
+  QtWebEngine::initialize();
 
-  engine.load(QStringLiteral("../app/qml/MainWindow.qml"));
+  QQmlApplicationEngine engine;
+  engine.load(QUrl(QStringLiteral("../app/qml/MainWindow.qml")));
 
   return app.exec();
 }
