@@ -6,11 +6,11 @@ ApplicationWindow {
     id: main
 
     visible: true
-    width: 1024
-    height: 800
+    width: 1280
+    height: 768
 
     WebEngineView {
         anchors.fill: parent
-        url: "https://cesium.com/cesiumjs/cesium-viewer/"
+        url: "../html/index.html"
     }
 }
