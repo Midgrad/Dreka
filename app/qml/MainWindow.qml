@@ -11,6 +11,6 @@ ApplicationWindow {
 
     WebEngineView {
         anchors.fill: parent
-        url: "../html/index.html"
+        url: "../web/index.html"
     }
 }

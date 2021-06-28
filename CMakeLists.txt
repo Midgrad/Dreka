@@ -1,9 +1,18 @@
-# Dreka
-# Project
-project(Dreka)
-
 # CMake version string
 cmake_minimum_required(VERSION 3.16)
+
+# Dreka project
+set(PROJECT_NAME "Dreka")
+set(PROJECT_ORGANIZATION "Midgrad")
+project(${PROJECT_NAME})
+
+# Versions
+set(FLT_PROJECT_VERSION_MAJOR 0)
+set(FLT_PROJECT_VERSION_MINOR 1)
+set(FLT_PROJECT_VERSION_PATCH 0)
+
+# Cmake includes
+include(cmake/TrToQrc.cmake)
 
 # Set default output directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/result)

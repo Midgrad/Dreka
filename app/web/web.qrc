@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/Dreka/web">
+        <file>index.html</file>
+        <file>Weremap.js</file>
+    </qresource>
+</RCC>

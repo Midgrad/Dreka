@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
   QtWebEngine::initialize();
 
   QQmlApplicationEngine engine;
-  engine.load(QUrl(QStringLiteral("../app/qml/MainWindow.qml")));
+  engine.load(QUrl(QStringLiteral("qrc:/Dreka/qml/MainWindow.qml")));
 
   return app.exec();
 }
