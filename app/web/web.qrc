@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/Dreka/web">
         <file>index.html</file>
-        <file>IWeremap.js</file>
-        <file>WereCesium.js</file>
+        <file>CesiumWrapper.js</file>
     </qresource>
 </RCC>

@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
   <title>Dreka App</title>
+  <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
   <!-- Include the CesiumJS JavaScript and CSS files -->
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.82/Build/Cesium/Cesium.js"></script>
   <link href="https://cesium.com/downloads/cesiumjs/releases/1.82/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
@@ -26,11 +27,7 @@
 </head>
 <body>
   <div id="cesiumContainer"></div>
-  <script src="IWeremap.js"></script>
-  <script src="WereCesium.js"></script>
-  <script>
-    const weremap = new WereCesium('cesiumContainer');
-  </script>
+  <script src="CesiumWrapper.js"></script>
   </div>
 </body>
 </html>
