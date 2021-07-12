@@ -10,13 +10,14 @@ class CesiumWrapper {
         const buildingTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
 
         // connect to a fly to signal
-        viewportController.flyTo.connect(function(latitude, longitude, height, heading, pitch) {
+        viewportController.flyTo.connect(function(latitude, longitude, height, heading, pitch, duration) {
             viewer.camera.flyTo({
                          destination : Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
                          orientation : {
                              heading : Cesium.Math.toRadians(heading),
                              pitch : Cesium.Math.toRadians(pitch),
-                         }
+                         },
+                         duration: duration
                      });
         });
 

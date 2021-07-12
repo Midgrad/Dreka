@@ -24,8 +24,8 @@ class MapViewportController : public QObject {
   void cursorLatitudeChanged();
   void cursorLongitudeChanged();
 
-  Q_INVOKABLE void flyTo(double latitude, double longitude, float height,
-                         float heading, float pitch);
+  void flyTo(double latitude, double longitude, float height, float heading,
+             float pitch, float duration = 0.0);
 
  private:
   double m_cursorLatitude = qQNaN();
