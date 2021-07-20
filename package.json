@@ -1,0 +1,29 @@
+{
+  "name": "dreka",
+  "version": "0.1.0",
+  "description": "Desktop GCS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Midgrad/Dreka.git"
+  },
+  "keywords": [
+    "GCS",
+    "Mavlink",
+    "Globe",
+    "UAV",
+    "Robotics"
+  ],
+  "author": "Mikhail Rogachev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Midgrad/Dreka/issues"
+  },
+  "homepage": "https://github.com/Midgrad/Dreka#readme",
+  "dependencies": {
+    "cesium": "^1.83.0"
+  }
+}
