@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/Dreka/qml">
-        <file>MainWindow.qml</file>
-        <file>Map.qml</file>
-    </qresource>
-</RCC>

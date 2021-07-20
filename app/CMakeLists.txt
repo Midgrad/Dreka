@@ -14,13 +14,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC "include" PRIVATE "src")
 file(GLOB SOURCES "include/*" "src/*")
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
 
-# Resources
-file(GLOB QRC_FILES "web/*.qrc" "qml/*.qrc")
-
-# Create translations QRC file
-file(GLOB TS_FILES "translations/*.ts")
-tr_to_qrc("${CMAKE_CURRENT_BINARY_DIR}/dreka_ts.qrc")
-
 # Compile resources
 qt5_add_resources(QRC_SOURCES ${QRC_FILES})
 target_sources(${PROJECT_NAME} PRIVATE ${QRC_SOURCES})

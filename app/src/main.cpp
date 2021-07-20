@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
   QQmlApplicationEngine engine;
   engine.rootContext()->setContextProperty("viewportController",
                                            &viewportController);
-  engine.load(QUrl(QStringLiteral("qrc:/Dreka/qml/MainWindow.qml")));
+  engine.load(QUrl(QStringLiteral("../app/qml/MainWindow.qml")));
 
   return app.exec();
 }
