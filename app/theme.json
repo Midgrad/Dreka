@@ -1,0 +1,83 @@
+{
+    "animation_time": 200,
+    "base_size": 32,
+    "colors_common": {
+        "shadow": "#80000000"
+    },
+    "colors_day": {
+        "background": "#eff0f0",
+        "sunken": "#dfe1e2",
+        "raised": "#fafafa",
+        "text": "#181a1b",
+        "description": "#627884",
+        "disabled": "#bbc1c4",
+
+        "control": "#c3cfd5",
+        "controlBorder": "#a3b8c2",
+        "line": "#80a3b8c2",
+        "controlText": "#181a1b",
+
+        "tip": "#00ad9f",
+        "tipText": "#ffffff",
+
+        "selection": "#00ad9f",
+        "selectedText": "#ffffff",
+
+        "highlight": "#0bd8c7",
+        "hover": "#330bd8c7",
+        "highlightedText": "#ffffff",
+
+        "link": "#51a0e7",
+        "negative": "#e53535",
+        "neutral": "#ff9800",
+        "positive": "#65c20a"
+    },
+    "colors_night": {
+        "background": "#2c393f",
+        "sunken": "#212c30",
+        "raised": "#334248",
+        "text": "#ffffff",
+        "description": "#899ea9",
+        "disabled": "#4F5D64",
+
+        "control": "#5a717c",
+        "controlBorder": "#6c8693",
+        "line": "#805a717c",
+        "controlText": "#ffffff",
+               
+        "tip": "#009688",
+        "tipText": "#ffffff",
+
+        "selection": "#009688",
+        "selectedText": "#ffffff",
+
+        "highlight": "#19d6c4",
+        "hover": "#3319d6c4",
+        "highlightedText": "#000000",
+
+        "link": "#51a0e7",
+        "negative": "#e53535",
+        "neutral": "#ff9800",
+        "positive": "#86c34a"
+    },
+    "factors": {
+        "auxFontSize": 0.4,
+        "border": 0.0625,
+        "checkmarkSize": 0.625,
+        "floatSize": 1.25,
+        "handleSize": 0.625,
+        "iconSize": 0.625,
+        "mainFontSize": 0.5,
+        "margins": 0.25,
+        "padding": 0.25,
+        "rounding": 0.125,
+        "scrollSize": 0.0625,
+        "shadow": 0.1,
+        "sliderSize": 0.125,
+        "spacing": 0.4,
+        "switchSize": 0.7143,
+        "underline": 0.0625
+    },
+    "night": true,
+    "scroll_interactive": false
+}
