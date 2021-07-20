@@ -1,0 +1,6 @@
+[submodule "2ndparty/industrial-controls"]
+	path = 2ndparty/industrial-controls
+	url = git@github.com:Midgrad/industrial-controls.git
+[submodule "2ndparty/industrial-indicators"]
+	path = 2ndparty/industrial-indicators
+	url = git@github.com:Midgrad/industrial-indicators.git

@@ -19,4 +19,7 @@ qt5_add_resources(QRC_SOURCES ${QRC_FILES})
 target_sources(${PROJECT_NAME} PRIVATE ${QRC_SOURCES})
 
 # Link with libraries
-target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Quick Qt5::WebEngine)
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE industrial_controls industrial_indicators
+    PRIVATE Qt5::Core Qt5::Quick Qt5::WebEngine
+)
