@@ -4,7 +4,9 @@
   "description": "Desktop GCS",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "configure": "cmake-js configure",
+    "build": "cmake-js build",
+    "start": "cd result && ./Dreka"
   },
   "repository": {
     "type": "git",
@@ -25,5 +27,8 @@
   "homepage": "https://github.com/Midgrad/Dreka#readme",
   "dependencies": {
     "cesium": "^1.83.0"
+  },
+  "devDependencies": {
+    "cmake-js": "^6.2.1"
   }
 }
