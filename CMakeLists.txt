@@ -29,4 +29,3 @@ set(QT_REQUIRED_VERSION 5.12.8)
 
 # Executable app target
 add_subdirectory(app)
-
