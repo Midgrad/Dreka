@@ -42,15 +42,16 @@ class CesiumWrapper {
                         new Cesium.Cartesian3(event.clientX, event.clientY), ellipsoid);
             if (cartesian) {
                 var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+                if (cartographic) {
 
-                viewportController.cursorLatitude = Cesium.Math.toDegrees(cartographic.latitude);
-                viewportController.cursorLongitude = Cesium.Math.toDegrees(cartographic.longitude);
-                //viewportController.cursorHeight = cartographic.height;
-            } else {
-                viewportController.cursorLatitude = NaN;
-                viewportController.cursorLongitude = NaN;
-                //viewportController.cursorHeight = NaN;
+                    viewportController.cursorPosition.latitude = Cesium.Math.toDegrees(cartographic.latitude);
+                    viewportController.cursorPosition.longitude = Cesium.Math.toDegrees(cartographic.longitude);
+                    // viewportController.cursorHeight = cartographic.height;
+                    return;
+                }
             }
+
+            viewportController.cursorPosition.invalidate()
         });
 
         viewer.scene.postRender.addEventListener(function(){

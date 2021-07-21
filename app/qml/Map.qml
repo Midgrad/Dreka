@@ -42,9 +42,9 @@ Item {
 
         Label {
             id: tools
-
-            text: "Lat:" + viewportController.cursorLatitude.toFixed(8) + " " +
-                  "Lon:" + viewportController.cursorLongitude.toFixed(8)
+            visible: viewportController.cursorPosition.valid
+            text: "Lat:" + viewportController.cursorPosition.latitude.toFixed(8) + " " +
+                  "Lon:" + viewportController.cursorPosition.longitude.toFixed(8)
         }
     }
 }

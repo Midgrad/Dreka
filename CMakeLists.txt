@@ -17,6 +17,9 @@ include(cmake/TrToQrc.cmake)
 # Set default output directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/result)
 
+# Use C++20 standart by default
+set(CMAKE_CXX_STANDARD 20)
+
 # Instruct CMake to run moc & rcc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
