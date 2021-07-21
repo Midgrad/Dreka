@@ -9,18 +9,32 @@ class CesiumWrapper {
         // Add Cesium OSM Buildings, a global 3D buildings layer.
         const buildingTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
 
-        // connect to a fly to signal
+        // signals
         viewportController.flyTo.connect(function(latitude, longitude, height, heading, pitch, duration) {
             viewer.camera.flyTo({
                          destination : Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
                          orientation : {
                              heading : Cesium.Math.toRadians(heading),
                              pitch : Cesium.Math.toRadians(pitch),
+                             roll : 0
                          },
                          duration: duration
                      });
         });
 
+        viewportController.headingTo.connect(function(heading, duration) {
+            viewer.camera.flyTo({
+                         destination : viewer.camera.positionWC,
+                         orientation : {
+                             heading : Cesium.Math.toRadians(heading),
+                             pitch : viewer.camera.pitch,
+                             roll : viewer.camera.roll
+                         },
+                         duration: duration
+                     });
+        });
+
+         // event listners
         viewer.scene.canvas.addEventListener('mousemove', function(event) {
             var ellipsoid = viewer.scene.globe.ellipsoid;
             // Mouse over the globe to see the cartographic position
@@ -38,6 +52,11 @@ class CesiumWrapper {
                 //viewportController.cursorHeight = NaN;
             }
         });
+
+        viewer.scene.postRender.addEventListener(function(){
+          viewportController.heading = Cesium.Math.toDegrees(viewer.camera.heading);
+          viewportController.pitch = Cesium.Math.toDegrees(viewer.camera.pitch);
+        })
     }
 }
 
