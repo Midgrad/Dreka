@@ -11,6 +11,10 @@ Item {
         webChannel.registerObject("viewportController", viewportController);
     }
 
+    Component.onDestruction: {
+        viewportController.save();
+    }
+
     WebEngineView {
         anchors.fill: parent
         url: "../../web/index.html"
@@ -18,11 +22,6 @@ Item {
             id: webChannel
         }
     }
-
-//    Timer {
-//        interval: 5000; running: true; repeat: true
-//        onTriggered: viewportController.flyTo(55.97101, 37.10610, 400, 0.0, -15.0, 3);
-//    }
 
     MapControl {
         id: row

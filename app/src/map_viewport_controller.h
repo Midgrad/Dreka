@@ -8,6 +8,7 @@ class Coordinate : public QObject {
 
   Q_PROPERTY(double latitude MEMBER latitude NOTIFY changed)
   Q_PROPERTY(double longitude MEMBER longitude NOTIFY changed)
+  Q_PROPERTY(double height MEMBER height NOTIFY changed)
   Q_PROPERTY(bool valid READ isValid NOTIFY changed)
 
  public:
@@ -15,6 +16,7 @@ class Coordinate : public QObject {
 
   double latitude = qQNaN();
   double longitude = qQNaN();
+  float height = 0;
 
   bool isValid() const;
 
@@ -29,6 +31,7 @@ class MapViewportController : public QObject {
   Q_OBJECT
 
   Q_PROPERTY(Coordinate* cursorPosition MEMBER cursorPosition CONSTANT)
+  Q_PROPERTY(Coordinate* position MEMBER position CONSTANT)
 
   Q_PROPERTY(float heading MEMBER heading NOTIFY headingChanged)
   Q_PROPERTY(float pitch MEMBER pitch NOTIFY pitchChanged)
@@ -40,10 +43,15 @@ class MapViewportController : public QObject {
   explicit MapViewportController(QObject* parent = nullptr);
 
   Coordinate* const cursorPosition;
+  Coordinate* const position;
 
   float heading = qQNaN();
   float pitch = qQNaN();
   double metersInPixel = 0.0;
+
+ public slots:
+  void save();
+  void restore();
 
  signals:
   void headingChanged();

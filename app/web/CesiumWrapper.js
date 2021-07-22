@@ -47,10 +47,21 @@ class CesiumWrapper {
 
                 viewportController.cursorPosition.latitude = Cesium.Math.toDegrees(cartographic.latitude);
                 viewportController.cursorPosition.longitude = Cesium.Math.toDegrees(cartographic.longitude);
-                // viewportController.cursorHeight = cartographic.height;
+                viewportController.cursorPosition.height = cartographic.height;
             } else {
                 viewportController.cursorPosition.invalidate();
             }
+        });
+
+        viewer.scene.postRender.addEventListener(function(){
+            viewportController.heading = Cesium.Math.toDegrees(viewer.camera.heading);
+            viewportController.pitch = Cesium.Math.toDegrees(viewer.camera.pitch);
+
+            var position = Cesium.Cartographic.fromCartesian(viewer.camera.positionWC);
+
+            viewportController.position.latitude = Cesium.Math.toDegrees(position.latitude)
+            viewportController.position.longitude = Cesium.Math.toDegrees(position.longitude)
+            viewportController.position.height = position.height;
 
             // Find the distance between two pixels at the bottom center of the screen.
             var width = viewer.scene.canvas.clientWidth;
@@ -77,10 +88,7 @@ class CesiumWrapper {
             viewportController.metersInPixel = pixelDistance;
         });
 
-        viewer.scene.postRender.addEventListener(function(){
-          viewportController.heading = Cesium.Math.toDegrees(viewer.camera.heading);
-          viewportController.pitch = Cesium.Math.toDegrees(viewer.camera.pitch);
-        })
+        viewportController.restore();
     }
 }
 
