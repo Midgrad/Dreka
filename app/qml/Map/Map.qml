@@ -1,23 +1,28 @@
 import QtQuick 2.12
-import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtWebEngine 1.3
 import QtWebChannel 1.0
+import Industrial.Controls 1.0 as Controls
 import Dreka 1.0
 
 Item {
     id: root
 
     MapViewportController {
-        id: viewportController
+        id: viewport
+    }
+
+    MapRulerController {
+        id: ruler
     }
 
     Component.onCompleted: {
-        webChannel.registerObject("viewportController", viewportController);
+        webChannel.registerObject("viewportController", viewport);
+        webChannel.registerObject("rulerController", ruler);
     }
 
     Component.onDestruction: {
-        viewportController.save();
+        viewport.save();
     }
 
     WebEngineView {
@@ -28,10 +33,20 @@ Item {
         }
     }
 
+    Controls.Button {
+        backgroundOpacity: 0.25
+        anchors.left: parent.left
+        anchors.bottom: mapControl.top
+        anchors.margins: Controls.Theme.margins
+        iconSource: "../app/icons/ruler.svg"
+        checkable: true
+        onCheckedChanged: ruler.rulerMode = checked
+    }
+
     MapControl {
-        id: row
+        id: mapControl
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.margins: 15
+        anchors.margins: Controls.Theme.margins
     }
 }

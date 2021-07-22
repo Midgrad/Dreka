@@ -1,37 +1,13 @@
 #ifndef MAP_VIEWPORT_CONTROLLER_H
 #define MAP_VIEWPORT_CONTROLLER_H
 
-#include <QObject>
-
-class Coordinate : public QObject {
-  Q_OBJECT
-
-  Q_PROPERTY(double latitude MEMBER latitude NOTIFY changed)
-  Q_PROPERTY(double longitude MEMBER longitude NOTIFY changed)
-  Q_PROPERTY(double height MEMBER height NOTIFY changed)
-  Q_PROPERTY(bool valid READ isValid NOTIFY changed)
-
- public:
-  explicit Coordinate(QObject* parent = nullptr);
-
-  double latitude = qQNaN();
-  double longitude = qQNaN();
-  float height = 0;
-
-  bool isValid() const;
-
- public slots:
-  void invalidate();
-
- signals:
-  void changed();
-};
+#include "map_coordinate.h"
 
 class MapViewportController : public QObject {
   Q_OBJECT
 
-  Q_PROPERTY(Coordinate* cursorPosition MEMBER cursorPosition CONSTANT)
-  Q_PROPERTY(Coordinate* position MEMBER position CONSTANT)
+  Q_PROPERTY(MapCoordinate* cursorPosition MEMBER cursorPosition CONSTANT)
+  Q_PROPERTY(MapCoordinate* position MEMBER position CONSTANT)
 
   Q_PROPERTY(float heading MEMBER heading NOTIFY headingChanged)
   Q_PROPERTY(float pitch MEMBER pitch NOTIFY pitchChanged)
@@ -42,8 +18,8 @@ class MapViewportController : public QObject {
  public:
   explicit MapViewportController(QObject* parent = nullptr);
 
-  Coordinate* const cursorPosition;
-  Coordinate* const position;
+  MapCoordinate* const cursorPosition;
+  MapCoordinate* const position;
 
   float heading = qQNaN();
   float pitch = qQNaN();

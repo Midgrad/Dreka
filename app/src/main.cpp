@@ -3,6 +3,7 @@
 #include <QVersionNumber>
 #include <QtWebEngine>
 
+#include "map_ruler_controller.h"
 #include "map_viewport_controller.h"
 #include "theme.h"
 #include "theme_activator.h"
@@ -26,6 +27,7 @@ int main(int argc, char* argv[]) {
 
   qmlRegisterType<MapViewportController>("Dreka", 1, 0,
                                          "MapViewportController");
+  qmlRegisterType<MapRulerController>("Dreka", 1, 0, "MapRulerController");
 
   QQmlApplicationEngine engine;
   industrialThemeActivate(true, &engine);

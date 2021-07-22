@@ -16,24 +16,10 @@ constexpr double defaultHeading = 0.0;
 constexpr double defaultPitch = -15.0;
 }  // namespace viewport_settings
 
-Coordinate::Coordinate(QObject *parent) : QObject(parent) {}
-
-bool Coordinate::isValid() const {
-  return !qIsNaN(latitude) && !qIsNaN(longitude);
-}
-
-void Coordinate::invalidate() {
-  latitude = qQNaN();
-  longitude = qQNaN();
-  height = 0;
-
-  emit changed();
-}
-
 MapViewportController::MapViewportController(QObject *parent)
     : QObject(parent),
-      cursorPosition(new Coordinate(this)),
-      position(new Coordinate(this)) {}
+      cursorPosition(new MapCoordinate(this)),
+      position(new MapCoordinate(this)) {}
 
 void MapViewportController::save() {
   if (!position->isValid()) return;

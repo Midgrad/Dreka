@@ -10,18 +10,18 @@ RowLayout {
 
     Compas {
         id: compas
-        heading: viewportController.heading
-        pitch: viewportController.pitch
-        onClicked: viewportController.lookTo(0, -90, 1);
+        heading: viewport.heading
+        pitch: viewport.pitch
+        onClicked: viewport.lookTo(0, -90, 1);
     }
 
     Coordinates {
         id: coordinates
-        latitude: viewportController.cursorPosition.latitude
-        longitude: viewportController.cursorPosition.longitude
+        latitude: viewport.cursorPosition.latitude
+        longitude: viewport.cursorPosition.longitude
     }
 
     ScaleRuler {
-        metersInPixel: viewportController.metersInPixel
+        metersInPixel: viewport.metersInPixel
     }
 }
