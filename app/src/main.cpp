@@ -24,11 +24,10 @@ int main(int argc, char* argv[]) {
   app.setProperty(::gitRevision, QString(GIT_REVISION));
   QtWebEngine::initialize();
 
-  MapViewportController viewportController;
+  qmlRegisterType<MapViewportController>("Dreka", 1, 0,
+                                         "MapViewportController");
 
   QQmlApplicationEngine engine;
-  engine.rootContext()->setContextProperty("viewportController",
-                                           &viewportController);
   industrialThemeActivate(true, &engine);
 
   ThemeLoader themeLoader;

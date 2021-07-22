@@ -3,9 +3,14 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtWebEngine 1.3
 import QtWebChannel 1.0
+import Dreka 1.0
 
 Item {
     id: root
+
+    MapViewportController {
+        id: viewportController
+    }
 
     Component.onCompleted: {
         webChannel.registerObject("viewportController", viewportController);
