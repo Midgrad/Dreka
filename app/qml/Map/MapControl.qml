@@ -14,20 +14,10 @@ RowLayout {
         onClicked: viewportController.lookTo(0, -90, 1);
     }
 
-    Text {
-        font.bold: true
-        font.pixelSize: Controls.Theme.auxFontSize
-        color: Controls.Theme.colors.text
-        text: qsTr("Lat:") + " " + (viewportController.cursorPosition.valid ?
-                                        viewportController.cursorPosition.latitude.toFixed(8) : "-")
-    }
-
-    Text {
-        font.bold: true
-        font.pixelSize: Controls.Theme.auxFontSize
-        color: Controls.Theme.colors.text
-        text: qsTr("Lon:") + " " + (viewportController.cursorPosition.valid ?
-                                        viewportController.cursorPosition.longitude.toFixed(8) : "-")
+    Coordinates {
+        id: coordinates
+        latitude: viewportController.cursorPosition.latitude
+        longitude: viewportController.cursorPosition.longitude
     }
 
     ScaleRuler {

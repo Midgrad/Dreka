@@ -34,7 +34,7 @@ class MapViewportController : public QObject {
   Q_PROPERTY(float pitch MEMBER pitch NOTIFY pitchChanged)
 
   Q_PROPERTY(
-      float metersInPixel MEMBER metersInPixel NOTIFY metersInPixelChanged)
+      double metersInPixel MEMBER metersInPixel NOTIFY metersInPixelChanged)
 
  public:
   explicit MapViewportController(QObject* parent = nullptr);
@@ -43,7 +43,7 @@ class MapViewportController : public QObject {
 
   float heading = qQNaN();
   float pitch = qQNaN();
-  float metersInPixel = 1;
+  double metersInPixel = 1.0;
 
  signals:
   void headingChanged();
