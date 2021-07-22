@@ -7,9 +7,9 @@ set(PROJECT_ORGANIZATION "Midgrad")
 project(${PROJECT_NAME})
 
 # Versions
-set(FLT_PROJECT_VERSION_MAJOR 0)
-set(FLT_PROJECT_VERSION_MINOR 1)
-set(FLT_PROJECT_VERSION_PATCH 0)
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 1)
+set(VERSION_PATCH 0)
 
 # Cmake includes
 include(cmake/TrToQrc.cmake)

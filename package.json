@@ -6,7 +6,7 @@
   "scripts": {
     "configure": "cmake-js configure",
     "build": "cmake-js build",
-    "start": "cd result && ./Dreka"
+    "start": "cd result && ./DrekaApp"
   },
   "repository": {
     "type": "git",

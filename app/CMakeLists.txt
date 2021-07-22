@@ -1,5 +1,24 @@
 # Project
-project(Dreka LANGUAGES CXX)
+project(DrekaApp LANGUAGES CXX)
+
+# Get git revision hash
+execute_process(
+    COMMAND git rev-parse HEAD
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_REVISION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get version from git
+add_definitions(-DVERSION_MAJOR=${VERSION_MAJOR})
+add_definitions(-DVERSION_MINOR=${VERSION_MINOR})
+add_definitions(-DVERSION_PATCH=${VERSION_PATCH})
+add_definitions(-DGIT_REVISION="${GIT_REVISION}")
+
+# Version message
+message(STATUS
+    "Configuring ${PROJECT_NAME} ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}(${GIT_REVISION})"
+)
 
 # Find Qt libraries
 find_package(Qt5 COMPONENTS Core Quick WebEngine REQUIRED)
