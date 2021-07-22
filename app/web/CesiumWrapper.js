@@ -22,12 +22,12 @@ class CesiumWrapper {
                      });
         });
 
-        viewportController.headingTo.connect(function(heading, duration) {
+        viewportController.lookTo.connect(function(heading, pitch, duration) {
             viewer.camera.flyTo({
                          destination : viewer.camera.positionWC,
                          orientation : {
                              heading : Cesium.Math.toRadians(heading),
-                             pitch : viewer.camera.pitch,
+                             pitch : Cesium.Math.toRadians(pitch),
                              roll : viewer.camera.roll
                          },
                          duration: duration

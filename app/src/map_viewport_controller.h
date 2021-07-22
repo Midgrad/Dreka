@@ -29,14 +29,14 @@ class MapViewportController : public QObject {
   Q_OBJECT
 
   Q_PROPERTY(Coordinate* cursorPosition MEMBER cursorPosition CONSTANT)
-  Q_PROPERTY(double heading MEMBER heading NOTIFY headingChanged)
-  Q_PROPERTY(double pitch MEMBER pitch NOTIFY pitchChanged)
+  Q_PROPERTY(float heading MEMBER heading NOTIFY headingChanged)
+  Q_PROPERTY(float pitch MEMBER pitch NOTIFY pitchChanged)
 
  public:
   explicit MapViewportController(QObject* parent = nullptr);
 
-  double heading = qQNaN();
-  double pitch = qQNaN();
+  float heading = qQNaN();
+  float pitch = qQNaN();
 
   Coordinate* const cursorPosition;
 
@@ -46,7 +46,7 @@ class MapViewportController : public QObject {
 
   void flyTo(double latitude, double longitude, float height, float heading,
              float pitch, float duration = 0.0);
-  void headingTo(double heading, float duration = 0.0);
+  void lookTo(float heading, float pitch, float duration = 0.0);
 };
 
 #endif  // MAP_VIEWPORT_CONTROLLER_H
