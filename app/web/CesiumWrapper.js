@@ -9,26 +9,6 @@ class CesiumWrapper {
         // Add Cesium OSM Buildings, a global 3D buildings layer.
         const buildingTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
 
-        // stuff to get meters in pixel
-        var getViewExtent = function() {
-            var camera = viewer.scene.camera;
-            var canvas = viewer.scene.canvas;
-            var ellipsoid = viewer.scene.globe.ellipsoid;
-            var corners = [
-                camera.pickEllipsoid( new Cesium.Cartesian2( 0, 0 ), ellipsoid ),
-                camera.pickEllipsoid( new Cesium.Cartesian2( canvas.width, 0 ), ellipsoid ),
-                camera.pickEllipsoid( new Cesium.Cartesian2( 0, canvas.height ), ellipsoid ),
-                camera.pickEllipsoid( new Cesium.Cartesian2( canvas.width, canvas.height ), ellipsoid )
-            ];
-            var extents = false;
-            for( var index = 0; index < 4; index++ ) {
-                if( corners[ index ] === undefined ) {
-                    return Cesium.Rectangle.MAX_VALUE;
-                }
-            }
-            return Cesium.Rectangle.fromCartographicArray( ellipsoid.cartesianArrayToCartographicArray( corners ) );
-        };
-
         // signals
         viewportController.flyTo.connect(function(latitude, longitude, height, heading, pitch, duration) {
             viewer.camera.flyTo({
@@ -54,7 +34,9 @@ class CesiumWrapper {
                      });
         });
 
-         // event listners
+        var geodesic = new Cesium.EllipsoidGeodesic();
+
+        // event listners
         viewer.scene.canvas.addEventListener('mousemove', function(event) {
             var ellipsoid = viewer.scene.globe.ellipsoid;
             // Mouse over the globe to see the cartographic position
@@ -70,14 +52,29 @@ class CesiumWrapper {
                 viewportController.cursorPosition.invalidate();
             }
 
-            var rect = getViewExtent();
+            // Find the distance between two pixels at the bottom center of the screen.
+            var width = viewer.scene.canvas.clientWidth;
+            var height = viewer.scene.canvas.clientHeight;
 
-            if (!rect.equals( Cesium.Rectangle.MAX_VALUE)) {
-                var canvas = viewer.scene.canvas;
-                var diffHeight = ( rect.north > rect.south ) ? rect.north - rect.south : rect.south - rect.north;
-                var kmPerPixel = ( diffHeight * 6355.3 ) / canvas.clientHeight;
-                viewportController.metersInPixel = kmPerPixel * 1000.0;
+            var left = viewer.camera.getPickRay(new Cesium.Cartesian2((width / 2) | 0, height - 1));
+            var right = viewer.camera.getPickRay(new Cesium.Cartesian2(1 + (width / 2) | 0, height - 1));
+
+            var globe = viewer.scene.globe;
+            var leftPosition = globe.pick(left, viewer.scene);
+            var rightPosition = globe.pick(right, viewer.scene);
+
+            if (!(leftPosition) || !(rightPosition)) {
+                viewportController.metersInPixel = 0;
+                return;
             }
+
+            var leftCartographic = globe.ellipsoid.cartesianToCartographic(leftPosition);
+            var rightCartographic = globe.ellipsoid.cartesianToCartographic(rightPosition);
+
+            geodesic.setEndPoints(leftCartographic, rightCartographic);
+            var pixelDistance = geodesic.surfaceDistance;
+
+            viewportController.metersInPixel = pixelDistance;
         });
 
         viewer.scene.postRender.addEventListener(function(){

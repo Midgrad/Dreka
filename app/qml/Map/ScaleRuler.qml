@@ -35,6 +35,7 @@ Item {
             x: root.width * metersRounded / metersInWidth
             height: root.height
             width: root.lineWidth
+            visible: metersInPixel > 0
             color: root.color
 
             Behavior on x { PropertyAnimation { duration: 100 } }
@@ -44,6 +45,7 @@ Item {
             anchors.left: leftTick.right
             anchors.right: roundedTick.left
             height: parent.height
+            visible: metersInPixel > 0
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             font.bold: true

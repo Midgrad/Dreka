@@ -43,7 +43,7 @@ class MapViewportController : public QObject {
 
   float heading = qQNaN();
   float pitch = qQNaN();
-  double metersInPixel = 1.0;
+  double metersInPixel = 0.0;
 
  signals:
   void headingChanged();
