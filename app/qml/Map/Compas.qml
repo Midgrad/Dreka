@@ -24,6 +24,4 @@ Controls.Button {
             angle: 90 - pitch
         }
     }
-
-
 }
