@@ -16,9 +16,14 @@ Item {
         id: ruler
     }
 
+    ClipboardController {
+        id: clipboard
+    }
+
     Component.onCompleted: {
         webChannel.registerObject("viewportController", viewport);
         webChannel.registerObject("rulerController", ruler);
+        webChannel.registerObject("clipboardController", clipboard);
     }
 
     Component.onDestruction: {

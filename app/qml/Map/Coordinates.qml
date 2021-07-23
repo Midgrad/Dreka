@@ -14,6 +14,7 @@ RowLayout {
 
     MapButton {
         rightCropped: true
+        tipText: qsTr("Copy coordinates")
         text: {
             var lat = qsTr("Lat:") + " ";
             var lon = qsTr("Lon:") + " ";
@@ -31,11 +32,13 @@ RowLayout {
             }
             return lat + " " + lon;
         }
+        onClicked: clipboard.setText(text)
         Layout.fillWidth: true
     }
 
     MapButton {
         leftCropped: true
+        tipText: qsTr("Change format")
         text: dmsFormat ? "DMS" : "X.X"
         onClicked: dmsFormat = !dmsFormat
     }

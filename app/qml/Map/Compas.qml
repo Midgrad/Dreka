@@ -9,6 +9,7 @@ MapButton {
 
     round: true
     implicitHeight: Controls.Theme.baseSize * 1.5
+    tipText: qsTr("Reset orientation")
 
     Controls.ColoredIcon {
         id: icon
