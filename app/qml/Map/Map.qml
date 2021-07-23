@@ -33,16 +33,6 @@ Item {
         }
     }
 
-    Controls.Button {
-        backgroundOpacity: 0.25
-        anchors.left: parent.left
-        anchors.bottom: mapControl.top
-        anchors.margins: Controls.Theme.margins
-        iconSource: "../app/icons/ruler.svg"
-        checkable: true
-        onCheckedChanged: ruler.rulerMode = checked
-    }
-
     MapControl {
         id: mapControl
         anchors.bottom: parent.bottom

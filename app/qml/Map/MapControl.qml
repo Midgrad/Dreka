@@ -21,7 +21,7 @@ RowLayout {
         longitude: viewport.cursorPosition.longitude
     }
 
-    ScaleRuler {
+    MapScale {
         metersInPixel: viewport.metersInPixel
     }
 }

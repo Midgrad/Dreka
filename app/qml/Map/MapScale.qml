@@ -11,11 +11,33 @@ Item {
     property color color: Controls.Theme.colors.text
 
     implicitWidth: Controls.Theme.baseSize * 4
-    implicitHeight: Controls.Theme.baseSize * 0.5
+    implicitHeight: Controls.Theme.baseSize
+
+    Rectangle {
+        anchors.fill: parent
+        radius: Controls.Theme.rounding
+        opacity: 0.35
+        color: "black"
+    }
+
+    Text {
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        visible: metersInPixel > 0
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        font.bold: true
+        font.pixelSize: Controls.Theme.auxFontSize
+        color: root.color
+        text: metersRounded > 1000 ? (Math.round(metersRounded / 1000) + " " + qsTr("km")):
+                                     (Math.round(metersRounded) + " " + qsTr("m"))
+    }
 
     Item {
-        id: item
+        id: scale
         anchors.fill: parent
+        anchors.topMargin: root.height / 2
 
         Rectangle {
             anchors { left: parent.left; right: parent.right; bottom: parent.bottom}
@@ -25,7 +47,7 @@ Item {
 
         Rectangle {
             id: leftTick
-            height: root.height
+            height: scale.height
             width: root.lineWidth
             color: root.color
         }
@@ -33,26 +55,12 @@ Item {
         Rectangle {
             id: roundedTick
             x: root.width * metersRounded / metersInWidth
-            height: root.height
+            height: scale.height
             width: root.lineWidth
             visible: metersInPixel > 0
             color: root.color
 
             Behavior on x { PropertyAnimation { duration: 100 } }
-        }
-
-        Text {
-            anchors.left: leftTick.right
-            anchors.right: roundedTick.left
-            height: parent.height
-            visible: metersInPixel > 0
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            font.bold: true
-            font.pixelSize: Controls.Theme.auxFontSize
-            color: root.color
-            text: metersRounded > 1000 ? (Math.round(metersRounded / 1000) + " " + qsTr("km")):
-                                         (Math.round(metersRounded) + " " + qsTr("m"))
         }
     }
 }

@@ -1,20 +1,19 @@
 import QtQuick 2.12
 import Industrial.Controls 1.0 as Controls
 
-Controls.Button {
+MapButton {
     id: root
 
     property real heading: 0
     property real pitch: 0
 
     round: true
-    backgroundOpacity: 0.25
     implicitHeight: Controls.Theme.baseSize * 1.5
 
     Controls.ColoredIcon {
         id: icon
         anchors.fill: parent
-        anchors.margins: Controls.Theme.padding
+        anchors.margins: 1
         source: "../app/icons/compas.svg"
         rotation: heading
         transform: Rotation {

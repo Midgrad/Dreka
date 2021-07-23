@@ -8,51 +8,34 @@ RowLayout {
     property bool dmsFormat: true
     property real latitude: NaN
     property real longitude: NaN
+    property bool valid: !isNaN(latitude) && !isNaN(longitude)
 
-    spacing: 10
+    spacing: 1
 
-    Text {
-        font.bold: true
-        font.pixelSize: Controls.Theme.auxFontSize
-        color: Controls.Theme.colors.text
+    MapButton {
+        rightCropped: true
         text: {
-            var result = qsTr("Lat:") + " ";
-            if (isNaN(latitude)) {
-                result += "-";
+            var lat = qsTr("Lat:") + " ";
+            var lon = qsTr("Lon:") + " ";
+            if (!valid) {
+                lat += "-";
+                lon += "-";
             } else {
-                if (dmsFormat)
-                    result += Controls.Helper.degreesToDmsString(latitude, false, 2);
-                else
-                    result += latitude.toFixed(8);
+                if (dmsFormat) {
+                    lat += Controls.Helper.degreesToDmsString(latitude, false, 2);
+                    lon += Controls.Helper.degreesToDmsString(longitude, true, 2);
+                } else {
+                    lat += latitude.toFixed(8);
+                    lon += longitude.toFixed(8);
+                }
             }
-            return result;
+            return lat + " " + lon;
         }
         Layout.fillWidth: true
     }
 
-    Text {
-        font.bold: true
-        font.pixelSize: Controls.Theme.auxFontSize
-        color: Controls.Theme.colors.text
-        text: {
-            var result = qsTr("Lat:") + " ";
-            if (isNaN(longitude)) {
-                result += "-";
-            } else {
-                if (dmsFormat)
-                    result += Controls.Helper.degreesToDmsString(longitude, true, 2);
-                else
-                    result += longitude.toFixed(8);
-            }
-            return result;
-        }
-        Layout.fillWidth: true
-    }
-
-    Controls.Button {
-        backgroundOpacity: 0.25
-        font.bold: true
-        font.pixelSize: Controls.Theme.auxFontSize
+    MapButton {
+        leftCropped: true
         text: dmsFormat ? "DMS" : "X.X"
         onClicked: dmsFormat = !dmsFormat
     }
