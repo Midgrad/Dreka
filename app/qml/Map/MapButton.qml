@@ -7,6 +7,6 @@ Controls.Button {
     implicitHeight: Controls.Theme.baseSize
     font.bold: true
     font.pixelSize: Controls.Theme.auxFontSize
-    backgroundOpacity: 0.35
+    backgroundOpacity: checked ? 1.0 : 0.35
     color: "black"
 }

@@ -4,8 +4,21 @@ class CesiumWrapper {
         // Replace `your_access_token` with your Cesium ion access token.
         // --> Cesium.Ion.defaultAccessToken = 'your_access_token';
 
+        var terrain = Cesium.createDefaultTerrainProviderViewModels();
+
         // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
-        this.viewer = new Cesium.Viewer(container, { terrainProvider: Cesium.createWorldTerrain() });
+        this.viewer = new Cesium.Viewer(container, {
+            orderIndependentTranslucency: false,
+            timeline: false,
+            geocoder : false,
+            selectionIndicator : false,
+            infoBox : false,
+            terrainProviderViewModels: terrain,
+            selectedTerrainProviderViewModel: terrain[1]
+        });
+
+        this.viewer.scene.globe.depthTestAgainstTerrain = true;
+
         // Add Cesium OSM Buildings, a global 3D buildings layer.
         const buildingTileset = this.viewer.scene.primitives.add(Cesium.createOsmBuildings());
     }

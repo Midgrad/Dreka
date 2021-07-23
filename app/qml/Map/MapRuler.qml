@@ -5,11 +5,12 @@ import Industrial.Controls 1.0 as Controls
 RowLayout {
     id: row
 
+    property real distance: ruler.distance
+
     spacing: 1
 
     MapButton {
-        id: rulerButton
-        rightCropped: removeRullerButton.visible
+        rightCropped: !ruler.empty
         tipText: checked ? qsTr("Disable ruler") : qsTr("Enable ruler")
         iconSource: "../app/icons/ruler.svg"
         checkable: true
@@ -17,7 +18,17 @@ RowLayout {
     }
 
     MapButton {
-        id: removeRullerButton
+        rightCropped: true
+        leftCropped: true
+        tipText: qsTr("Copy distance")
+        visible: !ruler.empty
+        text: distance > 1000 ? (Math.round(distance / 1000) + " " + qsTr("km")):
+                                (Math.round(distance) + " " + qsTr("m"))
+        onClicked: clipboard.setText(text)
+        Layout.fillWidth: true
+    }
+
+    MapButton {
         leftCropped: true
         tipText: qsTr("Remove ruler points")
         iconSource: "../app/icons/remove.svg"

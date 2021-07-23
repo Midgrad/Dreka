@@ -1,43 +1,88 @@
 class RulerAdapter {
     constructor(cesium, rulerController) {
 
-        const viewer = cesium.viewer;
-        var points = [];
+        this.viewer = cesium.viewer;
 
-        // signals
+        this.points = [];
+        this.lines = [];
+        this.lastPosition = null;
+
+        var that = this;
+        var scene = this.viewer.scene;
+
+        // clear signal
         rulerController.clear.connect(function() {
-            for (var i = 0; i < points.length; i++) {
-                viewer.entities.remove(points[i]);
-            }
+            that.clear();
+
             rulerController.empty = true;
+            rulerController.distance = 0;
         });
 
-        // event listners
-        viewer.scene.canvas.addEventListener('click', function(event) {
+        // Left click to add ruler points
+        var handler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+        handler.setInputAction(function(event) {
+            // Ignore with no ruler mode
             if (!rulerController.rulerMode)
                 return;
 
-            var mousePosition = new Cesium.Cartesian2(event.clientX, event.clientY);
+            // PickPosition is currently only supported in 3D mode
+            if (!scene.pickPositionSupported ||
+                    scene.mode !== Cesium.SceneMode.SCENE3D)
+                return;
 
-            var ellipsoid = viewer.scene.globe.ellipsoid;
-            var cartesian = viewer.camera.pickEllipsoid(mousePosition, ellipsoid);
+            var cartesian = that.viewer.scene.pickPosition(event.position);
+            if (Cesium.defined(cartesian)) {
+                //cartesian.z += 10;
 
-            if (cartesian) {
-                var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+                that.addPoint(cartesian);
 
-                points.push(viewer.entities.add({
-                    position: cartesian,
-                    point: {
-                        pixelSize: 4,
-                        color: Cesium.Color.ALICEBLUE,
-                        outlineColor: Cesium.Color.AQUAMARINE,
-                        outlineWidth: 2,
-                        heightReference : Cesium.HeightReference.RELATIVE_TO_GROUND,
-                        scaleByDistance: new Cesium.NearFarScalar(1.5e2, 2.0, 1.5e7, 0.5)
-                    }
-                }));
+                // Not empty now
                 rulerController.empty = false;
+
+                // Update ruler distance
+                if (that.lastPosition) {
+                    rulerController.distance +=
+                            Cesium.Cartesian3.distance(that.lastPosition, cartesian);
+                }
+                that.lastPosition = cartesian;
             }
-        }, false);
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    }
+
+    addPoint(cartesian) {
+        if (this.lastPosition) {
+            this.lines.push(this.viewer.entities.add({
+                polyline: {
+                    positions: [this.lastPosition, cartesian],
+                    arcType: Cesium.ArcType.GEODESIC,
+                    width : 4.0,
+                    material : Cesium.Color.CADETBLUE,
+                    depthFailMaterial: Cesium.Color.CADETBLUE,
+                }
+            }));
+        }
+
+        this.points.push(this.viewer.entities.add({
+            position: cartesian,
+            point: {
+                pixelSize: 8,
+                color: Cesium.Color.CADETBLUE,
+                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            }
+        }));
+    }
+
+    clear() {
+        for (var i = 0; i < this.points.length; ++i) {
+            this.viewer.entities.remove(this.points[i]);
+        }
+        this.points = [];
+
+        for (i = 0; i < this.lines.length; ++i) {
+            this.viewer.entities.remove(this.lines[i]);
+        }
+        this.lines = [];
+
+        this.lastPosition = null;
     }
 }
