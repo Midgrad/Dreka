@@ -5,6 +5,7 @@ class RulerAdapter {
 
         this.points = [];
         this.lines = [];
+        this.labels = [];
         this.lastPosition = null;
 
         var that = this;
@@ -60,6 +61,17 @@ class RulerAdapter {
                     depthFailMaterial: Cesium.Color.CADETBLUE,
                 }
             }));
+
+            this.labels.push(this.viewer.entities.add({
+                position: this.intermediate(this.lastPosition, cartesian),
+                label: {
+                    text: Cesium.Cartesian3.distance(this.lastPosition, cartesian).toFixed(2),
+                    showBackground: true,
+                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                    pixelOffset: new Cesium.Cartesian2(0, -25),
+                    font: "13px Helvetica"
+                }
+            }));
         }
 
         this.points.push(this.viewer.entities.add({
@@ -83,6 +95,22 @@ class RulerAdapter {
         }
         this.lines = [];
 
+        for (i = 0; i < this.labels.length; ++i) {
+            this.viewer.entities.remove(this.labels[i]);
+        }
+        this.labels = [];
+
         this.lastPosition = null;
+    }
+
+    intermediate(first, second) {
+        var scratch = new Cesium.Cartesian3();
+
+        var difference = Cesium.Cartesian3.subtract(first, second, scratch);
+        var distance = -0.5 * Cesium.Cartesian3.magnitude(difference);
+        var direction = Cesium.Cartesian3.normalize(difference, scratch);
+
+        return Cesium.Cartesian3.add(first, Cesium.Cartesian3.multiplyByScalar(
+                                            direction, distance, scratch), scratch);
     }
 }
