@@ -8,14 +8,14 @@ RowLayout {
 
     spacing: 10
 
-    Compas {
+    MapCompas {
         id: compas
         heading: viewport.heading
         pitch: viewport.pitch
         onClicked: viewport.lookTo(0, -90, 1);
     }
 
-    Coordinates {
+    MapCoordinates {
         id: coordinates
         latitude: viewport.cursorPosition.latitude
         longitude: viewport.cursorPosition.longitude
@@ -26,4 +26,6 @@ RowLayout {
     }
 
     MapRuler {}
+
+    MapGrid {}
 }

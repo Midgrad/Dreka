@@ -46,7 +46,7 @@ class ViewportAdapter {
             }
         });
 
-        viewer.scene.postRender.addEventListener(function(){
+        viewer.scene.postRender.addEventListener(function() {
             viewportController.heading = Cesium.Math.toDegrees(viewer.camera.heading);
             viewportController.pitch = Cesium.Math.toDegrees(viewer.camera.pitch);
 

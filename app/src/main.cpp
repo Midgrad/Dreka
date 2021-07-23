@@ -4,6 +4,7 @@
 #include <QtWebEngine>
 
 #include "clipboard_controller.h"
+#include "map_grid_controller.h"
 #include "map_ruler_controller.h"
 #include "map_viewport_controller.h"
 #include "theme.h"
@@ -29,6 +30,7 @@ int main(int argc, char* argv[]) {
   qmlRegisterType<MapViewportController>("Dreka", 1, 0,
                                          "MapViewportController");
   qmlRegisterType<MapRulerController>("Dreka", 1, 0, "MapRulerController");
+  qmlRegisterType<MapGridController>("Dreka", 1, 0, "MapGridController");
   qmlRegisterType<ClipboardController>("Dreka", 1, 0, "ClipboardController");
 
   QQmlApplicationEngine engine;

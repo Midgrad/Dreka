@@ -20,9 +20,14 @@ Item {
         id: clipboard
     }
 
+    MapGridController {
+        id: grid
+    }
+
     Component.onCompleted: {
         webChannel.registerObject("viewportController", viewport);
         webChannel.registerObject("rulerController", ruler);
+        webChannel.registerObject("gridController", grid);
         webChannel.registerObject("clipboardController", clipboard);
     }
 
