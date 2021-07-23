@@ -1,29 +1,25 @@
 #ifndef MAP_RULER_CONTROLLER_H
 #define MAP_RULER_CONTROLLER_H
 
-#include "map_coordinate.h"
+#include <QObject>
 
 class MapRulerController : public QObject {
   Q_OBJECT
 
-  Q_PROPERTY(QList<MapCoordinate*> coordinates MEMBER coordinates NOTIFY
-                 coordinatesChanged)
-  Q_PROPERTY(double rulerMode MEMBER rulerMode NOTIFY rulerModeChanged)
+  Q_PROPERTY(bool rulerMode MEMBER rulerMode NOTIFY rulerModeChanged)
+  Q_PROPERTY(bool empty MEMBER empty NOTIFY emptyChanged)
 
  public:
   explicit MapRulerController(QObject* parent = nullptr);
 
-  QList<MapCoordinate*> coordinates;
   bool rulerMode = false;
-
- public slots:
-  void addPoint(double latitude, double longitude, float height,
-                int index = INT_MAX);
-  void removePoint(int index);
+  bool empty = true;
 
  signals:
-  void coordinatesChanged();
   void rulerModeChanged();
+  void emptyChanged();
+
+  Q_INVOKABLE void clear();
 };
 
 #endif  // MAP_RULER_CONTROLLER_H

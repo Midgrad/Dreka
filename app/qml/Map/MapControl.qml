@@ -24,4 +24,6 @@ RowLayout {
     MapScale {
         metersInPixel: viewport.metersInPixel
     }
+
+    MapRuler {}
 }
