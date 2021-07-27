@@ -32,7 +32,7 @@ RowLayout {
         metersInPixel: viewport.metersInPixel
     }
 
-    MapRuler {}
-    MapGrid {}
-    MapLayers {}
+    MapRulerView {}
+    MapGridView {}
+    MapLayersView {}
 }

@@ -1,0 +1,41 @@
+import QtQuick 2.6
+import QtQuick.Layouts 1.12
+import Industrial.Controls 1.0 as Controls
+import Industrial.Widgets 1.0 as Widgets
+import Dreka 1.0
+
+MapButton {
+    id: root
+
+    MapLayersController { id: layers }
+
+    Component.onCompleted: webChannel.registerObject("layersController", layers)
+
+    tipText: qsTr("Map layers")
+    iconSource: "../app/icons/layers.svg"
+    highlighted: popup.visible
+    onClicked: popup.visible ? popup.close() : popup.open()
+
+    Controls.Popup {
+        id: popup
+
+        closePolicy: Controls.Popup.NoAutoClose
+        width: Controls.Theme.baseSize * 10
+        y: -height - Controls.Theme.spacing
+        x: root.width - width
+        backgroundOpacity: 0.35
+        backgroundColor: "black"
+
+        Widgets.ListWrapper {
+            model: layers.layers
+            anchors.fill: parent
+            emptyText: qsTr("No layers")
+
+                delegate: MapLayer {
+                    width: parent.width
+                    name: model.name
+                    visibility: model.visibility
+                }
+            }
+    }
+}

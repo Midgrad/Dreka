@@ -14,7 +14,7 @@ Item {
         onJavaScriptConsoleMessage: console.log(message)
     }
 
-    MapControl {
+    MapControlView {
         id: mapControl
         anchors.bottom: parent.bottom
         anchors.left: parent.left

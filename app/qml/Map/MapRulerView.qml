@@ -6,9 +6,7 @@ import Dreka 1.0
 RowLayout {
     id: root
 
-    MapRulerController {
-        id: ruler
-    }
+    MapRulerController { id: ruler }
 
     Component.onCompleted: webChannel.registerObject("rulerController", ruler)
 
