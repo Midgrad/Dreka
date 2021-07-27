@@ -26,6 +26,6 @@ RowLayout {
     }
 
     MapRuler {}
-
     MapGrid {}
+    MapLayers {}
 }

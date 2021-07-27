@@ -5,6 +5,7 @@
 
 #include "clipboard_controller.h"
 #include "map_grid_controller.h"
+#include "map_layers_controller.h"
 #include "map_ruler_controller.h"
 #include "map_viewport_controller.h"
 #include "theme.h"
@@ -32,6 +33,7 @@ int main(int argc, char* argv[]) {
   qmlRegisterType<MapRulerController>("Dreka", 1, 0, "MapRulerController");
   qmlRegisterType<MapGridController>("Dreka", 1, 0, "MapGridController");
   qmlRegisterType<ClipboardController>("Dreka", 1, 0, "ClipboardController");
+  qmlRegisterType<MapLayersController>("Dreka", 1, 0, "MapLayersController");
 
   QQmlApplicationEngine engine;
   industrialThemeActivate(true, &engine);
