@@ -3,42 +3,9 @@ import QtQuick.Layouts 1.12
 import QtWebEngine 1.3
 import QtWebChannel 1.0
 import Industrial.Controls 1.0 as Controls
-import Dreka 1.0
 
 Item {
     id: root
-
-    MapViewportController {
-        id: viewport
-    }
-
-    MapRulerController {
-        id: ruler
-    }
-
-    ClipboardController {
-        id: clipboard
-    }
-
-    MapGridController {
-        id: grid
-    }
-
-    MapLayersController {
-        id: layers
-    }
-
-    Component.onCompleted: {
-        webChannel.registerObject("viewportController", viewport);
-        webChannel.registerObject("rulerController", ruler);
-        webChannel.registerObject("gridController", grid);
-        webChannel.registerObject("clipboardController", clipboard);
-        webChannel.registerObject("layersController", layers);
-    }
-
-    Component.onDestruction: {
-        viewport.save();
-    }
 
     WebEngineView {
         anchors.fill: parent

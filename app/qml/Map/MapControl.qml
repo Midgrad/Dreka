@@ -4,7 +4,14 @@ import Industrial.Controls 1.0 as Controls
 import Dreka 1.0
 
 RowLayout {
-    id: row
+    id: root
+
+    MapViewportController {
+        id: viewport
+    }
+
+    Component.onCompleted: webChannel.registerObject("viewportController", viewport)
+    Component.onDestruction: viewport.save()
 
     spacing: 10
 

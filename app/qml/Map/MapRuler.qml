@@ -1,9 +1,16 @@
 import QtQuick 2.6
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
+import Dreka 1.0
 
 RowLayout {
-    id: row
+    id: root
+
+    MapRulerController {
+        id: ruler
+    }
+
+    Component.onCompleted: webChannel.registerObject("rulerController", ruler)
 
     property real distance: ruler.distance
 
