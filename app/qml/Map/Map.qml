@@ -38,9 +38,8 @@ Item {
     WebEngineView {
         anchors.fill: parent
         url: "../../web/index.html"
-        webChannel: WebChannel{
-            id: webChannel
-        }
+        webChannel: WebChannel { id: webChannel }
+        onJavaScriptConsoleMessage: console.log(message)
     }
 
     MapControl {

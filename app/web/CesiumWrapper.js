@@ -4,7 +4,7 @@ class CesiumWrapper {
         // Replace `your_access_token` with your Cesium ion access token.
         // --> Cesium.Ion.defaultAccessToken = 'your_access_token';
 
-        var terrain = Cesium.createDefaultTerrainProviderViewModels();
+//        var terrain = Cesium.createDefaultTerrainProviderViewModels();
 
         // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
         this.viewer = new Cesium.Viewer(container, {
@@ -13,8 +13,13 @@ class CesiumWrapper {
             geocoder : false,
             selectionIndicator : false,
             infoBox : false,
-            terrainProviderViewModels: terrain,
-            selectedTerrainProviderViewModel: terrain[1]
+//            terrainProviderViewModels: terrain,
+//            selectedTerrainProviderViewModel: terrain[1]
+
+            terrainProvider: Cesium.createWorldTerrain({
+                requestVertexNormals : true,
+                requestWaterMask : true
+            })
         });
 
         this.viewer.scene.globe.depthTestAgainstTerrain = true;
