@@ -21,7 +21,9 @@ RowLayout {
 
      Controls.RadioButton {
          id: visibilityBox
+         flat: true
          Controls.ButtonGroup.group: visibilityGroup
          onToggled: visibilityToggled()
+         Layout.rightMargin: (Controls.Theme.baseSize - Controls.Theme.checkmarkSize) / 2
      }
  }
