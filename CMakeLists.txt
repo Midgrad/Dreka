@@ -12,6 +12,7 @@ set(VERSION_MINOR 1)
 set(VERSION_PATCH 0)
 
 # Cmake includes
+include(cmake/CopyResourcePostCMake.cmake)
 include(cmake/TrToQrc.cmake)
 
 # Set default output directory
