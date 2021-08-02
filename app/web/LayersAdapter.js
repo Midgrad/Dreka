@@ -1,17 +1,48 @@
-class GridAdapter {
-    constructor(cesium, gridController) {
+class LayersAdapter {
+    constructor(cesium, layersController) {
 
-        this.gridMaterial = Cesium.Material.fromType('Grid');
-        this.gridMaterial.uniforms.color = Cesium.Color.WHITE.withAlpha(0.75);
-        this.gridMaterial.uniforms.lineCount = new Cesium.Cartesian2(12, 9);
+        this.imageryLayers = cesium.viewer.imageryLayers;
 
-        this.deafultMaterial = cesium.viewer.scene.globe.material;
+//        var cartoDB = new Cesium.UrlTemplateImageryProvider({
+//            url : 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
+//        });
 
+//        var esri = new Cesium.UrlTemplateImageryProvider({
+//            url : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+//        });
+
+//        var google = new Cesium.UrlTemplateImageryProvider({
+//            url : 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'
+//        });
+
+//        this.imageryLayers.addImageryProvider(google);
+
+        this.layersController = layersController;
         var that = this;
-
-        gridController.enabledChanged.connect(function() {
-            cesium.viewer.scene.globe.material = gridController.enabled ?
-                        that.gridMaterial : that.deafultMaterial;
+        // signals
+        layersController.layersChanged.connect(function() {
+            that.reloadLayers();
         });
+
+        layersController.restore();
+    }
+
+    clearLayers() {
+        this.imageryLayers.removeAll();
+    }
+
+    reloadLayers() {
+        this.clearLayers();
+
+        this.layersController.layers.forEach(layer => { if (layer.visibility) this.addLayer(layer); });
+    }
+
+    addLayer(layer) {
+        var provider = new Cesium.UrlTemplateImageryProvider({
+            credit: layer.name,
+            url: layer.url,
+        });
+
+        this.imageryLayers.addImageryProvider(provider);
     }
 }

@@ -8,6 +8,8 @@ RowLayout {
      property alias name: nameLabel.text
      property alias visibility: visibilityBox.checked
 
+     signal visibilityToggled()
+
      spacing: 0
      implicitHeight: Controls.Theme.baseSize
 
@@ -17,7 +19,9 @@ RowLayout {
          Layout.fillWidth: true
      }
 
-     Controls.CheckBox {
+     Controls.RadioButton {
          id: visibilityBox
+         Controls.ButtonGroup.group: visibilityGroup
+         onToggled: visibilityToggled()
      }
  }

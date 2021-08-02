@@ -10,11 +10,14 @@ MapButton {
     MapLayersController { id: layers }
 
     Component.onCompleted: webChannel.registerObject("layersController", layers)
+    Component.onDestruction: layers.save()
 
     tipText: qsTr("Map layers")
     iconSource: "../app/icons/layers.svg"
     highlighted: popup.visible
     onClicked: popup.visible ? popup.close() : popup.open()
+
+    Controls.ButtonGroup { id: visibilityGroup }
 
     Controls.Popup {
         id: popup
@@ -31,11 +34,12 @@ MapButton {
             anchors.fill: parent
             emptyText: qsTr("No layers")
 
-                delegate: MapLayer {
-                    width: parent.width
-                    name: model.name
-                    visibility: model.visibility
-                }
+            delegate: MapLayer {
+                width: parent.width
+                name: modelData.name
+                visibility: modelData.visibility
+                onVisibilityToggled: if (visibility) layers.toggleVisibility(name)
             }
+        }
     }
 }

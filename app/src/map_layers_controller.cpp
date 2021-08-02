@@ -1,13 +1,59 @@
 #include "map_layers_controller.h"
 
-#include <QSettings>
+#include <QDebug>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
-MapLayersController::MapLayersController(QObject *parent)
-    : QObject(parent), m_layers(new MapLayersModel(this)) {
-  m_layers->add({"Mapbox", 0, true});
-  m_layers->add({"Yandex", 0, true});
-  m_layers->add({"Google", 0, false});
-  m_layers->add({"Pizdabol", 0, true});
+namespace {
+constexpr char name[] = "name";
+constexpr char type[] = "type";
+constexpr char url[] = "url";
+constexpr char visibility[] = "visibility";
+constexpr char opacity[] = "opacity";
+
+constexpr char path[] = "./layers.json";
+}  // namespace
+
+MapLayersController::MapLayersController(QObject* parent) : QObject(parent) {}
+
+QJsonArray MapLayersController::layers() const { return m_layers; }
+
+void MapLayersController::save() {
+  QFile file(::path);
+  file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);
+
+  QJsonDocument doc(m_layers);
+  file.write(doc.toJson());
+  file.close();
 }
 
-QAbstractItemModel *MapLayersController::layers() const { return m_layers; }
+void MapLayersController::restore() {
+  QFile file(::path);
+  file.open(QIODevice::ReadOnly | QIODevice::Text);
+
+  QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+  file.close();
+
+  m_layers = doc.array();
+  emit layersChanged();
+}
+
+void MapLayersController::toggleVisibility(const QString& name) {
+  QJsonArray newLayers;
+
+  for (const QJsonValue& value : qAsConst(m_layers)) {
+    auto object = value.toObject();
+
+    if (object.value(::name) == name) {
+      object[::visibility] = true;
+    } else {
+      object[::visibility] = false;
+    }
+    newLayers.append(object);
+  }
+
+  m_layers = newLayers;
+  emit layersChanged();
+}

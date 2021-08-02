@@ -34,5 +34,6 @@ const cesium = new CesiumWrapper('cesiumContainer');
 const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
     const ruler = new RulerAdapter(cesium, channel.objects.rulerController);
     const grid = new GridAdapter(cesium, channel.objects.gridController);
+    const layers = new LayersAdapter(cesium, channel.objects.layersController);
     const viewport = new ViewportAdapter(cesium, channel.objects.viewportController);
 });

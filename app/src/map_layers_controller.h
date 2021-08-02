@@ -1,20 +1,29 @@
 #ifndef MAP_LAYERS_CONTROLLER_H
 #define MAP_LAYERS_CONTROLLER_H
 
-#include "map_layers_model.h"
+#include <QJsonArray>
+#include <QObject>
 
 class MapLayersController : public QObject {
   Q_OBJECT
 
-  Q_PROPERTY(QAbstractItemModel* layers READ layers CONSTANT)
+  Q_PROPERTY(QJsonArray layers READ layers NOTIFY layersChanged)
 
  public:
   explicit MapLayersController(QObject* parent = nullptr);
 
-  QAbstractItemModel* layers() const;
+  QJsonArray layers() const;
+
+ public slots:
+  void save();
+  void restore();
+  void toggleVisibility(const QString& name);
+
+ signals:
+  void layersChanged();
 
  private:
-  MapLayersModel* const m_layers;
+  QJsonArray m_layers;
 };
 
 #endif  // MAP_LAYERS_CONTROLLER_H
