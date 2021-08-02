@@ -1,0 +1,21 @@
+[{
+    "name": "Carto DB",
+    "type": "url_imagery",
+    "url": "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+    "opacity": 1.0,
+    "visibility": false
+},
+{
+    "name": "ESRI",
+    "type": "url_imagery",
+    "url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "opacity": 1.0,
+    "visibility": true
+},
+{
+    "name": "Google",
+    "type": "url_imagery",
+    "url": "http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}",
+    "opacity": 1.0,
+    "visibility": false
+}]

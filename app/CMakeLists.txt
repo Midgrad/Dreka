@@ -1,6 +1,10 @@
 # Project
 project(DrekaApp LANGUAGES CXX)
 
+# Copy theme & layers
+copy_post_cmake("theme.json" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+copy_post_cmake("layers.json" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
 # Get git revision hash
 execute_process(
     COMMAND git rev-parse HEAD
