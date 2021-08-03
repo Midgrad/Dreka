@@ -18,6 +18,8 @@ public:
 
     void init() override;
     void done() override;
+
+    QStringList qmlUrls() const override;
 };
 } // namespace dreka::service
 

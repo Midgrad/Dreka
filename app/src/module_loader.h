@@ -18,6 +18,7 @@ public:
     QStringList discoveredModules() const;
     QStringList loadedModules() const;
     QJsonObject moduleMetaData(const QString& moduleId) const;
+    IModule* module(const QString& moduleId) const;
 
     void loadModule(const QString& moduleId);
     void loadModules(const QStringList& moduleIds);

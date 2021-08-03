@@ -1,9 +1,8 @@
 # Project
-project(DrekaApp LANGUAGES CXX)
+project(DrekaApp)
 
-# Copy theme & layers
+# Copy theme config
 copy_post_cmake("theme.json" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-copy_post_cmake("layers.json" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 # Get git revision hash
 execute_process(
@@ -20,9 +19,7 @@ add_definitions(-DVERSION_PATCH=${VERSION_PATCH})
 add_definitions(-DGIT_REVISION="${GIT_REVISION}")
 
 # Version message
-message(STATUS
-    "Configuring ${PROJECT_NAME} ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}(${GIT_REVISION})"
-)
+message(STATUS "Configuring ${PROJECT_NAME} ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}(${GIT_REVISION})")
 
 # Find Qt libraries
 find_package(Qt5 ${QT_REQUIRED_VERSION} COMPONENTS Core Quick WebEngine WebChannel REQUIRED)

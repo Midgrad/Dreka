@@ -3,13 +3,18 @@ import QtQuick.Layouts 1.12
 import QtWebEngine 1.3
 import QtWebChannel 1.0
 import Industrial.Controls 1.0 as Controls
+import Dreka 1.0
 
 Item {
     id: root
 
+    ClipboardController {
+        id: clipboard
+    }
+
     WebEngineView {
         anchors.fill: parent
-        url: "../../web/index.html"
+        url: "../web/index.html"
         webChannel: WebChannel { id: webChannel }
         onJavaScriptConsoleMessage: console.log(message)
     }

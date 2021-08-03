@@ -32,6 +32,11 @@ QJsonObject ModuleLoader::moduleMetaData(const QString& moduleId) const
     return m_discoveredLoaders[moduleId]->metaData();
 }
 
+IModule* ModuleLoader::module(const QString& moduleId) const
+{
+    return m_loadedModules.value(moduleId, nullptr);
+}
+
 void ModuleLoader::loadModule(const QString& moduleId)
 {
     QPluginLoader* loader = m_discoveredLoaders.value(moduleId, nullptr);

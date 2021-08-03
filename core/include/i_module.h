@@ -13,6 +13,8 @@ public:
 
     virtual void init() = 0;
     virtual void done() = 0;
+
+    virtual QStringList qmlUrls() const = 0;
 };
 } // namespace dreka::service
 
