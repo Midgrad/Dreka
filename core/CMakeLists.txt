@@ -2,7 +2,7 @@
 project(dreka_core)
 
 # Find Qt libraries
-find_package(Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt5 ${QT_REQUIRED_VERSION} COMPONENTS Core REQUIRED)
 
 # Target
 add_library(${PROJECT_NAME} SHARED "")

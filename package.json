@@ -6,7 +6,8 @@
   "scripts": {
     "configure": "cmake-js configure",
     "build": "cmake-js build",
-    "start": "cd result && ./DrekaApp"
+    "start_debug": "cd Debug && ./DrekaApp",
+    "start_release": "cd Release && ./DrekaApp"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,7 @@
     "Robotics"
   ],
   "author": "Mikhail Rogachev",
-  "license": "ISC",
+  "license": "GPL",
   "bugs": {
     "url": "https://github.com/Midgrad/Dreka/issues"
   },

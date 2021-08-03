@@ -25,7 +25,7 @@ message(STATUS
 )
 
 # Find Qt libraries
-find_package(Qt5 COMPONENTS Core Quick WebEngine REQUIRED)
+find_package(Qt5 ${QT_REQUIRED_VERSION} COMPONENTS Core Quick WebEngine WebChannel REQUIRED)
 
 # Executable target
 add_executable(${PROJECT_NAME} "")
@@ -44,5 +44,5 @@ target_sources(${PROJECT_NAME} PRIVATE ${QRC_SOURCES})
 # Link with libraries
 target_link_libraries(${PROJECT_NAME}
     PRIVATE industrial_controls industrial_indicators dreka_core
-    PRIVATE Qt5::Core Qt5::Quick Qt5::WebEngine
+    PRIVATE Qt5::Core Qt5::Quick Qt5::WebEngine Qt5::WebChannel
 )

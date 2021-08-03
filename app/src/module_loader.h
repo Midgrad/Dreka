@@ -3,6 +3,9 @@
 
 #include "i_module.h"
 
+#include <QMap>
+#include <QPluginLoader>
+
 namespace dreka::service
 {
 class ModuleLoader : public QObject
@@ -12,7 +15,24 @@ class ModuleLoader : public QObject
 public:
     explicit ModuleLoader(QObject* parent = nullptr);
 
-    void discover();
+    QStringList discoveredModules() const;
+    QStringList loadedModules() const;
+    QJsonObject moduleMetaData(const QString& moduleId) const;
+
+    void loadModule(const QString& moduleId);
+    void loadModules(const QStringList& moduleIds);
+    void loadModules();
+    void unloadModule(const QString& moduleId);
+    void discoverModules();
+
+signals:
+    void moduleDiscovered(QString moduleId);
+    void moduleLoaded(QString moduleId);
+    void moduleUnloaded(QString moduleId);
+
+private:
+    QMap<QString, QPluginLoader*> m_discoveredLoaders;
+    QMap<QString, IModule*> m_loadedModules;
 };
 } // namespace dreka::service
 

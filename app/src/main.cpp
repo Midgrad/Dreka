@@ -46,7 +46,8 @@ int main(int argc, char* argv[])
     themeLoader.load();
 
     dreka::service::ModuleLoader moduleLoader;
-    moduleLoader.discover();
+    moduleLoader.discoverModules();
+    moduleLoader.loadModules();
 
     engine.load(QUrl(QStringLiteral("../app/qml/MainWindow.qml")));
 

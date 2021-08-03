@@ -16,7 +16,11 @@ include(cmake/CopyResourcePostCMake.cmake)
 include(cmake/TrToQrc.cmake)
 
 # Set default output directory
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/result)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/${CMAKE_BUILD_TYPE})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/${CMAKE_BUILD_TYPE})
+
+# Minimum Qt version
+set(QT_REQUIRED_VERSION 5.12.8)
 
 # Use C++20 standart by default
 set(CMAKE_CXX_STANDARD 20)
@@ -28,15 +32,15 @@ set(CMAKE_AUTORCC ON)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# Minimum Qt version
-set(QT_REQUIRED_VERSION 5.12.8)
-
 # 2ndparty libraries
 add_subdirectory(2ndparty/industrial-controls)
 add_subdirectory(2ndparty/industrial-indicators)
 
 # Core library
 add_subdirectory(core)
+
+# Dynamic modules
+add_subdirectory(modules)
 
 # Executable app target
 add_subdirectory(app)
