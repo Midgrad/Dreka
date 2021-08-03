@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-namespace dreka_service
+namespace dreka::service
 {
 class IModule
 {
@@ -13,8 +13,8 @@ public:
     virtual void init() = 0;
     virtual void done() = 0;
 };
-} // namespace dreka_service
+} // namespace dreka::service
 
-Q_DECLARE_INTERFACE(dreka_service::IModule, "Midgrad.Dreka.IModule")
+Q_DECLARE_INTERFACE(dreka::service::IModule, "Midgrad.Dreka.IModule")
 
 #endif // I_MODULE_H
