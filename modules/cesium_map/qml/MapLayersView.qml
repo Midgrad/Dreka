@@ -13,7 +13,7 @@ MapButton {
     Component.onDestruction: layers.save()
 
     tipText: qsTr("Map layers")
-    iconSource: "../app/icons/layers.svg"
+    iconSource: "qrc:/icons/layers.svg"
     highlighted: popup.visible
     onClicked: popup.visible ? popup.close() : popup.open()
 

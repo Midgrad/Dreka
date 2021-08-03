@@ -15,7 +15,7 @@ MapButton {
         id: icon
         anchors.fill: parent
         anchors.margins: 1
-        source: "../app/icons/compas.svg"
+        source: "qrc:/icons/compas.svg"
         rotation: heading
         transform: Rotation {
             origin.x: icon.width / 2;

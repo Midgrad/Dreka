@@ -32,5 +32,5 @@ void CesiumMap::done()
 
 QStringList CesiumMap::qmlUrls() const
 {
-    return { "../../modules/cesium_map/qml/Map.qml" };
+    return { "qrc:/CesiumMap/CesiumMap.qml" };
 }

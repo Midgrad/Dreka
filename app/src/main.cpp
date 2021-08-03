@@ -45,6 +45,7 @@ int main(int argc, char* argv[])
     }
 
     engine.rootContext()->setContextProperty("qmlUrls", qmlUrls);
+    engine.rootContext()->setContextProperty("currentPath", QString(QDir::currentPath()));
 
     engine.load(QUrl(QStringLiteral("../app/qml/MainWindow.qml")));
 

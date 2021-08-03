@@ -17,7 +17,7 @@ RowLayout {
     MapButton {
         rightCropped: !ruler.empty
         tipText: checked ? qsTr("Disable ruler") : qsTr("Enable ruler")
-        iconSource: "../app/icons/ruler.svg"
+        iconSource: "qrc:/icons/ruler.svg"
         checkable: true
         onCheckedChanged: ruler.rulerMode = checked
     }

@@ -14,7 +14,7 @@ Item {
 
     WebEngineView {
         anchors.fill: parent
-        url: "../web/index.html"
+        url: "file:///" + currentPath + "/../modules/cesium_map/web/index.html"
         webChannel: WebChannel { id: webChannel }
         onJavaScriptConsoleMessage: console.log(message)
     }

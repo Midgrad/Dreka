@@ -28,6 +28,9 @@ QJsonArray MapLayersController::layers() const
 
 void MapLayersController::save()
 {
+    if (m_layers.isEmpty())
+        return;
+
     QFile file(::path);
     file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);
 
