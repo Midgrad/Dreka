@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 
   ThemeLoader themeLoader;
   themeLoader.setTheme(IndustrialTheme::instance());
-  themeLoader.setFilename("../app/theme.json");
+  themeLoader.setFilename("./theme.json");
   themeLoader.load();
 
   engine.load(QUrl(QStringLiteral("../app/qml/MainWindow.qml")));
