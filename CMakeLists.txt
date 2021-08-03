@@ -35,5 +35,8 @@ set(QT_REQUIRED_VERSION 5.12.8)
 add_subdirectory(2ndparty/industrial-controls)
 add_subdirectory(2ndparty/industrial-indicators)
 
+# Core library
+add_subdirectory(core)
+
 # Executable app target
 add_subdirectory(app)
