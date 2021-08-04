@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
     }
 
     engine.rootContext()->setContextProperty("qmlUrls", qmlUrls);
-    engine.load(QUrl(QStringLiteral("../app/qml/MainWindow.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/App/MainWindow.qml")));
 
     return app.exec();
 }
