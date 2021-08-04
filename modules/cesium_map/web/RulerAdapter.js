@@ -58,7 +58,7 @@ class RulerAdapter {
                     arcType: Cesium.ArcType.GEODESIC,
                     width : 4.0,
                     material : Cesium.Color.CADETBLUE,
-                    depthFailMaterial: Cesium.Color.CADETBLUE,
+                    depthFailMaterial: Cesium.Color.CADETBLUE
                 }
             }));
 
