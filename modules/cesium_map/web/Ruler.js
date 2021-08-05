@@ -3,10 +3,14 @@ class Ruler {
 
         this.viewer = cesium.viewer;
 
+        this.pointPixelSize = 8.0;
+        this.hoveredPointPixelSize = 16.0;
+        this.lineWidth = 4.0;
+
         this.points = [];
         this.lines = [];
-        this.labels = [];
         this.lastPosition = null;
+        this.hoveredPoint = null;
 
         var that = this;
         var scene = this.viewer.scene;
@@ -20,8 +24,8 @@ class Ruler {
         });
 
         // Left click to add ruler points
-        var handler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-        handler.setInputAction(function(event) {
+        var addHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+        addHandler.setInputAction(function(event) {
             // Ignore with no ruler mode
             if (!rulerController.rulerMode)
                 return;
@@ -33,8 +37,6 @@ class Ruler {
 
             var cartesian = that.viewer.scene.pickPosition(event.position);
             if (Cesium.defined(cartesian)) {
-                //cartesian.z += 10;
-
                 that.addPoint(cartesian);
 
                 // Not empty now
@@ -48,22 +50,42 @@ class Ruler {
                 that.lastPosition = cartesian;
             }
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+        // pick hovered points
+        var moveHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+            moveHandler.setInputAction(function (movement) {
+                var pickedObject = scene.pick(movement.endPosition);
+
+                if (!Cesium.defined(pickedObject)) {
+                    that.dropHoveredPoint();
+                    return;
+                }
+
+                var entity = pickedObject.id;
+
+                if (entity === that.hoveredPoint)
+                    return;
+
+                that.dropHoveredPoint();
+
+                if (that.points.includes(entity)) {
+                    entity.point.pixelSize = that.hoveredPointPixelSize;
+                    that.hoveredPoint = entity;
+                }
+            }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
     }
 
     addPoint(cartesian) {
         if (this.lastPosition) {
             this.lines.push(this.viewer.entities.add({
+                position: this.intermediate(this.lastPosition, cartesian),
                 polyline: {
                     positions: [this.lastPosition, cartesian],
                     arcType: Cesium.ArcType.GEODESIC,
-                    width : 4.0,
+                    width : this.lineWidth,
                     material : Cesium.Color.CADETBLUE,
                     depthFailMaterial: Cesium.Color.CADETBLUE
-                }
-            }));
-
-            this.labels.push(this.viewer.entities.add({
-                position: this.intermediate(this.lastPosition, cartesian),
+                },
                 label: {
                     text: Cesium.Cartesian3.distance(this.lastPosition, cartesian).toFixed(2),
                     showBackground: true,
@@ -77,7 +99,7 @@ class Ruler {
         this.points.push(this.viewer.entities.add({
             position: cartesian,
             point: {
-                pixelSize: 8,
+                pixelSize: this.pointPixelSize,
                 color: Cesium.Color.CADETBLUE,
                 disableDepthTestDistance: Number.POSITIVE_INFINITY,
             }
@@ -95,11 +117,6 @@ class Ruler {
         }
         this.lines = [];
 
-        for (i = 0; i < this.labels.length; ++i) {
-            this.viewer.entities.remove(this.labels[i]);
-        }
-        this.labels = [];
-
         this.lastPosition = null;
     }
 
@@ -112,5 +129,13 @@ class Ruler {
 
         return Cesium.Cartesian3.add(first, Cesium.Cartesian3.multiplyByScalar(
                                             direction, distance, scratch), scratch);
+    }
+
+    dropHoveredPoint() {
+        if (!this.hoveredPoint)
+            return;
+
+        this.hoveredPoint.point.pixelSize = this.pointPixelSize;
+        this.hoveredPoint = null;
     }
 }
