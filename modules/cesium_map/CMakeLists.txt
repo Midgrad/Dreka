@@ -1,8 +1,10 @@
 # Project
 project(cesium_map)
 
-# Copy layers config
+# Copy layers config, cesium viewer and cesium wrapper
 copy_post_cmake("layers.json" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+copy_post_cmake("../../node_modules/cesium/Build/Cesium" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/modules/")
+copy_post_cmake("web" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/modules/")
 
 # Find Qt libraries
 find_package(Qt5 ${QT_REQUIRED_VERSION} COMPONENTS Gui Qml REQUIRED)

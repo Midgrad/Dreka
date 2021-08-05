@@ -12,9 +12,11 @@ Item {
         id: clipboard
     }
 
+    Component.onCompleted: console.log("file:" + applicationDirPath + "/modules/web/index.html")
+
     WebEngineView {
         anchors.fill: parent
-        url: "qrc:/../CesiumWraper/index.html"
+        url: "file:" + applicationDirPath + "/modules/web/index.html"
         webChannel: WebChannel { id: webChannel }
         onJavaScriptConsoleMessage: console.log(message)
     }

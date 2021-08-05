@@ -45,6 +45,9 @@ int main(int argc, char* argv[])
     }
 
     engine.rootContext()->setContextProperty("qmlUrls", qmlUrls);
+    engine.rootContext()->setContextProperty("applicationDirPath",
+                                             QGuiApplication::applicationDirPath());
+
     engine.load(QUrl(QStringLiteral("qrc:/App/MainWindow.qml")));
 
     return app.exec();
