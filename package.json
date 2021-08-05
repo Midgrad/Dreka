@@ -27,8 +27,7 @@
   },
   "homepage": "https://github.com/Midgrad/Dreka#readme",
   "dependencies": {
-    "cesium": "^1.84.0",
-    "npm-check-updates": "^11.8.3"
+    "cesium": "^1.83.0"
   },
   "devDependencies": {
     "cmake-js": "^6.2.1"
