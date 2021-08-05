@@ -1,4 +1,4 @@
-class LayersAdapter {
+class Layers {
     constructor(cesium, layersController) {
 
         this.imageryLayers = cesium.viewer.imageryLayers;

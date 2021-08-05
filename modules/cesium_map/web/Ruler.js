@@ -1,4 +1,4 @@
-class RulerAdapter {
+class Ruler {
     constructor(cesium, rulerController) {
 
         this.viewer = cesium.viewer;

@@ -1,4 +1,4 @@
-class ViewportAdapter {
+class Viewport {
     constructor(cesium, viewportController) {
         const viewer = cesium.viewer;
 
@@ -84,4 +84,3 @@ class ViewportAdapter {
         viewportController.restore();
     }
 }
-

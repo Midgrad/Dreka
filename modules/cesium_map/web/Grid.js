@@ -1,4 +1,4 @@
-class GridAdapter {
+class Grid {
     constructor(cesium, gridController) {
 
         this.gridMaterial = Cesium.Material.fromType('Grid');
