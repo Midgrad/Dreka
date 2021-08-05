@@ -12,8 +12,6 @@ Item {
         id: clipboard
     }
 
-    Component.onCompleted: console.log("file:" + applicationDirPath + "/modules/web/index.html")
-
     WebEngineView {
         anchors.fill: parent
         url: "file:" + applicationDirPath + "/modules/web/index.html"

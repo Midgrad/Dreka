@@ -22,12 +22,10 @@ CesiumMap::CesiumMap()
 
 void CesiumMap::init()
 {
-    qDebug() << "init";
 }
 
 void CesiumMap::done()
 {
-    qDebug() << "done";
 }
 
 QStringList CesiumMap::qmlUrls() const
