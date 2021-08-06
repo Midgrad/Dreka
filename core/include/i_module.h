@@ -16,8 +16,8 @@ public:
 
     virtual QStringList qmlUrls() const = 0;
 };
-} // namespace dreka::service
+} // namespace dreka::app
 
-Q_DECLARE_INTERFACE(dreka::service::IModule, "Midgrad.Dreka.IModule")
+Q_DECLARE_INTERFACE(dreka::app::IModule, "Midgrad.Dreka.IModule")
 
 #endif // I_MODULE_H

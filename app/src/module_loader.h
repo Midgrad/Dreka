@@ -35,6 +35,6 @@ private:
     QMap<QString, QPluginLoader*> m_discoveredLoaders;
     QMap<QString, IModule*> m_loadedModules;
 };
-} // namespace dreka::service
+} // namespace dreka::app
 
 #endif // MODULE_LOADER_H

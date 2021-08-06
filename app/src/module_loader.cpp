@@ -8,7 +8,7 @@ namespace
 constexpr char modulesPath[] = "./modules";
 }
 
-using namespace dreka::service;
+using namespace dreka::app;
 
 ModuleLoader::ModuleLoader(QObject* parent)
 {

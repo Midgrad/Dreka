@@ -1,20 +1,20 @@
-#ifndef CESIUM_MAP_H
-#define CESIUM_MAP_H
+#ifndef ADSB_OPENSKY_H
+#define ADSB_OPENSKY_H
 
 #include "i_module.h"
 
 namespace dreka::app
 {
-class CesiumMap
+class AdsbOpensky
     : public QObject
     , public IModule
 {
     Q_OBJECT
     Q_INTERFACES(dreka::app::IModule)
-    Q_PLUGIN_METADATA(IID "Midgrad.Dreka.CesiumMap" FILE "meta.json")
+    Q_PLUGIN_METADATA(IID "Midgrad.Dreka.AdsbOpensky" FILE "meta.json")
 
 public:
-    Q_INVOKABLE CesiumMap();
+    Q_INVOKABLE AdsbOpensky();
 
     void init() override;
     void done() override;
@@ -23,4 +23,4 @@ public:
 };
 } // namespace dreka::app
 
-#endif // CESIUM_MAP_H
+#endif // ADSB_OPENSKY_H
