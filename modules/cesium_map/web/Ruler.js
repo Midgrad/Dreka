@@ -20,7 +20,7 @@ class Ruler {
         rulerController.clear.connect(function() { that.clear(); });
     }
 
-    addNewPoint(cartesian) {
+    addPoint(cartesian) {
         var lastPosition = this.positions.slice(-1).pop();
         if (lastPosition)
             this.addLine(lastPosition, cartesian);
@@ -97,6 +97,11 @@ class Ruler {
         this.hoveredPoint = point;
     }
 
+    changeLinePosions(line, first, second) {
+        line.position = this.intermediate(first, second);
+        line.polyline.positions = [first, second];
+    }
+
     dropHoveredPoint() {
         if (!this.hoveredPoint)
             return;
@@ -116,25 +121,17 @@ class Ruler {
         scene.screenSpaceCameraController.enableLook = !dragging;
     }
 
-    rebuildLinesAndReturnLength() {
-        for (var i = 0; i < this.lines.length; ++i) {
-            this.viewer.entities.remove(this.lines[i]);
-        }
-        this.lines = [];
-
+    rebuildLength() {
         var distance = 0.0;
-        for (i = 1; i < this.positions.length; ++i) {
-            var last = this.positions[i - 1];
-            var current = this.positions[i];
-            distance += Cesium.Cartesian3.distance(last, current);
-            this.addLine(last, current);
+        for (var i = 1; i < this.positions.length; ++i) {
+            distance += Cesium.Cartesian3.distance(this.positions[i - 1], this.positions[i]);
         }
         return distance;
     }
 
     onClick(cartesian) {
         if (this.rulerController.rulerMode && Cesium.defined(cartesian))
-            this.addNewPoint(cartesian);
+            this.addPoint(cartesian);
     }
 
     onDown(cartesian) {
@@ -151,8 +148,19 @@ class Ruler {
 
         this.hoveredPoint.position = cartesian;
         var index = this.points.indexOf(this.hoveredPoint);
+        if (index === -1)
+            return;
+
+        // Move point to new place
         this.positions[index] = cartesian;
-        this.rulerController.distance = this.rebuildLinesAndReturnLength();
+
+        // Rebuild lines
+        if (index > 0)
+            this.changeLinePosions(this.lines[index - 1], this.positions[index - 1], cartesian);
+        if (index < this.lines.length)
+            this.changeLinePosions(this.lines[index], cartesian, this.positions[index + 1]);
+
+        this.rulerController.distance = this.rebuildLength();
     }
 
     onPick(pickedObject) {
