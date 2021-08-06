@@ -19,8 +19,8 @@ RowLayout {
             var lat = qsTr("Lat:") + " ";
             var lon = qsTr("Lon:") + " ";
             if (!valid) {
-                lat += "-";
-                lon += "-";
+                lat += qsTr("invalid");
+                lon += qsTr("invalid");
             } else {
                 if (dmsFormat) {
                     lat += Controls.Helper.degreesToDmsString(latitude, false, 2);
@@ -34,6 +34,7 @@ RowLayout {
         }
         onClicked: clipboard.setText(text)
         Layout.fillWidth: true
+        Layout.minimumWidth: Controls.Theme.baseSize * 8
     }
 
     MapButton {

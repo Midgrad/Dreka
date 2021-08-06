@@ -15,69 +15,9 @@ class Ruler {
         this.dragging = false;
 
         var that = this;
-        var scene = this.viewer.scene;
 
         // clear signal
         rulerController.clear.connect(function() { that.clear(); });
-
-        // Left down to add ruler points and move existing points
-        var downHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-        downHandler.setInputAction(function(event) {
-            // Ignore with no ruler mode
-            if (!rulerController.rulerMode)
-                return;
-
-            if (that.hoveredPoint) {
-                that.setDragging(true);
-                return;
-            }
-
-            // PickPosition is currently only supported in 3D mode
-            if (!scene.pickPositionSupported ||
-                    scene.mode !== Cesium.SceneMode.SCENE3D)
-                return;
-
-            var cartesian = that.viewer.scene.pickPosition(event.position);
-            if (Cesium.defined(cartesian))
-                that.addNewPoint(cartesian);
-        }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
-
-        var upHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-        upHandler.setInputAction(function(event) {
-            that.setDragging(false);
-        }, Cesium.ScreenSpaceEventType.LEFT_UP);
-
-        // pick hovered points
-        var moveHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
-            moveHandler.setInputAction(function (movement) {
-
-                if (that.dragging) {
-                    var cartesian = that.viewer.scene.pickPosition(movement.endPosition);
-                    if (Cesium.defined(cartesian)) {
-                        that.hoveredPoint.position = cartesian;
-                        var index = that.points.indexOf(that.hoveredPoint);
-                        that.positions[index] = cartesian;
-                        rulerController.distance = that.rebuildLinesAndReturnLength();
-                    }
-                    return;
-                }
-
-                var pickedObject = scene.pick(movement.endPosition);
-
-                if (!Cesium.defined(pickedObject)) {
-                    that.dropHoveredPoint();
-                    return;
-                }
-
-                var entity = pickedObject.id;
-                if (entity === that.hoveredPoint)
-                    return;
-
-                that.dropHoveredPoint();
-
-                if (that.points.includes(entity))
-                    that.makeHoveredPoint(entity);
-            }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
     }
 
     addNewPoint(cartesian) {
@@ -168,11 +108,12 @@ class Ruler {
     setDragging(dragging) {
         this.dragging = dragging;
 
-        this.viewer.scene.screenSpaceCameraController.enableRotate = !dragging;
-        this.viewer.scene.screenSpaceCameraController.enableTranslate = !dragging;
-        this.viewer.scene.screenSpaceCameraController.enableZoom = !dragging;
-        this.viewer.scene.screenSpaceCameraController.enableTilt = !dragging;
-        this.viewer.scene.screenSpaceCameraController.enableLook = !dragging;
+        var scene = this.viewer.scene;
+        scene.screenSpaceCameraController.enableRotate = !dragging;
+        scene.screenSpaceCameraController.enableTranslate = !dragging;
+        scene.screenSpaceCameraController.enableZoom = !dragging;
+        scene.screenSpaceCameraController.enableTilt = !dragging;
+        scene.screenSpaceCameraController.enableLook = !dragging;
     }
 
     rebuildLinesAndReturnLength() {
@@ -189,5 +130,47 @@ class Ruler {
             this.addLine(last, current);
         }
         return distance;
+    }
+
+    onClick(cartesian) {
+        if (this.rulerController.rulerMode && Cesium.defined(cartesian))
+            this.addNewPoint(cartesian);
+    }
+
+    onDown(cartesian) {
+        if (this.hoveredPoint)
+            this.setDragging(true);
+    }
+
+    onUp(cartesian) {
+        this.setDragging(false);
+    }
+
+    onMove(cartesian) {
+        if (!this.dragging || !Cesium.defined(cartesian) || !this.hoveredPoint) return;
+
+        this.hoveredPoint.position = cartesian;
+        var index = this.points.indexOf(this.hoveredPoint);
+        this.positions[index] = cartesian;
+        this.rulerController.distance = this.rebuildLinesAndReturnLength();
+    }
+
+    onPick(pickedObject) {
+        if (this.dragging)
+            return;
+
+        if (!Cesium.defined(pickedObject)) {
+            this.dropHoveredPoint();
+            return;
+        }
+
+        var entity = pickedObject.id;
+        if (entity === this.hoveredPoint)
+            return;
+
+        this.dropHoveredPoint();
+
+        if (this.points.includes(entity))
+            this.makeHoveredPoint(entity);
     }
 }

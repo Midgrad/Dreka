@@ -10,15 +10,16 @@ class CesiumWrapper {
         this.viewer = new Cesium.Viewer(container, {
             orderIndependentTranslucency: false,
             timeline: false,
-            geocoder : false,
-            selectionIndicator : false,
-            infoBox : false,
+            geocoder: false,
+            selectionIndicator: false,
+            infoBox: false,
+            scene3DOnly: true,
 //            terrainProviderViewModels: terrain,
 //            selectedTerrainProviderViewModel: terrain[1]
 
             terrainProvider: Cesium.createWorldTerrain({
-                requestVertexNormals : true,
-                requestWaterMask : true
+                requestVertexNormals: true,
+                requestWaterMask: true
             })
         });
 
@@ -30,10 +31,16 @@ class CesiumWrapper {
 }
 
 const cesium = new CesiumWrapper('cesiumContainer');
+const input = new Input(cesium);
 
 const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
     const ruler = new Ruler(cesium, channel.objects.rulerController);
+    input.registerHandler(ruler);
+
     const grid = new Grid(cesium, channel.objects.gridController);
+
     const layers = new Layers(cesium, channel.objects.layersController);
+
     const viewport = new Viewport(cesium, channel.objects.viewportController);
+    input.registerHandler(viewport);
 });
