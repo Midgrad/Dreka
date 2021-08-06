@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     themeLoader.setFilename("./theme.json");
     themeLoader.load();
 
-    dreka::service::ModuleLoader moduleLoader;
+    dreka::app::ModuleLoader moduleLoader;
     moduleLoader.discoverModules();
     moduleLoader.loadModules();
 

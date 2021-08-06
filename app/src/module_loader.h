@@ -6,7 +6,7 @@
 #include <QMap>
 #include <QPluginLoader>
 
-namespace dreka::service
+namespace dreka::app
 {
 class ModuleLoader : public QObject
 {

@@ -51,7 +51,7 @@ void ModuleLoader::loadModule(const QString& moduleId)
 
     IModule* module = qobject_cast<IModule*>(loader->instance());
 
-    qDebug() << module << loader->instance();
+    qDebug() << "Module:" << loader->instance();
     if (!module)
         return;
 

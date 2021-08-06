@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-namespace dreka::service
+namespace dreka::app
 {
 class IModule
 {

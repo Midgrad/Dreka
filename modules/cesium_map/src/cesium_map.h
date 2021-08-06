@@ -3,14 +3,14 @@
 
 #include "i_module.h"
 
-namespace dreka::service
+namespace dreka::app
 {
 class CesiumMap
     : public QObject
     , public IModule
 {
     Q_OBJECT
-    Q_INTERFACES(dreka::service::IModule)
+    Q_INTERFACES(dreka::app::IModule)
     Q_PLUGIN_METADATA(IID "Midgrad.Dreka.CesiumMap" FILE "meta.json")
 
 public:

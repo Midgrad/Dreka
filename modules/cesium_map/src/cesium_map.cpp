@@ -9,7 +9,7 @@
 #include "map_ruler_controller.h"
 #include "map_viewport_controller.h"
 
-using namespace dreka::service;
+using namespace dreka::app;
 
 CesiumMap::CesiumMap()
 {
