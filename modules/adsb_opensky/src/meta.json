@@ -1,6 +1,0 @@
-{
-    "name": "AdsbOpensky",
-    "version": "0.0.1",
-    "description": "OpenSky REST API ADS-B data provider",
-    "dependencies" : []
-}

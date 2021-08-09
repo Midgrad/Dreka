@@ -1,4 +1,4 @@
-#include "opensky_client.h"
+#include "opensky_adsb_source.h"
 
 #include <QDebug>
 #include <QJsonDocument>
@@ -15,22 +15,31 @@ constexpr char states[] = "states";
 
 using namespace dreka::domain;
 
-OpenskyClient::OpenskyClient(QObject* parent) : QObject(parent)
+OpenskyAdsbSource::OpenskyAdsbSource(QObject* parent) : IAdsbSource(parent)
 {
-    connect(&m_manager, &QNetworkAccessManager::finished, this, &OpenskyClient::onFinished);
+    connect(&m_manager, &QNetworkAccessManager::finished, this, &OpenskyAdsbSource::onFinished);
 }
 
-void OpenskyClient::start()
+void OpenskyAdsbSource::start()
 {
     this->get("/states/all");
 }
 
-void OpenskyClient::get(const QString& request)
+void OpenskyAdsbSource::stop()
 {
-    auto reply = m_manager.get(QNetworkRequest(QNetworkRequest(QUrl(baseUrl + request))));
+    if (m_lastReply)
+    {
+        m_lastReply->abort();
+        m_lastReply->deleteLater();
+    }
 }
 
-void OpenskyClient::onFinished(QNetworkReply* reply)
+void OpenskyAdsbSource::get(const QString& request)
+{
+    m_lastReply = m_manager.get(QNetworkRequest(QNetworkRequest(QUrl(baseUrl + request))));
+}
+
+void OpenskyAdsbSource::onFinished(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
     {
@@ -44,5 +53,6 @@ void OpenskyClient::onFinished(QNetworkReply* reply)
 
     reply->deleteLater();
 
-    this->start();
+    if (m_started && reply == m_lastReply)
+        this->start();
 }

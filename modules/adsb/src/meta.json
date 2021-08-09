@@ -1,0 +1,6 @@
+{
+    "name": "Adsb",
+    "version": "0.0.1",
+    "description": "ADS-B data provider & visulizator",
+    "dependencies" : []
+}

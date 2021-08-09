@@ -1,5 +1,5 @@
 # Project
-project(adsb_opensky)
+project(adsb)
 
 # Find Qt libraries
 find_package(Qt5 ${QT_REQUIRED_VERSION} COMPONENTS Gui Qml REQUIRED)
@@ -19,7 +19,7 @@ target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
 
 # Create translations QRC file
 file(GLOB TS_FILES "translations/*.ts")
-tr_to_qrc("${CMAKE_CURRENT_BINARY_DIR}/adsb_opensky_ts.qrc")
+tr_to_qrc("${CMAKE_CURRENT_BINARY_DIR}/adsb_ts.qrc")
 
 # Local resources
 file(GLOB LOC_QRC_FILES "qml/*.qrc" "resources/*.qrc")
