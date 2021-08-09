@@ -3,10 +3,13 @@
 #include <QDebug>
 #include <QQmlEngine>
 
+#include "adsb_controller.h"
+
 using namespace dreka::app;
 
 ModuleAdsb::ModuleAdsb()
 {
+    qmlRegisterType<endpoint::AdsbController>("Dreka.Adsb", 1, 0, "AdsbController");
 }
 
 void ModuleAdsb::init()
@@ -17,7 +20,7 @@ void ModuleAdsb::done()
 {
 }
 
-QStringList ModuleAdsb::qmlUrls() const
+QString ModuleAdsb::qmlUrl() const
 {
-    return {};
+    return "qrc:/Adsb/AdsbView.qml";
 }

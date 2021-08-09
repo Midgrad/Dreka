@@ -20,8 +20,15 @@ OpenskyAdsbSource::OpenskyAdsbSource(QObject* parent) : IAdsbSource(parent)
     connect(&m_manager, &QNetworkAccessManager::finished, this, &OpenskyAdsbSource::onFinished);
 }
 
+QJsonArray OpenskyAdsbSource::adsbData() const
+{
+    return m_adsbData;
+}
+
 void OpenskyAdsbSource::start()
 {
+    qDebug() << "start";
+    m_started = true;
     this->get("/states/all");
 }
 
@@ -32,6 +39,8 @@ void OpenskyAdsbSource::stop()
         m_lastReply->abort();
         m_lastReply->deleteLater();
     }
+
+    m_started = false;
 }
 
 void OpenskyAdsbSource::get(const QString& request)
@@ -44,7 +53,9 @@ void OpenskyAdsbSource::onFinished(QNetworkReply* reply)
     if (reply->error() == QNetworkReply::NoError)
     {
         QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
-        emit adsbDataReceived(doc.object().value(::states).toArray());
+        m_adsbData = doc.object().value(::states).toArray();
+        qDebug() << m_adsbData;
+        emit adsbDataReceived(m_adsbData);
     }
     else
     {

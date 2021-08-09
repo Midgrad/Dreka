@@ -28,7 +28,7 @@ void ModuleCesiumMap::done()
 {
 }
 
-QStringList ModuleCesiumMap::qmlUrls() const
+QString ModuleCesiumMap::qmlUrl() const
 {
-    return { "qrc:/CesiumMap/CesiumMap.qml" };
+    return "qrc:/CesiumMap/CesiumMap.qml";
 }

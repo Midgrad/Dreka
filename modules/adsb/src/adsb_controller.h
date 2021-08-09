@@ -9,8 +9,15 @@ class AdsbController : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QJsonArray adsb READ adsb NOTIFY adsbChanged)
+
 public:
     explicit AdsbController(QObject* parent = nullptr);
+
+    QJsonArray adsb() const;
+
+signals:
+    void adsbChanged();
 
 private:
     domain::IAdsbSource* const m_source;

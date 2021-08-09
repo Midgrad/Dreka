@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     QStringList qmlUrls;
     for (const QString& moduleId : moduleLoader.loadedModules())
     {
-        qmlUrls += moduleLoader.module(moduleId)->qmlUrls();
+        qmlUrls.prepend(moduleLoader.module(moduleId)->qmlUrl());
     }
 
     engine.rootContext()->setContextProperty("qmlUrls", qmlUrls);

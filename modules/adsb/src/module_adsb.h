@@ -19,7 +19,7 @@ public:
     void init() override;
     void done() override;
 
-    QStringList qmlUrls() const override;
+    QString qmlUrl() const override;
 };
 } // namespace dreka::app
 

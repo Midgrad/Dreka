@@ -15,6 +15,8 @@ class OpenskyAdsbSource : public IAdsbSource
 public:
     explicit OpenskyAdsbSource(QObject* parent = nullptr);
 
+    QJsonArray adsbData() const override;
+
     void start() override;
     void stop() override;
 
@@ -26,6 +28,7 @@ private slots:
 private:
     QNetworkAccessManager m_manager;
     QPointer<QNetworkReply> m_lastReply;
+    QJsonArray m_adsbData;
     bool m_started = false;
 };
 
