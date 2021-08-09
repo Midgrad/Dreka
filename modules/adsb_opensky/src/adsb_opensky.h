@@ -2,6 +2,7 @@
 #define ADSB_OPENSKY_H
 
 #include "i_module.h"
+#include "opensky_client.h"
 
 namespace dreka::app
 {
@@ -20,6 +21,9 @@ public:
     void done() override;
 
     QStringList qmlUrls() const override;
+
+private:
+    domain::OpenskyClient* m_client = nullptr;
 };
 } // namespace dreka::app
 
