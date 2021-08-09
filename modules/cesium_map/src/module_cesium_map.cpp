@@ -1,4 +1,4 @@
-#include "cesium_map.h"
+#include "module_cesium_map.h"
 
 #include <QDebug>
 #include <QQmlEngine>
@@ -11,7 +11,7 @@
 
 using namespace dreka::app;
 
-CesiumMap::CesiumMap()
+ModuleCesiumMap::ModuleCesiumMap()
 {
     qmlRegisterType<MapViewportController>("Dreka", 1, 0, "MapViewportController");
     qmlRegisterType<MapRulerController>("Dreka", 1, 0, "MapRulerController");
@@ -20,15 +20,15 @@ CesiumMap::CesiumMap()
     qmlRegisterType<MapLayersController>("Dreka", 1, 0, "MapLayersController");
 }
 
-void CesiumMap::init()
+void ModuleCesiumMap::init()
 {
 }
 
-void CesiumMap::done()
+void ModuleCesiumMap::done()
 {
 }
 
-QStringList CesiumMap::qmlUrls() const
+QStringList ModuleCesiumMap::qmlUrls() const
 {
     return { "qrc:/CesiumMap/CesiumMap.qml" };
 }
