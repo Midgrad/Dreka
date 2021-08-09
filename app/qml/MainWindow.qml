@@ -1,19 +1,29 @@
 import QtQuick 2.12
-import QtQuick.Controls 2.12
+import Industrial.Controls 1.0 as Controls
+import QtQuick.Layouts 1.12
 
-ApplicationWindow {
+Controls.ApplicationWindow {
     id: main
 
     visible: true
     width: 1280
     height: 768
 
-    Repeater {
-        model: qmlUrls
+    Component.onCompleted: console.log(qmlEntries)
+
+    Loader {
+        anchors.fill: parent
+        source: qmlEntries.substrate
+    }
+
+    RowLayout {
+        id: menuBar
+        anchors.top: parent.top
+        anchors.left: parent.left
+        spacing: Controls.Theme.baseSize
 
         Loader {
-            anchors.fill: parent
-            source: modelData
+            source: qmlEntries.menu
         }
     }
 }

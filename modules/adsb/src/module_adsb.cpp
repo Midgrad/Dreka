@@ -20,7 +20,7 @@ void ModuleAdsb::done()
 {
 }
 
-QString ModuleAdsb::qmlUrl() const
+QJsonObject ModuleAdsb::qmlEntries() const
 {
-    return "qrc:/Adsb/AdsbView.qml";
+    return QJsonObject::fromVariantMap({ { "menu", "qrc:/Adsb/AdsbView.qml" } });
 }

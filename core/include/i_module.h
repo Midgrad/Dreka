@@ -1,6 +1,7 @@
 #ifndef I_MODULE_H
 #define I_MODULE_H
 
+#include <QJsonObject>
 #include <QObject>
 
 namespace dreka::app
@@ -14,7 +15,7 @@ public:
     virtual void init() = 0;
     virtual void done() = 0;
 
-    virtual QString qmlUrl() const = 0;
+    virtual QJsonObject qmlEntries() const = 0;
 };
 } // namespace dreka::app
 

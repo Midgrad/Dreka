@@ -28,7 +28,7 @@ void ModuleCesiumMap::done()
 {
 }
 
-QString ModuleCesiumMap::qmlUrl() const
+QJsonObject ModuleCesiumMap::qmlEntries() const
 {
-    return "qrc:/CesiumMap/CesiumMap.qml";
+    return QJsonObject::fromVariantMap({ { "substrate", "qrc:/CesiumMap/CesiumMap.qml" } });
 }
