@@ -2,6 +2,8 @@ import QtQuick 2.12
 import Industrial.Controls 1.0 as Controls
 import QtQuick.Layouts 1.12
 
+import "Map"
+
 Controls.ApplicationWindow {
     id: main
 
@@ -9,9 +11,9 @@ Controls.ApplicationWindow {
     width: 1280
     height: 768
 
-    Loader {
+    CesiumMap {
+        id: map
         anchors.fill: parent
-        source: qmlEntries.substrate
     }
 
     RowLayout {

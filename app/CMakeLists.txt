@@ -3,6 +3,9 @@ project(DrekaApp)
 
 # Copy theme config
 copy_post_cmake("theme.json" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+copy_post_cmake("layers.json" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+copy_post_cmake("../node_modules/cesium/Build/Cesium" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/modules/")
+copy_post_cmake("web" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/modules/")
 
 # Get git revision hash
 execute_process(

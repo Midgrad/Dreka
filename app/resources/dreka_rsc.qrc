@@ -1,8 +1,11 @@
 <RCC>
     <qresource prefix="/icons">
         <file>compas.svg</file>
+        <file>dots.svg</file>
         <file>grid.svg</file>
         <file>layers.svg</file>
+        <file>plus.svg</file>
+        <file>remove.svg</file>
         <file>ruler.svg</file>
     </qresource>
 </RCC>

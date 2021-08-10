@@ -1,5 +1,15 @@
 <RCC>
-    <qresource prefix="/App">
+    <qresource prefix="/">
+        <file>Map/CesiumMap.qml</file>
+        <file>Map/MapButton.qml</file>
+        <file>Map/MapCompas.qml</file>
+        <file>Map/MapControlView.qml</file>
+        <file>Map/MapCoordinates.qml</file>
+        <file>Map/MapGridView.qml</file>
+        <file>Map/MapLayer.qml</file>
+        <file>Map/MapLayersView.qml</file>
+        <file>Map/MapRulerView.qml</file>
+        <file>Map/MapScale.qml</file>
         <file>MainWindow.qml</file>
     </qresource>
 </RCC>

@@ -1,6 +1,0 @@
-{
-    "name": "ModuleCesiumMap",
-    "version": "0.0.1",
-    "description": "Map based on Cesium Viewer",
-    "dependencies" : []
-}

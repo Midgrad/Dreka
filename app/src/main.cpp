@@ -8,6 +8,12 @@
 #include "theme_activator.h"
 #include "theme_loader.h"
 
+#include "clipboard_controller.h"
+#include "map_grid_controller.h"
+#include "map_layers_controller.h"
+#include "map_ruler_controller.h"
+#include "map_viewport_controller.h"
+
 namespace
 {
 const char* gitRevision = "git_revision";
@@ -55,6 +61,12 @@ int main(int argc, char* argv[])
     app.setProperty(::gitRevision, QString(GIT_REVISION));
     QtWebEngine::initialize();
 
+    qmlRegisterType<MapViewportController>("Dreka", 1, 0, "MapViewportController");
+    qmlRegisterType<MapRulerController>("Dreka", 1, 0, "MapRulerController");
+    qmlRegisterType<MapGridController>("Dreka", 1, 0, "MapGridController");
+    qmlRegisterType<ClipboardController>("Dreka", 1, 0, "ClipboardController");
+    qmlRegisterType<MapLayersController>("Dreka", 1, 0, "MapLayersController");
+
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);
 
@@ -77,7 +89,7 @@ int main(int argc, char* argv[])
     engine.rootContext()->setContextProperty("applicationDirPath",
                                              QGuiApplication::applicationDirPath());
 
-    engine.load(QUrl(QStringLiteral("qrc:/App/MainWindow.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/MainWindow.qml")));
 
     return app.exec();
 }
