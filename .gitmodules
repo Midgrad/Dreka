@@ -10,3 +10,6 @@
 [submodule "modules/Adsbera"]
 	path = modules/Adsbera
 	url = git@github.com:Midgrad/Adsbera.git
+[submodule "modules/Jerom-The-Mavlink"]
+	path = modules/Jerom-The-Mavlink
+	url = git@github.com:Midgrad/Jerom-The-Mavlink.git
