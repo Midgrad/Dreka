@@ -37,7 +37,8 @@ Item {
 
             delegate: AdsbState {
                 width: parent.width
-                callsign: modelData[1]
+                callsign: modelData.callsign
+                originCountry: modelData.originCountry
             }
         }
     }

@@ -27,6 +27,8 @@ private slots:
     void onFinished(QNetworkReply* reply);
 
 private:
+    void parseOpenskyData(const QJsonArray& data);
+
     QNetworkAccessManager m_manager;
     QPointer<QNetworkReply> m_lastReply;
     QElapsedTimer m_timer;
