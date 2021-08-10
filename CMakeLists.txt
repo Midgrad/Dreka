@@ -23,7 +23,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/${CMAKE_BUILD_TYPE}
 set(QT_REQUIRED_VERSION 5.12.8)
 
 # Use C++20 standart by default
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 # Instruct CMake to run moc & rcc automatically when needed.
 set(CMAKE_AUTOMOC ON)
