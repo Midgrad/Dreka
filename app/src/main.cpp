@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
     themeLoader.setFilename("./theme.json");
     themeLoader.load();
 
-    dreka::app::ModuleLoader moduleLoader;
+    kjarni::app::ModuleLoader moduleLoader;
     moduleLoader.discoverModules();
     moduleLoader.loadModules();
 

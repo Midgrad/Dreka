@@ -29,4 +29,4 @@ qt5_add_resources(QRC_SOURCES ${QRC_FILES} ${LOC_QRC_FILES})
 target_sources(${PROJECT_NAME} PRIVATE ${QRC_SOURCES})
 
 # Libraries
-target_link_libraries(${PROJECT_NAME} PUBLIC dreka_core Qt5::Gui Qt5::Qml)
+target_link_libraries(${PROJECT_NAME} PUBLIC kjarni Qt5::Gui Qt5::Qml)
