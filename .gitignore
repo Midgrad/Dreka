@@ -50,7 +50,13 @@ compile_commands.json
 
 # QtCreator local machine specific files for imported projects
 *creator.user*
+
+# Build artifacts
 /build/
 /result/
 /node_modules/
 /Debug
+/Release
+
+# IDE
+.vscode
