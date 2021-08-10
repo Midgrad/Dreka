@@ -6,4 +6,4 @@
 	url = git@github.com:Midgrad/industrial-indicators.git
 [submodule "kjarni"]
 	path = kjarni
-	url = https://github.com/Midgrad/kjarni
+	url = git@github.com:Midgrad/kjarni
