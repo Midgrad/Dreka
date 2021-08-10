@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/Adsb">
-        <file>AdsbView.qml</file>
-        <file>AdsbState.qml</file>
-    </qresource>
-</RCC>

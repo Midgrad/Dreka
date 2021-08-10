@@ -7,3 +7,6 @@
 [submodule "kjarni"]
 	path = kjarni
 	url = git@github.com:Midgrad/kjarni
+[submodule "modules/Adsbera"]
+	path = modules/Adsbera
+	url = git@github.com:Midgrad/Adsbera.git
