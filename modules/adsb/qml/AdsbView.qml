@@ -24,7 +24,8 @@ Item {
 
         closePolicy: Controls.Popup.NoAutoClose
         width: Controls.Theme.baseSize * 10
-        y: button.height + Controls.Theme.spacing
+        height: Math.min(implicitHeight, main.height - y - Controls.Theme.baseSize * 2)
+        y: button.height + Controls.Theme.margins
         x: button.x
         backgroundOpacity: 0.45
         backgroundColor: "black"
@@ -37,6 +38,7 @@ Item {
             delegate: AdsbState {
                 width: parent.width
                 callsign: modelData.callsign
+                originCountry: modelData.originCountry
             }
         }
     }

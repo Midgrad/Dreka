@@ -7,11 +7,11 @@ namespace dreka::app
 {
 class ModuleCesiumMap
     : public QObject
-    , public IModule
+    , public kjarni::app::IModule
 {
     Q_OBJECT
-    Q_INTERFACES(dreka::app::IModule)
-    Q_PLUGIN_METADATA(IID "Midgrad.Dreka.ModuleCesiumMap" FILE "meta.json")
+    Q_INTERFACES(kjarni::app::IModule)
+    Q_PLUGIN_METADATA(IID "Midgrad.ModuleCesiumMap" FILE "meta.json")
 
 public:
     Q_INVOKABLE ModuleCesiumMap();

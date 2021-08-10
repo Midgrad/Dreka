@@ -7,11 +7,11 @@ namespace dreka::app
 {
 class ModuleAdsb
     : public QObject
-    , public IModule
+    , public kjarni::app::IModule
 {
     Q_OBJECT
-    Q_INTERFACES(dreka::app::IModule)
-    Q_PLUGIN_METADATA(IID "Midgrad.Dreka.ModuleAdsb" FILE "meta.json")
+    Q_INTERFACES(kjarni::app::IModule)
+    Q_PLUGIN_METADATA(IID "Midgrad.ModuleAdsb" FILE "meta.json")
 
 public:
     Q_INVOKABLE ModuleAdsb();

@@ -5,10 +5,17 @@ import QtQuick.Layouts 1.12
 RowLayout {
     id: stateItem
 
-    property alias callsign: label.text
+    property alias callsign: callsignLabel.text
+    property alias originCountry: originlabel.text
 
     Controls.Label {
-        id: label
+        id: callsignLabel
+        font.pixelSize: Controls.Theme.auxFontSize
         Layout.fillWidth: true
+    }
+
+    Controls.Label {
+        id: originlabel
+        font.pixelSize: Controls.Theme.auxFontSize
     }
 }

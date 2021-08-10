@@ -9,8 +9,6 @@ Controls.ApplicationWindow {
     width: 1280
     height: 768
 
-    Component.onCompleted: console.log(qmlEntries)
-
     Loader {
         anchors.fill: parent
         source: qmlEntries.substrate
