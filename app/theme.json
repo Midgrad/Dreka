@@ -33,27 +33,27 @@
         "positive": "#65c20a"
     },
     "colors_night": {
-        "background": "#2c393f",
-        "sunken": "#212c30",
-        "raised": "#334248",
+        "background": "#99000000",
+        "sunken": "#ac000000",
+        "raised": "#66000000",
         "text": "#ffffff",
         "description": "#899ea9",
         "disabled": "#4F5D64",
 
-        "control": "#5a717c",
+        "control": "#99000000",
         "controlBorder": "#6c8693",
         "line": "#805a717c",
         "controlText": "#ffffff",
-               
-        "tip": "#009688",
+
+        "tip": "#147a7e",
         "tipText": "#ffffff",
 
-        "selection": "#009688",
+        "selection": "#147a7e",
         "selectedText": "#ffffff",
 
-        "highlight": "#19d6c4",
-        "hover": "#3319d6c4",
-        "highlightedText": "#000000",
+        "highlight": "#199499",
+        "hover": "#33ffffff",
+        "highlightedText": "#ffffff",
 
         "link": "#51a0e7",
         "negative": "#e53535",

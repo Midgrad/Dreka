@@ -26,8 +26,6 @@ MapButton {
         width: Controls.Theme.baseSize * 10
         y: -height - Controls.Theme.spacing
         x: root.width - width
-        backgroundOpacity: 0.45
-        backgroundColor: "black"
 
         Widgets.ListWrapper {
             model: layers.layers

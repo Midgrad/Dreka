@@ -36,7 +36,7 @@ RowLayout {
     MapButton {
         leftCropped: true
         tipText: qsTr("Remove ruler points")
-        iconSource: "../app/icons/remove.svg"
+        iconSource: "qrc:/icons/remove.svg"
         visible: !ruler.empty
         onClicked: ruler.clear()
     }

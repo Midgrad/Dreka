@@ -16,8 +16,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: Controls.Theme.rounding
-        opacity: 0.45
-        color: "black"
+        color: Controls.Theme.colors.background
     }
 
     Text {
