@@ -4,3 +4,6 @@
 [submodule "2ndparty/industrial-indicators"]
 	path = 2ndparty/industrial-indicators
 	url = git@github.com:Midgrad/industrial-indicators.git
+[submodule "kjarni"]
+	path = kjarni
+	url = https://github.com/Midgrad/kjarni
