@@ -11,6 +11,7 @@ namespace
 {
 constexpr char baseUrl[] = "https://opensky-network.org/api";
 constexpr char states[] = "states";
+constexpr int timeout = 1000;
 } // namespace
 
 using namespace dreka::domain;
@@ -27,8 +28,8 @@ QJsonArray OpenskyAdsbSource::adsbData() const
 
 void OpenskyAdsbSource::start()
 {
-    qDebug() << "start";
     m_started = true;
+    m_timer.start();
     this->get("/states/all");
 }
 
@@ -54,7 +55,6 @@ void OpenskyAdsbSource::onFinished(QNetworkReply* reply)
     {
         QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
         m_adsbData = doc.object().value(::states).toArray();
-        qDebug() << m_adsbData;
         emit adsbDataReceived(m_adsbData);
     }
     else
@@ -64,6 +64,6 @@ void OpenskyAdsbSource::onFinished(QNetworkReply* reply)
 
     reply->deleteLater();
 
-    if (m_started && reply == m_lastReply)
+    if (m_started && m_timer.elapsed() >= ::timeout)
         this->start();
 }

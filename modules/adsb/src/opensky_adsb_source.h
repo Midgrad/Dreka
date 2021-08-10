@@ -3,6 +3,7 @@
 
 #include "i_adsb_source.h"
 
+#include <QElapsedTimer>
 #include <QNetworkAccessManager>
 #include <QPointer>
 
@@ -28,6 +29,7 @@ private slots:
 private:
     QNetworkAccessManager m_manager;
     QPointer<QNetworkReply> m_lastReply;
+    QElapsedTimer m_timer;
     QJsonArray m_adsbData;
     bool m_started = false;
 };
