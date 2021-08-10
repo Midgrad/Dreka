@@ -22,8 +22,12 @@ Controls.ApplicationWindow {
         anchors.left: parent.left
         spacing: Controls.Theme.baseSize
 
-        Loader {
-            source: qmlEntries.menu
+        Repeater {
+            model: qmlEntries.menu
+
+            Loader {
+                source: modelData
+            }
         }
     }
 }

@@ -14,8 +14,6 @@
 #include "map_ruler_controller.h"
 #include "map_viewport_controller.h"
 
-#include "utils.h"
-
 namespace
 {
 const char* gitRevision = "git_revision";
@@ -55,7 +53,7 @@ int main(int argc, char* argv[])
     QJsonObject qmlEntries;
     for (const QString& moduleId : moduleLoader.loadedModules())
     {
-        kjarni::utils::mergeJson(qmlEntries, moduleLoader.module(moduleId)->qmlEntries());
+        moduleLoader.module(moduleId)->visit(qmlEntries);
     }
 
     engine.rootContext()->setContextProperty("qmlEntries", qmlEntries);
