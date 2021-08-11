@@ -3,6 +3,9 @@
 #include <QVersionNumber>
 #include <QtWebEngine>
 
+#include "locator.h"
+#include "property_tree.h"
+
 #include "module_loader.h"
 #include "theme.h"
 #include "theme_activator.h"
@@ -30,6 +33,10 @@ int main(int argc, char* argv[])
 
     QGuiApplication app(argc, argv);
     app.setProperty(::gitRevision, QString(GIT_REVISION));
+
+    kjarni::domain::PropertyTree pTree;
+    kjarni::domain::Locator::provide<kjarni::domain::IPropertyTree>(&pTree);
+
     QtWebEngine::initialize();
 
     qmlRegisterType<MapViewportController>("Dreka", 1, 0, "MapViewportController");
