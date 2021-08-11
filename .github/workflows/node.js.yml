@@ -21,6 +21,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
     - name: Install Deps
       run: sudo ./scripts/ubuntu_install_deps.sh   
     - name: Use Node.js ${{ matrix.node-version }}
