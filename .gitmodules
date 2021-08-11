@@ -1,15 +1,15 @@
 [submodule "2ndparty/industrial-controls"]
 	path = 2ndparty/industrial-controls
-	url = git@github.com:Midgrad/industrial-controls.git
+	url = ../industrial-controls.git
 [submodule "2ndparty/industrial-indicators"]
 	path = 2ndparty/industrial-indicators
-	url = git@github.com:Midgrad/industrial-indicators.git
+	url = ../industrial-indicators.git
 [submodule "kjarni"]
 	path = kjarni
-	url = git@github.com:Midgrad/kjarni
+	url = ../kjarni
 [submodule "modules/Adsbera"]
 	path = modules/Adsbera
-	url = git@github.com:Midgrad/Adsbera.git
+	url = ../Adsbera.git
 [submodule "modules/Jerom-The-Mavlink"]
 	path = modules/Jerom-The-Mavlink
-	url = git@github.com:Midgrad/Jerom-The-Mavlink.git
+	url = ../Jerom-The-Mavlink.git
