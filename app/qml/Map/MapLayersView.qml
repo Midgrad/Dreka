@@ -9,7 +9,7 @@ MapButton {
 
     MapLayersController { id: layers }
 
-    Component.onCompleted: webChannel.registerObject("layersController", layers)
+    Component.onCompleted: map.registerController("layersController", layers)
     Component.onDestruction: layers.save()
 
     tipText: qsTr("Map layers")

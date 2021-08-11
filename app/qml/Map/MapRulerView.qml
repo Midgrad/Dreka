@@ -8,7 +8,7 @@ RowLayout {
 
     MapRulerController { id: ruler }
 
-    Component.onCompleted: webChannel.registerObject("rulerController", ruler)
+    Component.onCompleted: map.registerController("rulerController", ruler)
 
     property real distance: ruler.distance
 

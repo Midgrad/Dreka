@@ -8,7 +8,7 @@ RowLayout {
 
     MapViewportController { id: viewport }
 
-    Component.onCompleted: webChannel.registerObject("viewportController", viewport)
+    Component.onCompleted: map.registerController("viewportController", viewport)
     Component.onDestruction: viewport.save()
 
     spacing: 10

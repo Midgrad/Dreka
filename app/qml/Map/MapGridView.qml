@@ -8,7 +8,7 @@ MapButton {
 
     MapGridController { id: grid }
 
-    Component.onCompleted: webChannel.registerObject("gridController", grid)
+    Component.onCompleted: map.registerController("gridController", grid)
 
     tipText: checked ? qsTr("Disable grid") : qsTr("Enable grid")
     iconSource: "qrc:/icons/grid.svg"

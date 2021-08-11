@@ -8,6 +8,10 @@ import Dreka 1.0
 Item {
     id: root
 
+    function registerController(id, controller) {
+        webChannel.registerObject(id, controller);
+    }
+
     ClipboardController {
         id: clipboard
     }
