@@ -13,3 +13,6 @@
 [submodule "modules/Jerom-The-Mavlink"]
 	path = modules/Jerom-The-Mavlink
 	url = ../Jerom-The-Mavlink.git
+[submodule "2ndparty/loodsman"]
+	path = 2ndparty/loodsman
+	url = ../loodsman.git
