@@ -29,5 +29,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm install
-    - run: npm run confugure
+    - run: npm run configure
     - run: npm run build
