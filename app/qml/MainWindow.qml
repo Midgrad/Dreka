@@ -7,6 +7,10 @@ import "Map"
 Controls.ApplicationWindow {
     id: main
 
+    readonly property real availableHeight: main.height -
+                                            Controls.Theme.baseSize * 3 -
+                                            Controls.Theme.margins * 2
+
     visible: true
     width: 1280
     height: 768
@@ -20,14 +24,13 @@ Controls.ApplicationWindow {
         id: menuBar
         anchors.top: parent.top
         anchors.left: parent.left
+        anchors.margins: Controls.Theme.margins
         spacing: Controls.Theme.baseSize
 
         Repeater {
             model: qmlEntries.menu
 
-            Loader {
-                source: modelData
-            }
+            Loader { source: modelData }
         }
     }
 }

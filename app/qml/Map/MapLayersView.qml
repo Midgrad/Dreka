@@ -22,7 +22,7 @@ MapButton {
     Controls.Popup {
         id: popup
 
-        closePolicy: Controls.Popup.NoAutoClose
+        closePolicy: Controls.Popup.CloseOnPressOutsideParent
         width: Controls.Theme.baseSize * 10
         y: -height - Controls.Theme.spacing
         x: root.width - width

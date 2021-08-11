@@ -6,9 +6,7 @@ import Dreka 1.0
 RowLayout {
     id: root
 
-    MapViewportController {
-        id: viewport
-    }
+    MapViewportController { id: viewport }
 
     Component.onCompleted: webChannel.registerObject("viewportController", viewport)
     Component.onDestruction: viewport.save()
