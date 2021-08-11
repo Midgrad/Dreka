@@ -43,4 +43,10 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
 
     const viewport = new Viewport(cesium, channel.objects.viewportController);
     input.registerHandler(viewport);
+
+    var adsbController = channel.objects.adsbController;
+    if (adsbController) {
+        const adsb = new Adsb(cesium);
+        adsbController.adsbChanged.connect(function(data) { adsb.setData(data); });
+    }
 });
