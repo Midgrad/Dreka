@@ -33,4 +33,11 @@ Controls.ApplicationWindow {
             Loader { source: modelData }
         }
     }
+
+    Loader {
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.margins: Controls.Theme.margins
+        source: qmlEntries.dashboard
+    }
 }
