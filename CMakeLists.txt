@@ -6,6 +6,12 @@ set(PROJECT_NAME "Dreka")
 set(PROJECT_ORGANIZATION "Midgrad")
 project(${PROJECT_NAME})
 
+# Tests
+option(TESTS_ENABLED "Enable tests" ON)
+if(TESTS_ENABLED)
+    enable_testing()
+endif(TESTS_ENABLED)
+
 # Versions
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 1)

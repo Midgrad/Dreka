@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 
     QtWebEngine::initialize();
 
-    qmlRegisterType<MapViewportController>("Dreka", 1, 0, "MapViewportController");
+    qmlRegisterType<dreka::endpoint::MapViewportController>("Dreka", 1, 0, "MapViewportController");
     qmlRegisterType<MapRulerController>("Dreka", 1, 0, "MapRulerController");
     qmlRegisterType<MapGridController>("Dreka", 1, 0, "MapGridController");
     qmlRegisterType<ClipboardController>("Dreka", 1, 0, "ClipboardController");
