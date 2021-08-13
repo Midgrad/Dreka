@@ -16,3 +16,6 @@
 [submodule "2ndparty/jord"]
 	path = 2ndparty/jord
 	url = ../jord.git
+[submodule "modules/Draken"]
+	path = modules/Draken
+	url = ../Draken.git
