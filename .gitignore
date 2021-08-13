@@ -57,6 +57,8 @@ compile_commands.json
 /node_modules/
 /Debug
 /Release
+/modules/web
+/modules/Cesium
 
 # IDE
 .vscode
