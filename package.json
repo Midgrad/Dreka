@@ -6,8 +6,8 @@
   "scripts": {
     "configure": "cmake-js configure",
     "build": "cmake-js build",
-    "start_debug": "cd Debug && ./DrekaApp",
-    "start_release": "cd Release && ./DrekaApp"
+    "start_debug": "cd Debug && ./DrekaApp --ignore-gpu-blacklist",
+    "start_release": "cd Release && ./DrekaApp --ignore-gpu-blacklist"
   },
   "repository": {
     "type": "git",
