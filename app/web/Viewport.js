@@ -46,12 +46,12 @@ class Viewport {
             };
             viewportController.centerPosition = converted;
 
-            // Find the distance between two pixels at the bottom center of the screen.
+            // Find the distance between two pixels int the center of the screen.
             var width = that.viewer.scene.canvas.clientWidth;
             var height = that.viewer.scene.canvas.clientHeight;
 
-            var left = that.viewer.camera.getPickRay(new Cesium.Cartesian2((width / 2) | 0, height - 1));
-            var right = that.viewer.camera.getPickRay(new Cesium.Cartesian2(1 + (width / 2) | 0, height - 1));
+            var left = that.viewer.camera.getPickRay(new Cesium.Cartesian2((width / 2) | 0, height / 2));
+            var right = that.viewer.camera.getPickRay(new Cesium.Cartesian2(1 + (width / 2) | 0, height / 2));
 
             var globe = that.viewer.scene.globe;
             var leftPosition = globe.pick(left, that.viewer.scene);
