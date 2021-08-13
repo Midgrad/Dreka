@@ -3,18 +3,22 @@
 
 #include <QObject>
 
-class MapGridController : public QObject {
-  Q_OBJECT
+namespace dreka::endpoint
+{
+class MapGridController : public QObject
+{
+    Q_OBJECT
 
-  Q_PROPERTY(bool enabled MEMBER enabled NOTIFY enabledChanged)
+    Q_PROPERTY(bool enabled MEMBER enabled NOTIFY enabledChanged)
 
- public:
-  explicit MapGridController(QObject* parent = nullptr);
+public:
+    explicit MapGridController(QObject* parent = nullptr);
 
-  bool enabled = false;
+    bool enabled = false;
 
- signals:
-  void enabledChanged();
+signals:
+    void enabledChanged();
 };
+} // namespace dreka::endpoint
 
-#endif  // MAP_GRID_CONTROLLER_H
+#endif // MAP_GRID_CONTROLLER_H

@@ -1,7 +1,5 @@
 #include "map_viewport_controller.h"
 
-using namespace dreka::endpoint;
-
 #include <QDebug>
 #include <QSettings>
 
@@ -19,6 +17,8 @@ constexpr double defaultHeight = 400;
 constexpr double defaultHeading = 0.0;
 constexpr double defaultPitch = -15.0;
 } // namespace viewport_settings
+
+using namespace dreka::endpoint;
 
 MapViewportController::MapViewportController(QObject* parent) : QObject(parent)
 {

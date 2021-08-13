@@ -40,10 +40,10 @@ int main(int argc, char* argv[])
     QtWebEngine::initialize();
 
     qmlRegisterType<dreka::endpoint::MapViewportController>("Dreka", 1, 0, "MapViewportController");
-    qmlRegisterType<MapRulerController>("Dreka", 1, 0, "MapRulerController");
-    qmlRegisterType<MapGridController>("Dreka", 1, 0, "MapGridController");
-    qmlRegisterType<ClipboardController>("Dreka", 1, 0, "ClipboardController");
-    qmlRegisterType<MapLayersController>("Dreka", 1, 0, "MapLayersController");
+    qmlRegisterType<dreka::endpoint::MapRulerController>("Dreka", 1, 0, "MapRulerController");
+    qmlRegisterType<dreka::endpoint::MapGridController>("Dreka", 1, 0, "MapGridController");
+    qmlRegisterType<dreka::endpoint::ClipboardController>("Dreka", 1, 0, "ClipboardController");
+    qmlRegisterType<dreka::endpoint::MapLayersController>("Dreka", 1, 0, "MapLayersController");
 
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);

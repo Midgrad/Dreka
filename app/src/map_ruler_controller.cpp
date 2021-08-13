@@ -2,4 +2,13 @@
 
 #include <QDebug>
 
-MapRulerController::MapRulerController(QObject *parent) : QObject(parent) {}
+using namespace dreka::endpoint;
+
+MapRulerController::MapRulerController(QObject* parent) : QObject(parent)
+{
+}
+
+bool MapRulerController::isEmpty() const
+{
+    return qFuzzyIsNull(distance);
+}

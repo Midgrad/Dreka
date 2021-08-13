@@ -3,26 +3,30 @@
 
 #include <QObject>
 
-class MapRulerController : public QObject {
-  Q_OBJECT
+namespace dreka::endpoint
+{
+class MapRulerController : public QObject
+{
+    Q_OBJECT
 
-  Q_PROPERTY(bool rulerMode MEMBER rulerMode NOTIFY rulerModeChanged)
-  Q_PROPERTY(float distance MEMBER distance NOTIFY distanceChanged)
-  Q_PROPERTY(bool empty MEMBER empty NOTIFY emptyChanged)
+    Q_PROPERTY(bool rulerMode MEMBER rulerMode NOTIFY rulerModeChanged)
+    Q_PROPERTY(float distance MEMBER distance NOTIFY distanceChanged)
+    Q_PROPERTY(bool empty READ isEmpty NOTIFY distanceChanged)
 
- public:
-  explicit MapRulerController(QObject* parent = nullptr);
+public:
+    explicit MapRulerController(QObject* parent = nullptr);
 
-  bool rulerMode = false;
-  float distance = 0;
-  bool empty = true;
+    bool rulerMode = false;
+    float distance = 0;
 
- signals:
-  void rulerModeChanged();
-  void distanceChanged();
-  void emptyChanged();
+    bool isEmpty() const;
 
-  Q_INVOKABLE void clear();
+signals:
+    void rulerModeChanged();
+    void distanceChanged();
+
+    Q_INVOKABLE void clear();
 };
+} // namespace dreka::endpoint
 
-#endif  // MAP_RULER_CONTROLLER_H
+#endif // MAP_RULER_CONTROLLER_H

@@ -4,26 +4,30 @@
 #include <QJsonArray>
 #include <QObject>
 
-class MapLayersController : public QObject {
-  Q_OBJECT
+namespace dreka::endpoint
+{
+class MapLayersController : public QObject
+{
+    Q_OBJECT
 
-  Q_PROPERTY(QJsonArray layers READ layers NOTIFY layersChanged)
+    Q_PROPERTY(QJsonArray layers READ layers NOTIFY layersChanged)
 
- public:
-  explicit MapLayersController(QObject* parent = nullptr);
+public:
+    explicit MapLayersController(QObject* parent = nullptr);
 
-  QJsonArray layers() const;
+    QJsonArray layers() const;
 
- public slots:
-  void save();
-  void restore();
-  void toggleVisibility(const QString& name);
+public slots:
+    void save();
+    void restore();
+    void toggleVisibility(const QString& name);
 
- signals:
-  void layersChanged();
+signals:
+    void layersChanged();
 
- private:
-  QJsonArray m_layers;
+private:
+    QJsonArray m_layers;
 };
+} // namespace dreka::endpoint
 
-#endif  // MAP_LAYERS_CONTROLLER_H
+#endif // MAP_LAYERS_CONTROLLER_H
