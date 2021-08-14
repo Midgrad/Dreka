@@ -9,9 +9,6 @@ class Vehicles {
     }
 
     setVehicleData(vehicle, data) {
-
-        console.log(vehicle);
-
         var position = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, data.satelliteAltitude);
         var hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(data.heading), 0, 0);
         var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
@@ -27,8 +24,8 @@ class Vehicles {
                  orientation: orientation,
                  model: {
                      uri: "./flying_wing.glb",
-                     minimumPixelSize: 64,
-                     maximumScale: 20000
+                     minimumPixelSize: 128,
+                     maximumScale: 40000
                  }
              });
              this.vehicles.set(vehicle, newEntity);

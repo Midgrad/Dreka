@@ -48,7 +48,6 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
     if (vehiclesController) {
         const vehicles = new Vehicles(cesium);
         vehiclesController.vehicleDataChanged.connect(function(vehicle, data) {
-            console.log(vehicle)
             vehicles.setVehicleData(vehicle, data);
         });
     }
