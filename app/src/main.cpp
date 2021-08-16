@@ -40,7 +40,8 @@ int main(int argc, char* argv[])
     // FIXME: demonstrtation telemetry values
     QJsonArray modes = QJsonArray({ "auto", "manual", "rtl", "circle" });
     pTree.setProperty("MAV 23", QJsonObject({ { "callsign", "MAVIK 23" },
-                                              { "state", "active" },
+                                              { "state", "ACTIVE" },
+                                              { "armed", true },
                                               { "mode", "auto" },
                                               { "modes", modes },
                                               { "gs", 34.234 },
@@ -62,7 +63,8 @@ int main(int argc, char* argv[])
                                               { "wpDistance", 1453 },
                                               { "homeDistance", 2315 } }));
     pTree.setProperty("UAV 13", QJsonObject({ { "callsign", "UAV-13" },
-                                              { "state", "emergency" },
+                                              { "state", "EMERGENCY" },
+                                              { "armed", false },
                                               { "mode", "rtl" },
                                               { "modes", modes },
                                               { "gs", 27.123 },
