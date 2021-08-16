@@ -25,7 +25,7 @@ Controls.ApplicationWindow {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.margins: Controls.Theme.margins
-        spacing: Controls.Theme.baseSize
+        spacing: Controls.Theme.spacing
 
         Repeater {
             model: qmlEntries.menu
