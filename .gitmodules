@@ -19,3 +19,6 @@
 [submodule "modules/Draken"]
 	path = modules/Draken
 	url = ../Draken.git
+[submodule "modules/Vegur"]
+	path = modules/Vegur
+	url = ../Vegur.git
