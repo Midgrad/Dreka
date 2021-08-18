@@ -6,6 +6,12 @@ set(PROJECT_NAME "Dreka")
 set(PROJECT_ORGANIZATION "Midgrad")
 project(${PROJECT_NAME})
 
+# Tests
+option(TESTS_ENABLED "Enable tests" ON)
+if(TESTS_ENABLED)
+    enable_testing()
+endif(TESTS_ENABLED)
+
 # Versions
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 1)
@@ -36,6 +42,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_subdirectory(2ndparty/industrial-controls)
 add_subdirectory(2ndparty/industrial-indicators)
 add_subdirectory(2ndparty/loodsman)
+add_subdirectory(2ndparty/jord)
 
 # Core library
 add_subdirectory(kjarni)

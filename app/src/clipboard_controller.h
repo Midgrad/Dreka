@@ -5,17 +5,21 @@
 
 class QClipboard;
 
-class ClipboardController : public QObject {
-  Q_OBJECT
+namespace dreka::endpoint
+{
+class ClipboardController : public QObject
+{
+    Q_OBJECT
 
- public:
-  explicit ClipboardController(QObject* parent = nullptr);
+public:
+    explicit ClipboardController(QObject* parent = nullptr);
 
- public slots:
-  void setText(const QString& text);
+public slots:
+    void setText(const QString& text);
 
- private:
-  QClipboard* const m_clipboard;
+private:
+    QClipboard* const m_clipboard;
 };
+} // namespace dreka::endpoint
 
-#endif  // CLIPBOARD_CONTROLLER_H
+#endif // CLIPBOARD_CONTROLLER_H

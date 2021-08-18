@@ -44,6 +44,14 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
     const viewport = new Viewport(cesium, channel.objects.viewportController);
     input.registerHandler(viewport);
 
+    var vehiclesController = channel.objects.vehiclesController;
+    if (vehiclesController) {
+        const vehicles = new Vehicles(cesium);
+        vehiclesController.vehicleDataChanged.connect(function(vehicle, data) {
+            vehicles.setVehicleData(vehicle, data);
+        });
+    }
+
     var adsbController = channel.objects.adsbController;
     if (adsbController) {
         const adsb = new Adsb(cesium);

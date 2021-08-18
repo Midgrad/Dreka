@@ -36,9 +36,6 @@ class Ruler {
         this.points.push(point);
         this.makeHoveredPoint(point);
 
-        // Not empty now
-        this.rulerController.empty = false;
-
         // Update ruler distance
         if (lastPosition)
             this.rulerController.distance += Cesium.Cartesian3.distance(lastPosition, cartesian);
@@ -77,7 +74,6 @@ class Ruler {
         this.lines = [];
         this.positions = [];
 
-        this.rulerController.empty = true;
         this.rulerController.distance = 0;
     }
 

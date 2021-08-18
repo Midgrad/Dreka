@@ -25,12 +25,19 @@ Controls.ApplicationWindow {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.margins: Controls.Theme.margins
-        spacing: Controls.Theme.baseSize
+        spacing: Controls.Theme.spacing
 
         Repeater {
             model: qmlEntries.menu
 
             Loader { source: modelData }
         }
+    }
+
+    Loader {
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.margins: Controls.Theme.margins
+        source: qmlEntries.dashboard
     }
 }

@@ -69,7 +69,7 @@
         "iconSize": 0.625,
         "mainFontSize": 0.5,
         "margins": 0.25,
-        "padding": 0.25,
+        "padding": 0.2,
         "rounding": 0.125,
         "scrollSize": 0.0625,
         "shadow": 0.1,

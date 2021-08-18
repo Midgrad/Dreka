@@ -2,4 +2,8 @@
 
 #include <QDebug>
 
-MapGridController::MapGridController(QObject *parent) : QObject(parent) {}
+using namespace dreka::endpoint;
+
+MapGridController::MapGridController(QObject* parent) : QObject(parent)
+{
+}

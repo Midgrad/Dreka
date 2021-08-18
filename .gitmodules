@@ -16,3 +16,12 @@
 [submodule "2ndparty/loodsman"]
 	path = 2ndparty/loodsman
 	url = ../loodsman.git
+[submodule "2ndparty/jord"]
+	path = 2ndparty/jord
+	url = ../jord.git
+[submodule "modules/Draken"]
+	path = modules/Draken
+	url = ../Draken.git
+[submodule "modules/Vegur"]
+	path = modules/Vegur
+	url = ../Vegur.git

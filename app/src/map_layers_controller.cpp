@@ -17,6 +17,8 @@ constexpr char opacity[] = "opacity";
 constexpr char path[] = "./layers.json";
 } // namespace
 
+using namespace dreka::endpoint;
+
 MapLayersController::MapLayersController(QObject* parent) : QObject(parent)
 {
 }

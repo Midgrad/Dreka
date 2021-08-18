@@ -8,6 +8,8 @@ import Dreka 1.0
 Item {
     id: root
 
+    readonly property alias centerPosition: mapControl.centerPosition
+
     function registerController(id, controller) {
         webChannel.registerObject(id, controller);
     }
