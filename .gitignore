@@ -64,3 +64,5 @@ compile_commands.json
 .vscode
 .idea
 
+#Mac
+.DS_Store
