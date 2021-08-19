@@ -3,7 +3,7 @@
 Lightweight Qt and web based software for UAS ground control.  
 
 Detailed information: https://github.com/Midgrad/Dreka/wiki/Dreka-overview  
-Build instructions can be find here: https://github.com/Midgrad/Dreka/wiki/Building-from-source
+Build instructions can be found here: https://github.com/Midgrad/Dreka/wiki/Building-from-source
 
 This is early pre-alfa version, use it on your own risk!
 

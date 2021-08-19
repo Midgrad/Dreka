@@ -13,6 +13,9 @@
 [submodule "modules/Jerom-The-Mavlink"]
 	path = modules/Jerom-The-Mavlink
 	url = ../Jerom-The-Mavlink.git
+[submodule "2ndparty/loodsman"]
+	path = 2ndparty/loodsman
+	url = ../loodsman.git
 [submodule "2ndparty/jord"]
 	path = 2ndparty/jord
 	url = ../jord.git
@@ -22,3 +25,6 @@
 [submodule "modules/Vegur"]
 	path = modules/Vegur
 	url = ../Vegur.git
+[submodule "3rdparty/googletest"]
+	path = 3rdparty/googletest
+	url = https://github.com/google/googletest.git

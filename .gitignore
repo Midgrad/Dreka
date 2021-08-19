@@ -60,3 +60,7 @@ compile_commands.json
 
 # IDE
 .vscode
+.idea
+
+#Mac
+.DS_Store

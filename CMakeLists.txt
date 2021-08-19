@@ -41,7 +41,11 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # 2ndparty libraries
 add_subdirectory(2ndparty/industrial-controls)
 add_subdirectory(2ndparty/industrial-indicators)
+add_subdirectory(2ndparty/loodsman)
 add_subdirectory(2ndparty/jord)
+
+# 3rdparty libraries
+add_subdirectory(3rdparty/googletest)
 
 # Core library
 add_subdirectory(kjarni)
