@@ -1,4 +1,4 @@
-// TODO: coomon with Adsb
+// TODO: common with Adsb
 class Vehicles {
     constructor(cesium) {
 
