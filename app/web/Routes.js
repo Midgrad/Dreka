@@ -28,10 +28,8 @@ class Routes {
 
         var point = this.viewer.entities.add({
             position: cartesian,
-            point: {
-                pixelSize: this.waypointPixelSize,
-                color: Cesium.Color.CADETBLUE,
-                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            billboard: {
+                image: "./icons/wpt.svg"
             }
         });
         this.points.push(point);

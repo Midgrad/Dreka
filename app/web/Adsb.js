@@ -26,7 +26,7 @@ class Adsb {
                      position: position,
                      orientation: orientation,
                      model: {
-                         uri: "./a320.glb",
+                         uri: "./models/a320.glb",
                          minimumPixelSize: 64,
                          maximumScale: 20000
                      }
