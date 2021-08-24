@@ -9,13 +9,20 @@ class Vehicles {
     }
 
     setVehicleData(vehicle, data) {
-        if (!data)
+        if (!Cesium.defined(data) || !Cesium.defined(data.longitude) ||
+            !Cesium.defined(data.latitude) || !Cesium.defined(data.satelliteAltitude))
             return;
 
         var position = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, data.satelliteAltitude);
-        var hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(data.heading),
+
+        var hpr;
+        if (Cesium.defined(data.heading) && Cesium.defined(data.pitch) && Cesium.defined(data.roll))
+            hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(data.heading),
                                               Cesium.Math.toRadians(data.pitch),
                                               Cesium.Math.toRadians(data.roll));
+        else
+            hpr = new Cesium.HeadingPitchRoll(0, 0, 0);
+
         var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
 
         if (this.vehicles.has(vehicle)) {
