@@ -9,6 +9,9 @@ class Adsb {
     }
 
     setData(adsb) {
+        if (!adsb || !adsb.length)
+            return;
+
         adsb.forEach((state) => {
             var position = Cesium.Cartesian3.fromDegrees(state.position.longitude,
                                                       state.position.latitude,
