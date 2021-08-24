@@ -18,8 +18,8 @@ class Vehicles {
         var hpr;
         if (Cesium.defined(data.heading) && Cesium.defined(data.pitch) && Cesium.defined(data.roll))
             hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(data.heading),
-                                              Cesium.Math.toRadians(data.pitch),
-                                              Cesium.Math.toRadians(data.roll));
+                                              Cesium.Math.toRadians(-data.roll),
+                                              Cesium.Math.toRadians(data.pitch));
         else
             hpr = new Cesium.HeadingPitchRoll(0, 0, 0);
 

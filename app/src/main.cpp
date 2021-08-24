@@ -53,55 +53,6 @@ int main(int argc, char* argv[])
     kjarni::domain::PropertyTree pTree;
     kjarni::domain::Locator::provide<kjarni::domain::IPropertyTree>(&pTree);
 
-    // FIXME: demonstrtation telemetry values
-    QJsonArray modes = QJsonArray({ "auto", "manual", "rtl", "circle" });
-    pTree.setProperties("MAV 23", QJsonObject({ { "callsign", "MAVIK 23" },
-                                              { "state", "ACTIVE" },
-                                              { "armed", true },
-                                              { "mode", "auto" },
-                                              { "modes", modes },
-                                              { "gs", 34.234 },
-                                              { "ias", 36.875 },
-                                              { "tas", 36.963 },
-                                              { "pitch", 12.2 },
-                                              { "roll", 23.6 },
-                                              { "latitude", 55.972512 },
-                                              { "longitude", 37.153741 },
-                                              { "satelliteAltitude", 5657 },
-                                              { "relativeHeight", 5544 },
-                                              { "absoluteHeight", 5660 },
-                                              { "climb", -1.1 },
-                                              { "elevation", 5324 },
-                                              { "heading", 132.7 },
-                                              { "course", 141.2 },
-                                              { "wp", 3 },
-                                              { "wps", 28 },
-                                              { "wpDistance", 1453 },
-                                              { "homeDistance", 2315 } }));
-    pTree.setProperties("UAV 13", QJsonObject({ { "callsign", "UAV-13" },
-                                              { "state", "EMERGENCY" },
-                                              { "armed", false },
-                                              { "mode", "rtl" },
-                                              { "modes", modes },
-                                              { "gs", 27.123 },
-                                              { "ias", 25.234 },
-                                              { "tas", 25.876 },
-                                              { "pitch", -7.5 },
-                                              { "roll", -4.4 },
-                                              { "latitude", 55.950577 },
-                                              { "longitude", 37.152934 },
-                                              { "satelliteAltitude", 8374 },
-                                              { "relativeHeight", 8238 },
-                                              { "absoluteHeight", 8380 },
-                                              { "climb", 1.5 },
-                                              { "elevation", 8341 },
-                                              { "heading", -64.3 },
-                                              { "course", -60.1 },
-                                              { "wp", 6 },
-                                              { "wps", 31 },
-                                              { "wpDistance", 512 },
-                                              { "homeDistance", 1223 } }));
-
     QtWebEngine::initialize();
 
     qmlRegisterType<dreka::endpoint::MapViewportController>("Dreka", 1, 0, "MapViewportController");
