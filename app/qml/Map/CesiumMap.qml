@@ -20,7 +20,7 @@ Item {
 
     WebEngineView {
         anchors.fill: parent
-        url: "file:" + applicationDirPath + "/modules/web/index.html"
+        url: "file:" + applicationDirPath + "/web/index.html"
         webChannel: WebChannel { id: webChannel }
         onJavaScriptConsoleMessage: console.log(message)
     }

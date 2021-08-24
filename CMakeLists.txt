@@ -25,6 +25,12 @@ include(cmake/TrToQrc.cmake)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/${CMAKE_BUILD_TYPE})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/${CMAKE_BUILD_TYPE})
 
+# Qtless 3rdparty libraries
+add_subdirectory(3rdparty/googletest)
+
+# Qtless 2ndparty libraries
+add_subdirectory(2ndparty/loodsman)
+
 # Minimum Qt version
 set(QT_REQUIRED_VERSION 5.12.8)
 
@@ -41,11 +47,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # 2ndparty libraries
 add_subdirectory(2ndparty/industrial-controls)
 add_subdirectory(2ndparty/industrial-indicators)
-add_subdirectory(2ndparty/loodsman)
 add_subdirectory(2ndparty/jord)
-
-# 3rdparty libraries
-add_subdirectory(3rdparty/googletest)
 
 # Core library
 add_subdirectory(kjarni)
