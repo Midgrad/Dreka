@@ -86,6 +86,11 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
         vehiclesController.vehicleDataChanged.connect(function(vehicle, data) {
             vehicles.setVehicleData(vehicle, data);
         });
+
+        vehiclesController.vehicles.forEach((vehicle) => {
+            console.log(vehicle)
+            vehicles.setVehicleData(vehicle, vehiclesController.vehicleData(vehicle));
+        });
     }
 
     var adsbController = channel.objects.adsbController;

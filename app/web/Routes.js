@@ -29,7 +29,9 @@ class Routes {
         var point = this.viewer.entities.add({
             position: cartesian,
             billboard: {
-                image: "./icons/wpt.svg"
+                image: "./icons/wpt.svg",
+                color: Cesium.Color.WHITE,
+                disableDepthTestDistance: Number.POSITIVE_INFINITY,
             }
         });
         this.points.push(point);

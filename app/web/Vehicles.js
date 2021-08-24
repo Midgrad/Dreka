@@ -9,6 +9,9 @@ class Vehicles {
     }
 
     setVehicleData(vehicle, data) {
+        if (!data)
+            return;
+
         var position = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, data.satelliteAltitude);
         var hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(data.heading), 0, 0);
         var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
