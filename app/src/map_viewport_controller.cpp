@@ -5,17 +5,13 @@
 
 namespace viewport_settings
 {
-constexpr char latitude[] = "viewport/latitude";
-constexpr char longitude[] = "viewport/longitude";
-constexpr char height[] = "viewport/height";
+constexpr char camera[] = "viewport/camera";
 constexpr char heading[] = "viewport/heading";
 constexpr char pitch[] = "viewport/pitch";
 
-constexpr double defaultLatitude = 55.97101;
-constexpr double defaultLongitude = 37.10610;
-constexpr double defaultHeight = 400;
-constexpr double defaultHeading = 0.0;
-constexpr double defaultPitch = -15.0;
+const jord::domain::Geodetic deafultCamera(55.97101, 37.10610, 400.0);
+constexpr float defaultHeading = 0.0;
+constexpr float defaultPitch = -15.0;
 } // namespace viewport_settings
 
 using namespace dreka::endpoint;
@@ -34,38 +30,53 @@ QJsonObject MapViewportController::centerPosition() const
     return m_centerPosition.toJson();
 }
 
+QJsonObject MapViewportController::cameraPosition() const
+{
+    return m_cameraPosition.toJson();
+}
+
+float MapViewportController::heading() const
+{
+    return m_heading;
+}
+
+float MapViewportController::pitch() const
+{
+    return m_pitch;
+}
+
+double MapViewportController::pixelScale() const
+{
+    return m_pixelScale;
+}
+
 void MapViewportController::save()
 {
-    if (!m_centerPosition.isValid())
+    if (!m_cameraPosition.isValid())
         return;
 
     QSettings settings;
 
-    settings.setValue(::viewport_settings::latitude, m_centerPosition.latitude());
-    settings.setValue(::viewport_settings::longitude, m_centerPosition.longitude());
-    settings.setValue(::viewport_settings::height, m_centerPosition.altitude());
-    settings.setValue(::viewport_settings::heading, heading);
-    settings.setValue(::viewport_settings::pitch, pitch);
+    settings.setValue(::viewport_settings::camera, m_cameraPosition.toJson().toVariantMap());
+    settings.setValue(::viewport_settings::heading, m_heading);
+    settings.setValue(::viewport_settings::pitch, m_pitch);
 }
 
 void MapViewportController::restore()
 {
     QSettings settings;
 
-    double latitude =
-        settings.value(::viewport_settings::latitude, ::viewport_settings::defaultLatitude).toReal();
-    double longitude = settings
-                           .value(::viewport_settings::longitude,
-                                  ::viewport_settings::defaultLongitude)
-                           .toReal();
-    double height = settings.value(::viewport_settings::height, ::viewport_settings::defaultHeight)
-                        .toReal();
-    double heading =
-        settings.value(::viewport_settings::heading, ::viewport_settings::defaultHeading).toReal();
-    double pitch = settings.value(::viewport_settings::pitch, ::viewport_settings::defaultPitch)
-                       .toReal();
+    QJsonObject camera = QJsonObject::fromVariantMap(
+        settings.value(::viewport_settings::camera).toMap());
+    if (camera.isEmpty())
+        camera = ::viewport_settings::deafultCamera.toJson();
 
-    emit flyTo(latitude, longitude, height, heading, pitch);
+    float heading =
+        settings.value(::viewport_settings::heading, ::viewport_settings::defaultHeading).toReal();
+    float pitch = settings.value(::viewport_settings::pitch, ::viewport_settings::defaultPitch)
+                      .toReal();
+
+    emit flyTo(camera, heading, pitch);
 }
 
 void MapViewportController::setCursorPosition(const QJsonObject& cursorPosition)
@@ -78,4 +89,37 @@ void MapViewportController::setCenterPosition(const QJsonObject& centerPosition)
 {
     m_centerPosition = jord::domain::Geodetic(centerPosition);
     emit centerPositionChanged();
+}
+
+void MapViewportController::setCameraPosition(const QJsonObject& cameraPosition)
+{
+    m_cameraPosition = jord::domain::Geodetic(cameraPosition);
+    emit cameraPositionChanged();
+}
+
+void MapViewportController::setHeading(float heading)
+{
+    if (qFuzzyCompare(m_heading, heading))
+        return;
+
+    m_heading = heading;
+    emit headingChanged();
+}
+
+void MapViewportController::setPitch(float pitch)
+{
+    if (qFuzzyCompare(m_pitch, pitch))
+        return;
+
+    m_pitch = pitch;
+    emit pitchChanged();
+}
+
+void MapViewportController::setPixelScale(double pixelScale)
+{
+    if (qFuzzyCompare(m_pixelScale, pixelScale))
+        return;
+
+    m_pixelScale = pixelScale;
+    emit pixelScaleChanged();
 }

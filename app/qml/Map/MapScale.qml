@@ -5,8 +5,8 @@ Item {
     id: root
 
     property real lineWidth: 2
-    property real metersInPixel: 1
-    property real metersInWidth: metersInPixel * width
+    property real pixelScale: 1
+    property real metersInWidth: pixelScale * width
     property real metersRounded: Controls.Helper.roundTo125(metersInWidth)
     property color color: Controls.Theme.colors.text
 
@@ -23,7 +23,7 @@ Item {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
 
-        visible: metersInPixel > 0
+        visible: pixelScale > 0
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         font.bold: true
@@ -56,7 +56,7 @@ Item {
             x: root.width * metersRounded / metersInWidth
             height: scale.height
             width: root.lineWidth
-            visible: metersInPixel > 0
+            visible: pixelScale > 0
             color: root.color
 
             Behavior on x { PropertyAnimation { duration: 100 } }

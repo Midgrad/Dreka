@@ -9,6 +9,9 @@ class Adsb {
     }
 
     setData(adsb) {
+        if (!adsb || !adsb.length)
+            return;
+
         adsb.forEach((state) => {
             var position = Cesium.Cartesian3.fromDegrees(state.position.longitude,
                                                       state.position.latitude,
@@ -26,7 +29,7 @@ class Adsb {
                      position: position,
                      orientation: orientation,
                      model: {
-                         uri: "./a320.glb",
+                         uri: "./models/a320.glb",
                          minimumPixelSize: 64,
                          maximumScale: 20000
                      }

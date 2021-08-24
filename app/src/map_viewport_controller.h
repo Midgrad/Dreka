@@ -15,25 +15,32 @@ class MapViewportController : public QObject
                    cursorPositionChanged)
     Q_PROPERTY(QJsonObject centerPosition READ centerPosition WRITE setCenterPosition NOTIFY
                    centerPositionChanged)
+    Q_PROPERTY(QJsonObject cameraPosition READ cameraPosition WRITE setCameraPosition NOTIFY
+                   cameraPositionChanged)
 
-    Q_PROPERTY(float heading MEMBER heading NOTIFY headingChanged)
-    Q_PROPERTY(float pitch MEMBER pitch NOTIFY pitchChanged)
-
-    Q_PROPERTY(double metersInPixel MEMBER metersInPixel NOTIFY metersInPixelChanged)
+    Q_PROPERTY(float heading READ heading WRITE setHeading NOTIFY headingChanged)
+    Q_PROPERTY(float pitch READ pitch WRITE setPitch NOTIFY pitchChanged)
+    Q_PROPERTY(double pixelScale READ pixelScale WRITE setPixelScale NOTIFY pixelScaleChanged)
 
 public:
     explicit MapViewportController(QObject* parent = nullptr);
 
     QJsonObject cursorPosition() const;
     QJsonObject centerPosition() const;
+    QJsonObject cameraPosition() const;
 
-    float heading = qQNaN();
-    float pitch = qQNaN();
-    double metersInPixel = 0.0;
+    float heading() const;
+    float pitch() const;
+    double pixelScale() const;
 
 public slots:
     void setCursorPosition(const QJsonObject& cursorPosition);
     void setCenterPosition(const QJsonObject& centerPosition);
+    void setCameraPosition(const QJsonObject& cameraPosition);
+
+    void setHeading(float heading);
+    void setPitch(float pitch);
+    void setPixelScale(double pixelScale);
 
     void save();
     void restore();
@@ -41,18 +48,23 @@ public slots:
 signals:
     void cursorPositionChanged();
     void centerPositionChanged();
+    void cameraPositionChanged();
 
     void headingChanged();
     void pitchChanged();
-    void metersInPixelChanged();
+    void pixelScaleChanged();
 
-    void flyTo(double latitude, double longitude, float height, float heading, float pitch,
-               float duration = 0.0);
+    void flyTo(QJsonObject center, float heading, float pitch, float duration = 0.0);
     void lookTo(float heading, float pitch, float duration = 0.0);
 
 private:
     jord::domain::Geodetic m_cursorPosition;
     jord::domain::Geodetic m_centerPosition;
+    jord::domain::Geodetic m_cameraPosition;
+
+    float m_heading = qQNaN();
+    float m_pitch = qQNaN();
+    double m_pixelScale = 0.0;
 };
 } // namespace dreka::endpoint
 

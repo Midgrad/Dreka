@@ -23,7 +23,7 @@ class Vehicles {
                  position: position,
                  orientation: orientation,
                  model: {
-                     uri: "./flying_wing.glb",
+                     uri: "./models/flying_wing.glb",
                      minimumPixelSize: 128,
                      maximumScale: 40000
                  }

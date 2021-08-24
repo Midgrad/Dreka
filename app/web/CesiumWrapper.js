@@ -35,18 +35,45 @@ const input = new Input(cesium);
 
 const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
     const ruler = new Ruler(cesium, channel.objects.rulerController);
-    input.registerHandler(ruler);
+    input.subscribe(ruler);
 
     const grid = new Grid(cesium, channel.objects.gridController);
 
     const layers = new Layers(cesium, channel.objects.layersController);
 
-    const viewport = new Viewport(cesium, channel.objects.viewportController);
-    input.registerHandler(viewport);
+    var viewportController = channel.objects.viewportController;
+    if (viewportController) {
+        const viewport = new Viewport(cesium);
+        input.subscribe(viewport);
+
+        viewportController.flyTo.connect(function(center, heading, pitch, duration) {
+            viewport.flyTo(center, heading, pitch, duration);
+        });
+
+        viewportController.lookTo.connect(function(heading, pitch, duration) {
+            viewport.lookTo(heading, pitch, duration);
+        });
+
+        viewport.subscribeCamera(function() {
+            viewportController.heading = viewport.heading;
+            viewportController.pitch = viewport.pitch;
+            viewportController.cameraPosition = viewport.cameraPosition;
+            viewportController.centerPosition = viewport.centerPosition;
+            viewportController.pixelScale = viewport.pixelScale;
+        });
+
+        viewport.subscribeCursor(function() {
+            viewportController.cursorPosition = viewport.cursorPosition;
+        });
+
+        viewportController.restore();
+    }
 
     var routesController = channel.objects.routesController;
     if (routesController) {
         const routes = new Routes(cesium);
+        input.subscribe(routes);
+
         routesController.routesChanged.connect(function() {
             routes.setRoutes(routesController.routes);
         });
