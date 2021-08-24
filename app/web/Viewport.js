@@ -18,27 +18,34 @@ class Viewport {
                 longitude: Cesium.Math.toDegrees(cartographic.longitude),
                 altitude: cartographic.height
             };
-            viewportController.centerPosition = converted; // TODO: cameraPosition
+            viewportController.cameraPosition = converted;
 
             // Find map center coordinates
+            var globe = that.viewer.scene.globe;
             var width = that.viewer.scene.canvas.clientWidth;
             var height = that.viewer.scene.canvas.clientHeight;
 
             var center = that.viewer.camera.getPickRay(new Cesium.Cartesian2(width / 2, height / 2));
-            if (center) {
-                // TODO: viewportController.centerPosition = converted;
+            var centerPosition = globe.pick(center, that.viewer.scene);
+            if (Cesium.defined(centerPosition)) {
+                cartographic = globe.ellipsoid.cartesianToCartographic(centerPosition);
+                converted = {
+                    latitude: Cesium.Math.toDegrees(cartographic.latitude),
+                    longitude: Cesium.Math.toDegrees(cartographic.longitude),
+                    altitude: cartographic.height
+                };
+                viewportController.centerPosition = converted;
             }
 
             // Find the distance between two pixels int the center of the screen.
             var left = that.viewer.camera.getPickRay(new Cesium.Cartesian2((width / 2) | 0, height / 2));
             var right = that.viewer.camera.getPickRay(new Cesium.Cartesian2(1 + (width / 2) | 0, height / 2));
 
-            var globe = that.viewer.scene.globe;
             var leftPosition = globe.pick(left, that.viewer.scene);
             var rightPosition = globe.pick(right, that.viewer.scene);
 
-            if (!(leftPosition) || !(rightPosition)) {
-                viewportController.metersInPixel = 0;
+            if (!Cesium.defined(leftPosition) || !Cesium.defined(rightPosition)) {
+                viewportController.pixelScale = 0;
                 return;
             }
 
@@ -48,7 +55,7 @@ class Viewport {
             geodesic.setEndPoints(leftCartographic, rightCartographic);
             var pixelDistance = geodesic.surfaceDistance;
 
-            viewportController.metersInPixel = pixelDistance;
+            viewportController.pixelScale = pixelDistance;
         });
     }
 
@@ -67,16 +74,16 @@ class Viewport {
         }
     }
 
-    flyTo(latitude, longitude, height, heading, pitch, duration) {
+    flyTo(center, heading, pitch, duration) {
         this.viewer.camera.flyTo({
-             destination : Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
-             orientation : {
-                 heading : Cesium.Math.toRadians(heading),
-                 pitch : Cesium.Math.toRadians(pitch),
-                 roll : 0
-             },
-             duration: duration
-         });
+            destination : Cesium.Cartesian3.fromDegrees(center.longitude, center.latitude, center.altitude),
+            orientation : {
+                heading : Cesium.Math.toRadians(heading),
+                pitch : Cesium.Math.toRadians(pitch),
+                roll : 0
+            },
+            duration: duration
+        });
     }
 
     lookTo(heading, pitch, duration) {
@@ -85,7 +92,7 @@ class Viewport {
             orientation : {
                 heading : Cesium.Math.toRadians(heading),
                 pitch : Cesium.Math.toRadians(pitch),
-                roll : that.viewer.camera.roll
+                roll : this.viewer.camera.roll
             },
             duration: duration
         });

@@ -29,7 +29,7 @@ RowLayout {
     }
 
     MapScale {
-        metersInPixel: viewport.metersInPixel
+        pixelScale: viewport.pixelScale
     }
 
     MapRulerView {}

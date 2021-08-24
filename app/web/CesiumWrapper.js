@@ -46,8 +46,8 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
         const viewport = new Viewport(cesium, viewportController);
         input.registerHandler(viewport);
 
-        viewportController.flyTo.connect(function(lat, lon, height, heading, pitch, duration) {
-            viewport.flyTo(lat, lon, height, heading, pitch, duration);
+        viewportController.flyTo.connect(function(center, heading, pitch, duration) {
+            viewport.flyTo(center, heading, pitch, duration);
         });
 
         viewportController.lookTo.connect(function(heading, pitch, duration) {
