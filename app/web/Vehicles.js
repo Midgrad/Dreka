@@ -1,14 +1,28 @@
 // TODO: common with Adsb
-class Vehicles {
-    constructor(cesium) {
 
-        this.vehicles = new Map();
-        this.viewer = cesium.viewer;
+class Vehicle {
+    constructor(viewer, callsign) {
 
-        var that = this;
+        this.track = [];
+        this.viewer = viewer;
+        this.vehicle = viewer.entities.add({
+            name: callsign,
+            model: {
+                uri: "./models/flying_wing.glb",
+                minimumPixelSize: 128,
+                maximumScale: 40000,
+                color: Cesium.Color.AQUA
+            }
+        });
     }
 
-    setVehicleData(vehicle, data) {
+    done() {
+        this.viewer.entities.remove(this.vehicle);
+        this.track.forEach((value) => { this.viewer.entities.remove(value); } );
+        this.track.clear();
+    }
+
+    setData(data) {
         if (!Cesium.defined(data) || !Cesium.defined(data.longitude) ||
             !Cesium.defined(data.latitude) || !Cesium.defined(data.satelliteAltitude))
             return;
@@ -25,28 +39,39 @@ class Vehicles {
 
         var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
 
-        if (this.vehicles.has(vehicle)) {
-            var entity = this.vehicles.get(vehicle);
-            entity.position = position;
-            entity.orientation = orientation;
+        this.vehicle.position = position;
+        this.vehicle.orientation = orientation;
+
+        var point = this.viewer.entities.add({
+            position: position,
+            point: {
+                pixelSize: 2,
+                color: Cesium.Color.AQUA
+            }
+        });
+        this.track.push(point);
+    }
+}
+
+class Vehicles {
+    constructor(cesium) {
+        this.vehicles = new Map();
+        this.viewer = cesium.viewer;
+    }
+
+    setVehicleData(vehicleId, data) {
+        var vehicle;
+        if (this.vehicles.has(vehicleId)) {
+            vehicle = this.vehicles.get(vehicleId);
         } else {
-             var newEntity = this.viewer.entities.add({
-                 name: data.callsign,
-                 position: position,
-                 orientation: orientation,
-                 model: {
-                     uri: "./models/flying_wing.glb",
-                     minimumPixelSize: 128,
-                     maximumScale: 40000,
-                     color: Cesium.Color.AQUA
-                 }
-             });
-             this.vehicles.set(vehicle, newEntity);
+            vehicle = new Vehicle(this.viewer, vehicleId)
+            this.vehicles.set(vehicleId, vehicle);
         }
+        vehicle.setData(data);
     }
 
     clear() {
-        this.vehicles.forEach((value) => { this.viewer.entities.remove(value); } );
+        this.vehicles.forEach((value) => { value.done() } );
         this.vehicles.clear();
     }
 }
