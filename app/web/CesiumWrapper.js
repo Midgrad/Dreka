@@ -41,12 +41,26 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
 
     const layers = new Layers(cesium, channel.objects.layersController);
 
-    const viewport = new Viewport(cesium, channel.objects.viewportController);
-    input.registerHandler(viewport);
+    var viewportController = channel.objects.viewportController;
+    if (viewportController) {
+        const viewport = new Viewport(cesium, viewportController);
+        input.registerHandler(viewport);
+
+        viewportController.flyTo.connect(function(lat, lon, height, heading, pitch, duration) {
+            viewport.flyTo(lat, lon, height, heading, pitch, duration);
+        });
+
+        viewportController.lookTo.connect(function(heading, pitch, duration) {
+            viewport.lookTo(heading, pitch, duration);
+        });
+        viewportController.restore();
+    }
 
     var routesController = channel.objects.routesController;
     if (routesController) {
         const routes = new Routes(cesium);
+        input.registerHandler(routes);
+
         routesController.routesChanged.connect(function() {
             routes.setRoutes(routesController.routes);
         });

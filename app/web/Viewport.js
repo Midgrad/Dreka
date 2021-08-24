@@ -3,33 +3,7 @@ class Viewport {
 
         this.viewer = cesium.viewer;
         this.viewportController = viewportController;
-
         var that = this;
-
-        // signals
-        viewportController.flyTo.connect(function(latitude, longitude, height, heading, pitch, duration) {
-            that.viewer.camera.flyTo({
-                         destination : Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
-                         orientation : {
-                             heading : Cesium.Math.toRadians(heading),
-                             pitch : Cesium.Math.toRadians(pitch),
-                             roll : 0
-                         },
-                         duration: duration
-                     });
-        });
-
-        viewportController.lookTo.connect(function(heading, pitch, duration) {
-            that.viewer.camera.flyTo({
-                         destination : that.viewer.camera.positionWC,
-                         orientation : {
-                             heading : Cesium.Math.toRadians(heading),
-                             pitch : Cesium.Math.toRadians(pitch),
-                             roll : that.viewer.camera.roll
-                         },
-                         duration: duration
-                     });
-        });
 
         var geodesic = new Cesium.EllipsoidGeodesic();
         this.viewer.scene.postRender.addEventListener(function() {
@@ -44,12 +18,18 @@ class Viewport {
                 longitude: Cesium.Math.toDegrees(cartographic.longitude),
                 altitude: cartographic.height
             };
-            viewportController.centerPosition = converted;
+            viewportController.centerPosition = converted; // TODO: cameraPosition
 
-            // Find the distance between two pixels int the center of the screen.
+            // Find map center coordinates
             var width = that.viewer.scene.canvas.clientWidth;
             var height = that.viewer.scene.canvas.clientHeight;
 
+            var center = that.viewer.camera.getPickRay(new Cesium.Cartesian2(width / 2, height / 2));
+            if (center) {
+                // TODO: viewportController.centerPosition = converted;
+            }
+
+            // Find the distance between two pixels int the center of the screen.
             var left = that.viewer.camera.getPickRay(new Cesium.Cartesian2((width / 2) | 0, height / 2));
             var right = that.viewer.camera.getPickRay(new Cesium.Cartesian2(1 + (width / 2) | 0, height / 2));
 
@@ -70,7 +50,6 @@ class Viewport {
 
             viewportController.metersInPixel = pixelDistance;
         });
-        viewportController.restore();
     }
 
     onMove(cartesian) {
@@ -87,4 +66,28 @@ class Viewport {
             this.viewportController.cursorPosition = {};
         }
     }
+
+    flyTo(latitude, longitude, height, heading, pitch, duration) {
+        this.viewer.camera.flyTo({
+             destination : Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
+             orientation : {
+                 heading : Cesium.Math.toRadians(heading),
+                 pitch : Cesium.Math.toRadians(pitch),
+                 roll : 0
+             },
+             duration: duration
+         });
+    }
+
+    lookTo(heading, pitch, duration) {
+        this.viewer.camera.flyTo({
+            destination : this.viewer.camera.positionWC,
+            orientation : {
+                heading : Cesium.Math.toRadians(heading),
+                pitch : Cesium.Math.toRadians(pitch),
+                roll : that.viewer.camera.roll
+            },
+            duration: duration
+        });
+    };
 }
