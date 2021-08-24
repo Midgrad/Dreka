@@ -1,24 +1,28 @@
 class Viewport {
-    constructor(cesium, viewportController) {
+    constructor(cesium) {
 
         this.viewer = cesium.viewer;
-        this.viewportController = viewportController;
+        this.cameraHandlers = [];
+        this.cursorHandlers = [];
         var that = this;
 
+        this.heading = 0;
+        this.pitch = 0;
+        this.pixelScale = 0;
+        this.cameraPosition = {};
+        this.centerPosition = {};
+        this.cursorPosition = {};
+
         var geodesic = new Cesium.EllipsoidGeodesic();
+        // Do it every time postRender, cause camera.changed is too slow
         this.viewer.scene.postRender.addEventListener(function() {
             // Get camera pitch & roll
-            viewportController.heading = Cesium.Math.toDegrees(that.viewer.camera.heading);
-            viewportController.pitch = Cesium.Math.toDegrees(that.viewer.camera.pitch);
+            that.heading = Cesium.Math.toDegrees(that.viewer.camera.heading);
+            that.pitch = Cesium.Math.toDegrees(that.viewer.camera.pitch);
 
             // Get the camera position
-            var cartographic = Cesium.Cartographic.fromCartesian(that.viewer.camera.positionWC);
-            var converted = {
-                latitude: Cesium.Math.toDegrees(cartographic.latitude),
-                longitude: Cesium.Math.toDegrees(cartographic.longitude),
-                altitude: cartographic.height
-            };
-            viewportController.cameraPosition = converted;
+            var position = Cesium.Cartographic.fromCartesian(that.viewer.camera.positionWC);
+            that.cameraPosition = that.convert(position);
 
             // Find map center coordinates
             var globe = that.viewer.scene.globe;
@@ -28,13 +32,8 @@ class Viewport {
             var center = that.viewer.camera.getPickRay(new Cesium.Cartesian2(width / 2, height / 2));
             var centerPosition = globe.pick(center, that.viewer.scene);
             if (Cesium.defined(centerPosition)) {
-                cartographic = globe.ellipsoid.cartesianToCartographic(centerPosition);
-                converted = {
-                    latitude: Cesium.Math.toDegrees(cartographic.latitude),
-                    longitude: Cesium.Math.toDegrees(cartographic.longitude),
-                    altitude: cartographic.height
-                };
-                viewportController.centerPosition = converted;
+                position = globe.ellipsoid.cartesianToCartographic(centerPosition);
+                that.centerPosition = that.convert(position);
             }
 
             // Find the distance between two pixels int the center of the screen.
@@ -44,34 +43,32 @@ class Viewport {
             var leftPosition = globe.pick(left, that.viewer.scene);
             var rightPosition = globe.pick(right, that.viewer.scene);
 
-            if (!Cesium.defined(leftPosition) || !Cesium.defined(rightPosition)) {
-                viewportController.pixelScale = 0;
-                return;
+            if (Cesium.defined(leftPosition) && Cesium.defined(rightPosition)) {
+                var leftCartographic = globe.ellipsoid.cartesianToCartographic(leftPosition);
+                var rightCartographic = globe.ellipsoid.cartesianToCartographic(rightPosition);
+
+                geodesic.setEndPoints(leftCartographic, rightCartographic);
+                var pixelDistance = geodesic.surfaceDistance;
+
+                that.pixelScale = pixelDistance;
+            } else {
+                that.pixelScale = 0;
             }
 
-            var leftCartographic = globe.ellipsoid.cartesianToCartographic(leftPosition);
-            var rightCartographic = globe.ellipsoid.cartesianToCartographic(rightPosition);
-
-            geodesic.setEndPoints(leftCartographic, rightCartographic);
-            var pixelDistance = geodesic.surfaceDistance;
-
-            viewportController.pixelScale = pixelDistance;
+            that.cameraHandlers.forEach(handler => handler());
         });
     }
 
     onMove(cartesian) {
          // Get mouse position
         if (Cesium.defined(cartesian)) {
-            var cartographic = this.viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesian);
-            var converted = {
-                latitude: Cesium.Math.toDegrees(cartographic.latitude),
-                longitude: Cesium.Math.toDegrees(cartographic.longitude),
-                altitude: cartographic.height
-            };
-            this.viewportController.cursorPosition = converted;
+            var position = this.viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesian);
+            this.cursorPosition = this.convert(position);
         } else {
-            this.viewportController.cursorPosition = {};
+            this.cursorPosition = {};
         }
+
+        this.cursorHandlers.forEach(handler => handler());
     }
 
     flyTo(center, heading, pitch, duration) {
@@ -88,7 +85,9 @@ class Viewport {
 
     lookTo(heading, pitch, duration) {
         this.viewer.camera.flyTo({
-            destination : this.viewer.camera.positionWC,
+            destination : Cesium.Cartesian3.fromDegrees(this.centerPosition.longitude,
+                                                        this.centerPosition.latitude,
+                                                        this.cameraPosition.altitude),
             orientation : {
                 heading : Cesium.Math.toRadians(heading),
                 pitch : Cesium.Math.toRadians(pitch),
@@ -97,4 +96,29 @@ class Viewport {
             duration: duration
         });
     };
+
+    // TODO: all notifications to one style
+    subscribeCamera(handler) {
+        this.cameraHandlers.push(handler);
+    }
+
+    unsubscribeCamera(handler) {
+        this.cameraHandlers = this.cameraHandlers.filter(item => item !== handler)
+    }
+
+    subscribeCursor(handler) {
+        this.cursorHandlers.push(handler);
+    }
+
+    unsubscribeCursor(handler) {
+        this.cursorHandlers = this.cursorHandlers.filter(item => item !== handler)
+    }
+
+    convert(position) {
+        return {
+            latitude: Cesium.Math.toDegrees(position.latitude),
+            longitude: Cesium.Math.toDegrees(position.longitude),
+            altitude: position.height
+        };
+    }
 }

@@ -65,11 +65,11 @@ class Input {
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
     }
 
-    registerHandler(handler) {
+    subscribe(handler) {
         this.handlers.push(handler);
     }
 
-    unregisterHandler(handler) {
+    unsubscribe(handler) {
         this.handlers = this.handlers.filter(item => item !== handler)
     }
 }
