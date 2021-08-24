@@ -13,7 +13,9 @@ class Vehicles {
             return;
 
         var position = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, data.satelliteAltitude);
-        var hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(data.heading), 0, 0);
+        var hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(data.heading),
+                                              Cesium.Math.toRadians(data.pitch),
+                                              Cesium.Math.toRadians(data.roll));
         var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
 
         if (this.vehicles.has(vehicle)) {
@@ -28,7 +30,8 @@ class Vehicles {
                  model: {
                      uri: "./models/flying_wing.glb",
                      minimumPixelSize: 128,
-                     maximumScale: 40000
+                     maximumScale: 40000,
+                     color: Cesium.Color.AQUA
                  }
              });
              this.vehicles.set(vehicle, newEntity);
