@@ -1,10 +1,12 @@
 // TODO: common with Adsb
 
 class Vehicle {
-    constructor(viewer, callsign) {
+    constructor(viewer, callsign, parent) {
+
+        this.parent = parent;
+        this.viewer = viewer;
 
         this.track = [];
-        this.viewer = viewer;
         this.vehicle = viewer.entities.add({
             name: callsign,
             model: {
@@ -34,13 +36,16 @@ class Vehicle {
     }
 
     setData(data) {
+        // Ignore data with no position
         if (!Cesium.defined(data) || !Cesium.defined(data.longitude) ||
             !Cesium.defined(data.latitude) || !Cesium.defined(data.satelliteAltitude))
             return;
 
+        // Get the position
         var position = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, data.satelliteAltitude);
         var groundPosition = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, 0);
 
+        // Get the orientation
         var hpr;
         if (Cesium.defined(data.heading) && Cesium.defined(data.pitch) && Cesium.defined(data.roll))
             hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(data.heading),
@@ -67,6 +72,14 @@ class Vehicle {
             }
         });
         this.track.push(point);
+
+        // Remove extra points
+        if (this.parent.trackLength >= 0) {
+            var pointsToClear = this.track.length - this.parent.trackLength;
+            for (var i = 0; i < pointsToClear; ++i) {
+                this.viewer.entities.remove(this.track.shift());
+            }
+        }
     }
 }
 
@@ -74,6 +87,12 @@ class Vehicles {
     constructor(cesium) {
         this.vehicles = new Map();
         this.viewer = cesium.viewer;
+
+        this.trackLength = 250;
+    }
+
+    setTrackLength(trackLength) {
+        this.trackLength = trackLength;
     }
 
     setVehicleData(vehicleId, data) {
@@ -81,7 +100,7 @@ class Vehicles {
         if (this.vehicles.has(vehicleId)) {
             vehicle = this.vehicles.get(vehicleId);
         } else {
-            vehicle = new Vehicle(this.viewer, vehicleId)
+            vehicle = new Vehicle(this.viewer, vehicleId, this)
             this.vehicles.set(vehicleId, vehicle);
         }
         vehicle.setData(data);

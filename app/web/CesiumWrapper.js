@@ -88,9 +88,13 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
         });
 
         vehiclesController.vehicles.forEach((vehicle) => {
-            console.log(vehicle)
             vehicles.setVehicleData(vehicle, vehiclesController.vehicleData(vehicle));
         });
+
+        vehiclesController.trackLengthChanged.connect(function() {
+            vehicles.setTrackLength(vehiclesController.trackLength);
+        });
+        vehicles.setTrackLength(vehiclesController.trackLength);
     }
 
     var adsbController = channel.objects.adsbController;
