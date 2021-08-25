@@ -11,8 +11,19 @@ class Vehicle {
                 uri: "./models/flying_wing.glb",
                 minimumPixelSize: 128,
                 maximumScale: 40000,
-                color: Cesium.Color.AQUA
+                color: Cesium.Color.TEAL,
+                colorBlendMode: Cesium.ColorBlendMode.REPLACE,
+                silhouetteColor: Cesium.Color.AQUA,
+                silhouetteSize: 3,
+               // heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
             }
+        });
+        this.pylon = viewer.entities.add({
+            polyline: {
+                width: 5,
+                arcType: Cesium.ArcType.NONE,
+                material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.AQUA),
+            },
         });
     }
 
@@ -28,6 +39,7 @@ class Vehicle {
             return;
 
         var position = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, data.satelliteAltitude);
+        var groundPosition = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, 0);
 
         var hpr;
         if (Cesium.defined(data.heading) && Cesium.defined(data.pitch) && Cesium.defined(data.roll))
@@ -39,14 +51,19 @@ class Vehicle {
 
         var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
 
+        // Update vehicle position & orientation
         this.vehicle.position = position;
         this.vehicle.orientation = orientation;
 
+        // Update pylon position
+        this.pylon.polyline.positions = [position, groundPosition];
+
+        // Add track points
         var point = this.viewer.entities.add({
             position: position,
             point: {
-                pixelSize: 2,
-                color: Cesium.Color.AQUA
+                pixelSize : 2,
+                color: Cesium.Color.AQUA,
             }
         });
         this.track.push(point);
