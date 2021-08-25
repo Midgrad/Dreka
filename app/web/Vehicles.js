@@ -8,7 +8,7 @@ class Vehicle {
         this.vehicle = viewer.entities.add({
             name: callsign,
             model: {
-                uri: "./models/flying_wing.glb",
+                uri: "./models/fixed_wing.glb",
                 minimumPixelSize: 128,
                 maximumScale: 40000,
                 color: Cesium.Color.TEAL,
