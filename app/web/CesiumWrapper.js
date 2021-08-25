@@ -4,8 +4,6 @@ class CesiumWrapper {
         // Replace `your_access_token` with your Cesium ion access token.
         // --> Cesium.Ion.defaultAccessToken = 'your_access_token';
 
-//        var terrain = Cesium.createDefaultTerrainProviderViewModels();
-
         // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
         this.viewer = new Cesium.Viewer(container, {
             orderIndependentTranslucency: false,
@@ -14,14 +12,16 @@ class CesiumWrapper {
             selectionIndicator: false,
             infoBox: false,
             scene3DOnly: true,
-//            terrainProviderViewModels: terrain,
-//            selectedTerrainProviderViewModel: terrain[1]
 
             terrainProvider: Cesium.createWorldTerrain({
                 requestVertexNormals: true,
                 requestWaterMask: true
             })
         });
+
+//        this.viewer.terrainProvider = new Cesium.CesiumTerrainProvider({
+//            url: 'https://api.maptiler.com/tiles/terrain-quantized-mesh/?key={key}' // get your own key at https://cloud.maptiler.com/
+//        });
 
         this.viewer.scene.globe.depthTestAgainstTerrain = true;
 
@@ -95,6 +95,15 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
             vehicles.setTrackLength(vehiclesController.trackLength);
         });
         vehicles.setTrackLength(vehiclesController.trackLength);
+
+        vehiclesController.selectedVehicleChanged.connect(function() {
+            vehicles.selectVehicle(vehiclesController.selectedVehicle);
+        });
+        vehicles.selectVehicle(vehiclesController.selectedVehicle);
+
+        vehiclesController.trackingChanged.connect(function() {
+            vehicles.setTracking(vehiclesController.tracking);
+        });
     }
 
     var adsbController = channel.objects.adsbController;

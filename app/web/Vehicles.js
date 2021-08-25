@@ -86,6 +86,7 @@ class Vehicle {
 class Vehicles {
     constructor(cesium) {
         this.vehicles = new Map();
+        this.selectedVehicle = null;
         this.viewer = cesium.viewer;
 
         this.trackLength = 250;
@@ -93,6 +94,18 @@ class Vehicles {
 
     setTrackLength(trackLength) {
         this.trackLength = trackLength;
+    }
+
+    selectVehicle(vehicleId) {
+        this.selectedVehicle = this.vehicles.has(vehicleId) ? this.vehicles.get(vehicleId) : null;
+        console.log(this.selectedVehicle)
+    }
+
+    setTracking(tracking) {
+        if (this.selectedVehicle && tracking)
+            this.viewer.trackedEntity = this.selectedVehicle.vehicle;
+        else
+            this.viewer.trackedEntity = undefined;
     }
 
     setVehicleData(vehicleId, data) {
