@@ -19,6 +19,7 @@ class CesiumWrapper {
             })
         });
 
+//        Alternate terrainProvider
 //        this.viewer.terrainProvider = new Cesium.CesiumTerrainProvider({
 //            url: 'https://api.maptiler.com/tiles/terrain-quantized-mesh/?key={key}' // get your own key at https://cloud.maptiler.com/
 //        });

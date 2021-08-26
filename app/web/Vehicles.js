@@ -30,6 +30,7 @@ class Vehicle {
     }
 
     done() {
+        this.viewer.entities.remove(this.pylon);
         this.viewer.entities.remove(this.vehicle);
         this.track.forEach((value) => { this.viewer.entities.remove(value); } );
         this.track.clear();
@@ -98,7 +99,6 @@ class Vehicles {
 
     selectVehicle(vehicleId) {
         this.selectedVehicle = this.vehicles.has(vehicleId) ? this.vehicles.get(vehicleId) : null;
-        console.log(this.selectedVehicle)
     }
 
     setTracking(tracking) {
