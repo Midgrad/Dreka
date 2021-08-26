@@ -12,6 +12,7 @@ class CesiumWrapper {
             selectionIndicator: false,
             infoBox: false,
             scene3DOnly: true,
+            shouldAnimate: true,
 
             terrainProvider: Cesium.createWorldTerrain({
                 requestVertexNormals: true,

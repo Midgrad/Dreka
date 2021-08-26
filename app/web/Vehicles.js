@@ -6,6 +6,10 @@ class Vehicle {
         this.parent = parent;
         this.viewer = viewer;
 
+        this.position = Cesium.Cartesian3.fromDegrees(NaN, NaN, NaN);
+        this.groundPosition = Cesium.Cartesian3.fromDegrees(NaN, NaN, NaN);
+        this.hpr = new Cesium.HeadingPitchRoll(0, 0, 0);
+
         this.track = [];
         this.vehicle = viewer.entities.add({
             name: callsign,
@@ -43,30 +47,25 @@ class Vehicle {
             return;
 
         // Get the position
-        var position = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, data.satelliteAltitude);
-        var groundPosition = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, 0);
+        this.position = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, data.satelliteAltitude);
+        this.groundPosition = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, 0);
 
         // Get the orientation
-        var hpr;
         if (Cesium.defined(data.heading) && Cesium.defined(data.pitch) && Cesium.defined(data.roll))
-            hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(data.heading),
+            this.hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(data.heading),
                                               Cesium.Math.toRadians(-data.roll),
                                               Cesium.Math.toRadians(data.pitch));
-        else
-            hpr = new Cesium.HeadingPitchRoll(0, 0, 0);
-
-        var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
 
         // Update vehicle position & orientation
-        this.vehicle.position = position;
-        this.vehicle.orientation = orientation;
+        this.vehicle.position = this.position;
+        this.vehicle.orientation = Cesium.Transforms.headingPitchRollQuaternion(this.position, this.hpr);
 
         // Update pylon position
-        this.pylon.polyline.positions = [position, groundPosition];
+        this.pylon.polyline.positions = [this.position, this.groundPosition];
 
         // Add track points
         var point = this.viewer.entities.add({
-            position: position,
+            position: this.position,
             point: {
                 pixelSize : 2,
                 color: Cesium.Color.AQUA,
@@ -102,10 +101,12 @@ class Vehicles {
     }
 
     setTracking(tracking) {
-        if (this.selectedVehicle && tracking)
+        if (this.selectedVehicle && tracking) {
             this.viewer.trackedEntity = this.selectedVehicle.vehicle;
-        else
+        }
+        else {
             this.viewer.trackedEntity = undefined;
+        }
     }
 
     setVehicleData(vehicleId, data) {
