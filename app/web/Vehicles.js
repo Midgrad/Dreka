@@ -20,15 +20,14 @@ class Vehicle {
                 color: Cesium.Color.TEAL,
                 colorBlendMode: Cesium.ColorBlendMode.REPLACE,
                 silhouetteColor: Cesium.Color.AQUA,
-                silhouetteSize: 3,
-               // heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+                silhouetteSize: 3
             }
         });
         this.pylon = viewer.entities.add({
             polyline: {
                 width: 5,
                 arcType: Cesium.ArcType.NONE,
-                material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.AQUA),
+                material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.AQUA)
             },
         });
     }
@@ -43,12 +42,11 @@ class Vehicle {
     setData(data) {
         // Ignore data with no position
         if (!Cesium.defined(data) || !Cesium.defined(data.longitude) ||
-            !Cesium.defined(data.latitude) || !Cesium.defined(data.satelliteAltitude))
+            !Cesium.defined(data.latitude) || !Cesium.defined(data.altitudeAmsl))
             return;
 
         // Get the position
-        this.position = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, data.satelliteAltitude);
-        this.groundPosition = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, 0);
+        this.position = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, data.altitudeAmsl);
 
         // Get the orientation
         if (Cesium.defined(data.heading) && Cesium.defined(data.pitch) && Cesium.defined(data.roll))
@@ -59,9 +57,6 @@ class Vehicle {
         // Update vehicle position & orientation
         this.vehicle.position = this.position;
         this.vehicle.orientation = Cesium.Transforms.headingPitchRollQuaternion(this.position, this.hpr);
-
-        // Update pylon position
-        this.pylon.polyline.positions = [this.position, this.groundPosition];
 
         // Add track points
         var point = this.viewer.entities.add({
@@ -80,6 +75,20 @@ class Vehicle {
                 this.viewer.entities.remove(this.track.shift());
             }
         }
+
+        // Update ground position with terrain sample
+        var that = this;
+        var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider,
+                               [Cesium.Cartographic.fromDegrees(data.longitude, data.latitude, 0)]);
+        Cesium.when(promise, function(updatedPositions) {
+
+            that.groundPosition = updatedPositions[0];
+
+            console.log(that.groundPosition.height)
+
+            // Update pylon position
+            that.pylon.polyline.positions = [that.position, that.groundPosition];
+        });
     }
 }
 

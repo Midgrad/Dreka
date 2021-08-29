@@ -31,6 +31,7 @@ class Ruler {
                 pixelSize: this.pointPixelSize,
                 color: Cesium.Color.CADETBLUE,
                 disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                // heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
             }
         });
         this.points.push(point);
