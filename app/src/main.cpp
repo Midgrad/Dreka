@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
     app.setProperty(::gitRevision, QString(GIT_REVISION));
 
     kjarni::domain::PropertyTree pTree;
-    kjarni::domain::Locator::provide<kjarni::domain::IPropertyTree>(&pTree);
+    kjarni::app::Locator::provide<kjarni::domain::IPropertyTree>(&pTree);
 
     QtWebEngine::initialize();
 
