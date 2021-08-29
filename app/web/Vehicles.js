@@ -10,6 +10,8 @@ class Vehicle {
         this.groundPosition = Cesium.Cartesian3.fromDegrees(NaN, NaN, NaN);
         this.hpr = new Cesium.HeadingPitchRoll(0, 0, 0);
 
+        var that = this;
+
         this.track = [];
         this.vehicle = viewer.entities.add({
             name: callsign,
@@ -25,6 +27,9 @@ class Vehicle {
         });
         this.pylon = viewer.entities.add({
             polyline: {
+                positions: new Cesium.CallbackProperty(function() {
+                    return [that.position, that.groundPosition];
+                }, false),
                 width: 5,
                 arcType: Cesium.ArcType.NONE,
                 material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.AQUA)
@@ -82,12 +87,8 @@ class Vehicle {
                                [Cesium.Cartographic.fromDegrees(data.longitude, data.latitude, 0)]);
         Cesium.when(promise, function(updatedPositions) {
 
-            that.groundPosition = updatedPositions[0];
-
-            console.log(that.groundPosition.height)
-
-            // Update pylon position
-            that.pylon.polyline.positions = [that.position, that.groundPosition];
+            that.groundPosition = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude,
+                                                                updatedPositions[0].height);
         });
     }
 }
