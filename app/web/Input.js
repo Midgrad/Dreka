@@ -15,10 +15,11 @@ class Input {
         var leftClickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
         leftClickHandler.setInputAction(function(event) {
             // Promoute mouse click event with position
-            var cartesian = that.viewer.scene.pickPosition(event.position);
-            that.handlers.forEach(handler => {
-                if (typeof handler.onClick === "function")
-                    handler.onClick(cartesian);
+            that.pickPosition(event.position, function (cartesian) {
+                that.handlers.forEach(handler => {
+                    if (typeof handler.onClick === "function")
+                        handler.onClick(cartesian);
+                });
             });
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
@@ -26,10 +27,11 @@ class Input {
         var leftDownHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
         leftDownHandler.setInputAction(function(event) {
             // Promoute mouse down event with position
-            var cartesian = that.viewer.scene.pickPosition(event.position);
-            that.handlers.forEach(handler => {
-                if (typeof handler.onDown === "function")
-                    handler.onDown(cartesian);
+            that.pickPosition(event.position, function (cartesian) {
+                that.handlers.forEach(handler => {
+                    if (typeof handler.onDown === "function")
+                        handler.onDown(cartesian);
+                });
             });
         }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
 
@@ -37,10 +39,11 @@ class Input {
         var leftUpHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
         leftUpHandler.setInputAction(function(event) {
             // Promoute mouse up event with position
-            var cartesian = that.viewer.scene.pickPosition(event.position);
-            that.handlers.forEach(handler => {
-                if (typeof handler.onUp === "function")
-                    handler.onUp(cartesian);
+            that.pickPosition(event.position, function (cartesian) {
+                that.handlers.forEach(handler => {
+                    if (typeof handler.onUp === "function")
+                        handler.onUp(cartesian);
+                });
             });
         }, Cesium.ScreenSpaceEventType.LEFT_UP);
 
@@ -53,16 +56,24 @@ class Input {
                 if (typeof handler.onPick === "function")
                     handler.onPick(pickedObject);
             });
-            // Don't pick nan position after picking entity
-            if (Cesium.defined(pickedObject)) return;
 
             // Promoute mouse move event with position
-            var cartesian = that.viewer.scene.pickPosition(movement.endPosition);
-            that.handlers.forEach(handler => {
-                if (typeof handler.onMove === "function")
-                    handler.onMove(cartesian);
+            that.pickPosition(movement.endPosition, function (cartesian) {
+                that.handlers.forEach(handler => {
+                    if (typeof handler.onMove === "function")
+                        handler.onMove(cartesian);
+                });
             });
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+    }
+
+    pickPosition(position, callback) {
+        // Not work well with disabled depth test
+        // callback(this.viewer.scene.pickPosition(event.position));
+
+        var ray = this.viewer.camera.getPickRay(position);
+        var intersection = this.viewer.scene.globe.pick(ray, this.viewer.scene);
+        if (intersection) callback(intersection);
     }
 
     subscribe(handler) {

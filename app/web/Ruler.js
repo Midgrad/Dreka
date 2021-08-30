@@ -29,9 +29,7 @@ class Ruler {
             position: cartesian,
             point: {
                 pixelSize: this.pointPixelSize,
-                color: Cesium.Color.CADETBLUE,
-                disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                // heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+                color: Cesium.Color.CADETBLUE
             }
         });
         this.points.push(point);
@@ -50,8 +48,7 @@ class Ruler {
                 positions: [first, second],
                 arcType: Cesium.ArcType.GEODESIC,
                 width : this.lineWidth,
-                material : Cesium.Color.CADETBLUE,
-                depthFailMaterial: Cesium.Color.CADETBLUE
+                material : Cesium.Color.CADETBLUE
             },
             label: {
                 text: Cesium.Cartesian3.distance(first, second).toFixed(2),
