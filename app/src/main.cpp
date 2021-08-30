@@ -50,16 +50,16 @@ int main(int argc, char* argv[])
     QGuiApplication app(argc, argv);
     app.setProperty(::gitRevision, QString(GIT_REVISION));
 
-    kjarni::domain::PropertyTree pTree;
-    kjarni::app::Locator::provide<kjarni::domain::IPropertyTree>(&pTree);
+    md::domain::PropertyTree pTree;
+    md::app::Locator::provide<md::domain::IPropertyTree>(&pTree);
 
     QtWebEngine::initialize();
 
-    qmlRegisterType<dreka::endpoint::MapViewportController>("Dreka", 1, 0, "MapViewportController");
-    qmlRegisterType<dreka::endpoint::MapRulerController>("Dreka", 1, 0, "MapRulerController");
-    qmlRegisterType<dreka::endpoint::MapGridController>("Dreka", 1, 0, "MapGridController");
-    qmlRegisterType<dreka::endpoint::ClipboardController>("Dreka", 1, 0, "ClipboardController");
-    qmlRegisterType<dreka::endpoint::MapLayersController>("Dreka", 1, 0, "MapLayersController");
+    qmlRegisterType<md::presentation::MapViewportController>("Dreka", 1, 0, "MapViewportController");
+    qmlRegisterType<md::presentation::MapRulerController>("Dreka", 1, 0, "MapRulerController");
+    qmlRegisterType<md::presentation::MapGridController>("Dreka", 1, 0, "MapGridController");
+    qmlRegisterType<md::presentation::ClipboardController>("Dreka", 1, 0, "ClipboardController");
+    qmlRegisterType<md::presentation::MapLayersController>("Dreka", 1, 0, "MapLayersController");
 
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
     themeLoader.setFilename("./theme.json");
     themeLoader.load();
 
-    kjarni::app::ModuleLoader moduleLoader;
+    md::app::ModuleLoader moduleLoader;
     moduleLoader.discoverModules();
     moduleLoader.loadModules();
 

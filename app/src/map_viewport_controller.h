@@ -5,7 +5,7 @@
 
 #include "geodetic.h"
 
-namespace dreka::endpoint
+namespace md::presentation
 {
 class MapViewportController : public QObject
 {
@@ -58,14 +58,14 @@ signals:
     void lookTo(float heading, float pitch, float duration = 0.0);
 
 private:
-    jord::domain::Geodetic m_cursorPosition;
-    jord::domain::Geodetic m_centerPosition;
-    jord::domain::Geodetic m_cameraPosition;
+    md::domain::Geodetic m_cursorPosition;
+    md::domain::Geodetic m_centerPosition;
+    md::domain::Geodetic m_cameraPosition;
 
     float m_heading = qQNaN();
     float m_pitch = qQNaN();
     double m_pixelScale = 0.0;
 };
-} // namespace dreka::endpoint
+} // namespace md::presentation
 
 #endif // MAP_VIEWPORT_CONTROLLER_H

@@ -5,7 +5,7 @@
 
 class QClipboard;
 
-namespace dreka::endpoint
+namespace md::presentation
 {
 class ClipboardController : public QObject
 {
@@ -20,6 +20,6 @@ public slots:
 private:
     QClipboard* const m_clipboard;
 };
-} // namespace dreka::endpoint
+} // namespace dreka::presentation
 
 #endif // CLIPBOARD_CONTROLLER_H

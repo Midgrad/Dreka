@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-namespace dreka::endpoint
+namespace md::presentation
 {
 class MapGridController : public QObject
 {
@@ -19,6 +19,6 @@ public:
 signals:
     void enabledChanged();
 };
-} // namespace dreka::endpoint
+} // namespace dreka::presentation
 
 #endif // MAP_GRID_CONTROLLER_H

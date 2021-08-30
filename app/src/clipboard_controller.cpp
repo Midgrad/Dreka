@@ -3,7 +3,7 @@
 #include <QClipboard>
 #include <QGuiApplication>
 
-using namespace dreka::endpoint;
+using namespace md::presentation;
 
 ClipboardController::ClipboardController(QObject* parent) :
     QObject(parent),

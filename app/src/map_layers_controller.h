@@ -4,7 +4,7 @@
 #include <QJsonArray>
 #include <QObject>
 
-namespace dreka::endpoint
+namespace md::presentation
 {
 class MapLayersController : public QObject
 {
@@ -28,6 +28,6 @@ signals:
 private:
     QJsonArray m_layers;
 };
-} // namespace dreka::endpoint
+} // namespace dreka::presentation
 
 #endif // MAP_LAYERS_CONTROLLER_H

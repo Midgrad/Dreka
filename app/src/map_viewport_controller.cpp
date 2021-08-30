@@ -9,12 +9,12 @@ constexpr char camera[] = "viewport/camera";
 constexpr char heading[] = "viewport/heading";
 constexpr char pitch[] = "viewport/pitch";
 
-const jord::domain::Geodetic deafultCamera(55.97101, 37.10610, 400.0);
+const md::domain::Geodetic deafultCamera(55.97101, 37.10610, 400.0);
 constexpr float defaultHeading = 0.0;
 constexpr float defaultPitch = -15.0;
 } // namespace viewport_settings
 
-using namespace dreka::endpoint;
+using namespace md::presentation;
 
 MapViewportController::MapViewportController(QObject* parent) : QObject(parent)
 {
@@ -81,19 +81,19 @@ void MapViewportController::restore()
 
 void MapViewportController::setCursorPosition(const QJsonObject& cursorPosition)
 {
-    m_cursorPosition = jord::domain::Geodetic(cursorPosition);
+    m_cursorPosition = md::domain::Geodetic(cursorPosition);
     emit cursorPositionChanged();
 }
 
 void MapViewportController::setCenterPosition(const QJsonObject& centerPosition)
 {
-    m_centerPosition = jord::domain::Geodetic(centerPosition);
+    m_centerPosition = md::domain::Geodetic(centerPosition);
     emit centerPositionChanged();
 }
 
 void MapViewportController::setCameraPosition(const QJsonObject& cameraPosition)
 {
-    m_cameraPosition = jord::domain::Geodetic(cameraPosition);
+    m_cameraPosition = md::domain::Geodetic(cameraPosition);
     emit cameraPositionChanged();
 }
 

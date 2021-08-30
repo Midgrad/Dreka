@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-namespace dreka::endpoint
+namespace md::presentation
 {
 class MapRulerController : public QObject
 {
@@ -27,6 +27,6 @@ signals:
 
     Q_INVOKABLE void clear();
 };
-} // namespace dreka::endpoint
+} // namespace dreka::presentation
 
 #endif // MAP_RULER_CONTROLLER_H

@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-using namespace dreka::endpoint;
+using namespace md::presentation;
 
 MapGridController::MapGridController(QObject* parent) : QObject(parent)
 {
