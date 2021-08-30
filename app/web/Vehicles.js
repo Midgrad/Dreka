@@ -86,7 +86,7 @@ class Vehicle {
         var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider,
                                [Cesium.Cartographic.fromDegrees(data.longitude, data.latitude, 0)]);
         Cesium.when(promise, function(updatedPositions) {
-            if (!updatedPositions || !updatedPositions.length)
+            if (!updatedPositions || !Array.isArray(updatedPositions))
                 return;
 
             that.groundPosition = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude,

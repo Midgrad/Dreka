@@ -9,7 +9,7 @@ class Adsb {
     }
 
     setData(adsb) {
-        if (!adsb || !adsb.length)
+        if (!adsb || !Array.isArray(adsb))
             return;
 
         adsb.forEach((state) => {
