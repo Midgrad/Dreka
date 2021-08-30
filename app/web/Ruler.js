@@ -8,13 +8,24 @@ class Ruler {
         this.hoveredPointPixelSize = 16.0;
         this.lineWidth = 4.0;
 
-        this.points = [];
-        this.lines = [];
         this.positions = [];
         this.hoveredPoint = null;
         this.dragging = false;
 
         var that = this;
+
+        this.points = [];
+        this.labels = [];
+        this.lines = this.viewer.entities.add({
+            polyline: {
+                positions: new Cesium.CallbackProperty(function() {
+                    return that.positions;
+                }, false),
+                arcType: Cesium.ArcType.GEODESIC,
+                width : this.lineWidth,
+                material : Cesium.Color.CADETBLUE
+            }
+        });
 
         // clear signal
         rulerController.clear.connect(function() { that.clear(); });
@@ -23,7 +34,7 @@ class Ruler {
     addPoint(cartesian) {
         var lastPosition = this.positions.slice(-1).pop();
         if (lastPosition)
-            this.addLine(lastPosition, cartesian);
+            this.addLabel(lastPosition, cartesian);
 
         var point = this.viewer.entities.add({
             position: cartesian,
@@ -41,15 +52,9 @@ class Ruler {
         this.positions.push(cartesian);
     }
 
-    addLine(first, second) {
-        this.lines.push(this.viewer.entities.add({
+    addLabel(first, second) {
+        this.labels.push(this.viewer.entities.add({
             position: this.intermediate(first, second),
-            polyline: {
-                positions: [first, second],
-                arcType: Cesium.ArcType.GEODESIC,
-                width : this.lineWidth,
-                material : Cesium.Color.CADETBLUE
-            },
             label: {
                 text: Cesium.Cartesian3.distance(first, second).toFixed(2),
                 showBackground: true,
@@ -66,10 +71,10 @@ class Ruler {
         }
         this.points = [];
 
-        for (i = 0; i < this.lines.length; ++i) {
-            this.viewer.entities.remove(this.lines[i]);
+        for (i = 0; i < this.labels.length; ++i) {
+            this.viewer.entities.remove(this.labels[i]);
         }
-        this.lines = [];
+        this.labels = [];
         this.positions = [];
 
         this.rulerController.distance = 0;
@@ -91,9 +96,9 @@ class Ruler {
         this.hoveredPoint = point;
     }
 
-    changeLinePosions(line, first, second) {
-        line.position = this.intermediate(first, second);
-        line.polyline.positions = [first, second];
+    changeLabelsPositions(label, first, second) {
+        label.position = this.intermediate(first, second);
+        label.label.text = Cesium.Cartesian3.distance(first, second).toFixed(2);
     }
 
     dropHoveredPoint() {
@@ -148,11 +153,11 @@ class Ruler {
         // Move point to new place
         this.positions[index] = cartesian;
 
-        // Rebuild lines
+        // Rebuild labels
         if (index > 0)
-            this.changeLinePosions(this.lines[index - 1], this.positions[index - 1], cartesian);
-        if (index < this.lines.length)
-            this.changeLinePosions(this.lines[index], cartesian, this.positions[index + 1]);
+            this.changeLabelsPositions(this.labels[index - 1], this.positions[index - 1], cartesian);
+        if (index < this.labels.length)
+            this.changeLabelsPositions(this.labels[index], cartesian, this.positions[index + 1]);
 
         this.rulerController.distance = this.rebuildLength();
     }
