@@ -8,9 +8,9 @@ project(${PROJECT_NAME})
 
 # Tests
 option(TESTS_ENABLED "Enable tests" ON)
-if(TESTS_ENABLED)
+if (TESTS_ENABLED)
     enable_testing()
-endif(TESTS_ENABLED)
+endif (TESTS_ENABLED)
 
 # Versions
 set(VERSION_MAJOR 0)
