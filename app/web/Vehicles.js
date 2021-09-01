@@ -76,8 +76,10 @@ class Vehicle {
         // Remove extra points
         if (this.parent.trackLength >= 0) {
             var pointsToClear = this.track.length - this.parent.trackLength;
-            for (var i = 0; i < pointsToClear; ++i) {
-                this.viewer.entities.remove(this.track.shift());
+            if (pointsToClear > 0) {
+                for (var i = 0; i < pointsToClear; ++i) {
+                    this.viewer.entities.remove(this.track.shift());
+                }
             }
         }
 
@@ -90,8 +92,10 @@ class Vehicle {
                 if (!updatedPositions || !Array.isArray(updatedPositions))
                     return;
 
-                that.groundPosition = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude,
-                                                                    updatedPositions[0].height);
+                var cartesian = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude,
+                                                              updatedPositions[0].height);
+                if (Cesium.defined(cartesian))
+                    that.groundPosition = cartesian;
             });
         }
     }
