@@ -23,22 +23,26 @@ class Vehicle {
                 colorBlendMode: Cesium.ColorBlendMode.REPLACE,
                 silhouetteColor: Cesium.Color.AQUA,
                 silhouetteSize: 3
+            },
+            box: {
+                dimensions: new Cesium.Cartesian3(500.0, 500.0, 500.0),
+                material: Cesium.Color.TRANSPARENT
             }
         });
-        this.pylon = viewer.entities.add({
-            polyline: {
-                positions: new Cesium.CallbackProperty(function() {
-                    return [that.position, that.groundPosition];
-                }, false),
-                width: 5,
-                arcType: Cesium.ArcType.NONE,
-                material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.AQUA)
-            },
-        });
+//        this.pylon = viewer.entities.add({
+//            polyline: {
+//                positions: new Cesium.CallbackProperty(function() {
+//                    return [that.position, that.groundPosition];
+//                }, false),
+//                width: 5,
+//                arcType: Cesium.ArcType.NONE,
+//                material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.AQUA)
+//            },
+//        });
     }
 
     done() {
-        this.viewer.entities.remove(this.pylon);
+//        this.viewer.entities.remove(this.pylon);
         this.viewer.entities.remove(this.vehicle);
         this.track.forEach((value) => { this.viewer.entities.remove(value); } );
         this.track.clear();
@@ -83,21 +87,21 @@ class Vehicle {
             }
         }
 
-        // Update ground position with terrain sample
-        var that = this;
-        var terrainPoint = Cesium.Cartographic.fromDegrees(data.longitude, data.latitude, 0);
-        if (Cesium.defined(terrainPoint)) {
-            var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [terrainPoint]);
-            Cesium.when(promise, function(updatedPositions) {
-                if (!updatedPositions || !Array.isArray(updatedPositions))
-                    return;
+//        // Update ground position with terrain sample
+//        var that = this;
+//        var terrainPoint = Cesium.Cartographic.fromDegrees(data.longitude, data.latitude, 0);
+//        if (Cesium.defined(terrainPoint)) {
+//            var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [terrainPoint]);
+//            Cesium.when(promise, function(updatedPositions) {
+//                if (!updatedPositions || !Array.isArray(updatedPositions))
+//                    return;
 
-                var cartesian = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude,
-                                                              updatedPositions[0].height);
-                if (Cesium.defined(cartesian))
-                    that.groundPosition = cartesian;
-            });
-        }
+//                var cartesian = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude,
+//                                                              updatedPositions[0].height);
+//                if (Cesium.defined(cartesian))
+//                    that.groundPosition = cartesian;
+//            });
+//        }
     }
 }
 

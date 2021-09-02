@@ -25,6 +25,7 @@ class CesiumWrapper {
 //            url: 'https://api.maptiler.com/tiles/terrain-quantized-mesh/?key={key}' // get your own key at https://cloud.maptiler.com/
 //        });
 
+        // Disable depth test for showing entities under terrain
         this.viewer.scene.globe.depthTestAgainstTerrain = false;
 
         // Add Cesium OSM Buildings, a global 3D buildings layer.
