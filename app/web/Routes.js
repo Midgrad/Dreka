@@ -5,9 +5,12 @@ class Route {
         this.viewer = viewer;
 
         this.waypointPixelSize = 8.0;
+        this.data = {};
     }
 
     setData(routeData) {
+        this.data = routeData;
+
         routeData.waypoints.forEach((wpt) => { this.addWaypoint(wpt); } );
     }
 
@@ -20,16 +23,17 @@ class Route {
 
         var point = this.viewer.entities.add({
             position: cartesian,
+            show: this.data.visible,
             billboard: {
                 image: "./icons/wpt.svg",
                 color: Cesium.Color.WHITE,
-                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                disableDepthTestDistance: Number.POSITIVE_INFINITY
             }
         });
         this.points.push(point);
     }
 
-    clear() {
+    done() {
         for (var i = 0; i < this.points.length; ++i) {
             this.viewer.entities.remove(this.points[i]);
         }

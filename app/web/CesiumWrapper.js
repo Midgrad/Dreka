@@ -78,6 +78,8 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
         input.subscribe(routes);
 
         var routeUpdater = function(routesData) {
+            routes.clear();
+
             routesData.forEach((routeData) => {
                 routes.setRouteData(routeData.id, routeData);
             } );
