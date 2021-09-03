@@ -1,22 +1,14 @@
-class Routes {
-    constructor(cesium) {
+class Route {
+    constructor(viewer) {
 
         this.points = [];
-        this.viewer = cesium.viewer;
+        this.viewer = viewer;
 
         this.waypointPixelSize = 8.0;
-
-        var that = this;
     }
 
-    setRoutes(routes) {
-        this.clear();
-
-        routes.forEach((route) => { this.addRoute(route); } );
-    }
-
-    addRoute(route) {
-        route.waypoints.forEach((wpt) => { this.addWaypoint(wpt); } );
+    setData(routeData) {
+        routeData.waypoints.forEach((wpt) => { this.addWaypoint(wpt); } );
     }
 
     addWaypoint(wpt) {
@@ -44,5 +36,47 @@ class Routes {
         this.points = [];
     }
 
-    // TODO: callback to get ray from camera to ground
+    center() {
+        if (this.points.length > 0)
+            this.viewer.flyTo(this.points[0]);
+    }
+}
+
+class Routes {
+    constructor(cesium) {
+        this.viewer = cesium.viewer;
+
+        this.routes = new Map();
+    }
+
+    centerRoute(routeId) {
+        if (!this.routes.has(routeId))
+            return;
+
+        this.routes.get(routeId).center();
+    }
+
+    setRouteData(routeId, data) {
+        var route;
+        if (this.routes.has(routeId)) {
+            route = this.routes.get(routeId);
+        } else {
+            route = new Route(this.viewer, routeId, this)
+            this.routes.set(routeId, route);
+        }
+        route.setData(data);
+    }
+
+    removeRoute(routeId) {
+        if (!this.routes.has(routeId))
+            return;
+
+        this.routes.get(routeId).done();
+        this.routes.delete(routeId);
+    }
+
+    clear() {
+        this.routes.forEach((value) => { value.done(); } );
+        this.routes.clear();
+    }
 }

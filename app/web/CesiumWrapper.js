@@ -77,10 +77,20 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
         const routes = new Routes(cesium);
         input.subscribe(routes);
 
+        var routeUpdater = function(routesData) {
+            routesData.forEach((routeData) => {
+                routes.setRouteData(routeData.id, routeData);
+            } );
+        }
+
         routesController.routesChanged.connect(function() {
-            routes.setRoutes(routesController.routes);
+            routeUpdater(routesController.routes);
         });
-        routes.setRoutes(routesController.routes);
+        routeUpdater(routesController.routes);
+
+        routesController.centerRoute.connect(function(routeId) {
+            routes.centerRoute(routeId);
+        });
     }
 
     var vehiclesController = channel.objects.vehiclesController;
