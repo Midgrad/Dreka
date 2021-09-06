@@ -77,22 +77,26 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
         const routes = new Routes(cesium);
         input.subscribe(routes);
 
-        var routeUpdater = function(routesData) {
-            routes.clear();
+//        var setData = function(routeId) {
+//            console.log("PIZDA");
+//            var data = routesController.routeData(routeId);
+//            console.log(data);
+//            if (!data) return;
 
-            routesData.forEach((routeData) => {
-                routes.setRouteData(routeData.id, routeData);
-            } );
-        }
+//            routes.setRouteData(routeId, data);
+//        }
 
-        routesController.routesChanged.connect(function() {
-            routeUpdater(routesController.routes);
-        });
-        routeUpdater(routesController.routes);
+//        routesController.routesChanged.connect(function() {
+//            // TODO: add/remove each route
+//            routes.clear();
 
-        routesController.centerRoute.connect(function(routeId) {
-            routes.centerRoute(routeId);
-        });
+//            routesController.routes.forEach((routeId) => { setData(routeId); });
+//        });
+//        routesController.routeChanged.connect(function(routeId) { setData(routeId); });
+//        routesController.routes.forEach((routeId) => { setData(routeId); });
+        routesController.routes.forEach((routeId) => { routes.setRouteData(routeId, routesController.routeData(routeId)); });
+
+        routesController.centerRoute.connect(function(routeId) { routes.centerRoute(routeId); });
     }
 
     var vehiclesController = channel.objects.vehiclesController;
