@@ -9,6 +9,7 @@ class Route {
     }
 
     setData(routeData) {
+        this.clear();
         this.data = routeData;
 
         routeData.waypoints.forEach((wpt) => { this.addWaypoint(wpt); } );
@@ -33,7 +34,7 @@ class Route {
         this.points.push(point);
     }
 
-    done() {
+    clear() {
         for (var i = 0; i < this.points.length; ++i) {
             this.viewer.entities.remove(this.points[i]);
         }
@@ -75,12 +76,12 @@ class Routes {
         if (!this.routes.has(routeId))
             return;
 
-        this.routes.get(routeId).done();
+        this.routes.get(routeId).clear();
         this.routes.delete(routeId);
     }
 
     clear() {
-        this.routes.forEach((value) => { value.done(); } );
+        this.routes.forEach((value) => { value.clear(); } );
         this.routes.clear();
     }
 }

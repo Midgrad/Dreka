@@ -77,24 +77,22 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
         const routes = new Routes(cesium);
         input.subscribe(routes);
 
-//        var setData = function(routeId) {
-//            console.log("PIZDA");
-//            var data = routesController.routeData(routeId);
-//            console.log(data);
-//            if (!data) return;
+        routesController.routeChanged.connect(function(routeId) {
+            routesController.routeData(routeId, function(routeData) {
+                routes.setRouteData(routeId, routeData);
+            });
+        });
 
-//            routes.setRouteData(routeId, data);
-//        }
-
-//        routesController.routesChanged.connect(function() {
-//            // TODO: add/remove each route
-//            routes.clear();
-
-//            routesController.routes.forEach((routeId) => { setData(routeId); });
-//        });
-//        routesController.routeChanged.connect(function(routeId) { setData(routeId); });
-//        routesController.routes.forEach((routeId) => { setData(routeId); });
-        routesController.routes.forEach((routeId) => { routes.setRouteData(routeId, routesController.routeData(routeId)); });
+        var updateAllRoutes = function () {
+            routes.clear();
+            routesController.routes.forEach((routeId) => {
+                routesController.routeData(routeId, function(routeData) {
+                    routes.setRouteData(routeId, routeData);
+                });
+            });
+        }
+        routesController.routesChanged.connect(function(routeId) { updateAllRoutes(); });
+        updateAllRoutes();
 
         routesController.centerRoute.connect(function(routeId) { routes.centerRoute(routeId); });
     }
@@ -107,7 +105,9 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
         });
 
         vehiclesController.vehicles.forEach((vehicle) => {
-            vehicles.setVehicleData(vehicle, vehiclesController.vehicleData(vehicle));
+            vehiclesController.vehicleData(vehicle, function(vehicleData) {
+                vehicles.setVehicleData(vehicle, vehicleData);
+            });
         });
 
         vehiclesController.trackLengthChanged.connect(function() {
