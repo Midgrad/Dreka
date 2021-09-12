@@ -1,10 +1,10 @@
 #include "map_layers_controller.h"
 
 #include <QDebug>
-#include <QFile>
 #include <QJsonArray>
-#include <QJsonDocument>
 #include <QJsonObject>
+
+#include "json_source_file.h"
 
 namespace
 {
@@ -14,12 +14,14 @@ constexpr char url[] = "url";
 constexpr char visibility[] = "visibility";
 constexpr char opacity[] = "opacity";
 
-constexpr char path[] = "./layers.json";
+constexpr char layersFileName[] = "./layers.json";
 } // namespace
 
 using namespace md::presentation;
 
-MapLayersController::MapLayersController(QObject* parent) : QObject(parent)
+MapLayersController::MapLayersController(QObject* parent) :
+    QObject(parent),
+    m_source(new data_source::JsonSourceFile(::layersFileName))
 {
 }
 
@@ -33,23 +35,16 @@ void MapLayersController::save()
     if (m_layers.isEmpty())
         return;
 
-    QFile file(::path);
-    file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);
-
-    QJsonDocument doc(m_layers);
-    file.write(doc.toJson());
-    file.close();
+    m_source->save(QJsonDocument(m_layers));
 }
 
 void MapLayersController::restore()
 {
-    QFile file(::path);
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QJsonDocument document = m_source->read();
+    if (!document.isArray())
+        return;
 
-    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
-    file.close();
-
-    m_layers = doc.array();
+    m_layers = document.array();
     emit layersChanged();
 }
 

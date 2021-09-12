@@ -4,6 +4,8 @@
 #include <QJsonArray>
 #include <QObject>
 
+#include "i_json_source.h"
+
 namespace md::presentation
 {
 class MapLayersController : public QObject
@@ -26,8 +28,9 @@ signals:
     void layersChanged();
 
 private:
+    QScopedPointer<data_source::IJsonSource> const m_source;
     QJsonArray m_layers;
 };
-} // namespace dreka::presentation
+} // namespace md::presentation
 
 #endif // MAP_LAYERS_CONTROLLER_H
