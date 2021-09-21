@@ -72,29 +72,31 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
         viewportController.restore();
     }
 
-    var routesController = channel.objects.routesController;
-    if (routesController) {
+    var missionsController = channel.objects.missionsController;
+    if (missionsController) {
         const routes = new Routes(cesium);
         input.subscribe(routes);
 
-        routesController.routeChanged.connect(function(routeId) {
-            routesController.routeData(routeId, function(routeData) {
-                routes.setRouteData(routeId, routeData);
-            });
-        });
+        console.log(missionsController.missions)
 
-        var updateAllRoutes = function () {
-            routes.clear();
-            routesController.routes.forEach((routeId) => {
-                routesController.routeData(routeId, function(routeData) {
-                    routes.setRouteData(routeId, routeData);
-                });
-            });
-        }
-        routesController.routesChanged.connect(function(routeId) { updateAllRoutes(); });
-        updateAllRoutes();
+//        routesController.routeChanged.connect(function(routeId) {
+//            routesController.routeData(routeId, function(routeData) {
+//                routes.setRouteData(routeId, routeData);
+//            });
+//        });
 
-        routesController.centerRoute.connect(function(routeId) { routes.centerRoute(routeId); });
+//        var updateAllRoutes = function () {
+//            routes.clear();
+//            routesController.routes.forEach((routeId) => {
+//                routesController.routeData(routeId, function(routeData) {
+//                    routes.setRouteData(routeId, routeData);
+//                });
+//            });
+//        }
+//        routesController.routesChanged.connect(function(routeId) { updateAllRoutes(); });
+//        updateAllRoutes();
+
+//        routesController.centerRoute.connect(function(routeId) { routes.centerRoute(routeId); });
     }
 
     var vehiclesController = channel.objects.vehiclesController;
