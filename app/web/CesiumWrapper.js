@@ -77,11 +77,10 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
         const routes = new Routes(cesium);
         input.subscribe(routes);
 
-        missionsController.missions.forEach((mission) => {
-            console.log(mission.id)
-            //missionsController.missionData(mission.id, function(missionData) {
-            //    vehicles.setRouteData(mission, missionData);
-            //});
+        missionsController.missions.forEach((missionId) => {
+            missionsController.route(missionId, function(routeData) {
+                routes.setRouteData(missionId, routeData);
+            });
         });
 
 //        routesController.routeChanged.connect(function(routeId) {

@@ -1,11 +1,26 @@
 class Route {
     constructor(viewer) {
 
-        this.points = [];
         this.viewer = viewer;
 
-        this.waypointPixelSize = 8.0;
+        this.lineWidth = 1.0;
+        this.homeAltitude = 0.0;
+        this.positions = [];
         this.data = {};
+
+        var that = this;
+
+        this.points = [];
+        this.lines = this.viewer.entities.add({
+            polyline: {
+                positions: new Cesium.CallbackProperty(function() {
+                    return that.positions;
+                }, false),
+                arcType: Cesium.ArcType.GEODESIC,
+                width : this.lineWidth,
+                material: Cesium.Color.WHITE
+            }
+        });
     }
 
     setData(routeData) {
@@ -16,11 +31,21 @@ class Route {
     }
 
     addWaypoint(wpt) {
-        var pos = wpt.position;
-        var cartesian = Cesium.Cartesian3.fromDegrees(pos.longitude, pos.latitude, pos.altitude);
+        var params = wpt.params;
+        var altitude = params.altitude;
+
+        // Home altitude form first waypoint to waypoints with relative flag
+        if (this.points.length === 0)
+            this.homeAltitude = altitude;
+        else if (Cesium.defined(params.relative) && params.relative)
+            altitude += this.homeAltitude;
+
+        var cartesian = Cesium.Cartesian3.fromDegrees(params.longitude, params.latitude, altitude);
 
         if (!Cesium.defined(cartesian))
             return;
+
+        this.positions.push(cartesian);
 
         var point = this.viewer.entities.add({
             position: cartesian,
@@ -39,6 +64,7 @@ class Route {
             this.viewer.entities.remove(this.points[i]);
         }
         this.points = [];
+        this.positions = [];
     }
 
     center() {
