@@ -91,16 +91,16 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
 
         missionsController.missionsChanged.connect(() => {
             var missionIds = missionsController.missions;
-            routes.routeIds().forEach((routeId) => {
-                var index = missionIds.indexOf(routeId);
+            routes.missions.forEach((missionId) => {
+                var index = missionIds.indexOf(missionId);
                 // Don't touch existing routes
                 if (index > -1) {
                     missionIds.splice(index, 1);
                 }
                 // Add new route
                 else {
-                    missionsController.route(routeId, function(routeData) {
-                        routes.setRouteData(routeId, routeData);
+                    missionsController.route(missionId, function(routeData) {
+                        routes.setRouteData(missionId, routeData);
                     });
                 }
             });

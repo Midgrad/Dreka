@@ -67,7 +67,7 @@ class Route extends Draggable {
 
     center() {
         if (this.points.length > 0)
-            this.viewer.flyTo(this.points[0]);
+            this.viewer.flyTo(this.lines);
     }
 
     makeHoveredPoint(point) {
