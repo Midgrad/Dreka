@@ -1,21 +1,18 @@
-class Route {
+class Route extends Draggable {
     constructor(viewer) {
+        super(cesium.viewer);
 
-        this.viewer = viewer;
-
-        this.lineWidth = 1.0;
+        this.lineWidth = 3.0;
+        this.normalScale = 1.0;
+        this.hoveredScale = 1.5;
         this.homeAltitude = 0.0;
-        this.positions = [];
         this.data = {};
 
         var that = this;
 
-        this.points = [];
         this.lines = this.viewer.entities.add({
             polyline: {
-                positions: new Cesium.CallbackProperty(function() {
-                    return that.positions;
-                }, false),
+                positions: new Cesium.CallbackProperty(function() { return that.positions; }, false),
                 arcType: Cesium.ArcType.GEODESIC,
                 width : this.lineWidth,
                 material: Cesium.Color.WHITE
@@ -53,7 +50,8 @@ class Route {
             billboard: {
                 image: "./icons/wpt.svg",
                 color: Cesium.Color.WHITE,
-                disableDepthTestDistance: Number.POSITIVE_INFINITY
+                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                scale: this.normalScale
             }
         });
         this.points.push(point);
@@ -71,6 +69,24 @@ class Route {
         if (this.points.length > 0)
             this.viewer.flyTo(this.points[0]);
     }
+
+    makeHoveredPoint(point) {
+        point.billboard.scale = this.hoveredScale;
+        super.makeHoveredPoint(point);
+    }
+
+    dropHoveredPoint() {
+        if (!this.hoveredPoint)
+            return;
+
+        this.hoveredPoint.billboard.scale = this.normalScale;
+        super.dropHoveredPoint();
+    }
+
+//    onMove(cartesian) {
+//        if (!super.onMove(cartesian))
+//            return;
+//    }
 }
 
 class Routes {
@@ -78,6 +94,10 @@ class Routes {
         this.viewer = cesium.viewer;
 
         this.routes = new Map();
+    }
+
+    routeIds() {
+        return this.routes.keys();
     }
 
     centerRoute(routeId) {
@@ -107,7 +127,23 @@ class Routes {
     }
 
     clear() {
-        this.routes.forEach((value) => { value.clear(); } );
+        this.routes.forEach((route) => { route.clear(); } );
         this.routes.clear();
+    }
+
+    onUp(cartesian) {
+        this.routes.forEach((route) => { route.onUp(cartesian); } );
+    }
+
+    onDown(cartesian) {
+        this.routes.forEach((route) => { route.onDown(cartesian); } );
+    }
+
+    onMove(cartesian) {
+        this.routes.forEach((route) => { route.onMove(cartesian); } );
+    }
+
+    onPick(pickedObject) {
+        this.routes.forEach((route) => { route.onPick(pickedObject); } );
     }
 }

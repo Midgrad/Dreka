@@ -1,29 +1,22 @@
-class Ruler {
+class Ruler extends Draggable {
     constructor(cesium, rulerController) {
+        super(cesium.viewer);
 
-        this.viewer = cesium.viewer;
         this.rulerController = rulerController;
 
         this.pointPixelSize = 8.0;
         this.hoveredPointPixelSize = 16.0;
         this.lineWidth = 4.0;
 
-        this.positions = [];
-        this.hoveredPoint = null;
-        this.dragging = false;
-
         var that = this;
 
-        this.points = [];
         this.labels = [];
         this.lines = this.viewer.entities.add({
             polyline: {
-                positions: new Cesium.CallbackProperty(function() {
-                    return that.positions;
-                }, false),
+                positions: new Cesium.CallbackProperty(function() { return that.positions; }, false),
                 arcType: Cesium.ArcType.GEODESIC,
-                width : this.lineWidth,
-                material : Cesium.Color.CADETBLUE
+                width: this.lineWidth,
+                material: Cesium.Color.CADETBLUE
             }
         });
 
@@ -93,12 +86,7 @@ class Ruler {
 
     makeHoveredPoint(point) {
         point.point.pixelSize = this.hoveredPointPixelSize;
-        this.hoveredPoint = point;
-    }
-
-    changeLabelsPositions(label, first, second) {
-        label.position = this.intermediate(first, second);
-        label.label.text = Cesium.Cartesian3.distance(first, second).toFixed(2);
+        super.makeHoveredPoint(point);
     }
 
     dropHoveredPoint() {
@@ -106,18 +94,7 @@ class Ruler {
             return;
 
         this.hoveredPoint.point.pixelSize = this.pointPixelSize;
-        this.hoveredPoint = null;
-    }
-
-    setDragging(dragging) {
-        this.dragging = dragging;
-
-        var scene = this.viewer.scene;
-        scene.screenSpaceCameraController.enableRotate = !dragging;
-        scene.screenSpaceCameraController.enableTranslate = !dragging;
-        scene.screenSpaceCameraController.enableZoom = !dragging;
-        scene.screenSpaceCameraController.enableTilt = !dragging;
-        scene.screenSpaceCameraController.enableLook = !dragging;
+        super.dropHoveredPoint()
     }
 
     rebuildLength() {
@@ -128,30 +105,20 @@ class Ruler {
         return distance;
     }
 
+    changeLabelsPositions(label, first, second) {
+        label.position = this.intermediate(first, second);
+        label.label.text = Cesium.Cartesian3.distance(first, second).toFixed(2);
+    }
+
     onClick(cartesian) {
         if (this.rulerController.rulerMode && Cesium.defined(cartesian))
             this.addPoint(cartesian);
     }
 
-    onDown(cartesian) {
-        if (this.hoveredPoint)
-            this.setDragging(true);
-    }
-
-    onUp(cartesian) {
-        this.setDragging(false);
-    }
-
     onMove(cartesian) {
-        if (!this.dragging || !Cesium.defined(cartesian) || !this.hoveredPoint) return;
-
-        this.hoveredPoint.position = cartesian;
-        var index = this.points.indexOf(this.hoveredPoint);
+        var index = super.onMove(cartesian);
         if (index === -1)
             return;
-
-        // Move point to new place
-        this.positions[index] = cartesian;
 
         // Rebuild labels
         if (index > 0)
@@ -160,24 +127,5 @@ class Ruler {
             this.changeLabelsPositions(this.labels[index], cartesian, this.positions[index + 1]);
 
         this.rulerController.distance = this.rebuildLength();
-    }
-
-    onPick(pickedObject) {
-        if (this.dragging)
-            return;
-
-        if (!Cesium.defined(pickedObject)) {
-            this.dropHoveredPoint();
-            return;
-        }
-
-        var entity = pickedObject.id;
-        if (entity === this.hoveredPoint)
-            return;
-
-        this.dropHoveredPoint();
-
-        if (this.points.includes(entity))
-            this.makeHoveredPoint(entity);
     }
 }

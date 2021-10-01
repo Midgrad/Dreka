@@ -83,24 +83,34 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
             });
         });
 
-//        routesController.routeChanged.connect(function(routeId) {
-//            routesController.routeData(routeId, function(routeData) {
-//                routes.setRouteData(routeId, routeData);
-//            });
-//        });
+        missionsController.routeChanged.connect((missionId) => {
+            missionsController.route(missionId, function(routeData) {
+                routes.setRouteData(missionId, routeData);
+            });
+        });
 
-//        var updateAllRoutes = function () {
-//            routes.clear();
-//            routesController.routes.forEach((routeId) => {
-//                routesController.routeData(routeId, function(routeData) {
-//                    routes.setRouteData(routeId, routeData);
-//                });
-//            });
-//        }
-//        routesController.routesChanged.connect(function(routeId) { updateAllRoutes(); });
-//        updateAllRoutes();
+        missionsController.missionsChanged.connect(() => {
+            var missionIds = missionsController.missions;
+            routes.routeIds().forEach((routeId) => {
+                var index = missionIds.indexOf(routeId);
+                // Don't touch existing routes
+                if (index > -1) {
+                    missionIds.splice(index, 1);
+                }
+                // Add new route
+                else {
+                    missionsController.route(routeId, function(routeData) {
+                        routes.setRouteData(routeId, routeData);
+                    });
+                }
+            });
+            // Remove deleted routes
+            missionIds.forEach((missionId) => {
+                routes.removeRoute(missionId);
+            });
+        });
 
-//        routesController.centerRoute.connect(function(routeId) { routes.centerRoute(routeId); });
+        missionsController.centerRoute.connect(function(missionId) { routes.centerRoute(missionId); });
     }
 
     var vehiclesController = channel.objects.vehiclesController;
