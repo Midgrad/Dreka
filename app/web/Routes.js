@@ -1,4 +1,71 @@
 // TODO: waypoint class
+//class Waypoint {
+//    constructor(waypointData) {
+//        this.setData(waypointData);
+
+//        var that = this;
+
+//        // Add draggable point on the ground
+//        var groundPoint = this.viewer.entities.add({
+//            position: new Cesium.CallbackProperty( () => { return that.position; }),
+//            point: {
+//                pixelSize: this.pointPixelSize,
+//                color: Cesium.Color.GAINSBORO,
+//                heightReference : Cesium.HeightReference.CLAMP_TO_GROUND
+//            }
+//        });
+//        this.points.push(groundPoint);
+
+//        // Waypoint with real altitude
+//        var waypoint = this.viewer.entities.add({
+//            position: position,
+//            show: this.visible,
+//            billboard: {
+//                image: "./icons/wpt.svg",
+//                color: Cesium.Color.WHITE,
+//                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+//                scale: this.normalScale
+//            }
+//        });
+//        this.waypoints.push(waypoint);
+
+//        var heightMaps = this.viewer.terrainProvider;
+//        var terrainPosition = Cesium.Cartographic.fromDegrees(params.longitude, params.latitude, 0);
+//        this.terrainPositions.push(terrainPosition);
+
+//        // TODO: unified terrain check
+//        var heightCheck = setInterval(function () {
+//            if (heightMaps.ready) {
+//                clearInterval(heightCheck);
+
+//                var promise =  Cesium.sampleTerrainMostDetailed(heightMaps, [terrainPosition]);
+//                Cesium.when(promise, updatedPositions => {});
+//            }
+//        }, 1000);
+
+//        // Arrow to the ground
+//        var pylon = this.viewer.entities.add({
+//             show: this.visible,
+//             polyline: {
+//                 positions: new Cesium.CallbackProperty(function() {
+//                     return [position, Cesium.Cartographic.toCartesian(terrainPosition)];
+//                 }, false),
+//                 width: 5,
+//                 arcType: Cesium.ArcType.NONE,
+//                 material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.GAINSBORO)
+//             }
+//        });
+//        this.pylons.push(pylon);
+//    }
+
+//    setData(waypointData) {
+//        var params = waypointData.params;
+
+//        this.altitude = params.altitude;
+//        this.position = Cesium.Cartesian3.fromDegrees(params.longitude, params.latitude, altitude);
+//        this.terrainPosition = Cesium.Cartographic.fromDegrees(params.longitude, params.latitude, 0);
+//    }
+//}
 
 class Route extends Draggable {
     constructor(viewer) {
@@ -13,7 +80,6 @@ class Route extends Draggable {
 
         // Cartesian coordinates
         this.positions = [];
-        this.terrainPositions = [];
 
         // Entities
         this.waypoints = [];
@@ -85,7 +151,6 @@ class Route extends Draggable {
 
         var heightMaps = this.viewer.terrainProvider;
         var terrainPosition = Cesium.Cartographic.fromDegrees(params.longitude, params.latitude, 0);
-        this.terrainPositions.push(terrainPosition);
 
         // TODO: unified terrain check
         var heightCheck = setInterval(function () {
@@ -124,9 +189,7 @@ class Route extends Draggable {
             this.viewer.entities.remove(this.pylons[i]);
         }
         this.pylons = [];
-
         this.positions = [];
-        this.terrainPositions = [];
     }
 
     center() {
@@ -139,11 +202,16 @@ class Route extends Draggable {
         if (index === -1)
             return;
 
-        // Move point to new place
-        this.positions[index].x = cartesian.x;
-        this.positions[index].y = cartesian.y;
+        var point = Cesium.Cartographic.fromCartesian(cartesian);
+        var terrainPoint = Cesium.Cartographic.fromCartesian(this.positions[index]);
+        terrainPoint.latitude = point.latitude;
+        terrainPoint.longitude = point.longitude;
 
-        this.terrainPositions[index] = cartesian;
+        // Move point to new place
+        this.positions[index] = Cesium.Cartographic.toCartesian(terrainPoint);
+
+        this.waypoints[index].position = this.positions[index];
+        this.pylons[index].polyline.positions = [this.positions[index], cartesian];
     }
 }
 
