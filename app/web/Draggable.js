@@ -2,8 +2,9 @@ class Draggable {
     constructor(viewer) {
         this.viewer = viewer;
 
-        // Cartesian coordinates
-        this.positions = [];
+        // Visual
+        this.pointPixelSize = 8.0;
+        this.hoveredPointPixelSize = 16.0;
 
         // Entities
         this.points = [];
@@ -25,11 +26,23 @@ class Draggable {
     }
 
     makeHoveredPoint(point) {
+        point.point.pixelSize = this.hoveredPointPixelSize;
         this.hoveredPoint = point;
     }
 
     dropHoveredPoint() {
+        if (!this.hoveredPoint)
+            return;
+
+        this.hoveredPoint.point.pixelSize = this.pointPixelSize;
         this.hoveredPoint = null;
+    }
+
+    clear() {
+        for (var i = 0; i < this.points.length; ++i) {
+            this.viewer.entities.remove(this.points[i]);
+        }
+        this.points = [];
     }
 
     onUp(cartesian) {
@@ -54,8 +67,6 @@ class Draggable {
         if (index === -1)
             return -1;
 
-        // Move point to new place
-        this.positions[index] = cartesian;
         return index;
     }
 

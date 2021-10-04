@@ -2,15 +2,17 @@ class Ruler extends Draggable {
     constructor(cesium, rulerController) {
         super(cesium.viewer);
 
+        // Visual
         this.rulerController = rulerController;
+        this.lineWidth = 3.0;
 
-        this.pointPixelSize = 8.0;
-        this.hoveredPointPixelSize = 16.0;
-        this.lineWidth = 4.0;
+        // Cartesian coordinates
+        this.positions = [];
+
+        // Entities
+        this.labels = [];
 
         var that = this;
-
-        this.labels = [];
         this.lines = this.viewer.entities.add({
             polyline: {
                 positions: new Cesium.CallbackProperty(function() { return that.positions; }, false),
@@ -59,18 +61,15 @@ class Ruler extends Draggable {
     }
 
     clear() {
-        for (var i = 0; i < this.points.length; ++i) {
-            this.viewer.entities.remove(this.points[i]);
-        }
-        this.points = [];
+        super.clear();
 
-        for (i = 0; i < this.labels.length; ++i) {
+        for (var i = 0; i < this.labels.length; ++i) {
             this.viewer.entities.remove(this.labels[i]);
         }
         this.labels = [];
-        this.positions = [];
 
         this.rulerController.distance = 0;
+        this.positions = [];
     }
 
     intermediate(first, second) {
@@ -82,19 +81,6 @@ class Ruler extends Draggable {
 
         return Cesium.Cartesian3.add(first, Cesium.Cartesian3.multiplyByScalar(
                                             direction, distance, scratch), scratch);
-    }
-
-    makeHoveredPoint(point) {
-        point.point.pixelSize = this.hoveredPointPixelSize;
-        super.makeHoveredPoint(point);
-    }
-
-    dropHoveredPoint() {
-        if (!this.hoveredPoint)
-            return;
-
-        this.hoveredPoint.point.pixelSize = this.pointPixelSize;
-        super.dropHoveredPoint()
     }
 
     rebuildLength() {
@@ -119,6 +105,9 @@ class Ruler extends Draggable {
         var index = super.onMove(cartesian);
         if (index === -1)
             return;
+
+        // Move point to new place
+        this.positions[index] = cartesian;
 
         // Rebuild labels
         if (index > 0)
