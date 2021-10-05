@@ -15,6 +15,7 @@ class Route extends Draggable {
         // Entities
         this.waypoints = [];
         this.pylons = [];
+        this.hoveredWaypoint = null;
 
         var that = this;
         this.lines = this.viewer.entities.add({
@@ -75,6 +76,14 @@ class Route extends Draggable {
                 color: Cesium.Color.WHITE,
                 disableDepthTestDistance: Number.POSITIVE_INFINITY,
                 scale: this.normalScale
+            },
+            label: {
+                text: wpt.name,
+                show: false,
+                showBackground: true,
+                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                pixelOffset: new Cesium.Cartesian2(0, -25),
+                font: "13px Helvetica"
             }
         });
         this.waypoints.push(waypoint);
@@ -133,10 +142,12 @@ class Route extends Draggable {
 
     edit()  {
         this.points.forEach(point => point.show = true);
+        this.waypoints.forEach(waypoint => waypoint.label.show = true);
     }
 
     unedit() {
         this.points.forEach(point => point.show = false);
+        this.waypoints.forEach(waypoint => waypoint.label.show = false);
     }
 
     onMove(cartesian) {
@@ -155,6 +166,11 @@ class Route extends Draggable {
         this.waypoints[index].position = this.positions[index];
         this.pylons[index].polyline.positions = [this.positions[index], cartesian];
     }
+
+    onPick(pickedObjects) {
+        return super.onPick(pickedObjects);
+        // TODO: highlight distance labels
+    }
 }
 
 class Routes {
@@ -162,7 +178,7 @@ class Routes {
         this.viewer = cesium.viewer;
 
         this.routes = new Map();
-        this.editRoute = null
+        this.editingRoute = null
     }
 
     routeIds() {
@@ -178,16 +194,16 @@ class Routes {
 
     setEditingRoute(routeId) {
         var route = this.routes.has(routeId) ? this.routes.get(routeId) : null;
-        if (this.editRoute === route)
+        if (this.editingRoute === route)
             return;
 
-        if (this.editRoute)
-            this.editRoute.unedit();
+        if (this.editingRoute)
+            this.editingRoute.unedit();
 
-        this.editRoute = route;
+        this.editingRoute = route;
 
-        if (this.editRoute)
-            this.editRoute.edit();
+        if (this.editingRoute)
+            this.editingRoute.edit();
     }
 
     centerWaypoint(routeId, index) {
@@ -222,22 +238,23 @@ class Routes {
     }
 
     onUp(cartesian) {
-        if (this.editRoute)
-            this.editRoute.onUp(cartesian);
+        if (this.editingRoute)
+            this.editingRoute.onUp(cartesian);
     }
 
     onDown(cartesian) {
-        if (this.editRoute)
-            this.editRoute.onDown(cartesian);
+        if (this.editingRoute)
+            this.editingRoute.onDown(cartesian);
     }
 
     onMove(cartesian) {
-        if (this.editRoute)
-            this.editRoute.onMove(cartesian);
+        if (this.editingRoute)
+            this.editingRoute.onMove(cartesian);
     }
 
-    onPick(pickedObject) {
-        if (this.editRoute)
-            this.editRoute.onPick(pickedObject);
+    onPick(pickedObjects) {
+        if (this.editingRoute)
+            return this.editingRoute.onPick(pickedObjects);
+        return false;
     }
 }

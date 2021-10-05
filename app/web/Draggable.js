@@ -31,9 +31,6 @@ class Draggable {
     }
 
     dropHoveredPoint() {
-        if (!this.hoveredPoint)
-            return;
-
         this.hoveredPoint.point.pixelSize = this.pointPixelSize;
         this.hoveredPoint = null;
     }
@@ -70,22 +67,30 @@ class Draggable {
         return index;
     }
 
-    onPick(pickedObject) {
+    onPick(pickedObjects) {
         if (this.dragging)
-            return;
+            return true;
 
-        if (!Cesium.defined(pickedObject)) {
+        // Find candidate for picking
+        var candidate = null;
+        pickedObjects.forEach(pickedObject => {
+            var point = pickedObject.id;
+            if (this.points.includes(point))
+                candidate = point;
+        });
+
+        // Do nothing if same
+        if (candidate === this.hoveredPoint)
+            return candidate;
+
+        // Drop oldone
+        if (this.hoveredPoint)
             this.dropHoveredPoint();
-            return;
+
+        if (candidate) {
+            this.makeHoveredPoint(candidate);
+            return true;
         }
-
-        var point = pickedObject.id;
-        if (point === this.hoveredPoint)
-            return;
-
-        this.dropHoveredPoint();
-
-        if (this.points.includes(point))
-            this.makeHoveredPoint(point);
+        return false;
     }
 }

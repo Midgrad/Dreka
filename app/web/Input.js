@@ -5,6 +5,8 @@ class Input {
         this.viewer = cesium.viewer;
         this.handlers = [];
 
+        this.pickRadius = 10;
+
         var that = this;
         var scene = this.viewer.scene;
 
@@ -51,17 +53,14 @@ class Input {
         var moveHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
         moveHandler.setInputAction(function(movement) {
             // Try to pick entity on map
-            var pickedObjects = scene.drillPick(movement.endPosition);
+            var pickedObjects = scene.drillPick(movement.endPosition, undefined,
+                                                that.pickRadius, that.pickRadius);
+            var found = false;
             that.handlers.forEach(handler => {
-                if (typeof handler.onPick !== "function")
-                                      return;
+                if (found || typeof handler.onPick !== "function")
+                    return;
 
-                if (pickedObjects.length > 0) {
-                    pickedObjects.forEach(pickedObject => { handler.onPick(pickedObject); });
-                }
-                else {
-                    handler.onPick(null);
-                }
+                found = handler.onPick(pickedObjects);
             });
 
             // Promoute mouse move event with position
