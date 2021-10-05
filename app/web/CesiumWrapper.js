@@ -78,13 +78,13 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
         input.subscribe(routes);
 
         missionsController.missions.forEach((missionId) => {
-            missionsController.route(missionId, function(routeData) {
+            missionsController.route(missionId, routeData => {
                 routes.setRouteData(missionId, routeData);
             });
         });
 
         missionsController.routeChanged.connect((missionId) => {
-            missionsController.route(missionId, function(routeData) {
+            missionsController.route(missionId, routeData => {
                 routes.setRouteData(missionId, routeData);
             });
         });
@@ -99,7 +99,7 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
                 }
                 // Add new route
                 else {
-                    missionsController.route(missionId, function(routeData) {
+                    missionsController.route(missionId, routeData => {
                         routes.setRouteData(missionId, routeData);
                     });
                 }
@@ -110,7 +110,8 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
             });
         });
 
-        missionsController.centerRoute.connect(function(missionId) { routes.centerRoute(missionId); });
+        missionsController.centerRoute.connect(missionId => { routes.centerRoute(missionId); });
+        missionsController.editRoute.connect(missionId => { routes.setEditingRoute(missionId); });
     }
 
     var vehiclesController = channel.objects.vehiclesController;

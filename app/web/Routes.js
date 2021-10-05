@@ -1,72 +1,3 @@
-// TODO: waypoint class
-//class Waypoint {
-//    constructor(waypointData) {
-//        this.setData(waypointData);
-
-//        var that = this;
-
-//        // Add draggable point on the ground
-//        var groundPoint = this.viewer.entities.add({
-//            position: new Cesium.CallbackProperty( () => { return that.position; }),
-//            point: {
-//                pixelSize: this.pointPixelSize,
-//                color: Cesium.Color.GAINSBORO,
-//                heightReference : Cesium.HeightReference.CLAMP_TO_GROUND
-//            }
-//        });
-//        this.points.push(groundPoint);
-
-//        // Waypoint with real altitude
-//        var waypoint = this.viewer.entities.add({
-//            position: position,
-//            show: this.visible,
-//            billboard: {
-//                image: "./icons/wpt.svg",
-//                color: Cesium.Color.WHITE,
-//                disableDepthTestDistance: Number.POSITIVE_INFINITY,
-//                scale: this.normalScale
-//            }
-//        });
-//        this.waypoints.push(waypoint);
-
-//        var heightMaps = this.viewer.terrainProvider;
-//        var terrainPosition = Cesium.Cartographic.fromDegrees(params.longitude, params.latitude, 0);
-//        this.terrainPositions.push(terrainPosition);
-
-//        // TODO: unified terrain check
-//        var heightCheck = setInterval(function () {
-//            if (heightMaps.ready) {
-//                clearInterval(heightCheck);
-
-//                var promise =  Cesium.sampleTerrainMostDetailed(heightMaps, [terrainPosition]);
-//                Cesium.when(promise, updatedPositions => {});
-//            }
-//        }, 1000);
-
-//        // Arrow to the ground
-//        var pylon = this.viewer.entities.add({
-//             show: this.visible,
-//             polyline: {
-//                 positions: new Cesium.CallbackProperty(function() {
-//                     return [position, Cesium.Cartographic.toCartesian(terrainPosition)];
-//                 }, false),
-//                 width: 5,
-//                 arcType: Cesium.ArcType.NONE,
-//                 material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.GAINSBORO)
-//             }
-//        });
-//        this.pylons.push(pylon);
-//    }
-
-//    setData(waypointData) {
-//        var params = waypointData.params;
-
-//        this.altitude = params.altitude;
-//        this.position = Cesium.Cartesian3.fromDegrees(params.longitude, params.latitude, altitude);
-//        this.terrainPosition = Cesium.Cartographic.fromDegrees(params.longitude, params.latitude, 0);
-//    }
-//}
-
 class Route extends Draggable {
     constructor(viewer) {
         super(cesium.viewer);
@@ -127,11 +58,11 @@ class Route extends Draggable {
         // Add draggable point on the ground
         var groundPoint = this.viewer.entities.add({
             position: position,
-            show: this.visible,
+            show: false,
             point: {
                 pixelSize: this.pointPixelSize,
-                color: Cesium.Color.GAINSBORO,
-                heightReference : Cesium.HeightReference.CLAMP_TO_GROUND
+                color: Cesium.Color.CADETBLUE,
+                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
             }
         });
         this.points.push(groundPoint);
@@ -139,7 +70,6 @@ class Route extends Draggable {
         // Waypoint with real altitude
         var waypoint = this.viewer.entities.add({
             position: position,
-            show: this.visible,
             billboard: {
                 image: "./icons/wpt.svg",
                 color: Cesium.Color.WHITE,
@@ -164,7 +94,6 @@ class Route extends Draggable {
 
         // Arrow to the ground
         var pylon = this.viewer.entities.add({
-             show: this.visible,
              polyline: {
                  positions: new Cesium.CallbackProperty(function() {
                      return [position, Cesium.Cartographic.toCartesian(terrainPosition)];
@@ -197,6 +126,14 @@ class Route extends Draggable {
             this.viewer.flyTo(this.lines);
     }
 
+    edit()  {
+        this.points.forEach(point => point.show = true);
+    }
+
+    unedit() {
+        this.points.forEach(point => point.show = false);
+    }
+
     onMove(cartesian) {
         var index = super.onMove(cartesian);
         if (index === -1)
@@ -220,6 +157,7 @@ class Routes {
         this.viewer = cesium.viewer;
 
         this.routes = new Map();
+        this.editRoute = null
     }
 
     routeIds() {
@@ -231,6 +169,20 @@ class Routes {
             return;
 
         this.routes.get(routeId).center();
+    }
+
+    setEditingRoute(routeId) {
+        var route = this.routes.has(routeId) ? this.routes.get(routeId) : null;
+        if (this.editRoute === route)
+            return;
+
+        if (this.editRoute)
+            this.editRoute.unedit();
+
+        this.editRoute = route;
+
+        if (this.editRoute)
+            this.editRoute.edit();
     }
 
     setRouteData(routeId, data) {
@@ -258,18 +210,22 @@ class Routes {
     }
 
     onUp(cartesian) {
-        this.routes.forEach((route) => { route.onUp(cartesian); } );
+        if (this.editRoute)
+            this.editRoute.onUp(cartesian);
     }
 
     onDown(cartesian) {
-        this.routes.forEach((route) => { route.onDown(cartesian); } );
+        if (this.editRoute)
+            this.editRoute.onDown(cartesian);
     }
 
     onMove(cartesian) {
-        this.routes.forEach((route) => { route.onMove(cartesian); } );
+        if (this.editRoute)
+            this.editRoute.onMove(cartesian);
     }
 
     onPick(pickedObject) {
-        this.routes.forEach((route) => { route.onPick(pickedObject); } );
+        if (this.editRoute)
+            this.editRoute.onPick(pickedObject);
     }
 }
