@@ -51,10 +51,17 @@ class Input {
         var moveHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
         moveHandler.setInputAction(function(movement) {
             // Try to pick entity on map
-            var pickedObject = scene.pick(movement.endPosition);
+            var pickedObjects = scene.drillPick(movement.endPosition);
             that.handlers.forEach(handler => {
-                if (typeof handler.onPick === "function")
-                    handler.onPick(pickedObject);
+                if (typeof handler.onPick !== "function")
+                                      return;
+
+                if (pickedObjects.length > 0) {
+                    pickedObjects.forEach(pickedObject => { handler.onPick(pickedObject); });
+                }
+                else {
+                    handler.onPick(null);
+                }
             });
 
             // Promoute mouse move event with position
