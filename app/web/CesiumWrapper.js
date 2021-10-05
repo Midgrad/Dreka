@@ -105,13 +105,14 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
                 }
             });
             // Remove deleted routes
-            missionIds.forEach((missionId) => {
-                routes.removeRoute(missionId);
-            });
+            missionIds.forEach((missionId) => { routes.removeRoute(missionId); });
         });
 
         missionsController.centerRoute.connect(missionId => { routes.centerRoute(missionId); });
         missionsController.editRoute.connect(missionId => { routes.setEditingRoute(missionId); });
+        missionsController.centerWaypoint.connect((missionId, index) => {
+                                                      routes.centerWaypoint(missionId, index);
+                                                  });
     }
 
     var vehiclesController = channel.objects.vehiclesController;

@@ -126,6 +126,11 @@ class Route extends Draggable {
             this.viewer.flyTo(this.lines);
     }
 
+    centerWaypoint(index) {
+        if (this.waypoints.length > index)
+            this.viewer.flyTo(this.waypoints[index]);
+    }
+
     edit()  {
         this.points.forEach(point => point.show = true);
     }
@@ -183,6 +188,13 @@ class Routes {
 
         if (this.editRoute)
             this.editRoute.edit();
+    }
+
+    centerWaypoint(routeId, index) {
+        if (!this.routes.has(routeId))
+            return;
+
+        this.routes.get(routeId).centerWaypoint(index);
     }
 
     setRouteData(routeId, data) {
