@@ -156,15 +156,41 @@ class Route extends Draggable {
             return;
 
         var point = Cesium.Cartographic.fromCartesian(cartesian);
-        var terrainPoint = Cesium.Cartographic.fromCartesian(this.positions[index]);
-        terrainPoint.latitude = point.latitude;
-        terrainPoint.longitude = point.longitude;
+        var updatedPoint = Cesium.Cartographic.fromCartesian(this.positions[index]);
+        updatedPoint.latitude = point.latitude;
+        updatedPoint.longitude = point.longitude;
 
         // Move point to new place
-        this.positions[index] = Cesium.Cartographic.toCartesian(terrainPoint);
+        this.positions[index] = Cesium.Cartographic.toCartesian(updatedPoint);
 
         this.waypoints[index].position = this.positions[index];
-        this.pylons[index].polyline.positions = [this.positions[index], cartesian];
+        this.pylons[index].polyline.show = false;
+    }
+
+    onMoveShift(dx, dy) {
+        // Get hovered point index
+        var index = this.points.indexOf(this.hoveredPoint);
+        if (index === -1)
+            return;
+
+        var updatedPoint = Cesium.Cartographic.fromCartesian(this.positions[index]);
+        updatedPoint.height += dy;
+
+        // Change altitude
+        this.positions[index] = Cesium.Cartographic.toCartesian(updatedPoint);
+
+        this.waypoints[index].position = this.positions[index];
+        this.pylons[index].polyline.show = false;
+    }
+
+    onUp(cartesian) {
+        var index = this.points.indexOf(this.hoveredPoint);
+        if (index > -1) {
+            this.pylons[index].polyline.show = true;
+            this.pylons[index].polyline.positions = [this.positions[index], cartesian];
+        }
+
+        super.onUp(cartesian);
     }
 
     onPick(pickedObjects) {
@@ -250,6 +276,11 @@ class Routes {
     onMove(cartesian) {
         if (this.editingRoute)
             this.editingRoute.onMove(cartesian);
+    }
+
+    onMoveShift(dx, dy) {
+        if (this.editingRoute)
+            this.editingRoute.onMoveShift(dx, dy);
     }
 
     onPick(pickedObjects) {

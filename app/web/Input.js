@@ -10,8 +10,9 @@ class Input {
         var that = this;
         var scene = this.viewer.scene;
 
-        // Remove double click on (or near of) an entity
+        // Remove conflicting default behavior
         this.viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+        this.viewer.scene.screenSpaceCameraController.enableLook = false;
 
         // Left button click
         var leftClickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
@@ -71,6 +72,17 @@ class Input {
                 });
             });
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+        // Mouse move with shift
+        var moveShiftHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+        moveShiftHandler.setInputAction(function(movement) {
+            var dx = movement.startPosition.x - movement.endPosition.x;
+            var dy = movement.startPosition.y - movement.endPosition.y;
+            that.handlers.forEach(handler => {
+                if (typeof handler.onMoveShift === "function")
+                    handler.onMoveShift(dx, dy);
+            });
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE, Cesium.KeyboardEventModifier.SHIFT);
     }
 
     pickPosition(position, callback) {

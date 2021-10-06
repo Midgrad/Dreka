@@ -22,7 +22,6 @@ class Draggable {
         scene.screenSpaceCameraController.enableTranslate = !dragging;
         scene.screenSpaceCameraController.enableZoom = !dragging;
         scene.screenSpaceCameraController.enableTilt = !dragging;
-        scene.screenSpaceCameraController.enableLook = !dragging;
     }
 
     makeHoveredPoint(point) {
