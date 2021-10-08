@@ -17,7 +17,7 @@ set(VERSION_MAJOR 0)
 set(VERSION_MINOR 2)
 set(VERSION_PATCH 0)
 
-# Cmake includes
+# CMake modules
 include(cmake/CopyResourcePostCMake.cmake)
 include(cmake/TrToQrc.cmake)
 
