@@ -21,6 +21,7 @@
 
 #include "json_gateway_files.h"
 
+#include "gui_layout.h"
 #include "locator.h"
 #include "missions_service.h"
 #include "property_tree.h"
@@ -62,6 +63,9 @@ int main(int argc, char* argv[])
         new md::data_source::JsonGatewayFiles(::missionsFolder));
     md::app::Locator::provide<md::domain::IMissionsService>(&missionService);
 
+    md::presentation::GuiLayout layout;
+    md::app::Locator::provide<md::presentation::IGuiLayout>(&layout);
+
     QtWebEngine::initialize();
 
     qmlRegisterType<md::presentation::MapViewportController>("Dreka", 1, 0, "MapViewportController");
@@ -84,13 +88,7 @@ int main(int argc, char* argv[])
 
     missionService.readAllMissions();
 
-    QJsonObject qmlEntries;
-    for (const QString& moduleId : moduleLoader.loadedModules())
-    {
-        moduleLoader.module(moduleId)->visit(qmlEntries);
-    }
-
-    engine.rootContext()->setContextProperty("qmlEntries", qmlEntries);
+    engine.rootContext()->setContextProperty("qmlEntries", layout.items());
     engine.rootContext()->setContextProperty("applicationDirPath",
                                              QGuiApplication::applicationDirPath());
 

@@ -38,6 +38,6 @@ Controls.ApplicationWindow {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.margins: Controls.Theme.margins
-        source: qmlEntries.dashboard
+        source: qmlEntries.dashboard[0] // TODO: switcher
     }
 }
