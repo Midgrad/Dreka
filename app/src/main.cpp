@@ -19,7 +19,11 @@
 #include <QVersionNumber>
 #include <QtWebEngine>
 
+#include "json_gateway_files.h"
+
+#include "gui_layout.h"
 #include "locator.h"
+#include "missions_service.h"
 #include "property_tree.h"
 
 #include "module_loader.h"
@@ -36,6 +40,8 @@
 namespace
 {
 const char* gitRevision = "git_revision";
+
+constexpr char missionsFolder[] = "./missions";
 } // namespace
 
 int main(int argc, char* argv[])
@@ -52,6 +58,13 @@ int main(int argc, char* argv[])
 
     md::domain::PropertyTree pTree;
     md::app::Locator::provide<md::domain::IPropertyTree>(&pTree);
+
+    md::domain::MissionsService missionService(
+        new md::data_source::JsonGatewayFiles(::missionsFolder));
+    md::app::Locator::provide<md::domain::IMissionsService>(&missionService);
+
+    md::presentation::GuiLayout layout;
+    md::app::Locator::provide<md::presentation::IGuiLayout>(&layout);
 
     QtWebEngine::initialize();
 
@@ -73,13 +86,9 @@ int main(int argc, char* argv[])
     moduleLoader.discoverModules();
     moduleLoader.loadModules();
 
-    QJsonObject qmlEntries;
-    for (const QString& moduleId : moduleLoader.loadedModules())
-    {
-        moduleLoader.module(moduleId)->visit(qmlEntries);
-    }
+    missionService.readAllMissions();
 
-    engine.rootContext()->setContextProperty("qmlEntries", qmlEntries);
+    engine.rootContext()->setContextProperty("qmlEntries", layout.items());
     engine.rootContext()->setContextProperty("applicationDirPath",
                                              QGuiApplication::applicationDirPath());
 
