@@ -25,6 +25,7 @@
 #include "locator.h"
 #include "missions_service.h"
 #include "property_tree.h"
+#include "vehicles_service.h"
 
 #include "module_loader.h"
 #include "theme.h"
@@ -59,9 +60,12 @@ int main(int argc, char* argv[])
     md::domain::PropertyTree pTree;
     md::app::Locator::provide<md::domain::IPropertyTree>(&pTree);
 
-    md::domain::MissionsService missionService(
+    md::domain::MissionsService missionsService(
         new md::data_source::JsonGatewayFiles(::missionsFolder));
-    md::app::Locator::provide<md::domain::IMissionsService>(&missionService);
+    md::app::Locator::provide<md::domain::IMissionsService>(&missionsService);
+
+    md::domain::VehiclesService vehiclesService;
+    md::app::Locator::provide<md::domain::IVehiclesService>(&vehiclesService);
 
     md::presentation::GuiLayout layout;
     md::app::Locator::provide<md::presentation::IGuiLayout>(&layout);
@@ -86,7 +90,7 @@ int main(int argc, char* argv[])
     moduleLoader.discoverModules();
     moduleLoader.loadModules();
 
-    missionService.readAllMissions();
+    missionsService.readAllMissions();
 
     engine.rootContext()->setContextProperty("qmlEntries", layout.items());
     engine.rootContext()->setContextProperty("applicationDirPath",
