@@ -21,6 +21,7 @@
 
 #include "json_gateway_files.h"
 
+#include "command_service.h"
 #include "gui_layout.h"
 #include "locator.h"
 #include "missions_service.h"
@@ -66,6 +67,9 @@ int main(int argc, char* argv[])
 
     md::domain::VehiclesService vehiclesService;
     md::app::Locator::provide<md::domain::IVehiclesService>(&vehiclesService);
+
+    md::domain::CommandsService commandsService;
+    md::app::Locator::provide<md::domain::ICommandsService>(&commandsService);
 
     md::presentation::GuiLayout layout;
     md::app::Locator::provide<md::presentation::IGuiLayout>(&layout);
