@@ -10,6 +10,7 @@
         <file>Map/MapLayersView.qml</file>
         <file>Map/MapRulerView.qml</file>
         <file>Map/MapScale.qml</file>
+        <file>Routes/RoutesView.qml</file>
         <file>MainWindow.qml</file>
     </qresource>
 </RCC>

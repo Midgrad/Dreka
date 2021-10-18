@@ -72,73 +72,74 @@ const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
         viewportController.restore();
     }
 
-    var missionsController = channel.objects.missionsController;
-    if (missionsController) {
+    var routesController = channel.objects.routesController;
+    if (routesController) {
         const routes = new Routes(cesium);
         input.subscribe(routes);
 
-        missionsController.missions.forEach((missionId) => {
-            missionsController.route(missionId, routeData => {
-                routes.setRouteData(missionId, routeData);
+        routesController.routes.forEach((routeId) => {
+            routesController.route(routeId, routeData => {
+                routes.setRouteData(routeId, routeData);
+
+                if (routesController.selectedRoute === routeId)
+                    routes.setEditingRoute(routeId);
             });
         });
 
-        missionsController.routeChanged.connect((missionId) => {
-            missionsController.route(missionId, routeData => {
-                routes.setRouteData(missionId, routeData);
+        routesController.routeChanged.connect((routeId) => {
+            routesController.route(routeId, routeData => {
+                routes.setRouteData(routeId, routeData);
             });
         });
 
-        missionsController.missionsChanged.connect(() => {
-            var missionIds = missionsController.missions;
-            routes.missions.forEach((missionId) => {
-                var index = missionIds.indexOf(missionId);
+        routesController.routesChanged.connect(() => {
+            var routesIds = routesController.routes;
+            routes.routeIds().forEach(routeId => {
+                var index = routesIds.indexOf(routeId);
                 // Don't touch existing routes
                 if (index > -1) {
-                    missionIds.splice(index, 1);
+                    routesIds.splice(index, 1);
                 }
                 // Add new route
                 else {
-                    missionsController.route(missionId, routeData => {
-                        routes.setRouteData(missionId, routeData);
+                    routesController.route(routeId, routeData => {
+                        routes.setRouteData(routeId, routeData);
                     });
                 }
             });
             // Remove deleted routes
-            missionIds.forEach((missionId) => { routes.removeRoute(missionId); });
+            routesIds.forEach((routeId) => { routes.removeRoute(routeId); });
         });
 
-        missionsController.centerRoute.connect(missionId => { routes.centerRoute(missionId); });
-        missionsController.editRoute.connect(missionId => { routes.setEditingRoute(missionId); });
-        missionsController.centerWaypoint.connect((missionId, index) => {
-                                                      routes.centerWaypoint(missionId, index);
-                                                  });
+        routesController.centerRoute.connect(routeId => { routes.centerRoute(routeId); });
+        routesController.selectedRouteChanged.connect(routeId => { routes.setEditingRoute(routeId); });
+        routesController.centerWaypoint.connect((routeId, index) => { routes.centerWaypoint(routeId, index); });
     }
 
     var vehiclesController = channel.objects.vehiclesController;
     if (vehiclesController) {
         const vehicles = new Vehicles(cesium);
-        vehiclesController.vehicleDataChanged.connect(function(vehicle, data) {
-            vehicles.setVehicleData(vehicle, data);
+        vehiclesController.vehicleDataChanged.connect((vehicleId, data) => {
+            vehicles.setVehicleData(vehicleId, data);
         });
 
-        vehiclesController.vehicles.forEach((vehicle) => {
-            vehiclesController.vehicleData(vehicle, function(vehicleData) {
-                vehicles.setVehicleData(vehicle, vehicleData);
+        vehiclesController.vehicles.forEach(vehicle => {
+            vehiclesController.vehicleData(vehicle.id, function(vehicleData) {
+                vehicles.setVehicleData(vehicle.id, vehicleData);
             });
         });
 
-        vehiclesController.trackLengthChanged.connect(function() {
+        vehiclesController.trackLengthChanged.connect(() => {
             vehicles.setTrackLength(vehiclesController.trackLength);
         });
         vehicles.setTrackLength(vehiclesController.trackLength);
 
-        vehiclesController.selectedVehicleChanged.connect(function() {
+        vehiclesController.selectedVehicleChanged.connect(() => {
             vehicles.selectVehicle(vehiclesController.selectedVehicle);
         });
         vehicles.selectVehicle(vehiclesController.selectedVehicle);
 
-        vehiclesController.trackingChanged.connect(function() {
+        vehiclesController.trackingChanged.connect(() => {
             vehicles.setTracking(vehiclesController.tracking);
         });
     }

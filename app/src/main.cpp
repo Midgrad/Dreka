@@ -38,6 +38,7 @@
 #include "map_layers_controller.h"
 #include "map_ruler_controller.h"
 #include "map_viewport_controller.h"
+#include "routes_controller.h"
 
 namespace
 {
@@ -81,6 +82,7 @@ int main(int argc, char* argv[])
     qmlRegisterType<md::presentation::MapGridController>("Dreka", 1, 0, "MapGridController");
     qmlRegisterType<md::presentation::ClipboardController>("Dreka", 1, 0, "ClipboardController");
     qmlRegisterType<md::presentation::MapLayersController>("Dreka", 1, 0, "MapLayersController");
+    qmlRegisterType<md::presentation::RoutesController>("Dreka", 1, 0, "RoutesController");
 
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);

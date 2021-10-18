@@ -14,10 +14,6 @@ Item {
         webChannel.registerObject(id, controller);
     }
 
-    ClipboardController {
-        id: clipboard
-    }
-
     WebEngineView {
         anchors.fill: parent
         url: "file:" + applicationDirPath + "/web/index.html"
