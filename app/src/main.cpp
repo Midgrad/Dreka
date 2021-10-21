@@ -19,7 +19,8 @@
 #include <QVersionNumber>
 #include <QtWebEngine>
 
-#include "json_gateway_files.h"
+#include "repository_factory_sql.h"
+#include "sqlite_schema.h"
 
 #include "command_service.h"
 #include "gui_layout.h"
@@ -42,10 +43,11 @@
 
 namespace
 {
-const char* gitRevision = "git_revision";
-
-constexpr char missionsFolder[] = "./missions";
+constexpr char gitRevision[] = "git_revision";
+constexpr char databaseName[] = "dreka.db";
 } // namespace
+
+using namespace md;
 
 int main(int argc, char* argv[])
 {
@@ -59,30 +61,37 @@ int main(int argc, char* argv[])
     QGuiApplication app(argc, argv);
     app.setProperty(::gitRevision, QString(GIT_REVISION));
 
-    md::domain::PropertyTree pTree;
-    md::app::Locator::provide<md::domain::IPropertyTree>(&pTree);
+    // Data source initialization
+    data_source::SqliteSchema schema(::databaseName);
+    schema.setup();
 
-    md::domain::MissionsService missionsService(
-        new md::data_source::JsonGatewayFiles(::missionsFolder));
-    md::app::Locator::provide<md::domain::IMissionsService>(&missionsService);
+    // Domain services initialization
+    domain::RepositoryFactorySql repoFactory(schema.db());
+    domain::MissionsService missionsService(&repoFactory);
 
-    md::domain::VehiclesService vehiclesService;
-    md::app::Locator::provide<md::domain::IVehiclesService>(&vehiclesService);
+    domain::PropertyTree pTree;
+    app::Locator::provide<domain::IPropertyTree>(&pTree);
 
-    md::domain::CommandsService commandsService;
-    md::app::Locator::provide<md::domain::ICommandsService>(&commandsService);
+    app::Locator::provide<domain::IMissionsService>(&missionsService);
 
-    md::presentation::GuiLayout layout;
-    md::app::Locator::provide<md::presentation::IGuiLayout>(&layout);
+    domain::VehiclesService vehiclesService;
+    app::Locator::provide<domain::IVehiclesService>(&vehiclesService);
 
+    domain::CommandsService commandsService;
+    app::Locator::provide<domain::ICommandsService>(&commandsService);
+
+    presentation::GuiLayout layout;
+    app::Locator::provide<presentation::IGuiLayout>(&layout);
+
+    // Presentation initialization
     QtWebEngine::initialize();
 
-    qmlRegisterType<md::presentation::MapViewportController>("Dreka", 1, 0, "MapViewportController");
-    qmlRegisterType<md::presentation::MapRulerController>("Dreka", 1, 0, "MapRulerController");
-    qmlRegisterType<md::presentation::MapGridController>("Dreka", 1, 0, "MapGridController");
-    qmlRegisterType<md::presentation::ClipboardController>("Dreka", 1, 0, "ClipboardController");
-    qmlRegisterType<md::presentation::MapLayersController>("Dreka", 1, 0, "MapLayersController");
-    qmlRegisterType<md::presentation::RoutesController>("Dreka", 1, 0, "RoutesController");
+    qmlRegisterType<presentation::MapViewportController>("Dreka", 1, 0, "MapViewportController");
+    qmlRegisterType<presentation::MapRulerController>("Dreka", 1, 0, "MapRulerController");
+    qmlRegisterType<presentation::MapGridController>("Dreka", 1, 0, "MapGridController");
+    qmlRegisterType<presentation::ClipboardController>("Dreka", 1, 0, "ClipboardController");
+    qmlRegisterType<presentation::MapLayersController>("Dreka", 1, 0, "MapLayersController");
+    qmlRegisterType<presentation::RoutesController>("Dreka", 1, 0, "RoutesController");
 
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);
@@ -92,11 +101,12 @@ int main(int argc, char* argv[])
     themeLoader.setFilename("./theme.json");
     themeLoader.load();
 
-    md::app::ModuleLoader moduleLoader;
+    // App modules initialization
+    app::ModuleLoader moduleLoader;
     moduleLoader.discoverModules();
     moduleLoader.loadModules();
 
-    missionsService.readAllMissions();
+    missionsService.readAll();
 
     engine.rootContext()->setContextProperty("qmlEntries", layout.items());
     engine.rootContext()->setContextProperty("applicationDirPath",

@@ -52,12 +52,11 @@ QStringList RoutesController::routeTypes() const
 
 QJsonObject RoutesController::route(const QVariant& routeId) const
 {
-    qDebug() << routeId;
     Mission* mission = m_missionsService->mission(routeId);
     if (!mission)
         return QJsonObject();
 
-    return mission->route()->toJson(true);
+    return QJsonObject::fromVariantMap(mission->route()->toVariantMap(true));
 }
 
 void RoutesController::addNewRoute(const QString& missionType)
@@ -80,7 +79,7 @@ void RoutesController::save(const QVariant& routeId, const QJsonObject& data)
     if (!mission)
         return;
 
-    mission->fromJson(data);
+    mission->fromVariantMap(data.toVariantMap());
     m_missionsService->saveMission(mission);
 }
 
