@@ -27,6 +27,7 @@
 #include "locator.h"
 #include "missions_service.h"
 #include "property_tree.h"
+#include "routes_service.h"
 #include "vehicles_service.h"
 
 #include "module_loader.h"
@@ -67,12 +68,15 @@ int main(int argc, char* argv[])
 
     // Domain services initialization
     domain::RepositoryFactorySql repoFactory(schema.db());
-    domain::MissionsService missionsService(&repoFactory);
+
+    domain::RoutesService routesService(&repoFactory);
+    app::Locator::provide<domain::IRoutesService>(&routesService);
+
+    domain::MissionsService missionsService(&routesService, &repoFactory);
+    app::Locator::provide<domain::IMissionsService>(&missionsService);
 
     domain::PropertyTree pTree;
     app::Locator::provide<domain::IPropertyTree>(&pTree);
-
-    app::Locator::provide<domain::IMissionsService>(&missionsService);
 
     domain::VehiclesService vehiclesService;
     app::Locator::provide<domain::IVehiclesService>(&vehiclesService);

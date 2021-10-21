@@ -8,5 +8,6 @@
         <file>remove.svg</file>
         <file>ruler.svg</file>
         <file>center.svg</file>
+        <file>route.svg</file>
     </qresource>
 </RCC>

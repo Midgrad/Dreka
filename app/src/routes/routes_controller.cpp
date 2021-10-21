@@ -9,30 +9,26 @@ using namespace md::presentation;
 
 RoutesController::RoutesController(QObject* parent) :
     QObject(parent),
-    m_missionsService(md::app::Locator::get<IMissionsService>())
+    m_routesService(md::app::Locator::get<IRoutesService>())
 {
-    Q_ASSERT(m_missionsService);
-    connect(m_missionsService, &IMissionsService::missionTypesChanged, this,
+    Q_ASSERT(m_routesService);
+    connect(m_routesService, &IRoutesService::routeTypesChanged, this,
             &RoutesController::routeTypesChanged);
-    connect(m_missionsService, &IMissionsService::missionAdded, this, [this](Mission* mission) {
-        this->onRouteAdded(mission->route());
-    });
-    connect(m_missionsService, &IMissionsService::missionRemoved, this, [this](Mission* mission) {
-        this->onRouteRemoved(mission->route());
-    });
-    connect(m_missionsService, &IMissionsService::missionChanged, this, [this](Mission* mission) {
-        emit routeChanged(mission->id());
+    connect(m_routesService, &IRoutesService::routeAdded, this, &RoutesController::onRouteAdded);
+    connect(m_routesService, &IRoutesService::routeRemoved, this, &RoutesController::onRouteRemoved);
+    connect(m_routesService, &IRoutesService::routeChanged, this, [this](Route* route) {
+        emit routeChanged(route->id());
     });
 
-    for (Mission* mission : m_missionsService->missions())
+    for (Route* route : m_routesService->routes())
     {
-        this->onRouteAdded(mission->route());
+        this->onRouteAdded(route);
     }
 }
 
 QVariantList RoutesController::routes() const
 {
-    return m_missionsService->missionIds();
+    return m_routesService->routeIds();
 }
 
 QVariant RoutesController::selectedRoute() const
@@ -42,24 +38,24 @@ QVariant RoutesController::selectedRoute() const
 
 QStringList RoutesController::routeTypes() const
 {
-    QStringList missionTypes;
-    for (auto missionType : m_missionsService->missionTypes())
+    QStringList routeTypes;
+    for (auto routeType : m_routesService->routeTypes())
     {
-        missionTypes += missionType->routeType->name;
+        routeTypes += routeType->name;
     }
-    return missionTypes;
+    return routeTypes;
 }
 
 QJsonObject RoutesController::route(const QVariant& routeId) const
 {
-    Mission* mission = m_missionsService->mission(routeId);
-    if (!mission)
+    Route* route = m_routesService->route(routeId);
+    if (!route)
         return QJsonObject();
 
-    return QJsonObject::fromVariantMap(mission->route()->toVariantMap(true));
+    return QJsonObject::fromVariantMap(route->toVariantMap(true));
 }
 
-void RoutesController::addNewRoute(const QString& missionType)
+void RoutesController::addNewRoute(const QString& routeType)
 {
     // TODO create new route()
 }
@@ -75,21 +71,21 @@ void RoutesController::selectRoute(const QVariant& selectedRoute)
 
 void RoutesController::save(const QVariant& routeId, const QJsonObject& data)
 {
-    Mission* mission = m_missionsService->mission(routeId);
-    if (!mission)
+    Route* route = m_routesService->route(routeId);
+    if (!route)
         return;
 
-    mission->fromVariantMap(data.toVariantMap());
-    m_missionsService->saveMission(mission);
+    route->fromVariantMap(data.toVariantMap());
+    m_routesService->saveRoute(route);
 }
 
 void RoutesController::remove(const QVariant& routeId)
 {
-    Mission* mission = m_missionsService->mission(routeId);
-    if (!mission)
+    Route* route = m_routesService->route(routeId);
+    if (!route)
         return;
 
-    m_missionsService->removeMission(mission);
+    m_routesService->removeRoute(route);
 }
 
 void RoutesController::onRouteAdded(Route* route)
