@@ -75,11 +75,11 @@ int main(int argc, char* argv[])
     domain::MissionsService missionsService(&routesService, &repoFactory);
     app::Locator::provide<domain::IMissionsService>(&missionsService);
 
+    domain::VehiclesService vehiclesService(&repoFactory);
+    app::Locator::provide<domain::IVehiclesService>(&vehiclesService);
+
     domain::PropertyTree pTree;
     app::Locator::provide<domain::IPropertyTree>(&pTree);
-
-    domain::VehiclesService vehiclesService;
-    app::Locator::provide<domain::IVehiclesService>(&vehiclesService);
 
     domain::CommandsService commandsService;
     app::Locator::provide<domain::ICommandsService>(&commandsService);
@@ -110,6 +110,8 @@ int main(int argc, char* argv[])
     moduleLoader.discoverModules();
     moduleLoader.loadModules();
 
+    // TODO: soft caching, read only on demand
+    vehiclesService.readAll();
     missionsService.readAll();
 
     engine.rootContext()->setContextProperty("qmlEntries", layout.items());
