@@ -17,6 +17,7 @@ Controls.Popup {
 
         RowLayout {
             spacing: Controls.Theme.spacing
+            visible: !controller.selectedRoute
 
             Controls.FilterField {
                 id: filterField
@@ -36,24 +37,35 @@ Controls.Popup {
             }
         }
 
-        Widgets.ListWrapper {
-            emptyText: qsTr("No Missions")
-            model: controller.routes
-            delegate: Widgets.ListItem {
-                width: parent.width
-                color: "transparent"
-                expanded: controller.selectedRoute === modelData
-                expandedItem: RouteEdit {
-                    route: controller.route(modelData)
-                    onCollapse: controller.selectRoute(null)
-                }
-                collapsedItem: Route {
-                    route: controller.route(modelData)
-                    onExpand: controller.selectRoute(modelData)
-                }
-            }
+        Loader {
+            sourceComponent: controller.selectedRoute ? editComponent : listComponent
             Layout.fillWidth: true
             Layout.fillHeight: true
+        }
+    }
+
+    Component {
+        id: listComponent
+
+        Widgets.ListWrapper {
+            emptyText: qsTr("No routes")
+            model: controller.routes
+            width: root.width
+            delegate: Route {
+                width: parent.width
+                route: controller.route(modelData)
+                onExpand: controller.selectRoute(modelData)
+            }
+        }
+    }
+
+    Component {
+        id: editComponent
+
+        RouteEdit {
+            width: root.width
+            route: controller.route(controller.selectedRoute)
+            onCollapse: controller.selectRoute(null)
         }
     }
 }

@@ -27,7 +27,7 @@ Item {
 
             Controls.Button {
                 flat: true
-                radius: 0
+                rightCropped: true
                 iconSource: "qrc:/icons/left.svg"
                 tipText: qsTr("Back to routes")
                 onClicked: collapse()
