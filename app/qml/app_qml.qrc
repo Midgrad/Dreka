@@ -13,6 +13,7 @@
         <file>Routes/RoutesView.qml</file>
         <file>Routes/RouteList.qml</file>
         <file>Routes/Route.qml</file>
+        <file>Routes/RouteEdit.qml</file>
         <file>Routes/Waypoint.qml</file>
         <file>MainWindow.qml</file>
     </qresource>

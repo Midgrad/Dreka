@@ -2,17 +2,14 @@ import QtQuick 2.6
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
 
-// TODO: expandable
 Item {
     id: root
 
     property var waypoint
     property int waypointIndex: 0
 
-    signal expand()
-
     implicitWidth: row.implicitWidth
-    implicitHeight: Controls.Theme.baseSize
+    implicitHeight: row.implicitHeight
 
     Rectangle {
         id: hover
@@ -26,32 +23,40 @@ Item {
         id: mouseArea
         hoverEnabled: true
         anchors.fill: parent
-        onClicked: expand()
+        onClicked: controller.centerWaypoint(route.id, waypointIndex)
     }
 
     RowLayout {
         id: row
         anchors.fill: parent
-        spacing: Controls.Theme.spacing
-
-        Controls.Button {
-            flat: true
-            rightCropped: true
-            iconSource: "qrc:/icons/center.svg"
-            tipText: qsTr("Center on waypoint")
-            onClicked: controller.centerWaypoint(mission.id, waypointIndex)
-        }
+        spacing: 0
 
         Controls.Label {
             text: waypoint ? waypoint.name : ""
-            Layout.alignment: Qt.AlignVCenter
-            Layout.fillWidth: true
+            horizontalAlignment: Text.AlignHCenter
+            Layout.minimumWidth: _wptWidth
         }
 
         Controls.Label {
             text: waypoint ? waypoint.type : ""
             type: Controls.Theme.Label
-            Layout.alignment: Qt.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            Layout.minimumWidth: _typeWidth
         }
+
+        Controls.Label {
+            text: waypoint && waypoint.distance ? (Math.round(waypoint.distance) + " " + qsTr("m"))
+                                                : "-"
+            horizontalAlignment: Text.AlignHCenter
+            Layout.minimumWidth: _dstWidth
+        }
+
+        Controls.Label {
+            text: waypoint &&  waypoint.params.altitude ?
+                      (Math.round(waypoint.params.altitude) + " " + qsTr("m")) : "-"
+            horizontalAlignment: Text.AlignHCenter
+            Layout.minimumWidth: _altWidth
+        }
+
     }
 }

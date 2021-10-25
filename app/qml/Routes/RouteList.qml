@@ -36,18 +36,24 @@ Controls.Popup {
             }
         }
 
-//        Widgets.ListWrapper {
-//            emptyText: qsTr("No Missions")
-//            model: controller.routes
-//            delegate: Expandable {
-//                width: parent.width
-//                height: visible ? implicitHeight : 0
-//                visible: mission && mission.name.includes(filterField.text)
-//                mission: controller.mission(modelData)
-//                onExpand: selectedMission = mission
-//            }
-//            Layout.fillWidth: true
-//            Layout.fillHeight: true
-//        }
+        Widgets.ListWrapper {
+            emptyText: qsTr("No Missions")
+            model: controller.routes
+            delegate: Widgets.ListItem {
+                width: parent.width
+                color: "transparent"
+                expanded: controller.selectedRoute === modelData
+                expandedItem: RouteEdit {
+                    route: controller.route(modelData)
+                    onCollapse: controller.selectRoute(null)
+                }
+                collapsedItem: Route {
+                    route: controller.route(modelData)
+                    onExpand: controller.selectRoute(modelData)
+                }
+            }
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
     }
 }
