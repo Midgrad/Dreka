@@ -19,16 +19,15 @@
 #include <QVersionNumber>
 #include <QtWebEngine>
 
-#include "repository_factory_sql.h"
 #include "sqlite_schema.h"
 
 #include "command_service.h"
 #include "gui_layout.h"
 #include "locator.h"
-#include "missions_service.h"
+#include "missions_repository_sql.h"
 #include "property_tree.h"
-#include "routes_service.h"
-#include "vehicles_service.h"
+#include "routes_repository_sql.h"
+#include "vehicles_repository_sql.h"
 
 #include "module_loader.h"
 #include "theme.h"
@@ -67,16 +66,14 @@ int main(int argc, char* argv[])
     schema.setup();
 
     // Domain services initialization
-    domain::RepositoryFactorySql repoFactory(schema.db());
+    domain::RoutesRepositorySql routesRepository(schema.db());
+    app::Locator::provide<domain::IRoutesRepository>(&routesRepository);
 
-    domain::RoutesService routesService(&repoFactory);
-    app::Locator::provide<domain::IRoutesService>(&routesService);
+    domain::MissionsRepositorySql missionsRepository(&routesRepository, schema.db());
+    app::Locator::provide<domain::IMissionsRepository>(&missionsRepository);
 
-    domain::MissionsService missionsService(&routesService, &repoFactory);
-    app::Locator::provide<domain::IMissionsService>(&missionsService);
-
-    domain::VehiclesService vehiclesService(&repoFactory);
-    app::Locator::provide<domain::IVehiclesService>(&vehiclesService);
+    domain::VehiclesRepositorySql vehiclesRepository(schema.db());
+    app::Locator::provide<domain::IVehiclesRepository>(&vehiclesRepository);
 
     domain::PropertyTree pTree;
     app::Locator::provide<domain::IPropertyTree>(&pTree);
@@ -111,8 +108,8 @@ int main(int argc, char* argv[])
     moduleLoader.loadModules();
 
     // TODO: soft caching, read only on demand
-    vehiclesService.readAll();
-    missionsService.readAll();
+    vehiclesRepository.readAll();
+    missionsRepository.readAll();
 
     engine.rootContext()->setContextProperty("qmlEntries", layout.items());
     engine.rootContext()->setContextProperty("applicationDirPath",

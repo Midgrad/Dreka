@@ -9,18 +9,18 @@ using namespace md::presentation;
 
 RoutesController::RoutesController(QObject* parent) :
     QObject(parent),
-    m_routesService(md::app::Locator::get<IRoutesService>())
+    m_routesRepository(md::app::Locator::get<IRoutesRepository>())
 {
-    Q_ASSERT(m_routesService);
-    connect(m_routesService, &IRoutesService::routeTypesChanged, this,
+    Q_ASSERT(m_routesRepository);
+    connect(m_routesRepository, &IRoutesRepository::routeTypesChanged, this,
             &RoutesController::routeTypesChanged);
-    connect(m_routesService, &IRoutesService::routeAdded, this, &RoutesController::onRouteAdded);
-    connect(m_routesService, &IRoutesService::routeRemoved, this, &RoutesController::onRouteRemoved);
-    connect(m_routesService, &IRoutesService::routeChanged, this, [this](Route* route) {
+    connect(m_routesRepository, &IRoutesRepository::routeAdded, this, &RoutesController::onRouteAdded);
+    connect(m_routesRepository, &IRoutesRepository::routeRemoved, this, &RoutesController::onRouteRemoved);
+    connect(m_routesRepository, &IRoutesRepository::routeChanged, this, [this](Route* route) {
         emit routeChanged(route->id());
     });
 
-    for (Route* route : m_routesService->routes())
+    for (Route* route : m_routesRepository->routes())
     {
         this->onRouteAdded(route);
     }
@@ -28,7 +28,7 @@ RoutesController::RoutesController(QObject* parent) :
 
 QVariantList RoutesController::routes() const
 {
-    return m_routesService->routeIds();
+    return m_routesRepository->routeIds();
 }
 
 QVariant RoutesController::selectedRoute() const
@@ -39,7 +39,7 @@ QVariant RoutesController::selectedRoute() const
 QStringList RoutesController::routeTypes() const
 {
     QStringList routeTypes;
-    for (auto routeType : m_routesService->routeTypes())
+    for (auto routeType : m_routesRepository->routeTypes())
     {
         routeTypes += routeType->name;
     }
@@ -48,7 +48,7 @@ QStringList RoutesController::routeTypes() const
 
 QJsonObject RoutesController::route(const QVariant& routeId) const
 {
-    Route* route = m_routesService->route(routeId);
+    Route* route = m_routesRepository->route(routeId);
     if (!route)
         return QJsonObject();
 
@@ -71,21 +71,21 @@ void RoutesController::selectRoute(const QVariant& selectedRoute)
 
 void RoutesController::save(const QVariant& routeId, const QJsonObject& data)
 {
-    Route* route = m_routesService->route(routeId);
+    Route* route = m_routesRepository->route(routeId);
     if (!route)
         return;
 
     route->fromVariantMap(data.toVariantMap());
-    m_routesService->saveRoute(route);
+    m_routesRepository->saveRoute(route);
 }
 
 void RoutesController::remove(const QVariant& routeId)
 {
-    Route* route = m_routesService->route(routeId);
+    Route* route = m_routesRepository->route(routeId);
     if (!route)
         return;
 
-    m_routesService->removeRoute(route);
+    m_routesRepository->removeRoute(route);
 }
 
 void RoutesController::onRouteAdded(Route* route)

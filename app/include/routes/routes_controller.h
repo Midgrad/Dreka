@@ -1,7 +1,7 @@
 #ifndef ROUTES_CONTROLLER_H
 #define ROUTES_CONTROLLER_H
 
-#include "i_routes_service.h"
+#include "i_routes_repository.h"
 
 namespace md::presentation
 {
@@ -44,7 +44,7 @@ private slots:
     void onRouteRemoved(domain::Route* route);
 
 private:
-    domain::IRoutesService* const m_routesService;
+    domain::IRoutesRepository* const m_routesRepository;
     QVariant m_selectedRoute;
 };
 } // namespace md::presentation
