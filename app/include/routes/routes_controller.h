@@ -33,6 +33,8 @@ signals:
     void routesChanged();
     void routeTypesChanged();
 
+    void routeAdded(QVariant routeId);
+    void routeRemoved(QVariant routeId);
     void routeChanged(QVariant routeId);
 
     void centerRoute(QVariant routeId);

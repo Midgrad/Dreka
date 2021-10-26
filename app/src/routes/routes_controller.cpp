@@ -14,11 +14,10 @@ RoutesController::RoutesController(QObject* parent) :
     Q_ASSERT(m_routesRepository);
     connect(m_routesRepository, &IRoutesRepository::routeTypesChanged, this,
             &RoutesController::routeTypesChanged);
-    connect(m_routesRepository, &IRoutesRepository::routeAdded, this, &RoutesController::onRouteAdded);
-    connect(m_routesRepository, &IRoutesRepository::routeRemoved, this, &RoutesController::onRouteRemoved);
-    connect(m_routesRepository, &IRoutesRepository::routeChanged, this, [this](Route* route) {
-        emit routeChanged(route->id());
-    });
+    connect(m_routesRepository, &IRoutesRepository::routeAdded, this,
+            &RoutesController::onRouteAdded);
+    connect(m_routesRepository, &IRoutesRepository::routeRemoved, this,
+            &RoutesController::onRouteRemoved);
 
     for (Route* route : m_routesRepository->routes())
     {
@@ -49,6 +48,7 @@ QStringList RoutesController::routeTypes() const
 QJsonObject RoutesController::route(const QVariant& routeId) const
 {
     Route* route = m_routesRepository->route(routeId);
+
     if (!route)
         return QJsonObject();
 
@@ -90,11 +90,27 @@ void RoutesController::remove(const QVariant& routeId)
 
 void RoutesController::onRouteAdded(Route* route)
 {
+    // NOTE: .toString() is a workaround, cause Qt Web Channel loses {} in QUuid
+    auto routeId = route->id().toString();
+    // TODO: special signals for waypoints
+    connect(route, &Route::waypointChanged, this, [this, routeId] {
+        emit routeChanged(routeId);
+    });
+    connect(route, &Route::waypointAdded, this, [this, routeId] {
+        emit routeChanged(routeId);
+    });
+    connect(route, &Route::waypointRemoved, this, [this, routeId] {
+        emit routeChanged(routeId);
+    });
+    emit routeAdded(routeId);
     emit routesChanged();
 }
 
 void RoutesController::onRouteRemoved(Route* route)
 {
+    auto routeId = route->id().toString();
     disconnect(route, nullptr, this, nullptr);
+
+    emit routeRemoved(routeId);
     emit routesChanged();
 }
