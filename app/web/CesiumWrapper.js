@@ -31,122 +31,120 @@ class CesiumWrapper {
         // Add Cesium OSM Buildings, a global 3D buildings layer.
         const buildingTileset = this.viewer.scene.primitives.add(Cesium.createOsmBuildings());
     }
-}
 
-const cesium = new CesiumWrapper('cesiumContainer');
-const input = new Input(cesium);
+    initInstruments() {
+        this.input = new Input(cesium.viewer);
 
-const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
-    const ruler = new Ruler(cesium, channel.objects.rulerController);
-    input.subscribe(ruler);
+        var that = this;
+        this.webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
+            const ruler = new Ruler(that.viewer, channel.objects.rulerController);
+            that.input.subscribe(ruler);
 
-    const grid = new Grid(cesium, channel.objects.gridController);
+            const grid = new Grid(that.viewer, channel.objects.gridController);
+            const layers = new Layers(that.viewer, channel.objects.layersController);
 
-    const layers = new Layers(cesium, channel.objects.layersController);
+            var viewportController = channel.objects.viewportController;
+            if (viewportController) {
+                const viewport = new Viewport(that.viewer);
+                that.input.subscribe(viewport);
 
-    var viewportController = channel.objects.viewportController;
-    if (viewportController) {
-        const viewport = new Viewport(cesium);
-        input.subscribe(viewport);
+                viewportController.flyTo.connect(function(center, heading, pitch, duration) {
+                    viewport.flyTo(center, heading, pitch, duration);
+                });
 
-        viewportController.flyTo.connect(function(center, heading, pitch, duration) {
-            viewport.flyTo(center, heading, pitch, duration);
+                viewportController.lookTo.connect(function(heading, pitch, duration) {
+                    viewport.lookTo(heading, pitch, duration);
+                });
+
+                viewport.subscribeCamera(function() {
+                    viewportController.heading = viewport.heading;
+                    viewportController.pitch = viewport.pitch;
+                    viewportController.cameraPosition = viewport.cameraPosition;
+                    viewportController.centerPosition = viewport.centerPosition;
+                    viewportController.pixelScale = viewport.pixelScale;
+                });
+
+                viewport.subscribeCursor(function() {
+                    viewportController.cursorPosition = viewport.cursorPosition;
+                });
+
+                viewportController.restore();
+            }
         });
-
-        viewportController.lookTo.connect(function(heading, pitch, duration) {
-            viewport.lookTo(heading, pitch, duration);
-        });
-
-        viewport.subscribeCamera(function() {
-            viewportController.heading = viewport.heading;
-            viewportController.pitch = viewport.pitch;
-            viewportController.cameraPosition = viewport.cameraPosition;
-            viewportController.centerPosition = viewport.centerPosition;
-            viewportController.pixelScale = viewport.pixelScale;
-        });
-
-        viewport.subscribeCursor(function() {
-            viewportController.cursorPosition = viewport.cursorPosition;
-        });
-
-        viewportController.restore();
     }
 
-    var routesController = channel.objects.routesController;
-    if (routesController) {
-        const routes = new Routes(cesium);
-        input.subscribe(routes);
+    initData() {
+        var that = this;
+        const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
+            var routesController = channel.objects.routesController;
+            if (routesController) {
+                const routes = new Routes(that.viewer);
+                that.input.subscribe(routes);
 
-        routesController.routes.forEach((routeId) => {
-            routesController.route(routeId, routeData => {
-                routes.setRouteData(routeId, routeData);
+                routesController.routes.forEach((routeId) => {
+                    routesController.route(routeId, routeData => {
+                        routes.setRouteData(routeId, routeData);
 
-                if (routesController.selectedRoute === routeId)
-                    routes.setEditingRoute(routeId);
-            });
-        });
+                        if (routesController.selectedRoute === routeId)
+                            routes.setEditingRoute(routeId);
+                    });
+                });
 
-        routesController.routeChanged.connect((routeId) => {
-            routesController.route(routeId, routeData => {
-                routes.setRouteData(routeId, routeData);
-            });
-        });
-
-        routesController.routesChanged.connect(() => {
-            var routesIds = routesController.routes;
-            routes.routeIds().forEach(routeId => {
-                var index = routesIds.indexOf(routeId);
-                // Don't touch existing routes
-                if (index > -1) {
-                    routesIds.splice(index, 1);
-                }
-                // Add new route
-                else {
+                routesController.routeChanged.connect((routeId) => {
                     routesController.route(routeId, routeData => {
                         routes.setRouteData(routeId, routeData);
                     });
-                }
-            });
-            // Remove deleted routes
-            routesIds.forEach((routeId) => { routes.removeRoute(routeId); });
-        });
+                });
+                // TODO: route added/route removed
 
-        routesController.centerRoute.connect(routeId => { routes.centerRoute(routeId); });
-        routesController.selectedRouteChanged.connect(routeId => { routes.setEditingRoute(routeId); });
-        routesController.centerWaypoint.connect((routeId, index) => { routes.centerWaypoint(routeId, index); });
+                routesController.centerRoute.connect(routeId => { routes.centerRoute(routeId); });
+                routesController.selectedRouteChanged.connect(routeId => { routes.setEditingRoute(routeId); });
+                routesController.centerWaypoint.connect((routeId, index) => { routes.centerWaypoint(routeId, index); });
+            }
+
+            var vehiclesController = channel.objects.vehiclesController;
+            if (vehiclesController) {
+                const vehicles = new Vehicles(that.viewer);
+                vehiclesController.vehicleDataChanged.connect((vehicleId, data) => {
+                    vehicles.setVehicleData(vehicleId, data);
+                });
+
+                vehiclesController.vehicles.forEach(vehicle => {
+                    vehiclesController.vehicleData(vehicle.id, function(vehicleData) {
+                        vehicles.setVehicleData(vehicle.id, vehicleData);
+                    });
+                });
+
+                vehiclesController.trackLengthChanged.connect(() => {
+                    vehicles.setTrackLength(vehiclesController.trackLength);
+                });
+                vehicles.setTrackLength(vehiclesController.trackLength);
+
+                vehiclesController.selectedVehicleChanged.connect(() => {
+                    vehicles.selectVehicle(vehiclesController.selectedVehicle);
+                });
+                vehicles.selectVehicle(vehiclesController.selectedVehicle);
+
+                vehiclesController.trackingChanged.connect(() => {
+                    vehicles.setTracking(vehiclesController.tracking);
+                });
+            }
+
+            var adsbController = channel.objects.adsbController;
+            if (adsbController) {
+                const adsb = new Adsb(that.viewer);
+                adsbController.adsbChanged.connect(function(data) { adsb.setData(data); });
+            }
+        });
     }
+}
 
-    var vehiclesController = channel.objects.vehiclesController;
-    if (vehiclesController) {
-        const vehicles = new Vehicles(cesium);
-        vehiclesController.vehicleDataChanged.connect((vehicleId, data) => {
-            vehicles.setVehicleData(vehicleId, data);
-        });
+const cesium = new CesiumWrapper('cesiumContainer');
+cesium.initInstruments();
 
-        vehiclesController.vehicles.forEach(vehicle => {
-            vehiclesController.vehicleData(vehicle.id, function(vehicleData) {
-                vehicles.setVehicleData(vehicle.id, vehicleData);
-            });
-        });
+function checkLoad() {
+    // TODO: check cesium tiles and terrain are loaded
+    cesium.initData();
+}
 
-        vehiclesController.trackLengthChanged.connect(() => {
-            vehicles.setTrackLength(vehiclesController.trackLength);
-        });
-        vehicles.setTrackLength(vehiclesController.trackLength);
-
-        vehiclesController.selectedVehicleChanged.connect(() => {
-            vehicles.selectVehicle(vehiclesController.selectedVehicle);
-        });
-        vehicles.selectVehicle(vehiclesController.selectedVehicle);
-
-        vehiclesController.trackingChanged.connect(() => {
-            vehicles.setTracking(vehiclesController.tracking);
-        });
-    }
-
-    var adsbController = channel.objects.adsbController;
-    if (adsbController) {
-        const adsb = new Adsb(cesium);
-        adsbController.adsbChanged.connect(function(data) { adsb.setData(data); });
-    }
-});
+setTimeout(checkLoad, 2000);

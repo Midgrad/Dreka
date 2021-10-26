@@ -1,9 +1,9 @@
 // TODO: move adsb js to adsb module
 class Adsb {
-    constructor(cesium) {
+    constructor(viewer) {
 
         this.aircrafts = new Map();
-        this.viewer = cesium.viewer;
+        this.viewer = viewer;
 
         var that = this;
     }

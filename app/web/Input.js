@@ -1,8 +1,8 @@
 // Register handlers with: onClick(cartesian), onDown(cartesian), onUp(cartesian), onMove(cartesian), onPick(pickedObject)
 class Input {
-    constructor(cesium) {
+    constructor(viewer) {
 
-        this.viewer = cesium.viewer;
+        this.viewer = viewer;
         this.handlers = [];
 
         this.pickRadius = 10;

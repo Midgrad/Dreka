@@ -1,10 +1,9 @@
 class Viewport {
-    constructor(cesium) {
+    constructor(viewer) {
 
-        this.viewer = cesium.viewer;
+        this.viewer = viewer;
         this.cameraHandlers = [];
         this.cursorHandlers = [];
-        var that = this;
 
         this.heading = 0;
         this.pitch = 0;
@@ -14,6 +13,7 @@ class Viewport {
         this.cursorPosition = {};
 
         var geodesic = new Cesium.EllipsoidGeodesic();
+        var that = this;
         // Do it every time postRender, cause camera.changed is too slow
         this.viewer.scene.postRender.addEventListener(function() {
             // Get camera pitch & roll

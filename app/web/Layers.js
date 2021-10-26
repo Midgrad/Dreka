@@ -1,7 +1,7 @@
 class Layers {
-    constructor(cesium, layersController) {
+    constructor(viewer, layersController) {
 
-        this.imageryLayers = cesium.viewer.imageryLayers;
+        this.imageryLayers = viewer.imageryLayers;
 
         this.layersController = layersController;
         var that = this;

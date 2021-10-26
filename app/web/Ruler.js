@@ -1,6 +1,6 @@
 class Ruler extends Draggable {
-    constructor(cesium, rulerController) {
-        super(cesium.viewer);
+    constructor(viewer, rulerController) {
+        super(viewer);
 
         // Visual
         this.rulerController = rulerController;

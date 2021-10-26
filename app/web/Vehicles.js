@@ -106,10 +106,10 @@ class Vehicle {
 }
 
 class Vehicles {
-    constructor(cesium) {
+    constructor(viewer) {
         this.vehicles = new Map();
         this.selectedVehicle = null;
-        this.viewer = cesium.viewer;
+        this.viewer = viewer;
 
         this.trackLength = 250;
     }

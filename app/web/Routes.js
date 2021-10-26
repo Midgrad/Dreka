@@ -1,6 +1,6 @@
 class Route extends Draggable {
     constructor(viewer) {
-        super(cesium.viewer);
+        super(viewer);
 
         // Visual
         this.lineWidth = 3.0;
@@ -200,8 +200,8 @@ class Route extends Draggable {
 }
 
 class Routes {
-    constructor(cesium) {
-        this.viewer = cesium.viewer;
+    constructor(viewer) {
+        this.viewer = viewer;
 
         this.routes = new Map();
         this.editingRoute = null
