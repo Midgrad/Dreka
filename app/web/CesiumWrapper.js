@@ -81,13 +81,13 @@ class CesiumWrapper {
                 const routes = new Routes(that.viewer);
                 that.input.subscribe(routes);
 
-                var addWaypoint = (routeId, index) => {
+                var setWaypoint = (routeId, index) => {
                     routesController.waypointData(routeId, index, waypointData => {
                         routes.setWaypointData(routeId, waypointData);
                     });
                 }
 
-                var addRoute = routeId => {
+                var setRoute = routeId => {
                     routesController.routeData(routeId, routeData => {
                         routes.setRouteData(routeId, routeData);
 
@@ -95,19 +95,19 @@ class CesiumWrapper {
                             routes.setEditingRoute(routeId);
 
                         for (var index = 0; index < routeData.waypoints; ++index)
-                            addWaypoint(routeId, index);
+                            setWaypoint(routeId, index);
                     });
                 };
 
-                routesController.routeIds.forEach(routeId => addRoute(routeId));
+                routesController.routeIds.forEach(routeId => setRoute(routeId));
 
-                routesController.routeAdded.connect(routeId => addRoute(routeId));
+                routesController.routeAdded.connect(routeId => setRoute(routeId));
+                routesController.routeChanged.connect(routeId => setRoute(routeId));
 // TODO:        routesController.routeRemoved.connect(routeId =>
-// TODO:        routesController.routeChanged.connect(routeId =>
 
-                routesController.waypointAdded.connect((routeId, index) => addWaypoint(routeId, index));
+                routesController.waypointAdded.connect((routeId, index) => setWaypoint(routeId, index));
+                routesController.waypointChanged.connect((routeId, index) => setWaypoint(routeId, index));
 // TODO:        routesController.waypointRemoved.connect((routeId, index) =>
-// TODO:        routesController.waypointChanged.connect((routeId, index) =>
 
                 routesController.centerRoute.connect(routeId => { routes.centerRoute(routeId); });
                 routesController.selectedRouteChanged.connect(routeId => { routes.setEditingRoute(routeId); });
