@@ -81,21 +81,33 @@ class CesiumWrapper {
                 const routes = new Routes(that.viewer);
                 that.input.subscribe(routes);
 
-                routesController.routes.forEach((routeId) => {
-                    routesController.route(routeId, routeData => {
+                var addWaypoint = (routeId, index) => {
+                    routesController.waypointData(routeId, index, waypointData => {
+                        routes.setWaypointData(routeId, waypointData);
+                    });
+                }
+
+                var addRoute = routeId => {
+                    routesController.routeData(routeId, routeData => {
                         routes.setRouteData(routeId, routeData);
 
                         if (routesController.selectedRoute === routeId)
                             routes.setEditingRoute(routeId);
-                    });
-                });
 
-                routesController.routeChanged.connect((routeId) => {
-                    routesController.route(routeId, routeData => {
-                        routes.setRouteData(routeId, routeData);
+                        for (var index = 0; index < routeData.waypoints; ++index)
+                            addWaypoint(routeId, index);
                     });
-                });
-                // TODO: route added/route removed
+                };
+
+                routesController.routeIds.forEach(routeId => addRoute(routeId));
+
+                routesController.routeAdded.connect(routeId => addRoute(routeId));
+// TODO:        routesController.routeRemoved.connect(routeId =>
+// TODO:        routesController.routeChanged.connect(routeId =>
+
+                routesController.waypointAdded.connect((routeId, index) => addWaypoint(routeId, index));
+// TODO:        routesController.waypointRemoved.connect((routeId, index) =>
+// TODO:        routesController.waypointChanged.connect((routeId, index) =>
 
                 routesController.centerRoute.connect(routeId => { routes.centerRoute(routeId); });
                 routesController.selectedRouteChanged.connect(routeId => { routes.setEditingRoute(routeId); });
@@ -133,7 +145,7 @@ class CesiumWrapper {
             var adsbController = channel.objects.adsbController;
             if (adsbController) {
                 const adsb = new Adsb(that.viewer);
-                adsbController.adsbChanged.connect(function(data) { adsb.setData(data); });
+                adsbController.adsbChanged.connect((data) => { adsb.setData(data); });
             }
         });
     }
@@ -146,5 +158,4 @@ function checkLoad() {
     // TODO: check cesium tiles and terrain are loaded
     cesium.initData();
 }
-
-setTimeout(checkLoad, 2000);
+setTimeout(checkLoad, 1000);

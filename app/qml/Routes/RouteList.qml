@@ -49,11 +49,11 @@ Controls.Popup {
 
         Widgets.ListWrapper {
             emptyText: qsTr("No routes")
-            model: controller.routes
+            model: controller.routeIds
             width: root.width
             delegate: Route {
                 width: parent.width
-                route: controller.route(modelData)
+                route: controller.routeData(modelData)
                 onExpand: controller.selectRoute(modelData)
             }
         }
@@ -64,7 +64,7 @@ Controls.Popup {
 
         RouteEdit {
             width: root.width
-            route: controller.route(controller.selectedRoute)
+            route: controller.routeData(controller.selectedRoute)
             onCollapse: controller.selectRoute(null)
         }
     }

@@ -3,6 +3,7 @@
 #include <QDebug>
 
 #include "locator.h"
+#include "route_traits.h"
 
 using namespace md::domain;
 using namespace md::presentation;
@@ -25,16 +26,6 @@ RoutesController::RoutesController(QObject* parent) :
     }
 }
 
-QVariantList RoutesController::routes() const
-{
-    return m_routesRepository->routeIds();
-}
-
-QVariant RoutesController::selectedRoute() const
-{
-    return m_selectedRoute;
-}
-
 QStringList RoutesController::routeTypes() const
 {
     QStringList routeTypes;
@@ -45,14 +36,39 @@ QStringList RoutesController::routeTypes() const
     return routeTypes;
 }
 
-QJsonObject RoutesController::route(const QVariant& routeId) const
+QVariantList RoutesController::routeIds() const
+{
+    return m_routesRepository->routeIds();
+}
+
+QVariant RoutesController::selectedRoute() const
+{
+    return m_selectedRoute;
+}
+
+QJsonObject RoutesController::routeData(const QVariant& routeId) const
 {
     Route* route = m_routesRepository->route(routeId);
-
     if (!route)
         return QJsonObject();
 
-    return QJsonObject::fromVariantMap(route->toVariantMap(true));
+    QVariantMap routeData = route->toVariantMap(false);
+    routeData[params::waypoints] = route->count();
+
+    return QJsonObject::fromVariantMap(routeData);
+}
+
+QJsonObject RoutesController::waypointData(const QVariant& routeId, int index) const
+{
+    Route* route = m_routesRepository->route(routeId);
+    if (!route)
+        return QJsonObject();
+
+    Waypoint* waypoint = route->waypoint(index);
+    if (!waypoint)
+        return QJsonObject();
+
+    return QJsonObject::fromVariantMap(waypoint->toVariantMap(false));
 }
 
 void RoutesController::addNewRoute(const QString& routeType)
@@ -69,17 +85,16 @@ void RoutesController::selectRoute(const QVariant& selectedRoute)
     emit selectedRouteChanged(selectedRoute);
 }
 
-void RoutesController::save(const QVariant& routeId, const QJsonObject& data)
+void RoutesController::updateRoute(const QVariant& routeId, const QJsonObject& data)
 {
     Route* route = m_routesRepository->route(routeId);
     if (!route)
         return;
 
     route->fromVariantMap(data.toVariantMap());
-    m_routesRepository->saveRoute(route);
 }
 
-void RoutesController::remove(const QVariant& routeId)
+void RoutesController::removeRoute(const QVariant& routeId)
 {
     Route* route = m_routesRepository->route(routeId);
     if (!route)
@@ -88,29 +103,36 @@ void RoutesController::remove(const QVariant& routeId)
     m_routesRepository->removeRoute(route);
 }
 
+void RoutesController::updateWaypoint(const QVariant& waypointId, const QJsonObject& data)
+{
+    // TODO: impl updateWaypoint
+}
+
+void RoutesController::removeWaypoint(const QVariant& routeId, int index)
+{
+    // TODO: impl removeWaypoint
+}
+
 void RoutesController::onRouteAdded(Route* route)
 {
-    // NOTE: .toString() is a workaround, cause Qt Web Channel loses {} in QUuid
-    auto routeId = route->id().toString();
-    // TODO: special signals for waypoints
-    connect(route, &Route::waypointChanged, this, [this, routeId] {
-        emit routeChanged(routeId);
+    emit routeAdded(route->id());
+    emit routeIdsChanged();
+
+    connect(route, &Route::waypointAdded, this, [this, route](Waypoint* waypoint) {
+        emit waypointAdded(route->id(), route->index(waypoint));
     });
-    connect(route, &Route::waypointAdded, this, [this, routeId] {
-        emit routeChanged(routeId);
+    connect(route, &Route::waypointRemoved, this, [this, route](Waypoint* waypoint) {
+        emit waypointRemoved(route->id(), route->index(waypoint));
     });
-    connect(route, &Route::waypointRemoved, this, [this, routeId] {
-        emit routeChanged(routeId);
+    connect(route, &Route::waypointChanged, this, [this, route](Waypoint* waypoint) {
+        emit waypointChanged(route->id(), route->index(waypoint));
     });
-    emit routeAdded(routeId);
-    emit routesChanged();
 }
 
 void RoutesController::onRouteRemoved(Route* route)
 {
-    auto routeId = route->id().toString();
     disconnect(route, nullptr, this, nullptr);
 
-    emit routeRemoved(routeId);
-    emit routesChanged();
+    emit routeRemoved(route->id().toString());
+    emit routeIdsChanged();
 }

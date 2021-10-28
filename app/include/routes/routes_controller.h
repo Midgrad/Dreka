@@ -9,36 +9,42 @@ class RoutesController : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QVariantList routes READ routes NOTIFY routesChanged)
-    Q_PROPERTY(
-        QVariant selectedRoute READ selectedRoute WRITE selectRoute NOTIFY selectedRouteChanged)
     Q_PROPERTY(QStringList routeTypes READ routeTypes NOTIFY routeTypesChanged)
+    Q_PROPERTY(QVariantList routeIds READ routeIds NOTIFY routeIdsChanged)
+    Q_PROPERTY(QVariant selectedRoute READ selectedRoute NOTIFY selectedRouteChanged)
 
 public:
     explicit RoutesController(QObject* parent = nullptr);
 
-    QVariantList routes() const;
-    QVariant selectedRoute() const;
     QStringList routeTypes() const;
+    QVariantList routeIds() const;
+    QVariant selectedRoute() const;
 
-    Q_INVOKABLE QJsonObject route(const QVariant& routeId) const;
+    Q_INVOKABLE QJsonObject routeData(const QVariant& routeId) const;
+    Q_INVOKABLE QJsonObject waypointData(const QVariant& routeId, int index) const;
 
 public slots:
     void addNewRoute(const QString& routeType);
     void selectRoute(const QVariant& selectedRoute);
-    void save(const QVariant& routeId, const QJsonObject& data);
-    void remove(const QVariant& routeId);
+    void updateRoute(const QVariant& routeId, const QJsonObject& data);
+    void removeRoute(const QVariant& routeId);
+    void updateWaypoint(const QVariant& waypointId, const QJsonObject& data);
+    void removeWaypoint(const QVariant& routeId, int index);
 
 signals:
-    void routesChanged();
     void routeTypesChanged();
+    void routeIdsChanged();
+    void selectedRouteChanged(QVariant routeId);
 
     void routeAdded(QVariant routeId);
     void routeRemoved(QVariant routeId);
     void routeChanged(QVariant routeId);
 
+    void waypointAdded(QVariant routeId, int index);
+    void waypointRemoved(QVariant routeId, int index);
+    void waypointChanged(QVariant routeId, int index);
+
     void centerRoute(QVariant routeId);
-    void selectedRouteChanged(QVariant routeId);
     void centerWaypoint(QVariant routeId, int index);
 
 private slots:

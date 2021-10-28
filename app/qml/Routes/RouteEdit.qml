@@ -88,7 +88,7 @@ Item {
             emptyText: qsTr("No Waypoints")
             delegate: Waypoint {
                 width: parent.width
-                waypoint: modelData
+                waypoint: controller.waypointData(route.id, modelData)
                 waypointIndex: index
             }
             Layout.fillWidth: true

@@ -34,9 +34,8 @@ class Route extends Draggable {
 
     setData(routeData) {
         this.clear();
-        this.visible = routeData.visible;
-
-        routeData.waypoints.forEach((wpt) => { this.addWaypoint(wpt); } );
+        //this.visible = routeData.visible;
+        this.name = routeData.name;
     }
 
     addWaypoint(wpt) {
@@ -250,10 +249,11 @@ class Routes {
         route.setData(data);
     }
 
-    removeRoute(routeId) {
-        if (!this.routes.has(routeId))
-            return;
+    setWaypointData(routeId, waypointData) {
+        this.routes.get(routeId).addWaypoint(waypointData);
+    }
 
+    removeRoute(routeId) {
         this.routes.get(routeId).clear();
         this.routes.delete(routeId);
     }
