@@ -79,11 +79,11 @@ class CesiumWrapper {
             var routesController = channel.objects.routesController;
             if (routesController) {
                 const routes = new Routes(that.viewer);
-                that.input.subscribe(routes);
+//                that.input.subscribe(routes);
 
                 var setWaypoint = (routeId, index) => {
                     routesController.waypointData(routeId, index, waypointData => {
-                        routes.setWaypointData(routeId, waypointData);
+                        routes.setWaypointData(routeId, index, waypointData);
                     });
                 }
 
@@ -103,11 +103,11 @@ class CesiumWrapper {
 
                 routesController.routeAdded.connect(routeId => setRoute(routeId));
                 routesController.routeChanged.connect(routeId => setRoute(routeId));
-// TODO:        routesController.routeRemoved.connect(routeId =>
+                routesController.routeRemoved.connect(routeId => routes.removeRoute(routeId));
 
                 routesController.waypointAdded.connect((routeId, index) => setWaypoint(routeId, index));
                 routesController.waypointChanged.connect((routeId, index) => setWaypoint(routeId, index));
-// TODO:        routesController.waypointRemoved.connect((routeId, index) =>
+                routesController.waypointRemoved.connect((routeId, index) => routes.removeWaypoint(routeId, index));
 
                 routesController.centerRoute.connect(routeId => { routes.centerRoute(routeId); });
                 routesController.selectedRouteChanged.connect(routeId => { routes.setEditingRoute(routeId); });
