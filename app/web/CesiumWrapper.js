@@ -154,8 +154,11 @@ class CesiumWrapper {
 const cesium = new CesiumWrapper('cesiumContainer');
 cesium.initInstruments();
 
-function checkLoad() {
-    // TODO: check cesium tiles and terrain are loaded
-    cesium.initData();
-}
-setTimeout(checkLoad, 1000);
+var heightMaps = cesium.viewer.terrainProvider;
+var heightCheck = setInterval(function () {
+    if (heightMaps.ready) {
+        clearInterval(heightCheck);
+
+        cesium.initData();
+    }
+}, 1000);

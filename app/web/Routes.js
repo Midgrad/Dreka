@@ -87,18 +87,9 @@ class Route extends Draggable {
         });
         this.waypoints.push(waypoint);
 
-        var heightMaps = this.viewer.terrainProvider;
         var terrainPosition = Cesium.Cartographic.fromDegrees(params.longitude, params.latitude, 0);
-
-        // TODO: unified terrain check
-        var heightCheck = setInterval(function () {
-            if (heightMaps.ready) {
-                clearInterval(heightCheck);
-
-                var promise =  Cesium.sampleTerrainMostDetailed(heightMaps, [terrainPosition]);
-                Cesium.when(promise, updatedPositions => {});
-            }
-        }, 1000);
+        var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [terrainPosition]);
+        Cesium.when(promise, updatedPositions => {});
 
         // Arrow to the ground
         var pylon = this.viewer.entities.add({
