@@ -9,24 +9,32 @@ class MapRulerController : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool rulerMode MEMBER rulerMode NOTIFY rulerModeChanged)
-    Q_PROPERTY(float distance MEMBER distance NOTIFY distanceChanged)
+    Q_PROPERTY(bool rulerMode READ rulerMode WRITE setRulerMode NOTIFY rulerModeChanged)
+    Q_PROPERTY(float distance READ distance WRITE setDistance NOTIFY distanceChanged)
     Q_PROPERTY(bool empty READ isEmpty NOTIFY distanceChanged)
 
 public:
     explicit MapRulerController(QObject* parent = nullptr);
 
-    bool rulerMode = false;
-    float distance = 0;
-
+    bool rulerMode() const;
+    float distance() const;
     bool isEmpty() const;
 
-signals:
-    void rulerModeChanged();
-    void distanceChanged();
+public slots:
+    void setRulerMode(bool rulerMode);
+    void setDistance(float distance);
+    void clear();
 
-    Q_INVOKABLE void clear();
+signals:
+    void rulerModeChanged(bool rulerMode);
+    void distanceChanged(float distance);
+
+    void cleared();
+
+private:
+    bool m_rulerMode = false;
+    float m_distance = 0.0;
 };
-} // namespace dreka::presentation
+} // namespace md::presentation
 
 #endif // MAP_RULER_CONTROLLER_H

@@ -32,13 +32,22 @@ class CesiumWrapper {
         const buildingTileset = this.viewer.scene.primitives.add(Cesium.createOsmBuildings());
     }
 
-    initInstruments() {
-        this.input = new Input(cesium.viewer);
+    init() {
+        this.input = new Input(this.viewer);
 
         var that = this;
-        this.webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
-            const ruler = new Ruler(that.viewer, channel.objects.rulerController);
-            that.input.subscribe(ruler);
+        this.webChannel = new QWebChannel(qt.webChannelTransport, (channel) => {
+            // Add ruler instrument if we got rulerController
+            var rulerController = channel.objects.rulerController;
+            if (rulerController) {
+                const ruler = new Ruler(that.viewer, that.input);
+
+                // TODO: subscribe input
+
+                rulerController.cleared.connect(() => { ruler.clear(); });
+                rulerController.rulerModeChanged.connect(mode => { ruler.setEnabled(mode) });
+                ruler.subscribeDistance(distance => { rulerController.distance = distance; });
+            }
 
             const grid = new Grid(that.viewer, channel.objects.gridController);
             const layers = new Layers(that.viewer, channel.objects.layersController);
@@ -70,12 +79,7 @@ class CesiumWrapper {
 
                 viewportController.restore();
             }
-        });
-    }
 
-    initData() {
-        var that = this;
-        const webChannel = new QWebChannel(qt.webChannelTransport, function(channel) {
             var routesController = channel.objects.routesController;
             if (routesController) {
                 const routes = new Routes(that.viewer);
@@ -151,14 +155,14 @@ class CesiumWrapper {
     }
 }
 
-const cesium = new CesiumWrapper('cesiumContainer');
-cesium.initInstruments();
+const cesiumWrapper = new CesiumWrapper('cesiumContainer');
 
-var heightMaps = cesium.viewer.terrainProvider;
+// Init data when terrainProvider get ready
+var heightMaps = cesiumWrapper.viewer.terrainProvider;
 var heightCheck = setInterval(function () {
     if (heightMaps.ready) {
         clearInterval(heightCheck);
 
-        cesium.initData();
+        cesiumWrapper.init();
     }
-}, 1000);
+}, 100);

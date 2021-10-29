@@ -1,6 +1,6 @@
-class Route extends Draggable {
+class Route {
     constructor(viewer) {
-        super(viewer);
+        this.viewer = viewer;
 
         // Visual
         this.lineWidth = 3.0;
@@ -8,6 +8,7 @@ class Route extends Draggable {
         // Entities
         this.waypoints = [];
 
+        // Nominal track
         var that = this;
         this.lines = this.viewer.entities.add({
             polyline: {
@@ -50,12 +51,12 @@ class Route extends Draggable {
     }
 
     clear() {
-        super.clear();
+        // super.clear();
 
         this.viewer.entities.remove(this.lines);
 
         this.waypoints.forEach(waypoint => waypoint.clear());
-        this.routes.clear();
+        this.waypoints = [];
     }
 
     center() {

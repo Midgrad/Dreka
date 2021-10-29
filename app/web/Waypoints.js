@@ -1,13 +1,14 @@
-class Waypoint {
+class Waypoint extends Draggable {
     /**
      * @param {Cesium.Viewr} viewer
-     * @param {JSON} waypointData - JSON, must contain latitude, longitude, altitude (AMSL)
-     * @param {Cesium.Color} color - waypoint color, white by default
+     * @param {JSON} waypointData
+     * @param {Cesium.Color} color
      */
     constructor(viewer, waypointData, color = Cesium.Color.WHITE) {
+        super(viewer);
+
         // Data
         var params = waypointData.params;
-        this.viewer = viewer;
         this.position = Cesium.Cartographic.fromDegrees(params.longitude, params.latitude, params.altitude);
         this.terrainPosition = Cesium.Cartographic.fromDegrees(params.longitude, params.latitude, 0);
 
@@ -17,8 +18,7 @@ class Waypoint {
 
         // Visual
         this.normalScale = 1.0;
-        this.hoveredScale = 1.5;
-        this.pointPixelSize = 8.0; // TODO: to draggable
+        this.hoveredScale = 1.2;
         // this.visible = true;
 
         var that = this;

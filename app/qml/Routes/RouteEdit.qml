@@ -45,7 +45,7 @@ Item {
                 highlightColor: Controls.Theme.colors.negative
                 iconSource: "qrc:/icons/remove.svg"
                 tipText: qsTr("Remove")
-                onClicked: controller.remove(route.id)
+                onClicked: controller.removeRoute(route.id)
             }
         }
 

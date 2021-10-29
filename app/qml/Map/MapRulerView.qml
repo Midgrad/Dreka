@@ -10,7 +10,7 @@ RowLayout {
 
     Component.onCompleted: map.registerController("rulerController", ruler)
 
-    property real distance: ruler.distance
+    readonly property alias distance: ruler.distance
 
     spacing: 1
 
@@ -19,7 +19,7 @@ RowLayout {
         tipText: checked ? qsTr("Disable ruler") : qsTr("Enable ruler")
         iconSource: "qrc:/icons/ruler.svg"
         checkable: true
-        onCheckedChanged: ruler.rulerMode = checked
+        onCheckedChanged: ruler.setRulerMode(checked)
     }
 
     MapButton {
@@ -27,7 +27,7 @@ RowLayout {
         leftCropped: true
         tipText: qsTr("Copy distance")
         visible: !ruler.empty
-        text: distance > 1000 ? (Math.round(distance / 1000) + " " + qsTr("km")):
+        text: distance > 1000 ? ((Math.round(distance / 100) * 0.1).toFixed(1) + " " + qsTr("km")):
                                 (Math.round(distance) + " " + qsTr("m"))
         onClicked: clipboard.setText(text)
         Layout.fillWidth: true
