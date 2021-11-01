@@ -6,6 +6,9 @@ class Route extends Draggable {
     constructor(viewer, input) {
         super(viewer, input)
 
+        // Callbacks
+        this.waypointChangedCallback = null;
+
         // Visual
         this.lineWidth = 3.0;
 
@@ -49,12 +52,17 @@ class Route extends Draggable {
         } else {
             var waypoint = new Waypoint(this.viewer, waypointData);
             this.waypoints.push(waypoint);
+
+            if (this.waypointChangedCallback) {
+                var that = this;
+                waypoint.changedCallback = (waypointData) => {
+                    that.waypointChangedCallback(index, waypointData);
+                }
+            }
         }
     }
 
     clear() {
-        // super.clear();
-
         this.viewer.entities.remove(this.lines);
 
         this.waypoints.forEach(waypoint => waypoint.clear());
@@ -112,6 +120,9 @@ class Routes {
         this.viewer = viewer;
         this.input = input;
 
+        // Callbacks
+        this.waypointChangedCallback = null;
+
         // Entities
         this.routes = new Map();
         this.editingRoute = null
@@ -156,6 +167,13 @@ class Routes {
         } else {
             route = new Route(this.viewer, this.input)
             this.routes.set(routeId, route);
+
+            if (this.waypointChangedCallback) {
+                var that = this;
+                route.waypointChangedCallback = (index, waypointData) => {
+                    that.waypointChangedCallback(routeId, index, waypointData);
+                }
+            }
         }
         route.setRouteData(data);
     }

@@ -35,7 +35,7 @@ class Input {
                         handler.onDown(cartesian);
                 });
             });
-        };
+        }
 
         var leftDownHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
         leftDownHandler.setInputAction(downCallback, Cesium.ScreenSpaceEventType.LEFT_DOWN);
@@ -52,7 +52,7 @@ class Input {
                         handler.onUp(cartesian);
                 });
             });
-        };
+        }
 
         var leftUpHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
         leftUpHandler.setInputAction(upCallback, Cesium.ScreenSpaceEventType.LEFT_UP);

@@ -103,9 +103,18 @@ void RoutesController::removeRoute(const QVariant& routeId)
     m_routesRepository->removeRoute(route);
 }
 
-void RoutesController::updateWaypoint(const QVariant& waypointId, const QJsonObject& data)
+void RoutesController::updateWaypoint(const QVariant& routeId, int index, const QJsonObject& data)
 {
-    // TODO: impl updateWaypoint
+    Route* route = m_routesRepository->route(routeId);
+    if (!route)
+        return;
+
+    Waypoint* waypoint = route->waypoint(index);
+    if (!waypoint)
+        return;
+
+    waypoint->fromVariantMap(data.toVariantMap());
+    qDebug() << routeId << index << data;
 }
 
 void RoutesController::removeWaypoint(const QVariant& routeId, int index)

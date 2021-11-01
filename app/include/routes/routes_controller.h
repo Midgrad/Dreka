@@ -28,7 +28,7 @@ public slots:
     void selectRoute(const QVariant& selectedRoute);
     void updateRoute(const QVariant& routeId, const QJsonObject& data);
     void removeRoute(const QVariant& routeId);
-    void updateWaypoint(const QVariant& waypointId, const QJsonObject& data);
+    void updateWaypoint(const QVariant& routeId, int index, const QJsonObject& data);
     void removeWaypoint(const QVariant& routeId, int index);
 
 signals:
