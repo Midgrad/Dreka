@@ -1,6 +1,10 @@
-class Route {
-    constructor(viewer) {
-        this.viewer = viewer;
+class Route extends Draggable {
+    /**
+     * @param {Cesium.Viewr} viewer
+       @param {Input} input
+     */
+    constructor(viewer, input) {
+        super(viewer, input)
 
         // Visual
         this.lineWidth = 3.0;
@@ -14,9 +18,7 @@ class Route {
             polyline: {
                 positions: new Cesium.CallbackProperty(() => {
                     var positions = [];
-                    that.waypoints.forEach(waypoint => {
-                        positions.push(Cesium.Cartographic.toCartesian(waypoint.position));
-                    });
+                    that.waypoints.forEach(waypoint => { positions.push(waypoint.position); });
                     return positions;
                 }, false),
                 arcType: Cesium.ArcType.GEODESIC,
@@ -69,15 +71,42 @@ class Route {
             this.waypoints[index].flyTo();
     }
 
-    setEditMode(edit) {
+    setEditMode(edit) { // TODO: unify with dragEnabled
         this.waypoints.forEach(waypoint => waypoint.setEditMode(edit));
+    }
+
+    onClick(cartesian) {
+        // TODO: invoke add new point
+    }
+
+    onPick(pickedObjects) {
+        if (super.onPick(pickedObjects))
+            return true;
+
+        // Try to pick new point
+        this.waypoints.forEach(candidate => {
+            if (candidate.checkMatch(pickedObjects))
+                this.setHoveredPoint(candidate);
+        });
+    }
+
+    onMove(cartesian) {
+        if (this.hoveredPoint && this.hoveredPoint.dragging) {
+            this.hoveredPoint.updatePosition(cartesian, true);
+        }
     }
 }
 
 class Routes {
-    constructor(viewer) {
+    /**
+     * @param {Cesium.Viewr} viewer
+       @param {Input} input
+     */
+    constructor(viewer, input) {
         this.viewer = viewer;
+        this.input = input;
 
+        // Entities
         this.routes = new Map();
         this.editingRoute = null
     }
@@ -94,13 +123,17 @@ class Routes {
         if (this.editingRoute === route)
             return;
 
-        if (this.editingRoute)
+        if (this.editingRoute) {
             this.editingRoute.setEditMode(false);
+            this.input.unsubscribe(this.editingRoute);
+        }
 
         this.editingRoute = route;
 
-        if (this.editingRoute)
+        if (this.editingRoute) {
             this.editingRoute.setEditMode(true);
+            this.input.subscribe(this.editingRoute);
+        }
     }
 
     centerWaypoint(routeId, index) {
@@ -115,7 +148,7 @@ class Routes {
         if (this.routes.has(routeId)) {
             route = this.routes.get(routeId);
         } else {
-            route = new Route(this.viewer, routeId, this)
+            route = new Route(this.viewer, this.input)
             this.routes.set(routeId, route);
         }
         route.setRouteData(data);

@@ -1,4 +1,4 @@
-class Waypoint extends Draggable {
+class Waypoint extends DraggablePoint {
     /**
      * @param {Cesium.Viewr} viewer
      * @param {JSON} waypointData
@@ -8,13 +8,7 @@ class Waypoint extends Draggable {
         super(viewer);
 
         // Data
-        var params = waypointData.params;
-        this.position = Cesium.Cartographic.fromDegrees(params.longitude, params.latitude, params.altitude);
-        this.terrainPosition = Cesium.Cartographic.fromDegrees(params.longitude, params.latitude, 0);
-
-        // Update terrainPosition from the terrainProvider
-        var promise = Cesium.sampleTerrainMostDetailed(viewer.terrainProvider, [this.terrainPosition]);
-        Cesium.when(promise, updatedPositions => {});
+        this.update(waypointData);
 
         // Visual
         this.normalScale = 1.0;
@@ -25,9 +19,7 @@ class Waypoint extends Draggable {
 
         // SVG billboard with label
         this.point = viewer.entities.add({
-            position: new Cesium.CallbackProperty(() => {
-                return Cesium.Cartographic.toCartesian(that.position)
-            }, false),
+            position: new Cesium.CallbackProperty(() => { return that.position; }, false),
             billboard: {
                 image: "./icons/wpt.svg",
                 color: color,
@@ -35,7 +27,7 @@ class Waypoint extends Draggable {
                 scale: this.normalScale
             },
             label: {
-                text: waypointData.name,
+                text: new Cesium.CallbackProperty(() => { return that.name; }, false),
                 show: false,
                 showBackground: true,
                 disableDepthTestDistance: Number.POSITIVE_INFINITY,
@@ -48,8 +40,7 @@ class Waypoint extends Draggable {
         this.pylon = this.viewer.entities.add({
              polyline: {
                  positions: new Cesium.CallbackProperty(() => {
-                     return [Cesium.Cartographic.toCartesian(that.position),
-                             Cesium.Cartographic.toCartesian(that.terrainPosition)];
+                     return [that.position, that.terrainPosition];
                  }, false),
                  width: 1,
                  arcType: Cesium.ArcType.NONE,
@@ -57,11 +48,9 @@ class Waypoint extends Draggable {
              }
         });
 
-        // Draggable point on the ground
+        // DraggablePoint point on the ground
         this.groundPoint = this.viewer.entities.add({
-            position: new Cesium.CallbackProperty(() => {
-                return Cesium.Cartographic.toCartesian(that.terrainPosition)
-            }, false),
+            position: new Cesium.CallbackProperty(() => { return that.terrainPosition }, false),
             show: false,
             point: {
                 pixelSize: this.pointPixelSize,
@@ -70,26 +59,45 @@ class Waypoint extends Draggable {
         });
     }
 
-    /**
-     * @param {JSON} waypointData - JSON, must contain latitude, longitude, altitude (AMSL)
-     */
-    update(waypointData) {
-        var params = waypointData.params;
-
-        this.point.label.text = waypointData.name;
-
-        this.position = Cesium.Cartographic.fromDegrees(params.longitude, params.latitude, params.altitude);
-        this.terrainPosition = Cesium.Cartographic.fromDegrees(params.longitude, params.latitude, 0);
-
-        // Update terrainPosition from the terrainProvider
-        var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [this.terrainPosition]);
-        Cesium.when(promise, updatedPositions => {});
-    }
-
     clear() {
         this.viewer.entities.remove(this.point);
         this.viewer.entities.remove(this.pylon);
         this.viewer.entities.remove(this.groundPoint);
+    }
+
+    /**
+     * @param {JSON} waypointData - JSON, must contain latitude, longitude, altitude (AMSL)
+     */
+    update(waypointData) {
+        this.waypointData = waypointData;
+        var params = waypointData.params;
+
+        this.name = waypointData.name;
+
+        this.updatePosition(Cesium.Cartesian3.fromDegrees(params.longitude,
+                                                          params.latitude,
+                                                          params.altitude));
+    }
+
+    updatePosition(cartesian, saveAltitude = false) {
+        // Update terrainPosition from the terrainProvider
+        var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+
+        this.terrainPosition = cartesian;
+        if (saveAltitude) {
+            this.position = Cesium.Cartesian3.fromDegrees(
+                Cesium.Math.toDegrees(cartographic.longitude),
+                Cesium.Math.toDegrees(cartographic.latitude),
+                this.waypointData.params.altitude);
+        } else {
+            this.position = cartesian;
+        }
+
+        var that = this;
+        var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [cartographic]);
+        Cesium.when(promise, updatedPositions => {
+                        that.terrainPosition = Cesium.Cartographic.toCartesian(cartographic);
+                    });
     }
 
     flyTo() {
@@ -99,5 +107,20 @@ class Waypoint extends Draggable {
     setEditMode(edit) {
         this.point.label.show = edit;
         this.groundPoint.show = edit;
+    }
+
+    // TODO: set hovered for terrain point and waypoint separatly
+    setHovered(hovered) {
+        this.groundPoint.point.pixelSize = hovered ? this.hoveredPointPixelSize : this.pointPixelSize;
+    }
+
+    checkMatch(objects) {
+        var result = null;
+        objects.forEach(object => {
+            // check ground pointa
+            if (this.groundPoint === object.id)
+                 result = this.point;
+        });
+        return result;
     }
 }

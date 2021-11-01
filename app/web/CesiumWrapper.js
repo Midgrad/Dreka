@@ -82,8 +82,7 @@ class CesiumWrapper {
 
             var routesController = channel.objects.routesController;
             if (routesController) {
-                const routes = new Routes(that.viewer);
-//                that.input.subscribe(routes);
+                const routes = new Routes(that.viewer, that.input);
 
                 var setWaypoint = (routeId, index) => {
                     routesController.waypointData(routeId, index, waypointData => {

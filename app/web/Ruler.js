@@ -1,4 +1,4 @@
-class RulerPoint extends Draggable {
+class RulerPoint extends DraggablePoint {
     /**
      * @param {Cesium.Viewr} viewer
      * @param {Cesium.Cartesian} position
@@ -9,7 +9,7 @@ class RulerPoint extends Draggable {
         // Data
         this.position = position;
 
-        // Draggable point
+        // DraggablePoint point
         var that = this;
         this.point = this.viewer.entities.add({
             position: new Cesium.CallbackProperty(() => { return that.position }, false),
@@ -38,17 +38,13 @@ class RulerPoint extends Draggable {
     }
 }
 
-class Ruler {
+class Ruler extends Draggable {
     /**
      * @param {Cesium.Viewr} viewer
        @param {Input} input
      */
     constructor(viewer, input) {
-        this.viewer = viewer;
-        this.input = input;
-
-        // Subscribe for input
-        input.subscribe(this);
+        super(viewer, input);
 
         // Data
         this.distance = 0;
@@ -59,7 +55,6 @@ class Ruler {
 
         // Entities
         this.points = [];
-        this.hoveredPoint = null;
 
         // Labels between points
         this.labels = [];
@@ -145,20 +140,6 @@ class Ruler {
         }
     }
 
-    setHoveredPoint(hoveredPoint) {
-        if (this.hoveredPoint === hoveredPoint)
-            return;
-
-        if (this.hoveredPoint) {
-            this.hoveredPoint.setHovered(false);
-        }
-        this.hoveredPoint = hoveredPoint;
-
-        if (hoveredPoint) {
-            hoveredPoint.setHovered(true);
-        }
-    }
-
     subscribeDistance(callback) {
         this.distanceCallback = callback;
     }
@@ -173,31 +154,14 @@ class Ruler {
     }
 
     onPick(pickedObjects) {
-        if (this.hoveredPoint) {
-            // Continue if we picking the same or dragging
-            if (this.hoveredPoint.dragging ||
-                pickedObjects.includes(this.hoveredPoint.point.id))
-                return;
-
-            // Drop it if no
-            this.setHoveredPoint(null);
-        }
+        if (super.onPick(pickedObjects))
+            return true;
 
         // Try to pick new point
         this.points.forEach(candidate => {
             if (candidate.checkMatch(pickedObjects))
                 this.setHoveredPoint(candidate);
         });
-    }
-
-    onUp(cartesian) {
-        if (this.hoveredPoint && this.hoveredPoint.dragging)
-            this.hoveredPoint.setDragging(false);
-    }
-
-    onDown(cartesian) {
-        if (this.hoveredPoint && !this.hoveredPoint.dragging)
-            this.hoveredPoint.setDragging(true);
     }
 
     onMove(cartesian) {
