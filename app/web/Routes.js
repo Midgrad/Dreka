@@ -95,6 +95,12 @@ class Route extends Draggable {
             this.hoveredPoint.updatePosition(cartesian, true);
         }
     }
+
+    onMoveShift(dx, dy) {
+        if (this.hoveredPoint && this.hoveredPoint.dragging) {
+            this.hoveredPoint.onMoveShift(dx, dy);
+        }
+    }
 }
 
 class Routes {

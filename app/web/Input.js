@@ -4,11 +4,11 @@ class Input {
 
         this.viewer = viewer;
         this.handlers = [];
+        this.pixelScale = 0;
 
         this.pickRadius = 10;
 
         var that = this;
-        var scene = this.viewer.scene;
 
         // Remove conflicting default behavior
         this.viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
@@ -16,7 +16,7 @@ class Input {
 
         // Left button click
         var leftClickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-        leftClickHandler.setInputAction(function(event) {
+        leftClickHandler.setInputAction((event) => {
             // Promoute mouse click event with position
             that.pickPosition(event.position, function (cartesian) {
                 that.handlers.forEach(handler => {
@@ -27,8 +27,7 @@ class Input {
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
         // Left button down
-        var leftDownHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-        leftDownHandler.setInputAction(function(event) {
+        var downCallback = (event) => {
             // Promoute mouse down event with position
             that.pickPosition(event.position, function (cartesian) {
                 that.handlers.forEach(handler => {
@@ -36,11 +35,16 @@ class Input {
                         handler.onDown(cartesian);
                 });
             });
-        }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+        };
+
+        var leftDownHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+        leftDownHandler.setInputAction(downCallback, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+        var leftShiftDownHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+        leftShiftDownHandler.setInputAction(downCallback, Cesium.ScreenSpaceEventType.LEFT_DOWN,
+                                            Cesium.KeyboardEventModifier.SHIFT);
 
         // Left button up
-        var leftUpHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-        leftUpHandler.setInputAction(function(event) {
+        var upCallback = (event) => {
             // Promoute mouse up event with position
             that.pickPosition(event.position, function (cartesian) {
                 that.handlers.forEach(handler => {
@@ -48,23 +52,21 @@ class Input {
                         handler.onUp(cartesian);
                 });
             });
-        }, Cesium.ScreenSpaceEventType.LEFT_UP);
+        };
+
+        var leftUpHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+        leftUpHandler.setInputAction(upCallback, Cesium.ScreenSpaceEventType.LEFT_UP);
+        var leftShiftUpHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+        leftShiftUpHandler.setInputAction(upCallback, Cesium.ScreenSpaceEventType.LEFT_UP,
+                                          Cesium.KeyboardEventModifier.SHIFT);
 
         // Mouse move
-        var moveHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+        var moveHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
         moveHandler.setInputAction(function(movement) {
             // Try to pick entity on map
-            var pickedObjects = scene.drillPick(movement.endPosition, undefined,
-                                                that.pickRadius, that.pickRadius);
-            var found = false;
-            that.handlers.forEach(handler => {
-                if (found || typeof handler.onPick !== "function")
-                    return;
+            that.pickEntity(movement.endPosition);
 
-                found = handler.onPick(pickedObjects);
-            });
-
-            // Promoute mouse move event with position
+            // Promoute position for onMove handlers
             that.pickPosition(movement.endPosition, function (cartesian) {
                 that.handlers.forEach(handler => {
                     if (typeof handler.onMove === "function")
@@ -74,15 +76,31 @@ class Input {
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
         // Mouse move with shift
-        var moveShiftHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+        var moveShiftHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
         moveShiftHandler.setInputAction(function(movement) {
-            var dx = movement.startPosition.x - movement.endPosition.x;
-            var dy = movement.startPosition.y - movement.endPosition.y;
+            // Try to pick entity on map
+            that.pickEntity(movement.endPosition);
+
+            // Promoute scaled dx/dy for onMoveShift handlers
+            var dx = (movement.startPosition.x - movement.endPosition.x) * that.pixelScale;
+            var dy = (movement.startPosition.y - movement.endPosition.y) * that.pixelScale;
             that.handlers.forEach(handler => {
                 if (typeof handler.onMoveShift === "function")
                     handler.onMoveShift(dx, dy);
             });
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE, Cesium.KeyboardEventModifier.SHIFT);
+    }
+
+    pickEntity(position) {
+        var pickedObjects = this.viewer.scene.drillPick(position, undefined, this.pickRadius,
+                                                        this.pickRadius);
+        var found = false;
+        this.handlers.forEach(handler => {
+            if (found || typeof handler.onPick !== "function")
+                return;
+
+            found = handler.onPick(pickedObjects);
+        });
     }
 
     pickPosition(position, callback) {
@@ -91,7 +109,8 @@ class Input {
 
         var ray = this.viewer.camera.getPickRay(position);
         var intersection = this.viewer.scene.globe.pick(ray, this.viewer.scene);
-        if (intersection) callback(intersection);
+        if (intersection)
+            callback(intersection);
     }
 
     subscribe(handler) {

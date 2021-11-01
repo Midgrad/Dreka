@@ -55,7 +55,9 @@ class Viewport {
                 that.pixelScale = 0;
             }
 
-            that.cameraHandlers.forEach(handler => handler());
+            that.cameraHandlers.forEach(handler => handler(that.heading, that.pitch,
+                                                           that.cameraPosition, that.centerPosition,
+                                                           that.pixelScale));
         });
     }
 
@@ -68,7 +70,7 @@ class Viewport {
             this.cursorPosition = {};
         }
 
-        this.cursorHandlers.forEach(handler => handler());
+        this.cursorHandlers.forEach(handler => handler(this.cursorPosition));
     }
 
     flyTo(center, heading, pitch, duration) {
@@ -97,7 +99,6 @@ class Viewport {
         });
     };
 
-    // TODO: all notifications to one style
     subscribeCamera(handler) {
         this.cameraHandlers.push(handler);
     }

@@ -33,9 +33,15 @@ class CesiumWrapper {
     }
 
     init() {
-        this.input = new Input(this.viewer);
-
         var that = this;
+
+        this.input = new Input(this.viewer);
+        this.viewport = new Viewport(this.viewer);
+        this.input.subscribe(this.viewport);
+        this.viewport.subscribeCamera((heading, pitch, cameraPosition, centerPosition, pixelScale) => {
+            that.input.pixelScale = pixelScale;
+        });
+
         this.webChannel = new QWebChannel(qt.webChannelTransport, (channel) => {
             // Add ruler instrument if we got rulerController
             var rulerController = channel.objects.rulerController;
@@ -54,29 +60,23 @@ class CesiumWrapper {
 
             var viewportController = channel.objects.viewportController;
             if (viewportController) {
-                const viewport = new Viewport(that.viewer);
-                that.input.subscribe(viewport);
-
-                viewportController.flyTo.connect(function(center, heading, pitch, duration) {
-                    viewport.flyTo(center, heading, pitch, duration);
+                viewportController.flyTo.connect((center, heading, pitch, duration) => {
+                    that.viewport.flyTo(center, heading, pitch, duration);
                 });
 
-                viewportController.lookTo.connect(function(heading, pitch, duration) {
-                    viewport.lookTo(heading, pitch, duration);
+                viewportController.lookTo.connect((heading, pitch, duration) => {
+                    that.viewport.lookTo(heading, pitch, duration);
                 });
 
-                viewport.subscribeCamera(function() {
-                    viewportController.heading = viewport.heading;
-                    viewportController.pitch = viewport.pitch;
-                    viewportController.cameraPosition = viewport.cameraPosition;
-                    viewportController.centerPosition = viewport.centerPosition;
-                    viewportController.pixelScale = viewport.pixelScale;
+                that.viewport.subscribeCamera((heading, pitch, cameraPosition, centerPosition, pixelScale) => {
+                    viewportController.heading = heading;
+                    viewportController.pitch = pitch;
+                    viewportController.cameraPosition = cameraPosition;
+                    viewportController.centerPosition = centerPosition;
+                    viewportController.pixelScale = pixelScale;
                 });
 
-                viewport.subscribeCursor(function() {
-                    viewportController.cursorPosition = viewport.cursorPosition;
-                });
-
+                that.viewport.subscribeCursor((cursorPosition) => { viewportController.cursorPosition = cursorPosition; });
                 viewportController.restore();
             }
 

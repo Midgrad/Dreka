@@ -100,6 +100,12 @@ class Waypoint extends DraggablePoint {
                     });
     }
 
+    onMoveShift(dx, dy) {
+        var cartographic = Cesium.Cartographic.fromCartesian(this.position);
+        cartographic.height += dy;
+        this.position = Cesium.Cartographic.toCartesian(cartographic);
+    }
+
     flyTo() {
         this.viewer.flyTo(this.point);
     }
