@@ -92,7 +92,7 @@ class Route extends Draggable {
 
     onMove(cartesian) {
         if (this.hoveredPoint && this.hoveredPoint.dragging) {
-            this.hoveredPoint.updatePosition(cartesian, true);
+            this.hoveredPoint.onMove(cartesian);
         }
     }
 

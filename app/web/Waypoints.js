@@ -70,40 +70,40 @@ class Waypoint extends DraggablePoint {
      */
     update(waypointData) {
         this.waypointData = waypointData;
-        var params = waypointData.params;
-
+        this.waypointData.params.terrainAltitude = 0; // Don't trust terrain data
         this.name = waypointData.name;
 
-        this.updatePosition(Cesium.Cartesian3.fromDegrees(params.longitude,
-                                                          params.latitude,
-                                                          params.altitude));
+        this.rebuild();
     }
 
-    updatePosition(cartesian, saveAltitude = false) {
-        // Update terrainPosition from the terrainProvider
-        var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+    rebuild() {
+        var params = this.waypointData.params;
 
-        this.terrainPosition = cartesian;
-        if (saveAltitude) {
-            this.position = Cesium.Cartesian3.fromDegrees(
-                Cesium.Math.toDegrees(cartographic.longitude),
-                Cesium.Math.toDegrees(cartographic.latitude),
-                this.waypointData.params.altitude);
-        } else {
-            this.position = cartesian;
-        }
+        this.position = Cesium.Cartesian3.fromDegrees(params.longitude, params.latitude, params.altitude);
+        this.terrainPosition = Cesium.Cartesian3.fromDegrees(params.longitude, params.latitude,
+                                                             this.waypointData.params.terrainAltitude);
 
+        // Sample terrain position from the ground
+        var cartographic = Cesium.Cartographic.fromCartesian(this.terrainPosition);
         var that = this;
         var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [cartographic]);
         Cesium.when(promise, updatedPositions => {
                         that.terrainPosition = Cesium.Cartographic.toCartesian(cartographic);
+                        that.waypointData.params.terrainAltitude = cartographic.height;
                     });
     }
 
+    onMove(cartesian) {
+        var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+        this.waypointData.params.latitude = Cesium.Math.toDegrees(cartographic.latitude);
+        this.waypointData.params.longitude = Cesium.Math.toDegrees(cartographic.longitude);
+        this.waypointData.params.terrainAltitude = cartographic.height;
+        this.rebuild();
+    }
+
     onMoveShift(dx, dy) {
-        var cartographic = Cesium.Cartographic.fromCartesian(this.position);
-        cartographic.height += dy;
-        this.position = Cesium.Cartographic.toCartesian(cartographic);
+        this.waypointData.params.altitude += dy;
+        this.rebuild();
     }
 
     flyTo() {
