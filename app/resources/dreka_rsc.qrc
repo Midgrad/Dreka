@@ -8,10 +8,9 @@
         <file>remove.svg</file>
         <file>ruler.svg</file>
         <file>center.svg</file>
+        <file>cancel_track.svg</file>
         <file>route.svg</file>
         <file>generic_aircraft.svg</file>
-        <file>track.svg</file>
-        <file>cancel_track.svg</file>
         <file>calibrate.svg</file>
         <file>gps.svg</file>
     </qresource>
