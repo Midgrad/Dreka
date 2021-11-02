@@ -27,6 +27,7 @@ Column {
             flat: true
             rightCropped: true
             iconSource: "qrc:/icons/calibrate.svg"
+            enabled: controller.selectedVehicle !== undefined
             tipText: qsTr("Preparation")
             highlighted: preflight.visible
             onClicked: preflight.visible ? preflight.close() : preflight.open()
@@ -93,6 +94,7 @@ Column {
         Controls.Button {
             id: switchButton
             flat: true
+            enabled: controller.selectedVehicle !== undefined
             leftCropped: true
             iconSource: "qrc:/icons/swap.svg"
             tipText: qsTr("Switch coordinates presentation")
@@ -268,7 +270,7 @@ Column {
             iconSource: "qrc:/icons/route.svg"
             tipText: qsTr("Mission")
             highlighted: mission.visible
-            enabled: controller.selectedVehicle
+            enabled: controller.selectedVehicle !== undefined
             onClicked: mission.visible ? mission.close() : mission.open()
 
             MissionView {
@@ -284,6 +286,7 @@ Column {
             width: root.width / 5 * 2
             flat: true
             labelText: qsTr("WPT")
+            enabled: controller.selectedVehicle !== undefined
             model: mission.waypoints
             displayText: mission.waypoints[mission.currentWaypoint]
             Binding on currentIndex {
@@ -297,6 +300,7 @@ Column {
             width: root.width - wpBox.width - missionButton.width
             flat: true
             labelText: qsTr("MODE")
+            enabled: controller.selectedVehicle !== undefined
             model: params.modes ? params.modes : []
             displayText: params.mode ? params.mode : "-"
             onActivated: controller.sendCommand("setMode", [ model[index] ])

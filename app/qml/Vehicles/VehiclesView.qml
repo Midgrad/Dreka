@@ -24,10 +24,10 @@ Controls.Pane {
 
             Controls.Button {
                 id: trackButton
-                enabled: controller.selectedVehicle
+                enabled: controller.selectedVehicle !== undefined
                 flat: true
                 rightCropped: true
-                iconSource: controller.tracking ? "qrc:/icons/cancel_track.svg" : "qrc:/icons/track.svg"
+                iconSource: controller.tracking ? "qrc:/icons/cancel_track.svg" : "qrc:/icons/center.svg"
                 tipText: controller.tracking ? qsTr("Cancel track") : qsTr("Track")
                 onClicked: controller.setTracking(!controller.tracking)
                 Layout.fillHeight: true

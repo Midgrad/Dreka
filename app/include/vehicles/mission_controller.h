@@ -10,7 +10,7 @@ class MissionController : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString vehicleId WRITE setVehicleId)
+    Q_PROPERTY(QVariant vehicleId WRITE setVehicleId)
     Q_PROPERTY(QJsonObject mission READ mission NOTIFY missionChanged)
     Q_PROPERTY(QJsonObject missionStatus READ missionStatus NOTIFY missionStatusChanged)
     Q_PROPERTY(QJsonObject route READ route NOTIFY routeChanged)
@@ -27,7 +27,7 @@ public:
     int currentWaypoint() const;
 
 public slots:
-    void setVehicleId(const QString& vehicleId);
+    void setVehicleId(const QVariant& vehicleId);
     void setMission(domain::Mission* mission);
 
     void save(const QJsonObject& data);
