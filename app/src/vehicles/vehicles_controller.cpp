@@ -32,7 +32,7 @@ QJsonArray VehiclesController::vehicles() const
     return m_vehicles;
 }
 
-QString VehiclesController::selectedVehicle() const
+QVariant VehiclesController::selectedVehicle() const
 {
     return m_selectedVehicleId;
 }
@@ -66,13 +66,13 @@ void VehiclesController::sendCommand(const QString& commandId, const QVariantLis
     m_commandsService->requestCommand(commandId)->exec(m_selectedVehicleId, args);
 }
 
-void VehiclesController::selectVehicle(const QString& selectedVehicleId)
+void VehiclesController::selectVehicle(const QVariant& vehicleId)
 {
-    if (m_selectedVehicleId == selectedVehicleId)
+    if (m_selectedVehicleId == vehicleId)
         return;
 
     this->setTracking(false);
-    m_selectedVehicleId = selectedVehicleId;
+    m_selectedVehicleId = vehicleId;
     emit selectedVehicleChanged();
 }
 

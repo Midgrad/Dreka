@@ -14,7 +14,7 @@ class VehiclesController : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QJsonArray vehicles READ vehicles NOTIFY vehiclesChanged)
-    Q_PROPERTY(QString selectedVehicle READ selectedVehicle NOTIFY selectedVehicleChanged)
+    Q_PROPERTY(QVariant selectedVehicle READ selectedVehicle NOTIFY selectedVehicleChanged)
     Q_PROPERTY(bool tracking READ isTracking WRITE setTracking NOTIFY trackingChanged)
     Q_PROPERTY(int trackLength READ trackLength NOTIFY trackLengthChanged)
 
@@ -22,14 +22,14 @@ public:
     explicit VehiclesController(QObject* parent = nullptr);
 
     QJsonArray vehicles() const;
-    QString selectedVehicle() const;
+    QVariant selectedVehicle() const;
     bool isTracking() const;
     int trackLength() const;
 
     Q_INVOKABLE QVariantMap vehicleData(const QString& vehicle) const;
 
 public slots:
-    void selectVehicle(const QString& selectedVehicleId);
+    void selectVehicle(const QVariant& vehicleId);
     void setTracking(bool tracking);
     void sendCommand(const QString& commandId, const QVariantList& args);
 
@@ -39,7 +39,7 @@ signals:
     void trackingChanged();
     void trackLengthChanged();
 
-    void vehicleDataChanged(QString vehicleId, QVariantMap data);
+    void vehicleDataChanged(QVariant vehicleId, QVariantMap data);
 
 private slots:
     void onVehiclesChanged();
@@ -49,7 +49,7 @@ private:
     domain::IVehiclesRepository* const m_vehiclesRepository;
     domain::ICommandsService* const m_commandsService;
     QJsonArray m_vehicles;
-    QString m_selectedVehicleId;
+    QVariant m_selectedVehicleId;
     bool m_tracking = false;
 };
 } // namespace md::presentation

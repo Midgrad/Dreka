@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
     vehiclesRepository.readAll();
     missionsRepository.readAll();
 
-    engine.rootContext()->setContextProperty("qmlEntries", layout.items());
+    engine.rootContext()->setContextProperty("layout", layout.items());
     engine.rootContext()->setContextProperty("applicationDirPath",
                                              QGuiApplication::applicationDirPath());
 

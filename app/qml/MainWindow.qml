@@ -35,7 +35,7 @@ Controls.ApplicationWindow {
         spacing: Controls.Theme.spacing
 
         Repeater {
-            model: qmlEntries.menu
+            model: layout.menu
 
             Loader { source: modelData }
         }
@@ -45,7 +45,7 @@ Controls.ApplicationWindow {
         }
     }
 
-    VehicleView {
+    VehiclesView {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.margins: Controls.Theme.margins
