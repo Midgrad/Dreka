@@ -15,7 +15,7 @@ Controls.Popup {
     MissionController {
         id: missionController
         vehicleId: controller.selectedVehicle
-        onMissionChanged: if (mission) routes.selectRoute(mission.route.id)
+        onMissionChanged: if (mission && mission.route) routes.selectRoute(mission.route.id)
     }
 
     readonly property var mission: missionController.mission

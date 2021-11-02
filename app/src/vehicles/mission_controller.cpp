@@ -43,7 +43,7 @@ QJsonObject MissionController::missionStatus() const
 
 QJsonObject MissionController::route() const
 {
-    if (!m_mission)
+    if (!m_mission || !m_mission->route())
         return QJsonObject();
 
     return QJsonObject::fromVariantMap(m_mission->route()->toVariantMap(true));
@@ -71,7 +71,7 @@ int MissionController::currentWaypoint() const
     return 0; //m_mission->currentWaypoint(); TODO: routeStatus
 }
 
-void MissionController::setVehicleId(const QString& vehicleId)
+void MissionController::setVehicleId(const QVariant& vehicleId)
 {
     this->setMission(m_missionsRepository->missionForVehicle(vehicleId));
 }
