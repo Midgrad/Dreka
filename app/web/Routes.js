@@ -70,7 +70,7 @@ class Route extends Draggable {
     }
 
     center() {
-        if (this.points.length > 0)
+        if (this.waypoints.length > 0)
             this.viewer.flyTo(this.lines);
     }
 
@@ -128,13 +128,6 @@ class Routes {
         this.editingRoute = null
     }
 
-    centerRoute(routeId) {
-        if (!this.routes.has(routeId))
-            return;
-
-        this.routes.get(routeId).center();
-    }
-
     setEditingRoute(routeId) {
         var route = this.routes.has(routeId) ? this.routes.get(routeId) : null;
         if (this.editingRoute === route)
@@ -151,6 +144,13 @@ class Routes {
             this.editingRoute.setEditMode(true);
             this.input.subscribe(this.editingRoute);
         }
+    }
+
+    centerRoute(routeId) {
+        if (!this.routes.has(routeId))
+            return;
+
+        this.routes.get(routeId).center();
     }
 
     centerWaypoint(routeId, index) {

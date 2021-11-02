@@ -114,7 +114,6 @@ void RoutesController::updateWaypoint(const QVariant& routeId, int index, const 
         return;
 
     waypoint->fromVariantMap(data.toVariantMap());
-    qDebug() << routeId << index << data;
 }
 
 void RoutesController::removeWaypoint(const QVariant& routeId, int index)

@@ -27,6 +27,8 @@ class Waypoint extends DraggablePoint {
                 image: "./icons/wpt.svg",
                 color: new Cesium.CallbackProperty(() => {
                     switch (that.state) {
+                    case "Current":
+                        return Cesium.Color.FUCHSIA;
                     case "Normal":
                         return Cesium.Color.WHITE;
                     case "Passed":
