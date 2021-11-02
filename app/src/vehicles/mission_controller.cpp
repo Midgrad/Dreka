@@ -65,10 +65,10 @@ QStringList MissionController::waypoints() const
 
 int MissionController::currentWaypoint() const
 {
-    if (!m_mission)
+    if (!m_routeStatus)
         return 0;
 
-    return 0; //m_mission->currentWaypoint(); TODO: routeStatus
+    return m_routeStatus->currentWaypoint();
 }
 
 void MissionController::setVehicleId(const QVariant& vehicleId)
@@ -91,15 +91,21 @@ void MissionController::setMission(Mission* mission)
     if (mission)
     {
         connect(mission, &Mission::statusChanged, this, &MissionController::missionStatusChanged);
-        connect(mission, &Mission::routeChanged, this, &MissionController::routeChanged);
-        connect(mission, &Mission::currentWaypointChanged, this,
-                &MissionController::currentWaypointChanged);
+        connect(mission, &Mission::routeChanged, this, &MissionController::onRouteChanged);
+
+        if (mission->route())
+        {
+            this->onRouteChanged(mission->route(), mission->routeStatus());
+        }
+    }
+
+    if (!mission || !mission->route())
+    {
+        this->onRouteChanged(nullptr, nullptr);
     }
 
     emit missionChanged();
     emit missionStatusChanged();
-    emit routeChanged();
-    emit currentWaypointChanged();
 }
 
 void MissionController::save(const QJsonObject& data)
@@ -153,8 +159,27 @@ void MissionController::cancel()
 
 void MissionController::switchWaypoint(int index)
 {
-    if (!m_mission)
+    if (!m_routeStatus)
         return;
 
-    emit m_mission->switchWaypoint(index);
+    emit m_routeStatus->switchWaypoint(index);
+}
+
+void MissionController::onRouteChanged(Route* route, RouteStatus* routeStatus)
+{
+    if (m_routeStatus && m_routeStatus != routeStatus)
+    {
+        disconnect(m_routeStatus, nullptr, this, nullptr);
+    }
+
+    m_routeStatus = routeStatus;
+
+    if (routeStatus)
+    {
+        connect(routeStatus, &RouteStatus::currentWaypointChanged, this,
+                &MissionController::currentWaypointChanged);
+    }
+
+    emit routeChanged();
+    emit currentWaypointChanged();
 }

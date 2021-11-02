@@ -31,7 +31,7 @@ class Waypoint extends DraggablePoint {
                         return Cesium.Color.FUCHSIA;
                     case "Normal":
                         return Cesium.Color.WHITE;
-                    case "Passed":
+                    case "Reached":
                         return Cesium.Color.SILVER;
                     case "Unconfirmed":
                         return Cesium.Color.SANDYBROWN;

@@ -44,9 +44,13 @@ signals:
     void routeChanged();
     void currentWaypointChanged();
 
+private slots:
+    void onRouteChanged(domain::Route* route, domain::RouteStatus* routeStatus);
+
 private:
     domain::IMissionsRepository* const m_missionsRepository;
     domain::Mission* m_mission = nullptr;
+    domain::RouteStatus* m_routeStatus = nullptr;
 };
 } // namespace md::presentation
 
