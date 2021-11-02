@@ -39,7 +39,9 @@
 #include "map_layers_controller.h"
 #include "map_ruler_controller.h"
 #include "map_viewport_controller.h"
+#include "mission_controller.h"
 #include "routes_controller.h"
+#include "vehicles_controller.h"
 
 namespace
 {
@@ -87,20 +89,27 @@ int main(int argc, char* argv[])
     // Presentation initialization
     QtWebEngine::initialize();
 
+    // TODO: unify registrations
     qmlRegisterType<presentation::MapViewportController>("Dreka", 1, 0, "MapViewportController");
     qmlRegisterType<presentation::MapRulerController>("Dreka", 1, 0, "MapRulerController");
     qmlRegisterType<presentation::MapGridController>("Dreka", 1, 0, "MapGridController");
     qmlRegisterType<presentation::ClipboardController>("Dreka", 1, 0, "ClipboardController");
     qmlRegisterType<presentation::MapLayersController>("Dreka", 1, 0, "MapLayersController");
     qmlRegisterType<presentation::RoutesController>("Dreka", 1, 0, "RoutesController");
+    qmlRegisterType<presentation::VehiclesController>("Dreka", 1, 0, "VehiclesController");
+    qmlRegisterType<presentation::MissionController>("Dreka", 1, 0, "MissionController");
 
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);
 
+    // Industrial Controls
     ThemeLoader themeLoader;
     themeLoader.setTheme(IndustrialTheme::instance());
     themeLoader.setFilename("./theme.json");
     themeLoader.load();
+
+    // Industrial Indicators
+    Q_INIT_RESOURCE(industrial_indicators_qml);
 
     // App modules initialization
     app::ModuleLoader moduleLoader;

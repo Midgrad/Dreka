@@ -5,6 +5,7 @@ import Dreka 1.0
 
 import "Map"
 import "Routes"
+import "Vehicles"
 
 Controls.ApplicationWindow {
     id: main
@@ -44,10 +45,9 @@ Controls.ApplicationWindow {
         }
     }
 
-    Loader {
+    VehicleView {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.margins: Controls.Theme.margins
-        source: qmlEntries.dashboard[0] // TODO: switcher
     }
 }

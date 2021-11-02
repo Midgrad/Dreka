@@ -15,6 +15,12 @@
         <file>Routes/Route.qml</file>
         <file>Routes/RouteEdit.qml</file>
         <file>Routes/Waypoint.qml</file>
+        <file>Vehicles/VehicleView.qml</file>
+        <file>Vehicles/MissionView.qml</file>
+        <file>Vehicles/GenericDashboard.qml</file>
+        <file>Vehicles/Preflight.qml</file>
+        <file>Vehicles/ChecklistItem.qml</file>
+        <file>Vehicles/Coordinates.qml</file>
         <file>MainWindow.qml</file>
     </qresource>
 </RCC>
