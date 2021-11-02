@@ -1,3 +1,6 @@
+[submodule "3rdparty/googletest"]
+	path = 3rdparty/googletest
+	url = https://github.com/google/googletest.git
 [submodule "2ndparty/industrial-controls"]
 	path = 2ndparty/industrial-controls
 	url = ../industrial-controls.git
@@ -7,21 +10,15 @@
 [submodule "kjarni"]
 	path = kjarni
 	url = ../kjarni
-[submodule "modules/Adsbera"]
-	path = modules/Adsbera
-	url = ../Adsbera.git
-[submodule "modules/Jerom-The-Mavlink"]
-	path = modules/Jerom-The-Mavlink
-	url = ../Jerom-The-Mavlink.git
 [submodule "2ndparty/loodsman"]
 	path = 2ndparty/loodsman
 	url = ../loodsman.git
 [submodule "2ndparty/jord"]
 	path = 2ndparty/jord
 	url = ../jord.git
-[submodule "modules/Draken"]
-	path = modules/Draken
-	url = ../Draken.git
-[submodule "3rdparty/googletest"]
-	path = 3rdparty/googletest
-	url = https://github.com/google/googletest.git
+[submodule "modules/Adsbera"]
+	path = modules/Adsbera
+	url = ../Adsbera.git
+[submodule "modules/Jerom-The-Mavlink"]
+	path = modules/Jerom-The-Mavlink
+	url = ../Jerom-The-Mavlink.git
