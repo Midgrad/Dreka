@@ -19,7 +19,7 @@ Controls.Popup {
     }
 
     readonly property var mission: missionController.mission
-    readonly property var missionStatus: missionController.missionStatus
+    readonly property var operation: missionController.operation
 
     ColumnLayout {
         id: column
@@ -41,12 +41,12 @@ Controls.Popup {
 
         Controls.ProgressBar {
             id: progress
-            visible: !missionStatus.complete
+            visible: !operation.complete
             flat: true
             radius: Controls.Theme.rounding
             from: 0
-            to: missionStatus.total
-            value: missionStatus.progress
+            to: operation.total ? operation.total : 0
+            value: operation.progress ? operation.progress : 0
             Layout.fillWidth: true
 
             Controls.Button {
@@ -61,7 +61,7 @@ Controls.Popup {
         Controls.ButtonBar {
             id: bar
             flat: true
-            visible: missionStatus.complete
+            visible: operation.complete ? true : false
             Layout.fillWidth: true
 
             Controls.Button {

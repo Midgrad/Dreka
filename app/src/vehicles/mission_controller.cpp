@@ -33,12 +33,12 @@ QJsonObject MissionController::mission() const
     return QJsonObject::fromVariantMap(m_mission->toVariantMap(false));
 }
 
-QJsonObject MissionController::missionStatus() const
+QJsonObject MissionController::operation() const
 {
     if (!m_mission)
-        return QJsonObject::fromVariantMap(MissionStatus().toVariantMap());
+        return QJsonObject();
 
-    return QJsonObject::fromVariantMap(m_mission->missionStatus().toVariantMap());
+    return QJsonObject::fromVariantMap(m_mission->operation()->toVariantMap());
 }
 
 QJsonObject MissionController::route() const
@@ -46,7 +46,7 @@ QJsonObject MissionController::route() const
     if (!m_mission || !m_mission->route())
         return QJsonObject();
 
-    return QJsonObject::fromVariantMap(m_mission->route()->toVariantMap(true));
+    return QJsonObject::fromVariantMap(m_mission->route()->route()->toVariantMap(true));
 }
 
 QStringList MissionController::waypoints() const
@@ -54,7 +54,7 @@ QStringList MissionController::waypoints() const
     QStringList list;
     if (m_mission && m_mission->route())
     {
-        for (Waypoint* waypoint : m_mission->route()->waypoints())
+        for (Waypoint* waypoint : m_mission->route()->route()->waypoints())
         {
             list.append(waypoint->name());
         }
@@ -90,22 +90,23 @@ void MissionController::setMission(Mission* mission)
 
     if (mission)
     {
-        connect(mission, &Mission::statusChanged, this, &MissionController::missionStatusChanged);
+        connect(mission->operation(), &MissionOperation::changed, this,
+                &MissionController::operationChanged);
         connect(mission, &Mission::routeChanged, this, &MissionController::onRouteChanged);
 
         if (mission->route())
         {
-            this->onRouteChanged(mission->route(), mission->routeStatus());
+            this->onRouteChanged(mission->route());
         }
     }
 
     if (!mission || !mission->route())
     {
-        this->onRouteChanged(nullptr, nullptr);
+        this->onRouteChanged(nullptr);
     }
 
     emit missionChanged();
-    emit missionStatusChanged();
+    emit operationChanged();
 }
 
 void MissionController::save(const QJsonObject& data)
@@ -130,7 +131,7 @@ void MissionController::upload()
     if (!m_mission)
         return;
 
-    emit m_mission->upload();
+    emit m_mission->operation()->upload();
 }
 
 void MissionController::download()
@@ -138,7 +139,7 @@ void MissionController::download()
     if (!m_mission)
         return;
 
-    emit m_mission->download();
+    emit m_mission->operation()->download();
 }
 
 void MissionController::clear()
@@ -146,7 +147,7 @@ void MissionController::clear()
     if (!m_mission)
         return;
 
-    emit m_mission->clear();
+    emit m_mission->operation()->clear();
 }
 
 void MissionController::cancel()
@@ -154,7 +155,7 @@ void MissionController::cancel()
     if (!m_mission)
         return;
 
-    emit m_mission->cancel();
+    emit m_mission->operation()->cancel();
 }
 
 void MissionController::switchWaypoint(int index)
@@ -165,18 +166,18 @@ void MissionController::switchWaypoint(int index)
     emit m_routeStatus->switchWaypoint(index);
 }
 
-void MissionController::onRouteChanged(Route* route, RouteStatus* routeStatus)
+void MissionController::onRouteChanged(MissionRoute* missionRoute)
 {
-    if (m_routeStatus && m_routeStatus != routeStatus)
+    if (m_routeStatus && m_routeStatus != missionRoute)
     {
         disconnect(m_routeStatus, nullptr, this, nullptr);
     }
 
-    m_routeStatus = routeStatus;
+    m_routeStatus = missionRoute;
 
-    if (routeStatus)
+    if (missionRoute)
     {
-        connect(routeStatus, &RouteStatus::currentWaypointChanged, this,
+        connect(missionRoute, &MissionRoute::currentWaypointChanged, this,
                 &MissionController::currentWaypointChanged);
     }
 
