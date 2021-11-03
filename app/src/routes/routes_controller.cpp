@@ -135,8 +135,15 @@ void RoutesController::updateWaypoint(const QVariant& routeId, int index, const 
         return;
 
     waypoint->fromVariantMap(data.toVariantMap());
-    waypoint->setConfirmed(false);
-    // TODO: save WPT and promoute it to mission handler
+
+    // Promoute to the vehicle
+    if (m_activeMission && m_activeMission->route() == route)
+    {
+        waypoint->setConfirmed(false);
+        emit m_activeMission->operation()->uploadItem(route->index(waypoint));
+    }
+    // Promoute to storage
+    m_routesRepository->saveWaypoint(route, waypoint);
 }
 
 void RoutesController::removeWaypoint(const QVariant& routeId, int index)
