@@ -86,7 +86,7 @@ void RoutesController::setActiveMission(const QVariant& missionId)
 
     if (m_activeMission && m_activeMission->route() && !m_selectedRoute)
     {
-        this->selectRoute(m_activeMission->route()->route()->id());
+        this->selectRoute(m_activeMission->route()->id());
     }
 }
 
@@ -135,6 +135,8 @@ void RoutesController::updateWaypoint(const QVariant& routeId, int index, const 
         return;
 
     waypoint->fromVariantMap(data.toVariantMap());
+    waypoint->setState(Waypoint::Unconfirmed);
+    // TODO: save WPT and promoute it to mission handler
 }
 
 void RoutesController::removeWaypoint(const QVariant& routeId, int index)

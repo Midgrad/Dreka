@@ -43,18 +43,18 @@ QJsonObject MissionController::operation() const
 
 QJsonObject MissionController::route() const
 {
-    if (!m_mission || !m_mission->route())
+    if (m_route)
         return QJsonObject();
 
-    return QJsonObject::fromVariantMap(m_mission->route()->route()->toVariantMap(true));
+    return QJsonObject::fromVariantMap(m_route->toVariantMap(true));
 }
 
 QStringList MissionController::waypoints() const
 {
     QStringList list;
-    if (m_mission && m_mission->route())
+    if (m_route)
     {
-        for (Waypoint* waypoint : m_mission->route()->route()->waypoints())
+        for (Waypoint* waypoint : m_route->waypoints())
         {
             list.append(waypoint->name());
         }
@@ -65,10 +65,10 @@ QStringList MissionController::waypoints() const
 
 int MissionController::currentWaypoint() const
 {
-    if (!m_routeStatus)
+    if (!m_route)
         return 0;
 
-    return m_routeStatus->currentWaypoint();
+    return m_route->currentWaypointIndex();
 }
 
 void MissionController::setVehicleId(const QVariant& vehicleId)
@@ -160,24 +160,24 @@ void MissionController::cancel()
 
 void MissionController::switchWaypoint(int index)
 {
-    if (!m_routeStatus)
+    if (!m_route)
         return;
 
-    emit m_routeStatus->switchWaypoint(index);
+    emit m_route->switchWaypoint(index);
 }
 
-void MissionController::onRouteChanged(MissionRoute* missionRoute)
+void MissionController::onRouteChanged(Route* route)
 {
-    if (m_routeStatus && m_routeStatus != missionRoute)
+    if (m_route && m_route != route)
     {
-        disconnect(m_routeStatus, nullptr, this, nullptr);
+        disconnect(m_route, nullptr, this, nullptr);
     }
 
-    m_routeStatus = missionRoute;
+    m_route = route;
 
-    if (missionRoute)
+    if (route)
     {
-        connect(missionRoute, &MissionRoute::currentWaypointChanged, this,
+        connect(route, &Route::currentWaypointChanged, this,
                 &MissionController::currentWaypointChanged);
     }
 

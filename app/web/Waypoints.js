@@ -11,7 +11,6 @@ class Waypoint extends DraggablePoint {
         this.changedCallback = null;
 
         // Data
-        this.state = "Normal";
         this.update(waypointData);
 
         // Visual
@@ -26,7 +25,7 @@ class Waypoint extends DraggablePoint {
             billboard: {
                 image: "./icons/wpt.svg",
                 color: new Cesium.CallbackProperty(() => {
-                    switch (that.state) {
+                    switch (that.waypointData.state) {
                     case "Current":
                         return Cesium.Color.FUCHSIA;
                     case "Normal":
