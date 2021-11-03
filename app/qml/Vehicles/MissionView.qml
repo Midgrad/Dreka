@@ -15,7 +15,7 @@ Controls.Popup {
     MissionController {
         id: missionController
         vehicleId: controller.selectedVehicle
-        onMissionChanged: if (mission && mission.route) routes.selectRoute(mission.route.id)
+        onMissionChanged: routes.setActiveMission(mission.id)
     }
 
     readonly property var mission: missionController.mission
@@ -33,9 +33,16 @@ Controls.Popup {
 
             Controls.TextField {
                 id: nameEdit
-                labelText: qsTr("Name")
+                labelText: qsTr("Mission")
                 Binding on text { value: mission.name ? mission.name : ""; when: !nameEdit.activeFocus }
                 onEditingFinished: missionController.save({ name: text });
+            }
+
+            Controls.ComboBox {
+                id: routeBox
+                labelText: qsTr("Route")
+                enabled: false
+                displayText: mission.route ? mission.route : ""
             }
         }
 

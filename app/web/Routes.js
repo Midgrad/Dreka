@@ -9,6 +9,9 @@ class Route extends Draggable {
         // Callbacks
         this.waypointChangedCallback = null;
 
+        // Data
+        this.editMode = false;
+
         // Visual
         this.lineWidth = 3.0;
 
@@ -51,6 +54,7 @@ class Route extends Draggable {
             this.waypoints[index].update(waypointData);
         } else {
             var waypoint = new Waypoint(this.viewer, waypointData);
+            waypoint.setEditMode(this.editMode);
             this.waypoints.push(waypoint);
 
             if (this.waypointChangedCallback) {
@@ -79,8 +83,9 @@ class Route extends Draggable {
             this.waypoints[index].flyTo();
     }
 
-    setEditMode(edit) { // TODO: unify with dragEnabled
-        this.waypoints.forEach(waypoint => waypoint.setEditMode(edit));
+    setEditMode(editMode) {
+        this.editMode = editMode;
+        this.waypoints.forEach(waypoint => waypoint.setEditMode(editMode));
     }
 
     onClick(cartesian) {
@@ -130,6 +135,7 @@ class Routes {
 
     setEditingRoute(routeId) {
         var route = this.routes.has(routeId) ? this.routes.get(routeId) : null;
+
         if (this.editingRoute === route)
             return;
 

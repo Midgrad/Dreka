@@ -6,7 +6,7 @@ import Dreka 1.0
 RowLayout {
     id: root
 
-    function selectRoute(routeId) { controller.selectRoute(routeId); }
+    function setActiveMission(missionId) { controller.setActiveMission(missionId); }
 
     RoutesController { id: controller }
 

@@ -1,6 +1,7 @@
 #ifndef ROUTES_CONTROLLER_H
 #define ROUTES_CONTROLLER_H
 
+#include "i_missions_repository.h"
 #include "i_routes_repository.h"
 
 namespace md::presentation
@@ -24,8 +25,9 @@ public:
     Q_INVOKABLE QJsonObject waypointData(const QVariant& routeId, int index) const;
 
 public slots:
+    Q_INVOKABLE void setActiveMission(const QVariant& missionId);
+    void selectRoute(const QVariant& selectedRouteId);
     void addNewRoute(const QString& routeType);
-    void selectRoute(const QVariant& selectedRoute);
     void updateRoute(const QVariant& routeId, const QJsonObject& data);
     void removeRoute(const QVariant& routeId);
     void updateWaypoint(const QVariant& routeId, int index, const QJsonObject& data);
@@ -53,7 +55,9 @@ private slots:
 
 private:
     domain::IRoutesRepository* const m_routesRepository;
-    QVariant m_selectedRoute;
+    domain::IMissionsRepository* const m_missionsRepository;
+    domain::Mission* m_activeMission = nullptr;
+    domain::Route* m_selectedRoute = nullptr;
 };
 } // namespace md::presentation
 

@@ -10,9 +10,12 @@ using namespace md::presentation;
 
 RoutesController::RoutesController(QObject* parent) :
     QObject(parent),
-    m_routesRepository(md::app::Locator::get<IRoutesRepository>())
+    m_routesRepository(md::app::Locator::get<IRoutesRepository>()),
+    m_missionsRepository(md::app::Locator::get<IMissionsRepository>())
 {
     Q_ASSERT(m_routesRepository);
+    Q_ASSERT(m_missionsRepository);
+
     connect(m_routesRepository, &IRoutesRepository::routeTypesChanged, this,
             &RoutesController::routeTypesChanged);
     connect(m_routesRepository, &IRoutesRepository::routeAdded, this,
@@ -24,6 +27,12 @@ RoutesController::RoutesController(QObject* parent) :
     {
         this->onRouteAdded(route);
     }
+
+    connect(m_missionsRepository, &IMissionsRepository::missionRemoved, this,
+            [this](Mission* mission) {
+                if (m_activeMission == mission)
+                    this->setActiveMission(QVariant());
+            });
 }
 
 QStringList RoutesController::routeTypes() const
@@ -43,7 +52,7 @@ QVariantList RoutesController::routeIds() const
 
 QVariant RoutesController::selectedRoute() const
 {
-    return m_selectedRoute;
+    return m_selectedRoute ? m_selectedRoute->id() : QVariant();
 }
 
 QJsonObject RoutesController::routeData(const QVariant& routeId) const
@@ -71,18 +80,30 @@ QJsonObject RoutesController::waypointData(const QVariant& routeId, int index) c
     return QJsonObject::fromVariantMap(waypoint->toVariantMap(false));
 }
 
-void RoutesController::addNewRoute(const QString& routeType)
+void RoutesController::setActiveMission(const QVariant& missionId)
 {
-    // TODO create new route()
+    m_activeMission = m_missionsRepository->mission(missionId);
+
+    if (m_activeMission && m_activeMission->route() && !m_selectedRoute)
+    {
+        this->selectRoute(m_activeMission->route()->route()->id());
+    }
 }
 
-void RoutesController::selectRoute(const QVariant& selectedRoute)
+void RoutesController::selectRoute(const QVariant& selectedRouteId)
 {
+    auto selectedRoute = m_routesRepository->route(selectedRouteId);
+
     if (m_selectedRoute == selectedRoute)
         return;
 
     m_selectedRoute = selectedRoute;
-    emit selectedRouteChanged(selectedRoute);
+    emit selectedRouteChanged(selectedRouteId);
+}
+
+void RoutesController::addNewRoute(const QString& routeType)
+{
+    // TODO create new route()
 }
 
 void RoutesController::updateRoute(const QVariant& routeId, const QJsonObject& data)
