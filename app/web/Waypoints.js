@@ -25,19 +25,13 @@ class Waypoint extends DraggablePoint {
             billboard: {
                 image: "./icons/wpt.svg",
                 color: new Cesium.CallbackProperty(() => {
-                    switch (that.waypointData.state) {
-                    case "Current":
-                        return Cesium.Color.FUCHSIA;
-                    case "Normal":
+                        if (!that.waypointData.confirmed)
+                            return Cesium.Color.SANDYBROWN;
+                        if (that.waypointData.current)
+                            return Cesium.Color.FUCHSIA;
+                        if (that.waypointData.reached)
+                            return Cesium.Color.SILVER;
                         return Cesium.Color.WHITE;
-                    case "Reached":
-                        return Cesium.Color.SILVER;
-                    case "Unconfirmed":
-                        return Cesium.Color.SANDYBROWN;
-                    case "Unknown": // no break
-                    default:
-                        return Cesium.Color.SLATEGRAY;
-                    }
                 }, false),
                 scale: this.normalScale,
                 disableDepthTestDistance: Number.POSITIVE_INFINITY

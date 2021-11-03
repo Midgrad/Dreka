@@ -135,7 +135,7 @@ void RoutesController::updateWaypoint(const QVariant& routeId, int index, const 
         return;
 
     waypoint->fromVariantMap(data.toVariantMap());
-    waypoint->setState(Waypoint::Unconfirmed);
+    waypoint->setConfirmed(false);
     // TODO: save WPT and promoute it to mission handler
 }
 
