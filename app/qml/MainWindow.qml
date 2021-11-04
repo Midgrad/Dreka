@@ -27,6 +27,11 @@ Controls.ApplicationWindow {
         anchors.fill: parent
     }
 
+    MapMenu {
+        id: menu
+        anchors.fill: map
+    }
+
     RowLayout {
         id: menuBar
         anchors.top: parent.top

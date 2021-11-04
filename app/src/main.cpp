@@ -37,6 +37,7 @@
 #include "clipboard_controller.h"
 #include "map_grid_controller.h"
 #include "map_layers_controller.h"
+#include "map_menu_controller.h"
 #include "map_ruler_controller.h"
 #include "map_viewport_controller.h"
 #include "mission_controller.h"
@@ -94,6 +95,7 @@ int main(int argc, char* argv[])
     qmlRegisterType<presentation::MapViewportController>("Dreka", 1, 0, "MapViewportController");
     qmlRegisterType<presentation::MapRulerController>("Dreka", 1, 0, "MapRulerController");
     qmlRegisterType<presentation::MapGridController>("Dreka", 1, 0, "MapGridController");
+    qmlRegisterType<presentation::MapMenuController>("Dreka", 1, 0, "MapMenuController");
     qmlRegisterType<presentation::ClipboardController>("Dreka", 1, 0, "ClipboardController");
     qmlRegisterType<presentation::MapLayersController>("Dreka", 1, 0, "MapLayersController");
     qmlRegisterType<presentation::RoutesController>("Dreka", 1, 0, "RoutesController");
