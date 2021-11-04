@@ -42,6 +42,7 @@
 #include "mission_controller.h"
 #include "routes_controller.h"
 #include "vehicles_controller.h"
+#include "waypoint_edit_controller.h"
 
 namespace
 {
@@ -96,6 +97,7 @@ int main(int argc, char* argv[])
     qmlRegisterType<presentation::ClipboardController>("Dreka", 1, 0, "ClipboardController");
     qmlRegisterType<presentation::MapLayersController>("Dreka", 1, 0, "MapLayersController");
     qmlRegisterType<presentation::RoutesController>("Dreka", 1, 0, "RoutesController");
+    qmlRegisterType<presentation::WaypointEditController>("Dreka", 1, 0, "WaypointEditController");
     qmlRegisterType<presentation::VehiclesController>("Dreka", 1, 0, "VehiclesController");
     qmlRegisterType<presentation::MissionController>("Dreka", 1, 0, "MissionController");
 
