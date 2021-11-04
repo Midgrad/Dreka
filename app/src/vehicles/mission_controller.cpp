@@ -179,6 +179,9 @@ void MissionController::onRouteChanged(Route* route)
     {
         connect(route, &Route::currentWaypointChanged, this,
                 &MissionController::currentWaypointChanged);
+        connect(route, &Route::waypointAdded, this, &MissionController::routeChanged);
+        connect(route, &Route::waypointChanged, this, &MissionController::routeChanged);
+        connect(route, &Route::waypointRemoved, this, &MissionController::routeChanged);
     }
 
     emit routeChanged();
