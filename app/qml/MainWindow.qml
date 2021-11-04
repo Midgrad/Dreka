@@ -28,7 +28,7 @@ Controls.ApplicationWindow {
     }
 
     MapMenu {
-        id: menu
+        id: mapMenu
         anchors.fill: map
     }
 

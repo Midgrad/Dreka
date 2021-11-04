@@ -142,6 +142,32 @@ void RoutesController::removeRoute(const QVariant& routeId)
     m_routesRepository->removeRoute(route);
 }
 
+void RoutesController::addWaypoint(const QVariant& routeId, double latitude, double longitude,
+                                   float altitude)
+{
+    qDebug() << routeId << latitude << longitude << altitude;
+    // TODO: wpt type
+
+    Route* route = m_routesRepository->route(routeId);
+    if (!route)
+        return;
+
+    const WaypointType* type = route->type()->waypointTypes.first();
+
+    QStringList wptNames;
+    for (Waypoint* wpt : route->waypoints())
+    {
+        wptNames += wpt->name();
+    }
+
+    Waypoint* wpt = new Waypoint(type, utils::nameFromType(type->name, wptNames));
+    route->addWaypoint(wpt);
+    wpt->setParameters(
+        { { "latitude", latitude }, { "longitude", longitude }, { "altitude", altitude } });
+
+    m_routesRepository->saveWaypoint(route, wpt);
+}
+
 void RoutesController::updateWaypoint(const QVariant& routeId, int index, const QJsonObject& data)
 {
     Route* route = m_routesRepository->route(routeId);

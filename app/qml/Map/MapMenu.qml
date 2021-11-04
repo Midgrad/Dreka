@@ -6,10 +6,26 @@ import Dreka 1.0
 Item {
     id: root
 
+    property real latitude: 0.0
+    property real longitude: 0.0
+    property real altitude: 0.0
+
+    function addItem(item) { menu.addItem(item); }
+    function removeItem(item) { menu.removeItem(item); }
+
     MapMenuController {
         id: controller
-        onInvoked: console.log(x, y, latitude, longitude, altitude);
+        onInvoked: {
+            root.latitude = latitude;
+            root.longitude = longitude;
+            root.altitude = altitude;
+
+            if (menu.count)
+                menu.popup(x, y);
+        }
     }
 
     Component.onCompleted: map.registerController("menuController", controller)
+
+    Controls.Menu { id: menu }
 }

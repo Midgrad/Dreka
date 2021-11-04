@@ -12,6 +12,7 @@ class RoutesController : public QObject
 
     Q_PROPERTY(QStringList routeTypes READ routeTypes NOTIFY routeTypesChanged)
     Q_PROPERTY(QVariantList routeIds READ routeIds NOTIFY routeIdsChanged)
+    // TODO: selectedRoute to QML only
     Q_PROPERTY(QVariant selectedRoute READ selectedRoute NOTIFY selectedRouteChanged)
 
 public:
@@ -30,6 +31,8 @@ public slots:
     void addNewRoute(const QString& routeTypeName);
     void updateRoute(const QVariant& routeId, const QJsonObject& data);
     void removeRoute(const QVariant& routeId);
+    // TODO: wptType, lat/lon/alt to QJsonObject
+    void addWaypoint(const QVariant& routeId, double latitude, double longitude, float altitude);
     void updateWaypoint(const QVariant& routeId, int index, const QJsonObject& data);
     void removeWaypoint(const QVariant& routeId, int index);
 

@@ -8,9 +8,20 @@ RowLayout {
 
     function setActiveMission(missionId) { controller.setActiveMission(missionId); }
 
+    Controls.MenuItem {
+        id: addWaypoint
+        enabled: controller.selectedRoute !== undefined
+        text: qsTr("Add Waypoint")
+        iconSource: "qrc:/icons/plus.svg"
+        onTriggered: controller.addWaypoint(controller.selectedRoute, mapMenu.latitude, mapMenu.longitude, mapMenu.altitude)
+    }
+
     RoutesController { id: controller }
 
-    Component.onCompleted: map.registerController("routesController", controller)
+    Component.onCompleted: {
+        map.registerController("routesController", controller);
+        mapMenu.addItem(addWaypoint);
+    }
 
     spacing: 1
 
