@@ -149,7 +149,7 @@ class Ruler extends Draggable {
     }
 
     onClick(cartesian) {
-        if (this.enabled && Cesium.defined(cartesian) && !this.hoveredPoint)
+        if (Cesium.defined(cartesian) && !this.hoveredPoint)
             this.addPoint(cartesian);
     }
 

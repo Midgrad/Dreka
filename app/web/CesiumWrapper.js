@@ -37,13 +37,18 @@ class CesiumWrapper {
 
         this.input = new Input(this.viewer);
         this.viewport = new Viewport(this.viewer);
-        this.input.subscribe(this.viewport);
+        this.input.subscribe("onMove", cartesian => { that.viewport.onMove(cartesian) });
+
         this.viewport.subscribeCamera((heading, pitch, cameraPosition, centerPosition, pixelScale) => {
             that.input.pixelScale = pixelScale;
         });
 
         this.webChannel = new QWebChannel(qt.webChannelTransport, (channel) => {
-            // Add ruler instrument if we got rulerController
+            var menuController = channel.objects.menuController;
+            if (menuController) {
+                that.input.subscribe("onDoubleClick", cartesian => { console.log(cartesian) });
+            }
+
             var rulerController = channel.objects.rulerController;
             if (rulerController) {
                 const ruler = new Ruler(that.viewer, that.input);
@@ -55,6 +60,7 @@ class CesiumWrapper {
                 ruler.subscribeDistance(distance => { rulerController.distance = distance; });
             }
 
+            // TODO: grid and layers optional
             const grid = new Grid(that.viewer, channel.objects.gridController);
             const layers = new Layers(that.viewer, channel.objects.layersController);
 

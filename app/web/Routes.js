@@ -11,6 +11,7 @@ class Route extends Draggable {
 
         // Data
         this.editMode = false;
+        this.enabled = false;
 
         // Visual
         this.lineWidth = 3.0;
@@ -85,11 +86,8 @@ class Route extends Draggable {
 
     setEditMode(editMode) {
         this.editMode = editMode;
+        this.enabled = editMode;
         this.waypoints.forEach(waypoint => waypoint.setEditMode(editMode));
-    }
-
-    onClick(cartesian) {
-        // TODO: invoke add new point
     }
 
     onPick(pickedObjects) {
@@ -139,17 +137,13 @@ class Routes {
         if (this.editingRoute === route)
             return;
 
-        if (this.editingRoute) {
+        if (this.editingRoute)
             this.editingRoute.setEditMode(false);
-            this.input.unsubscribe(this.editingRoute);
-        }
 
         this.editingRoute = route;
 
-        if (this.editingRoute) {
+        if (this.editingRoute)
             this.editingRoute.setEditMode(true);
-            this.input.subscribe(this.editingRoute);
-        }
     }
 
     centerRoute(routeId) {

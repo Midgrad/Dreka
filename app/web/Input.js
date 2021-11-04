@@ -1,10 +1,17 @@
-// Register handlers with: onClick(cartesian), onDown(cartesian), onUp(cartesian), onMove(cartesian), onPick(pickedObject)
+// Register handlers with: onClick(cartesian), onDown(cartesian), onUp(cartesian), onMove(cartesian), onMoveShift(dx, dy), onPick([pickedObjects])
 class Input {
     constructor(viewer) {
 
         this.viewer = viewer;
-        this.handlers = [];
-        this.pixelScale = 0;
+
+        this.handlers = new Map();
+        this.handlers["onClick"] = [];
+        this.handlers["onDoubleClick"] = [];
+        this.handlers["onDown"] = [];
+        this.handlers["onUp"] = [];
+        this.handlers["onMove"] = [];
+        this.handlers["onMoveShift"] = [];
+        this.handlers["onPick"] = [];
 
         this.pickRadius = 10;
 
@@ -18,22 +25,25 @@ class Input {
         var leftClickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
         leftClickHandler.setInputAction((event) => {
             // Promoute mouse click event with position
-            that.pickPosition(event.position, function (cartesian) {
-                that.handlers.forEach(handler => {
-                    if (typeof handler.onClick === "function")
-                        handler.onClick(cartesian);
-                });
+            that.pickPosition(event.position, cartesian => {
+                that.handlers["onClick"].forEach(handler => { handler(cartesian); });
             });
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+        // Left button double click
+        var leftDoubleClickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+        leftDoubleClickHandler.setInputAction((event) => {
+            // Promoute mouse click event with position
+            that.pickPosition(event.position, cartesian => {
+                that.handlers["onDoubleClick"].forEach(handler => { handler(cartesian); });
+            });
+        }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 
         // Left button down
         var downCallback = (event) => {
             // Promoute mouse down event with position
-            that.pickPosition(event.position, function (cartesian) {
-                that.handlers.forEach(handler => {
-                    if (typeof handler.onDown === "function")
-                        handler.onDown(cartesian);
-                });
+            that.pickPosition(event.position, cartesian => {
+                that.handlers["onDown"].forEach(handler => { handler(cartesian); });
             });
         }
 
@@ -46,11 +56,8 @@ class Input {
         // Left button up
         var upCallback = (event) => {
             // Promoute mouse up event with position
-            that.pickPosition(event.position, function (cartesian) {
-                that.handlers.forEach(handler => {
-                    if (typeof handler.onUp === "function")
-                        handler.onUp(cartesian);
-                });
+            that.pickPosition(event.position, cartesian => {
+                that.handlers["onUp"].forEach(handler => { handler(cartesian); });
             });
         }
 
@@ -62,45 +69,33 @@ class Input {
 
         // Mouse move
         var moveHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-        moveHandler.setInputAction(function(movement) {
+        moveHandler.setInputAction((movement) => {
             // Try to pick entity on map
             that.pickEntity(movement.endPosition);
 
             // Promoute position for onMove handlers
-            that.pickPosition(movement.endPosition, function (cartesian) {
-                that.handlers.forEach(handler => {
-                    if (typeof handler.onMove === "function")
-                        handler.onMove(cartesian);
-                });
+            that.pickPosition(movement.endPosition, cartesian => {
+                that.handlers["onMove"].forEach(handler => { handler(cartesian); });
             });
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
         // Mouse move with shift
         var moveShiftHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-        moveShiftHandler.setInputAction(function(movement) {
+        moveShiftHandler.setInputAction((movement) => {
             // Try to pick entity on map
             that.pickEntity(movement.endPosition);
 
             // Promoute scaled dx/dy for onMoveShift handlers
             var dx = (movement.startPosition.x - movement.endPosition.x) * that.pixelScale;
             var dy = (movement.startPosition.y - movement.endPosition.y) * that.pixelScale;
-            that.handlers.forEach(handler => {
-                if (typeof handler.onMoveShift === "function")
-                    handler.onMoveShift(dx, dy);
-            });
+            that.handlers["onMoveShift"].forEach(handler => { handler(dx, dy); });
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE, Cesium.KeyboardEventModifier.SHIFT);
     }
 
     pickEntity(position) {
         var pickedObjects = this.viewer.scene.drillPick(position, undefined, this.pickRadius,
                                                         this.pickRadius);
-        var found = false;
-        this.handlers.forEach(handler => {
-            if (found || typeof handler.onPick !== "function")
-                return;
-
-            found = handler.onPick(pickedObjects);
-        });
+        this.handlers["onPick"].forEach(handler => { handler(pickedObjects); });
     }
 
     pickPosition(position, callback) {
@@ -113,11 +108,11 @@ class Input {
             callback(intersection);
     }
 
-    subscribe(handler) {
-        this.handlers.push(handler);
+    subscribe(event, handler) {
+        this.handlers[event].push(handler);
     }
 
-    unsubscribe(handler) {
-        this.handlers = this.handlers.filter(item => item !== handler)
+    unsubscribe(event, handler) {
+        this.handlers[event] = this.handlers[event].filter(item => item !== handler)
     }
 }

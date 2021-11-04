@@ -52,11 +52,20 @@ class Draggable {
     constructor(viewer, input) {
         this.viewer = viewer;
 
+        // Data
+        this.enabled = true;
+
+        // Callbacks
+        var that = this;
+        input.subscribe("onPick", pickedObjects => { if (that.enabled) that.onPick(pickedObjects) });
+        input.subscribe("onUp", cartesian => { if (that.enabled) that.onUp(cartesian) });
+        input.subscribe("onDown", cartesian => { if (that.enabled) that.onDown(cartesian) });
+        input.subscribe("onMove", cartesian => { if (that.enabled) that.onMove(cartesian) });
+        input.subscribe("onMoveShift", (dx, dy) => { if (that.enabled) that.onMove(dx, dy) });
+        input.subscribe("onClick", cartesian => { if (that.enabled) that.onClick(cartesian) });
+
         // Entities
         this.hoveredPoint = null;
-
-        // Subscribe for input
-        input.subscribe(this);
     }
 
     setHoveredPoint(hoveredPoint) {
@@ -96,4 +105,7 @@ class Draggable {
         if (this.hoveredPoint && !this.hoveredPoint.dragging)
             this.hoveredPoint.setDragging(true);
     }
+
+    onMove(cartesian) {} // No default behavior for move
+    onClick(cartesian) {} // No default behavior for click
 }
