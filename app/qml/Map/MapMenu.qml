@@ -6,7 +6,10 @@ import Dreka 1.0
 Item {
     id: root
 
-    MapMenuController { id: controller }
+    MapMenuController {
+        id: controller
+        onInvoked: console.log(x, y, latitude, longitude, altitude);
+    }
 
     Component.onCompleted: map.registerController("menuController", controller)
 }

@@ -1,4 +1,4 @@
-// Register handlers with: onClick(cartesian), onDown(cartesian), onUp(cartesian), onMove(cartesian), onMoveShift(dx, dy), onPick([pickedObjects])
+// Register handlers with: onClick(cartesian), onCoubleClick(x, y, cartesian), onDown(cartesian), onUp(cartesian), onMove(cartesian), onMoveShift(dx, dy), onPick([pickedObjects])
 class Input {
     constructor(viewer) {
 
@@ -35,7 +35,9 @@ class Input {
         leftDoubleClickHandler.setInputAction((event) => {
             // Promoute mouse click event with position
             that.pickPosition(event.position, cartesian => {
-                that.handlers["onDoubleClick"].forEach(handler => { handler(cartesian); });
+                that.handlers["onDoubleClick"].forEach(handler => {
+                    handler(event.position.x, event.position.y, cartesian);
+                });
             });
         }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 

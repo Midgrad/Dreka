@@ -6,27 +6,27 @@ import Dreka 1.0
 RowLayout {
     id: root
 
-    MapRulerController { id: ruler }
+    MapRulerController { id: controller }
 
-    Component.onCompleted: map.registerController("rulerController", ruler)
+    Component.onCompleted: map.registerController("rulerController", controller)
 
-    readonly property alias distance: ruler.distance
+    readonly property alias distance: controller.distance
 
     spacing: 1
 
     MapButton {
-        rightCropped: !ruler.empty
+        rightCropped: !controller.empty
         tipText: checked ? qsTr("Disable ruler") : qsTr("Enable ruler")
         iconSource: "qrc:/icons/ruler.svg"
         checkable: true
-        onCheckedChanged: ruler.setRulerMode(checked)
+        onCheckedChanged: controller.setRulerMode(checked)
     }
 
     MapButton {
         rightCropped: true
         leftCropped: true
         tipText: qsTr("Copy distance")
-        visible: !ruler.empty
+        visible: !controller.empty
         text: distance > 1000 ? ((Math.round(distance / 100) * 0.1).toFixed(1) + " " + qsTr("km")):
                                 (Math.round(distance) + " " + qsTr("m"))
         onClicked: clipboard.setText(text)
@@ -37,7 +37,7 @@ RowLayout {
         leftCropped: true
         tipText: qsTr("Remove ruler points")
         iconSource: "qrc:/icons/remove.svg"
-        visible: !ruler.empty
-        onClicked: ruler.clear()
+        visible: !controller.empty
+        onClicked: controller.clear()
     }
 }

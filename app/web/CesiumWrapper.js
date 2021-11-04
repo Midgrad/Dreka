@@ -46,7 +46,13 @@ class CesiumWrapper {
         this.webChannel = new QWebChannel(qt.webChannelTransport, (channel) => {
             var menuController = channel.objects.menuController;
             if (menuController) {
-                that.input.subscribe("onDoubleClick", cartesian => { console.log(cartesian) });
+                that.input.subscribe("onDoubleClick", (x, y, cartesian) => {
+                    var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+                    var latitude = Cesium.Math.toDegrees(cartographic.latitude);
+                    var longitude = Cesium.Math.toDegrees(cartographic.longitude);
+                    var altitude = cartographic.height;
+                    menuController.invoke(x, y, latitude, longitude, altitude);
+                });
             }
 
             var rulerController = channel.objects.rulerController;
