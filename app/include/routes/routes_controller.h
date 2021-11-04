@@ -27,7 +27,7 @@ public:
 public slots:
     Q_INVOKABLE void setActiveMission(const QVariant& missionId);
     void selectRoute(const QVariant& selectedRouteId);
-    void addNewRoute(const QString& routeType);
+    void addNewRoute(const QString& routeTypeName);
     void updateRoute(const QVariant& routeId, const QJsonObject& data);
     void removeRoute(const QVariant& routeId);
     void updateWaypoint(const QVariant& routeId, int index, const QJsonObject& data);

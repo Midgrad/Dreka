@@ -101,9 +101,24 @@ void RoutesController::selectRoute(const QVariant& selectedRouteId)
     emit selectedRouteChanged(selectedRouteId);
 }
 
-void RoutesController::addNewRoute(const QString& routeType)
+void RoutesController::addNewRoute(const QString& routeTypeName)
 {
-    // TODO create new route()
+    auto routeType = m_routesRepository->routeType(routeTypeName);
+    if (!routeType)
+    {
+        qWarning() << "Unknown route type";
+        return;
+    }
+
+    QStringList routeNames;
+    for (Route* route : m_routesRepository->routes())
+    {
+        routeNames += route->name();
+    }
+
+    auto route = new Route(routeType, utils::nameFromType(routeTypeName, routeNames));
+    m_routesRepository->saveRoute(route);
+    this->selectRoute(route->id());
 }
 
 void RoutesController::updateRoute(const QVariant& routeId, const QJsonObject& data)
@@ -120,6 +135,9 @@ void RoutesController::removeRoute(const QVariant& routeId)
     Route* route = m_routesRepository->route(routeId);
     if (!route)
         return;
+
+    if (m_selectedRoute == route)
+        this->selectRoute(QVariant());
 
     m_routesRepository->removeRoute(route);
 }
