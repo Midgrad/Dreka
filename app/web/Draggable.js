@@ -62,7 +62,7 @@ class Draggable {
         input.subscribe("onDown", cartesian => { if (that.enabled) that.onDown(cartesian) });
         input.subscribe("onMove", cartesian => { if (that.enabled) that.onMove(cartesian) });
         input.subscribe("onMoveShift", (dx, dy) => { if (that.enabled) that.onMoveShift(dx, dy) });
-        input.subscribe("onClick", cartesian => { if (that.enabled) that.onClick(cartesian) });
+        input.subscribe("onClick", (cartesian, x, y) => { return that.enabled ? that.onClick(cartesian, x, y) : false });
 
         // Entities
         this.hoveredPoint = null;
@@ -107,5 +107,5 @@ class Draggable {
     }
 
     onMove(cartesian) {} // No default behavior for move
-    onClick(cartesian) {} // No default behavior for click
+    onClick(cartesian, x, y) { return false; } // No default behavior for click
 }
