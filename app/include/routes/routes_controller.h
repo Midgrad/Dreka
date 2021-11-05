@@ -24,6 +24,7 @@ public:
 
     Q_INVOKABLE QJsonObject routeData(const QVariant& routeId) const;
     Q_INVOKABLE QJsonObject waypointData(const QVariant& routeId, int index) const;
+    Q_INVOKABLE QStringList waypointTypes(const QVariant& routeId) const;
 
 public slots:
     Q_INVOKABLE void setActiveMission(const QVariant& missionId);
@@ -31,8 +32,7 @@ public slots:
     void addNewRoute(const QString& routeTypeName);
     void updateRoute(const QVariant& routeId, const QJsonObject& data);
     void removeRoute(const QVariant& routeId);
-    // TODO: wptType, lat/lon/alt to QJsonObject
-    void addWaypoint(const QVariant& routeId, double latitude, double longitude, float altitude);
+    void addWaypoint(const QVariant& routeId, const QString& wptTypeName, const QVariantMap& args);
     void updateWaypoint(const QVariant& routeId, int index, const QJsonObject& data);
     void removeWaypoint(const QVariant& routeId, int index);
 

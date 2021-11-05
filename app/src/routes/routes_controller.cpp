@@ -80,6 +80,15 @@ QJsonObject RoutesController::waypointData(const QVariant& routeId, int index) c
     return QJsonObject::fromVariantMap(waypoint->toVariantMap(false));
 }
 
+QStringList RoutesController::waypointTypes(const QVariant& routeId) const
+{
+    Route* route = m_routesRepository->route(routeId);
+    if (!route)
+        return QStringList();
+
+    return route->type()->waypointTypes.keys();
+}
+
 void RoutesController::setActiveMission(const QVariant& missionId)
 {
     m_activeMission = m_missionsRepository->mission(missionId);
@@ -142,17 +151,23 @@ void RoutesController::removeRoute(const QVariant& routeId)
     m_routesRepository->removeRoute(route);
 }
 
-void RoutesController::addWaypoint(const QVariant& routeId, double latitude, double longitude,
-                                   float altitude)
+void RoutesController::addWaypoint(const QVariant& routeId, const QString& wptTypeName,
+                                   const QVariantMap& args)
 {
-    qDebug() << routeId << latitude << longitude << altitude;
-    // TODO: wpt type
-
     Route* route = m_routesRepository->route(routeId);
     if (!route)
         return;
 
-    const WaypointType* type = route->type()->waypointTypes.first();
+    const WaypointType* type = route->type()->waypointType(wptTypeName);
+    if (!type)
+        return;
+
+    // Override default params with args
+    QVariantMap merged = type->defaultParameters();
+    for (auto it = args.begin(); it != args.end(); ++it)
+    {
+        merged[it.key()] = it.value();
+    }
 
     QStringList wptNames;
     for (Waypoint* wpt : route->waypoints())
@@ -160,10 +175,9 @@ void RoutesController::addWaypoint(const QVariant& routeId, double latitude, dou
         wptNames += wpt->name();
     }
 
-    Waypoint* wpt = new Waypoint(type, utils::nameFromType(type->name, wptNames));
+    Waypoint* wpt = new Waypoint(type, utils::nameFromType(wptTypeName, wptNames));
     route->addWaypoint(wpt);
-    wpt->setParameters(
-        { { "latitude", latitude }, { "longitude", longitude }, { "altitude", altitude } });
+    wpt->setParameters(merged);
 
     m_routesRepository->saveWaypoint(route, wpt);
 }

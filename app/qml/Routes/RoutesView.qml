@@ -8,19 +8,33 @@ RowLayout {
 
     function setActiveMission(missionId) { controller.setActiveMission(missionId); }
 
-    Controls.MenuItem {
+    Controls.Menu {
         id: addWaypoint
+        title: qsTr("Add Waypoint")
         enabled: controller.selectedRoute !== undefined
-        text: qsTr("Add Waypoint")
-        iconSource: "qrc:/icons/plus.svg"
-        onTriggered: controller.addWaypoint(controller.selectedRoute, mapMenu.latitude, mapMenu.longitude, mapMenu.altitude)
+
+        Repeater {
+            model: controller.waypointTypes(controller.selectedRoute)
+
+            Controls.MenuItem {
+                text: modelData
+                onTriggered: {
+                    var args = {};
+                    args["latitude"] = mapMenu.latitude;
+                    args["longitude"] = mapMenu.longitude;
+                    args["altitude"] = mapMenu.altitude;
+
+                    controller.addWaypoint(controller.selectedRoute, modelData, args);
+                }
+            }
+        }
     }
 
     RoutesController { id: controller }
 
     Component.onCompleted: {
         map.registerController("routesController", controller);
-        mapMenu.addItem(addWaypoint);
+        mapMenu.addSubmenu(addWaypoint);
     }
 
     spacing: 1

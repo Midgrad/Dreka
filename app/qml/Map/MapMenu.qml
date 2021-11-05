@@ -11,7 +11,9 @@ Item {
     property real altitude: 0.0
 
     function addItem(item) { menu.addItem(item); }
+    function addSubmenu(submenu) { menu.addMenu(submenu); }
     function removeItem(item) { menu.removeItem(item); }
+    function removeSubmenu(submenu) { menu.removeMenu(submenu); }
 
     MapMenuController {
         id: controller
