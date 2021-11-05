@@ -41,20 +41,12 @@ QJsonObject MissionController::operation() const
     return QJsonObject::fromVariantMap(m_mission->operation()->toVariantMap());
 }
 
-QJsonObject MissionController::route() const
-{
-    if (m_route)
-        return QJsonObject();
-
-    return QJsonObject::fromVariantMap(m_route->toVariantMap(true));
-}
-
 QStringList MissionController::waypoints() const
 {
     QStringList list;
-    if (m_route)
+    if (m_mission)
     {
-        for (Waypoint* waypoint : m_route->waypoints())
+        for (Waypoint* waypoint : m_mission->waypoints())
         {
             list.append(waypoint->name());
         }
@@ -65,10 +57,10 @@ QStringList MissionController::waypoints() const
 
 int MissionController::currentWaypoint() const
 {
-    if (!m_route)
-        return 0;
+    if (!m_mission)
+        return -1;
 
-    return m_route->currentWaypointIndex();
+    return m_mission->currentWaypointIndex();
 }
 
 void MissionController::setVehicleId(const QVariant& vehicleId)
@@ -92,17 +84,9 @@ void MissionController::setMission(Mission* mission)
     {
         connect(mission->operation(), &MissionOperation::changed, this,
                 &MissionController::operationChanged);
-        connect(mission, &Mission::routeChanged, this, &MissionController::onRouteChanged);
-
-        if (mission->route())
-        {
-            this->onRouteChanged(mission->route());
-        }
-    }
-
-    if (!mission || !mission->route())
-    {
-        this->onRouteChanged(nullptr);
+        connect(mission, &Mission::waypointsChanged, this, &MissionController::waypointsChanged);
+        connect(mission, &Mission::currentWaypointChanged, this,
+                &MissionController::currentWaypointChanged);
     }
 
     emit missionChanged();
@@ -160,30 +144,8 @@ void MissionController::cancel()
 
 void MissionController::switchWaypoint(int index)
 {
-    if (!m_route)
+    if (!m_mission)
         return;
 
-    emit m_route->switchWaypoint(index);
-}
-
-void MissionController::onRouteChanged(Route* route)
-{
-    if (m_route && m_route != route)
-    {
-        disconnect(m_route, nullptr, this, nullptr);
-    }
-
-    m_route = route;
-
-    if (route)
-    {
-        connect(route, &Route::currentWaypointChanged, this,
-                &MissionController::currentWaypointChanged);
-        connect(route, &Route::waypointAdded, this, &MissionController::routeChanged);
-        connect(route, &Route::waypointChanged, this, &MissionController::routeChanged);
-        connect(route, &Route::waypointRemoved, this, &MissionController::routeChanged);
-    }
-
-    emit routeChanged();
-    emit currentWaypointChanged();
+    emit m_mission->switchWaypoint(index);
 }
