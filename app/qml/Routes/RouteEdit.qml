@@ -18,6 +18,12 @@ Item {
     implicitWidth: column.implicitWidth
     implicitHeight: column.implicitHeight
 
+    Connections {
+        target: controller
+        onWaypointAdded: if (route.id === routeId) route = controller.routeData(route.id)
+        onWaypointRemoved: if (route.id === routeId) route = controller.routeData(route.id)
+    }
+
     ColumnLayout {
         id: column
         anchors.fill: parent

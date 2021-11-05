@@ -8,6 +8,12 @@ Item {
     property var waypoint
     property int waypointIndex: 0
 
+    Connections {
+        target: controller
+        onWaypointChanged: if (route.id === routeId && waypointIndex === index)
+                               waypoint = controller.waypointData(route.id, waypointIndex)
+    }
+
     implicitWidth: row.implicitWidth
     implicitHeight: row.implicitHeight
 
