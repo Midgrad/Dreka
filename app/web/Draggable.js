@@ -57,12 +57,14 @@ class Draggable {
 
         // Callbacks
         var that = this;
-        input.subscribe("onPick", pickedObjects => { if (that.enabled) that.onPick(pickedObjects) });
-        input.subscribe("onUp", cartesian => { if (that.enabled) that.onUp(cartesian) });
-        input.subscribe("onDown", cartesian => { if (that.enabled) that.onDown(cartesian) });
-        input.subscribe("onMove", cartesian => { if (that.enabled) that.onMove(cartesian) });
-        input.subscribe("onMoveShift", (dx, dy) => { if (that.enabled) that.onMoveShift(dx, dy) });
-        input.subscribe("onClick", (cartesian, x, y) => { return that.enabled ? that.onClick(cartesian, x, y) : false });
+        input.subscribe("onPick", pickedObjects => { if (that.enabled) that.onPick(pickedObjects); });
+        input.subscribe("onUp", cartesian => { if (that.enabled) that.onUp(cartesian); });
+        input.subscribe("onDown", cartesian => { if (that.enabled) that.onDown(cartesian); });
+        input.subscribe("onMove", cartesian => { if (that.enabled) that.onMove(cartesian); });
+        input.subscribe("onMoveShift", (dx, dy) => { if (that.enabled) that.onMoveShift(dx, dy); });
+        input.subscribe("onClick", (cartesian, x, y, objects) => {
+                            return that.enabled ? that.onClick(cartesian, x, y, objects) : false;
+                        });
 
         // Entities
         this.hoveredPoint = null;

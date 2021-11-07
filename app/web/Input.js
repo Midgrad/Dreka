@@ -1,4 +1,10 @@
-// Register handlers with: onClick(cartesian, x, y), onDown(cartesian), onUp(cartesian), onMove(cartesian), onMoveShift(dx, dy), onPick([pickedObjects])
+// Register handlers:
+//  onClick(cartesian, x, y, pickedObjects),
+//  onDown(cartesian),
+//  onUp(cartesian),
+//  onMove(cartesian),
+//  onMoveShift(dx, dy), - TODO: replace with onMove with shift modifier
+//  onPick([pickedObjects]) - TODO: replace with onMove
 class Input {
     constructor(viewer) {
 
@@ -24,17 +30,13 @@ class Input {
         // Left button click
         var leftClickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
         leftClickHandler.setInputAction((event) => {
-            // Ignore click while have pickedObjects
-            if (this.pickedObjects.length)
-                return;
-
             // Promoute mouse click event with position
             that.pickPosition(event.position, cartesian => {
-                var block = false;
-                that.handlers["onClick"].slice().reverse().forEach(handler => {
-                    if (!block)
-                        block = handler(cartesian, event.position.x, event.position.y);
-                });
+                var handlers = that.handlers["onClick"];
+                for (var i = handlers.length - 1; i >= 0; i--) {
+                    if (handlers[i](cartesian, event.position.x, event.position.y, this.pickedObjects))
+                        break;
+                }
             });
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 

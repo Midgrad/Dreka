@@ -10,24 +10,25 @@ Item {
     property real longitude: 0.0
     property real altitude: 0.0
 
-    function addItem(item) { menu.addItem(item); }
-    function addSubmenu(submenu) { menu.addMenu(submenu); }
-    function removeItem(item) { menu.removeItem(item); }
-    function removeSubmenu(submenu) { menu.removeMenu(submenu); }
+    function addPositionSubmenu(submenu) { positionMenu.addMenu(submenu); }
+    function removePositionSubmenu(submenu) { positionMenu.removeMenu(submenu); }
+    function addEntitySubmenu(submenu) { entityMenu.addMenu(submenu); }
+    function removeEntitySubmenu(submenu) { entityMenu.removeMenu(submenu); }
 
     MapMenuController {
         id: controller
-        onInvoked: {
+        onInvokedPosition: {
             root.latitude = latitude;
             root.longitude = longitude;
             root.altitude = altitude;
 
-            if (menu.count)
-                menu.popup(x, y);
+            if (positionMenu.count)
+                positionMenu.popup(x, y);
         }
     }
 
     Component.onCompleted: map.registerController("menuController", controller)
 
-    Controls.Menu { id: menu }
+    Controls.Menu { id: positionMenu }
+    Controls.Menu { id: entityMenu }
 }
