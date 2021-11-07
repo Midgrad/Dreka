@@ -181,6 +181,13 @@ void RoutesController::addWaypoint(const QVariant& routeId, const QString& wptTy
         merged[it.key()] = it.value();
     }
 
+    // Special case for altitude
+    float altitude =
+        route->count()
+            ? route->waypoint(route->count() - 1)->parameter(mission::altitude.id).toFloat()
+            : args.value(mission::altitude.id, 0).toFloat();
+    merged[mission::altitude.id] = altitude;
+
     QStringList wptNames;
     for (Waypoint* wpt : route->waypoints())
     {
