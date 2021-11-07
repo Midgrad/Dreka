@@ -83,13 +83,22 @@ QJsonObject RoutesController::waypointData(const QVariant& routeId, int index) c
     return QJsonObject::fromVariantMap(waypoint->toVariantMap(false));
 }
 
-QStringList RoutesController::waypointTypes(const QVariant& routeId) const
+QJsonArray RoutesController::waypointTypes(const QVariant& routeId) const
 {
+    QJsonArray jsons;
     Route* route = m_routesRepository->route(routeId);
-    if (!route)
-        return QStringList();
+    if (route)
+    {
+        for (auto type : route->type()->waypointTypes)
+        {
+            QJsonObject json;
+            json.insert(params::id, type->id);
+            json.insert(params::name, type->name);
+            jsons.append(json);
+        }
+    }
 
-    return route->type()->waypointTypes.keys();
+    return jsons;
 }
 
 void RoutesController::setActiveMission(const QVariant& missionId)
@@ -113,9 +122,9 @@ void RoutesController::selectRoute(const QVariant& selectedRouteId)
     emit selectedRouteChanged(selectedRouteId);
 }
 
-void RoutesController::addNewRoute(const QString& routeTypeName)
+void RoutesController::addNewRoute(const QString& routeTypeId)
 {
-    auto routeType = m_routesRepository->routeType(routeTypeName);
+    auto routeType = m_routesRepository->routeType(routeTypeId);
     if (!routeType)
     {
         qWarning() << "Unknown route type";
@@ -128,7 +137,7 @@ void RoutesController::addNewRoute(const QString& routeTypeName)
         routeNames += route->name();
     }
 
-    auto route = new Route(routeType, utils::nameFromType(routeTypeName, routeNames));
+    auto route = new Route(routeType, utils::nameFromType(routeType->name, routeNames));
     m_routesRepository->saveRoute(route);
     this->selectRoute(route->id());
 }
@@ -154,19 +163,19 @@ void RoutesController::removeRoute(const QVariant& routeId)
     m_routesRepository->removeRoute(route);
 }
 
-void RoutesController::addWaypoint(const QVariant& routeId, const QString& wptTypeName,
+void RoutesController::addWaypoint(const QVariant& routeId, const QString& wptTypeId,
                                    const QVariantMap& args)
 {
     Route* route = m_routesRepository->route(routeId);
     if (!route)
         return;
 
-    const WaypointType* type = route->type()->waypointType(wptTypeName);
-    if (!type)
+    const WaypointType* wptType = route->type()->waypointType(wptTypeId);
+    if (!wptType)
         return;
 
     // Override default params with args
-    QVariantMap merged = type->defaultParameters();
+    QVariantMap merged = wptType->defaultParameters();
     for (auto it = args.begin(); it != args.end(); ++it)
     {
         merged[it.key()] = it.value();
@@ -178,7 +187,7 @@ void RoutesController::addWaypoint(const QVariant& routeId, const QString& wptTy
         wptNames += wpt->name();
     }
 
-    Waypoint* wpt = new Waypoint(type, utils::nameFromType(wptTypeName, wptNames));
+    Waypoint* wpt = new Waypoint(wptType, utils::nameFromType(wptType->name, wptNames));
     route->addWaypoint(wpt);
     wpt->setParameters(merged);
 

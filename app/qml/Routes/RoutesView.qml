@@ -17,14 +17,14 @@ RowLayout {
             model: controller.waypointTypes(controller.selectedRoute)
 
             Controls.MenuItem {
-                text: modelData
+                text: modelData.name
                 onTriggered: {
                     var args = {};
                     args["latitude"] = mapMenu.latitude;
                     args["longitude"] = mapMenu.longitude;
                     args["altitude"] = mapMenu.altitude;
 
-                    controller.addWaypoint(controller.selectedRoute, modelData, args);
+                    controller.addWaypoint(controller.selectedRoute, modelData.id, args);
                 }
             }
         }
