@@ -35,14 +35,17 @@ RoutesController::RoutesController(QObject* parent) :
             });
 }
 
-QStringList RoutesController::routeTypes() const
+QJsonArray RoutesController::routeTypes() const
 {
-    QStringList routeTypes;
+    QJsonArray jsons;
     for (auto routeType : m_routesRepository->routeTypes())
     {
-        routeTypes += routeType->name;
+        QJsonObject json;
+        json.insert(params::id, routeType->id);
+        json.insert(params::name, routeType->name);
+        jsons.append(json);
     }
-    return routeTypes;
+    return jsons;
 }
 
 QVariantList RoutesController::routeIds() const

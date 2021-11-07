@@ -4,13 +4,15 @@
 #include "i_missions_repository.h"
 #include "i_routes_repository.h"
 
+#include <QJsonArray>
+
 namespace md::presentation
 {
 class RoutesController : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QStringList routeTypes READ routeTypes NOTIFY routeTypesChanged)
+    Q_PROPERTY(QJsonArray routeTypes READ routeTypes NOTIFY routeTypesChanged)
     Q_PROPERTY(QVariantList routeIds READ routeIds NOTIFY routeIdsChanged)
     // TODO: selectedRoute to QML only
     Q_PROPERTY(QVariant selectedRoute READ selectedRoute NOTIFY selectedRouteChanged)
@@ -18,7 +20,7 @@ class RoutesController : public QObject
 public:
     explicit RoutesController(QObject* parent = nullptr);
 
-    QStringList routeTypes() const;
+    QJsonArray routeTypes() const;
     QVariantList routeIds() const;
     QVariant selectedRoute() const;
 

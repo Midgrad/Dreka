@@ -31,8 +31,8 @@ Controls.Popup {
                 iconSource: "qrc:/icons/plus.svg"
                 model: controller.routeTypes
                 delegate: Controls.MenuItem {
-                    text: modelData
-                    onTriggered: controller.addNewRoute(modelData)
+                    text: modelData.name
+                    onTriggered: controller.addNewRoute(modelData.id)
                 }
             }
         }
