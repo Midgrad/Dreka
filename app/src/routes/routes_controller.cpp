@@ -223,24 +223,19 @@ void RoutesController::updateWaypoint(const QVariant& routeId, int index, const 
     m_routesRepository->saveWaypoint(route, waypoint);
 }
 
-void RoutesController::removeWaypoint(const QVariant& routeId, int index)
-{
-    // TODO: impl removeWaypoint
-}
-
 void RoutesController::onRouteAdded(Route* route)
 {
     emit routeAdded(route->id());
     emit routeIdsChanged();
 
-    connect(route, &Route::waypointAdded, this, [this, route](Waypoint* waypoint) {
-        emit waypointAdded(route->id(), route->index(waypoint));
+    connect(route, &Route::waypointAdded, this, [this, route](int index, Waypoint* waypoint) {
+        emit waypointAdded(route->id(), index);
     });
-    connect(route, &Route::waypointRemoved, this, [this, route](Waypoint* waypoint) {
-        emit waypointRemoved(route->id(), route->index(waypoint));
+    connect(route, &Route::waypointRemoved, this, [this, route](int index, Waypoint* waypoint) {
+        emit waypointRemoved(route->id(), index);
     });
-    connect(route, &Route::waypointChanged, this, [this, route](Waypoint* waypoint) {
-        emit waypointChanged(route->id(), route->index(waypoint));
+    connect(route, &Route::waypointChanged, this, [this, route](int index, Waypoint* waypoint) {
+        emit waypointChanged(route->id(), index);
     });
 }
 

@@ -75,14 +75,17 @@ class Route extends Draggable {
         this.waypoints = [];
     }
 
+    removeWaypoint(index) {
+        this.waypoints[index].clear();
+        this.waypoints.splice(index, 1);
+    }
+
     center() {
-        if (this.waypoints.length > 0)
-            this.viewer.flyTo(this.lines);
+        this.viewer.flyTo(this.lines);
     }
 
     centerWaypoint(index) {
-        if (this.waypoints.length > index)
-            this.waypoints[index].flyTo();
+        this.waypoints[index].flyTo();
     }
 
     setEditMode(editMode) {

@@ -15,6 +15,7 @@ public:
 public slots:
     void invokeWaypointMenu(const QVariant& routeId, int index, double x, double y);
     void setWaypoint(const QVariant& routeId, int index);
+    void remove();
 
 signals:
     void waypointChanged();
@@ -23,6 +24,7 @@ signals:
 
 private:
     domain::IRoutesRepository* const m_routesRepository;
+    domain::Route* m_route = nullptr;
     domain::Waypoint* m_waypoint = nullptr;
 };
 } // namespace md::presentation

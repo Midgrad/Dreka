@@ -25,10 +25,10 @@ void WaypointController::invokeWaypointMenu(const QVariant& routeId, int index, 
 void WaypointController::setWaypoint(const QVariant& routeId, int index)
 {
     Waypoint* waypoint = nullptr;
-    Route* route = m_routesRepository->route(routeId);
-    if (route)
+    m_route = m_routesRepository->route(routeId);
+    if (m_route)
     {
-        waypoint = route->waypoint(index);
+        waypoint = m_route->waypoint(index);
     }
 
     if (m_waypoint == waypoint)
@@ -36,4 +36,13 @@ void WaypointController::setWaypoint(const QVariant& routeId, int index)
 
     m_waypoint = waypoint;
     emit waypointChanged();
+}
+
+void WaypointController::remove()
+{
+    if (!m_route || !m_waypoint)
+        return;
+
+    m_route->removeWaypoint(m_waypoint);
+    m_routesRepository->saveRoute(m_route);
 }
