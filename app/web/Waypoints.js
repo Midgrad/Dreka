@@ -84,21 +84,30 @@ class Waypoint extends DraggablePoint {
      */
     update(waypointData) {
         this.waypointData = waypointData;
-        this.waypointData.params.terrainAltitude = 0; // Don't trust terrain data
+        this.terrainAltitude = 0; // Don't trust terrain data
         this.changed = false;
 
         this.rebuild();
     }
 
     rebuild() {
-        var params = this.waypointData.params;
+        var params = this.waypointData.params ? this.waypointData.params: {};
 
-        this.validPosition = params.longitude !== null &&
-                             params.latitude !== null &&
-                             params.altitude !== null;
-        this.position = Cesium.Cartesian3.fromDegrees(params.longitude, params.latitude, params.altitude);
-        this.terrainPosition = Cesium.Cartesian3.fromDegrees(params.longitude, params.latitude,
-                                                             this.waypointData.params.terrainAltitude);
+        if (Cesium.defined(params.longitude) &&
+            Cesium.defined(params.latitude) &&
+            Cesium.defined(params.altitude)) {
+
+            this.validPosition = params.longitude !== null &&
+                                 params.latitude !== null &&
+                                 params.altitude !== null;
+            this.position = Cesium.Cartesian3.fromDegrees(params.longitude, params.latitude, params.altitude);
+            this.terrainPosition = Cesium.Cartesian3.fromDegrees(params.longitude, params.latitude,
+                                                                 this.terrainAltitude);
+        } else {
+            this.validPosition = false;
+            this.position = Cesium.Cartesian3.ZERO;
+            this.terrainPosition = Cesium.Cartesian3.ZERO;
+        }
 
         if (!this.validPosition)
             return;
@@ -108,7 +117,7 @@ class Waypoint extends DraggablePoint {
         var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [cartographic]);
         Cesium.when(promise, updatedPositions => {
                         that.terrainPosition = Cesium.Cartographic.toCartesian(cartographic);
-                        that.waypointData.params.terrainAltitude = cartographic.height;
+                        that.terrainAltitude = cartographic.height;
                     });
     }
 
@@ -140,7 +149,7 @@ class Waypoint extends DraggablePoint {
         var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
         this.waypointData.params.latitude = Cesium.Math.toDegrees(cartographic.latitude);
         this.waypointData.params.longitude = Cesium.Math.toDegrees(cartographic.longitude);
-        this.waypointData.params.terrainAltitude = cartographic.height;
+        this.terrainAltitude = cartographic.height;
         this.changed = true;
         this.rebuild();
     }

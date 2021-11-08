@@ -58,7 +58,7 @@ Item {
         }
 
         Controls.Label {
-            text: waypoint &&  waypoint.params.altitude ?
+            text: waypoint && waypoint.params && waypoint.params.altitude ?
                       (Math.round(waypoint.params.altitude) + " " + qsTr("m")) : "-"
             horizontalAlignment: Text.AlignHCenter
             Layout.minimumWidth: _altWidth
