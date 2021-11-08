@@ -188,13 +188,7 @@ void RoutesController::addWaypoint(const QVariant& routeId, const QString& wptTy
             : args.value(mission::altitude.id, 0).toFloat();
     merged[mission::altitude.id] = altitude;
 
-    QStringList wptNames;
-    for (Waypoint* wpt : route->waypoints())
-    {
-        wptNames += wpt->name();
-    }
-
-    Waypoint* wpt = new Waypoint(wptType, utils::nameFromType(wptType->name, wptNames));
+    Waypoint* wpt = new Waypoint(wptType, wptType->shortName);
     route->addWaypoint(wpt);
     wpt->setParameters(merged);
 

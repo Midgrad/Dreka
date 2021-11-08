@@ -43,12 +43,20 @@ QJsonObject MissionController::operation() const
 
 QStringList MissionController::waypoints() const
 {
+    if (!m_mission)
+        return QStringList();
+
     QStringList list;
-    if (m_mission)
+
+    list.append(m_mission->homePoint()->name());
+
+    if (m_mission->route())
     {
-        for (Waypoint* waypoint : m_mission->waypoints())
+        int index = 1;
+        for (Waypoint* waypoint : m_mission->route()->waypoints())
         {
-            list.append(waypoint->name());
+            list.append(waypoint->name() + " " + QString::number(index));
+            index++;
         }
     }
 

@@ -39,13 +39,14 @@ class Route extends Draggable {
             this.waypoints[index].update(waypointData);
         } else {
             var waypoint = new Waypoint(this.viewer, waypointData);
+            waypoint.index = index;
             waypoint.setEditMode(this.editMode);
             this.waypoints.push(waypoint);
-            // FIXME: index form wpt
+
             if (this.waypointChangedCallback) {
                 var that = this;
                 waypoint.changedCallback = (waypointData) => {
-                    that.waypointChangedCallback(index, waypointData);
+                    that.waypointChangedCallback(waypoint.index, waypointData);
                 }
             }
             // Add line
@@ -96,6 +97,10 @@ class Route extends Draggable {
                 return [left.position, right.position];
             }, false);
         }
+
+        // Update indices
+        for (var i = index; i < this.waypoints.length; ++i)
+            this.waypoints[i].index = i;
     }
 
     center() {

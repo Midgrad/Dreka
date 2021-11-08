@@ -38,7 +38,7 @@ Item {
         spacing: 0
 
         Controls.Label {
-            text: waypoint ? waypoint.name : ""
+            text: waypoint ? waypoint.name + " " + (waypointIndex + 1) : ""
             horizontalAlignment: Text.AlignHCenter
             Layout.minimumWidth: _wptWidth
         }

@@ -37,7 +37,8 @@ class Waypoint extends DraggablePoint {
                 disableDepthTestDistance: Number.POSITIVE_INFINITY
             },
             label: {
-                text: new Cesium.CallbackProperty(() => { return that.waypointData.name; }, false),
+                text: new Cesium.CallbackProperty(() => {
+                    return that.waypointData.name + " " + (that.index + 1); }, false),
                 show: false,
                 showBackground: true,
                 pixelOffset: new Cesium.Cartesian2(0, -25),
