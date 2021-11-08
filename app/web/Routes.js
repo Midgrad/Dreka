@@ -15,29 +15,12 @@ class Route extends Draggable {
         this.enabled = false;
 
         // Visual
-        this.lineWidth = 3.0;
+        this.lineWidth = 8.0;
 
         // Entities
         this.waypoints = [];
-
         // Nominal track
-        var that = this;
-        this.lines = this.viewer.entities.add({
-            polyline: {
-                positions: new Cesium.CallbackProperty(() => {
-                    var positions = [];
-                    that.waypoints.forEach(waypoint => { positions.push(waypoint.position); });
-                    return positions;
-                }, false),
-                arcType: Cesium.ArcType.GEODESIC,
-                width : new Cesium.CallbackProperty(() => { return that.lineWidth; }, false),
-                material: new Cesium.PolylineOutlineMaterialProperty({
-                    color: Cesium.Color.WHITE,
-                    outlineWidth: 1,
-                    outlineColor: Cesium.Color.BLACK,
-                })
-            }
-        });
+        this.lines = [];
     }
 
     setRouteData(routeData) {
@@ -58,26 +41,61 @@ class Route extends Draggable {
             var waypoint = new Waypoint(this.viewer, waypointData);
             waypoint.setEditMode(this.editMode);
             this.waypoints.push(waypoint);
-
+            // FIXME: index form wpt
             if (this.waypointChangedCallback) {
                 var that = this;
                 waypoint.changedCallback = (waypointData) => {
                     that.waypointChangedCallback(index, waypointData);
                 }
             }
+            // Add line
+            if (this.waypoints.length > 1)
+                this.addLine(this.waypoints[index - 1], this.waypoints[index]);
         }
     }
 
+    addLine(first, second) {
+        var that = this;
+        var line = this.viewer.entities.add({
+            polyline: {
+                positions: new Cesium.CallbackProperty(() => { return [first.position, second.position]; }, false),
+                arcType: Cesium.ArcType.GEODESIC,
+                width: new Cesium.CallbackProperty(() => { return that.lineWidth; }, false),
+                material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.WHITE)
+            }
+        });
+        this.lines.push(line);
+    }
+
     clear() {
-        this.viewer.entities.remove(this.lines);
+        var that = this;
+        this.lines.forEach(line => that.viewer.entities.remove(line));
+        this.lines = [];
 
         this.waypoints.forEach(waypoint => waypoint.clear());
         this.waypoints = [];
     }
 
     removeWaypoint(index) {
+        var removeIndex = index < this.lines.length ? index : index - 1;
+        var updateIndex = removeIndex - 1;
+
+        // Remove waypoint entity
         this.waypoints[index].clear();
         this.waypoints.splice(index, 1);
+
+        // Remove one line
+        this.viewer.entities.remove(this.lines[removeIndex]);
+        this.lines.splice(removeIndex, 1);
+
+        // Update another line
+        if (updateIndex > -1) {
+            var left = this.waypoints[updateIndex];
+            var right = this.waypoints[updateIndex + 1];
+            this.lines[updateIndex].polyline.positions = new Cesium.CallbackProperty(() => {
+                return [left.position, right.position];
+            }, false);
+        }
     }
 
     center() {
