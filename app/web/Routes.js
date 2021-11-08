@@ -8,6 +8,7 @@ class Route extends Draggable {
 
         // Callbacks
         this.waypointChangedCallback = null;
+        this.waypointClickedCallback = null;
 
         // Data
         this.editMode = false;
@@ -90,13 +91,23 @@ class Route extends Draggable {
         this.waypoints.forEach(waypoint => waypoint.setEditMode(editMode));
     }
 
+    onClick(cartesian, x, y, objects) {
+        if (!this.waypointClickedCallback)
+            return;
+        // Try to pick point
+        for (var index = 0; index < this.waypoints.length; ++index) {
+            if (this.waypoints[index].checkMatchPoint(objects))
+                this.waypointClickedCallback(index, x, y);
+        }
+    }
+
     onPick(pickedObjects) {
         if (super.onPick(pickedObjects))
             return true;
 
-        // Try to pick new point
+        // Try to pick ground point
         this.waypoints.forEach(candidate => {
-            if (candidate.checkMatch(pickedObjects))
+            if (candidate.checkMatchGroundPoint(pickedObjects))
                 this.setHoveredPoint(candidate);
         });
     }
@@ -125,6 +136,7 @@ class Routes {
 
         // Callbacks
         this.waypointChangedCallback = null;
+        this.waypointClickedCallback = null;
 
         // Entities
         this.routes = new Map();
@@ -172,6 +184,9 @@ class Routes {
                 var that = this;
                 route.waypointChangedCallback = (index, waypointData) => {
                     that.waypointChangedCallback(routeId, index, waypointData);
+                }
+                route.waypointClickedCallback = (index, x, y) => {
+                    that.waypointClickedCallback(routeId, index, x, y);
                 }
             }
         }

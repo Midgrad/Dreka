@@ -32,6 +32,11 @@ Controls.ApplicationWindow {
         anchors.fill: map
     }
 
+    WaypointMenuView {
+        id: waypointEdit
+        anchors.fill: map
+    }
+
     RowLayout {
         id: menuBar
         anchors.top: parent.top

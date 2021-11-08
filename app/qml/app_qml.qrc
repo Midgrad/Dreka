@@ -16,7 +16,8 @@
         <file>Routes/Route.qml</file>
         <file>Routes/RouteEdit.qml</file>
         <file>Routes/Waypoint.qml</file>
-        <file>Routes/WaypointEditView.qml</file>
+        <file>Routes/WaypointMenuView.qml</file>
+        <file>Routes/WaypointEdit.qml</file>
         <file>Vehicles/VehiclesView.qml</file>
         <file>Vehicles/MissionView.qml</file>
         <file>Vehicles/GenericDashboard.qml</file>

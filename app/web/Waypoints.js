@@ -115,13 +115,15 @@ class Waypoint extends DraggablePoint {
         this.groundPoint.point.pixelSize = hovered ? this.hoveredPointPixelSize : this.pointPixelSize;
     }
 
-    checkMatch(objects) {
+    checkMatchPoint(objects) {
         var result = null;
-        objects.forEach(object => {
-            // check ground pointa
-            if (this.groundPoint === object.id)
-                 result = this.point;
-        });
+        objects.forEach(object => { if (this.point === object.id) result = this.point; });
+        return result;
+    }
+
+    checkMatchGroundPoint(objects) {
+        var result = null;
+        objects.forEach(object => { if (this.groundPoint === object.id) result = this.groundPoint; });
         return result;
     }
 

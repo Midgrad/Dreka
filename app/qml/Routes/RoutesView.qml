@@ -34,7 +34,7 @@ RowLayout {
 
     Component.onCompleted: {
         map.registerController("routesController", controller);
-        mapMenu.addPositionSubmenu(addWaypoint);
+        mapMenu.addSubmenu(addWaypoint);
     }
 
     spacing: 1

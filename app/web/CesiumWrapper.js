@@ -47,12 +47,12 @@ class CesiumWrapper {
             var menuController = channel.objects.menuController;
             if (menuController) {
                 that.input.subscribe("onClick", (cartesian, x, y, objects) => {
-                    if (objects.length) return; // TODO: invokeEntity
+                    if (objects.length) return;
                     var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
                     var latitude = Cesium.Math.toDegrees(cartographic.latitude);
                     var longitude = Cesium.Math.toDegrees(cartographic.longitude);
                     var altitude = cartographic.height;
-                    menuController.invokePosition(x, y, latitude, longitude, altitude);
+                    menuController.invoke(x, y, latitude, longitude, altitude);
                     return true;
                 });
             }
@@ -130,6 +130,13 @@ class CesiumWrapper {
                 routesController.centerRoute.connect(routeId => { routes.centerRoute(routeId); });
                 routesController.selectedRouteChanged.connect(routeId => { routes.setEditingRoute(routeId); });
                 routesController.centerWaypoint.connect((routeId, index) => { routes.centerWaypoint(routeId, index); });
+
+                var waypointController = channel.objects.waypointController;
+                if (waypointController) {
+                    routes.waypointClickedCallback = (routeId, index, x, y) => {
+                        waypointController.invokeWaypointMenu(routeId, index, x, y);
+                    }
+                }
             }
 
             var vehiclesController = channel.objects.vehiclesController;

@@ -8,8 +8,7 @@ MapMenuController::MapMenuController(QObject* parent) : QObject(parent)
 {
 }
 
-void MapMenuController::invokePosition(int x, int y, double latitude, double longitude,
-                                       float altitude)
+void MapMenuController::invoke(int x, int y, double latitude, double longitude, float altitude)
 {
-    emit invokedPosition(x, y, latitude, longitude, altitude);
+    emit invoked(x, y, latitude, longitude, altitude);
 }

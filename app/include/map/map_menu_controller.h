@@ -13,10 +13,10 @@ public:
     explicit MapMenuController(QObject* parent = nullptr);
 
 public slots:
-    void invokePosition(int x, int y, double latitude, double longitude, float altitude);
+    void invoke(int x, int y, double latitude, double longitude, float altitude);
 
 signals:
-    void invokedPosition(int x, int y, double latitude, double longitude, float altitude);
+    void invoked(int x, int y, double latitude, double longitude, float altitude);
 };
 } // namespace md::presentation
 

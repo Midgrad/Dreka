@@ -29,7 +29,7 @@ public:
     Q_INVOKABLE QJsonArray waypointTypes(const QVariant& routeId) const;
 
 public slots:
-    Q_INVOKABLE void setActiveMission(const QVariant& missionId);
+    void setActiveMission(const QVariant& missionId);
     void selectRoute(const QVariant& selectedRouteId);
     void addNewRoute(const QString& routeTypeId);
     void updateRoute(const QVariant& routeId, const QJsonObject& data);
