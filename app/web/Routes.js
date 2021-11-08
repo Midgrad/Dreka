@@ -59,6 +59,7 @@ class Route extends Draggable {
         var that = this;
         var line = this.viewer.entities.add({
             polyline: {
+                show: new Cesium.CallbackProperty(() => { return first.validPosition && second.validPosition; }, false),
                 positions: new Cesium.CallbackProperty(() => { return [first.position, second.position]; }, false),
                 arcType: Cesium.ArcType.GEODESIC,
                 width: new Cesium.CallbackProperty(() => { return that.lineWidth; }, false),
@@ -95,6 +96,9 @@ class Route extends Draggable {
             var right = this.waypoints[updateIndex + 1];
             this.lines[updateIndex].polyline.positions = new Cesium.CallbackProperty(() => {
                 return [left.position, right.position];
+            }, false);
+            this.lines[updateIndex].polyline.show =  new Cesium.CallbackProperty(() => {
+                return left.validPosition && right.validPosition;
             }, false);
         }
 

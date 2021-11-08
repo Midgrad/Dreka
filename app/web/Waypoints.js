@@ -11,6 +11,7 @@ class Waypoint extends DraggablePoint {
         this.changedCallback = null;
 
         // Data
+        this.editMode = false;
         this.update(waypointData);
 
         // Visual
@@ -23,6 +24,7 @@ class Waypoint extends DraggablePoint {
         this.point = viewer.entities.add({
             position: new Cesium.CallbackProperty(() => { return that.position; }, false),
             billboard: {
+                show: new Cesium.CallbackProperty(() => { return that.validPosition; }, false),
                 image: "./icons/wpt.svg",
                 color: new Cesium.CallbackProperty(() => {
                         if (!that.waypointData.confirmed)
@@ -39,7 +41,7 @@ class Waypoint extends DraggablePoint {
             label: {
                 text: new Cesium.CallbackProperty(() => {
                     return that.waypointData.name + " " + (that.index + 1); }, false),
-                show: false,
+                show: new Cesium.CallbackProperty(() => { return that.validPosition && that.editMode; }, false),
                 showBackground: true,
                 pixelOffset: new Cesium.Cartesian2(0, -25),
                 font: "13px Helvetica",
@@ -50,6 +52,7 @@ class Waypoint extends DraggablePoint {
         // Dash line to the terrain
         this.pylon = this.viewer.entities.add({
              polyline: {
+                 show: new Cesium.CallbackProperty(() => { return that.validPosition }, false),
                  positions: new Cesium.CallbackProperty(() => {
                      return [that.position, that.terrainPosition];
                  }, false),
@@ -62,8 +65,8 @@ class Waypoint extends DraggablePoint {
         // DraggablePoint point on the ground
         this.groundPoint = this.viewer.entities.add({
             position: new Cesium.CallbackProperty(() => { return that.terrainPosition }, false),
-            show: false,
             point: {
+                show: new Cesium.CallbackProperty(() => { return that.validPosition && that.editMode; }, false),
                 pixelSize: this.pointPixelSize,
                 color: Cesium.Color.CADETBLUE
             }
@@ -90,10 +93,15 @@ class Waypoint extends DraggablePoint {
     rebuild() {
         var params = this.waypointData.params;
 
+        this.validPosition = params.longitude !== null &&
+                             params.latitude !== null &&
+                             params.altitude !== null;
         this.position = Cesium.Cartesian3.fromDegrees(params.longitude, params.latitude, params.altitude);
         this.terrainPosition = Cesium.Cartesian3.fromDegrees(params.longitude, params.latitude,
                                                              this.waypointData.params.terrainAltitude);
 
+        if (!this.validPosition)
+            return;
         // Sample terrain position from the ground
         var cartographic = Cesium.Cartographic.fromCartesian(this.terrainPosition);
         var that = this;
@@ -143,12 +151,7 @@ class Waypoint extends DraggablePoint {
         this.rebuild();
     }
 
-    flyTo() {
-        this.viewer.flyTo(this.point);
-    }
+    flyTo() { this.viewer.flyTo(this.point); }
 
-    setEditMode(edit) {
-        this.point.label.show = edit;
-        this.groundPoint.show = edit;
-    }
+    setEditMode(edit) { this.editMode = edit; }
 }
