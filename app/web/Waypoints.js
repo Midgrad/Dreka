@@ -91,17 +91,15 @@ class Waypoint extends DraggablePoint {
     }
 
     rebuild() {
-        var params = this.waypointData.params ? this.waypointData.params: {};
+        var latitude = this.waypointData.latitude;
+        var longitude = this.waypointData.longitude;
+        var altitude = this.waypointData.altitude;
 
-        if (Cesium.defined(params.longitude) &&
-            Cesium.defined(params.latitude) &&
-            Cesium.defined(params.altitude)) {
+        if (Cesium.defined(latitude) && Cesium.defined(longitude) && Cesium.defined(altitude)) {
 
-            this.validPosition = params.longitude !== null &&
-                                 params.latitude !== null &&
-                                 params.altitude !== null;
-            this.position = Cesium.Cartesian3.fromDegrees(params.longitude, params.latitude, params.altitude);
-            this.terrainPosition = Cesium.Cartesian3.fromDegrees(params.longitude, params.latitude,
+            this.validPosition = latitude !== null && longitude !== null && altitude !== null;
+            this.position = Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude);
+            this.terrainPosition = Cesium.Cartesian3.fromDegrees(longitude, latitude,
                                                                  this.terrainAltitude);
         } else {
             this.validPosition = false;
@@ -147,15 +145,15 @@ class Waypoint extends DraggablePoint {
 
     onMove(cartesian) {
         var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-        this.waypointData.params.latitude = Cesium.Math.toDegrees(cartographic.latitude);
-        this.waypointData.params.longitude = Cesium.Math.toDegrees(cartographic.longitude);
+        this.waypointData.latitude = Cesium.Math.toDegrees(cartographic.latitude);
+        this.waypointData.longitude = Cesium.Math.toDegrees(cartographic.longitude);
         this.terrainAltitude = cartographic.height;
         this.changed = true;
         this.rebuild();
     }
 
     onMoveShift(dx, dy) {
-        this.waypointData.params.altitude += dy;
+        this.waypointData.altitude += dy;
         this.changed = true;
         this.rebuild();
     }

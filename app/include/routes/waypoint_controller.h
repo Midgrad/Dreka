@@ -25,7 +25,7 @@ signals:
 private:
     domain::IRoutesRepository* const m_routesRepository;
     domain::Route* m_route = nullptr;
-    domain::RouteItem* m_waypoint = nullptr;
+    domain::Waypoint* m_waypoint = nullptr;
 };
 } // namespace md::presentation
 

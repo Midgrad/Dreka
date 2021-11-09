@@ -65,7 +65,7 @@ QJsonObject RoutesController::routeData(const QVariant& routeId) const
         return QJsonObject();
 
     QVariantMap routeData = route->toVariantMap();
-    routeData[params::waypoints] = route->count();
+    routeData[params::waypoints] = route->waypointsCount();
 
     return QJsonObject::fromVariantMap(routeData);
 }
@@ -170,27 +170,20 @@ void RoutesController::addWaypoint(const QVariant& routeId, const QString& wptTy
     if (!route)
         return;
 
-    const RouteItemType* wptType = route->type()->waypointType(wptTypeId);
+    const WaypointType* wptType = route->type()->waypointType(wptTypeId);
     if (!wptType)
         return;
 
-    // Override default params with args
-    QVariantMap merged = wptType->defaultParameters();
-    for (auto it = args.begin(); it != args.end(); ++it)
-    {
-        merged[it.key()] = it.value();
-    }
-
     // Special case for altitude
-    float altitude =
-        route->count()
-            ? route->waypoint(route->count() - 1)->parameter(route::altitude.id).toFloat()
-            : args.value(route::altitude.id, 0).toFloat();
-    merged[route::altitude.id] = altitude;
+    QVariantMap position = args;
+    float altitude = route->waypointsCount()
+                         ? route->waypoint(route->waypointsCount() - 1)->position().altitude()
+                         : args.value(geo::altitude, 0).toFloat();
+    position[geo::altitude] = altitude;
 
-    RouteItem* wpt = new RouteItem(wptType, wptType->shortName);
+    Waypoint* wpt = new Waypoint(wptType, wptType->shortName);
+    wpt->setPosition(position);
     route->addWaypoint(wpt);
-    wpt->setParameters(merged);
 
     m_routesRepository->saveWaypoint(route, wpt);
 }
@@ -201,7 +194,7 @@ void RoutesController::updateWaypoint(const QVariant& routeId, int index, const 
     if (!route)
         return;
 
-    RouteItem* waypoint = route->waypoint(index);
+    Waypoint* waypoint = route->waypoint(index);
     if (!waypoint)
         return;
 
