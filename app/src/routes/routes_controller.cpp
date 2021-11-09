@@ -41,8 +41,8 @@ QJsonArray RoutesController::routeTypes() const
     for (auto routeType : m_routesRepository->routeTypes())
     {
         QJsonObject json;
-        json.insert(params::id, routeType->id);
-        json.insert(params::name, routeType->name);
+        json.insert(props::id, routeType->id);
+        json.insert(props::name, routeType->name);
         jsons.append(json);
     }
     return jsons;
@@ -65,7 +65,7 @@ QJsonObject RoutesController::routeData(const QVariant& routeId) const
         return QJsonObject();
 
     QVariantMap routeData = route->toVariantMap();
-    routeData[params::waypoints] = route->waypointsCount();
+    routeData[props::waypoints] = route->waypointsCount();
 
     return QJsonObject::fromVariantMap(routeData);
 }
@@ -92,8 +92,8 @@ QJsonArray RoutesController::waypointTypes(const QVariant& routeId) const
         for (auto type : route->type()->waypointTypes)
         {
             QJsonObject json;
-            json.insert(params::id, type->id);
-            json.insert(params::name, type->name);
+            json.insert(props::id, type->id);
+            json.insert(props::name, type->name);
             jsons.append(json);
         }
     }

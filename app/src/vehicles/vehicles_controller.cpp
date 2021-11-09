@@ -87,6 +87,6 @@ void VehiclesController::onVehiclesChanged()
 
     if (m_selectedVehicleId.isNull() && m_vehicles.count())
     {
-        this->selectVehicle(m_vehicles.first().toObject().value(params::id).toString());
+        this->selectVehicle(m_vehicles.first().toObject().value(props::id).toString());
     }
 }
