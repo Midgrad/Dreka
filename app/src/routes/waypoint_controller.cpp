@@ -24,7 +24,7 @@ void WaypointController::invokeWaypointMenu(const QVariant& routeId, int index, 
 
 void WaypointController::setWaypoint(const QVariant& routeId, int index)
 {
-    Waypoint* waypoint = nullptr;
+    RouteItem* waypoint = nullptr;
     m_route = m_routesRepository->route(routeId);
     if (m_route)
     {

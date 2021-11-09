@@ -76,7 +76,7 @@ QJsonObject RoutesController::waypointData(const QVariant& routeId, int index) c
     if (!route)
         return QJsonObject();
 
-    Waypoint* waypoint = route->waypoint(index);
+    RouteItem* waypoint = route->waypoint(index);
     if (!waypoint)
         return QJsonObject();
 
@@ -170,7 +170,7 @@ void RoutesController::addWaypoint(const QVariant& routeId, const QString& wptTy
     if (!route)
         return;
 
-    const WaypointType* wptType = route->type()->waypointType(wptTypeId);
+    const RouteItemType* wptType = route->type()->waypointType(wptTypeId);
     if (!wptType)
         return;
 
@@ -184,11 +184,11 @@ void RoutesController::addWaypoint(const QVariant& routeId, const QString& wptTy
     // Special case for altitude
     float altitude =
         route->count()
-            ? route->waypoint(route->count() - 1)->parameter(mission::altitude.id).toFloat()
-            : args.value(mission::altitude.id, 0).toFloat();
-    merged[mission::altitude.id] = altitude;
+            ? route->waypoint(route->count() - 1)->parameter(route::altitude.id).toFloat()
+            : args.value(route::altitude.id, 0).toFloat();
+    merged[route::altitude.id] = altitude;
 
-    Waypoint* wpt = new Waypoint(wptType, wptType->shortName);
+    RouteItem* wpt = new RouteItem(wptType, wptType->shortName);
     route->addWaypoint(wpt);
     wpt->setParameters(merged);
 
@@ -201,7 +201,7 @@ void RoutesController::updateWaypoint(const QVariant& routeId, int index, const 
     if (!route)
         return;
 
-    Waypoint* waypoint = route->waypoint(index);
+    RouteItem* waypoint = route->waypoint(index);
     if (!waypoint)
         return;
 
@@ -222,13 +222,13 @@ void RoutesController::onRouteAdded(Route* route)
     emit routeAdded(route->id());
     emit routeIdsChanged();
 
-    connect(route, &Route::waypointAdded, this, [this, route](int index, Waypoint* waypoint) {
+    connect(route, &Route::waypointAdded, this, [this, route](int index, RouteItem* waypoint) {
         emit waypointAdded(route->id(), index);
     });
-    connect(route, &Route::waypointRemoved, this, [this, route](int index, Waypoint* waypoint) {
+    connect(route, &Route::waypointRemoved, this, [this, route](int index, RouteItem* waypoint) {
         emit waypointRemoved(route->id(), index);
     });
-    connect(route, &Route::waypointChanged, this, [this, route](int index, Waypoint* waypoint) {
+    connect(route, &Route::waypointChanged, this, [this, route](int index, RouteItem* waypoint) {
         emit waypointChanged(route->id(), index);
     });
 }
