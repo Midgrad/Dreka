@@ -51,6 +51,6 @@ target_sources(${PROJECT_NAME} PRIVATE ${QRC_SOURCES})
 
 # Link with libraries
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE industrial_controls industrial_indicators jord kjarni
+    PRIVATE industrial_controls industrial_indicators kjarni
     PRIVATE Qt5::Core Qt5::Quick Qt5::WebEngine Qt5::WebChannel
 )

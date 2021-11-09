@@ -1,6 +1,7 @@
 #ifndef MAP_VIEWPORT_CONTROLLER_H
 #define MAP_VIEWPORT_CONTROLLER_H
 
+#include <QJsonObject>
 #include <QObject>
 
 #include "geodetic.h"

@@ -22,17 +22,17 @@ MapViewportController::MapViewportController(QObject* parent) : QObject(parent)
 
 QJsonObject MapViewportController::cursorPosition() const
 {
-    return m_cursorPosition.toJson();
+    return QJsonObject::fromVariantMap(m_cursorPosition.toVariantMap());
 }
 
 QJsonObject MapViewportController::centerPosition() const
 {
-    return m_centerPosition.toJson();
+    return QJsonObject::fromVariantMap(m_centerPosition.toVariantMap());
 }
 
 QJsonObject MapViewportController::cameraPosition() const
 {
-    return m_cameraPosition.toJson();
+    return QJsonObject::fromVariantMap(m_cameraPosition.toVariantMap());
 }
 
 float MapViewportController::heading() const
@@ -57,7 +57,7 @@ void MapViewportController::save()
 
     QSettings settings;
 
-    settings.setValue(::viewport_settings::camera, m_cameraPosition.toJson().toVariantMap());
+    settings.setValue(::viewport_settings::camera, m_cameraPosition.toVariantMap());
     settings.setValue(::viewport_settings::heading, m_heading);
     settings.setValue(::viewport_settings::pitch, m_pitch);
 }
@@ -66,34 +66,33 @@ void MapViewportController::restore()
 {
     QSettings settings;
 
-    QJsonObject camera = QJsonObject::fromVariantMap(
-        settings.value(::viewport_settings::camera).toMap());
+    QVariantMap camera = settings.value(::viewport_settings::camera).toMap();
     if (camera.isEmpty())
-        camera = ::viewport_settings::deafultCamera.toJson();
+        camera = ::viewport_settings::deafultCamera.toVariantMap();
 
     float heading =
         settings.value(::viewport_settings::heading, ::viewport_settings::defaultHeading).toReal();
     float pitch = settings.value(::viewport_settings::pitch, ::viewport_settings::defaultPitch)
                       .toReal();
 
-    emit flyTo(camera, heading, pitch);
+    emit flyTo(QJsonObject::fromVariantMap(camera), heading, pitch);
 }
 
 void MapViewportController::setCursorPosition(const QJsonObject& cursorPosition)
 {
-    m_cursorPosition = md::domain::Geodetic(cursorPosition);
+    m_cursorPosition = md::domain::Geodetic(cursorPosition.toVariantMap());
     emit cursorPositionChanged();
 }
 
 void MapViewportController::setCenterPosition(const QJsonObject& centerPosition)
 {
-    m_centerPosition = md::domain::Geodetic(centerPosition);
+    m_centerPosition = md::domain::Geodetic(centerPosition.toVariantMap());
     emit centerPositionChanged();
 }
 
 void MapViewportController::setCameraPosition(const QJsonObject& cameraPosition)
 {
-    m_cameraPosition = md::domain::Geodetic(cameraPosition);
+    m_cameraPosition = md::domain::Geodetic(cameraPosition.toVariantMap());
     emit cameraPositionChanged();
 }
 
