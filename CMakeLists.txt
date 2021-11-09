@@ -47,7 +47,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # 2ndparty libraries
 add_subdirectory(2ndparty/industrial-controls)
 add_subdirectory(2ndparty/industrial-indicators)
-add_subdirectory(2ndparty/jord)
 
 # Core library
 add_subdirectory(kjarni)
