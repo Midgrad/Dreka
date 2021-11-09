@@ -64,7 +64,7 @@ QJsonObject RoutesController::routeData(const QVariant& routeId) const
     if (!route)
         return QJsonObject();
 
-    QVariantMap routeData = route->toVariantMap(false);
+    QVariantMap routeData = route->toVariantMap();
     routeData[params::waypoints] = route->count();
 
     return QJsonObject::fromVariantMap(routeData);
@@ -80,7 +80,7 @@ QJsonObject RoutesController::waypointData(const QVariant& routeId, int index) c
     if (!waypoint)
         return QJsonObject();
 
-    return QJsonObject::fromVariantMap(waypoint->toVariantMap(false));
+    return QJsonObject::fromVariantMap(waypoint->toVariantMap());
 }
 
 QJsonArray RoutesController::waypointTypes(const QVariant& routeId) const

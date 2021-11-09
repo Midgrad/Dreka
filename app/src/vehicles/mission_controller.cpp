@@ -30,7 +30,7 @@ QJsonObject MissionController::mission() const
     if (!m_mission)
         return QJsonObject();
 
-    return QJsonObject::fromVariantMap(m_mission->toVariantMap(false));
+    return QJsonObject::fromVariantMap(m_mission->toVariantMap());
 }
 
 QJsonObject MissionController::operation() const
