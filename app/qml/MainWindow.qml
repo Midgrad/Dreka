@@ -10,8 +10,7 @@ import "Vehicles"
 Controls.ApplicationWindow {
     id: main
 
-    readonly property real availableHeight: main.height -
-                                            Controls.Theme.baseSize * 3 -
+    readonly property real availableHeight: main.height - map.controlHeight - menuBar.height -
                                             Controls.Theme.margins * 2
 
     visible: true

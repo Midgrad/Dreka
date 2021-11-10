@@ -40,10 +40,7 @@ QJsonArray RoutesController::routeTypes() const
     QJsonArray jsons;
     for (auto routeType : m_routesRepository->routeTypes())
     {
-        QJsonObject json;
-        json.insert(props::id, routeType->id);
-        json.insert(props::name, routeType->name);
-        jsons.append(json);
+        jsons.append(QJsonObject::fromVariantMap(routeType->toVariantMap()));
     }
     return jsons;
 }
@@ -85,19 +82,15 @@ QJsonObject RoutesController::waypointData(const QVariant& routeId, int index) c
 
 QJsonArray RoutesController::waypointTypes(const QVariant& routeId) const
 {
-    QJsonArray jsons;
     Route* route = m_routesRepository->route(routeId);
-    if (route)
-    {
-        for (auto type : route->type()->waypointTypes)
-        {
-            QJsonObject json;
-            json.insert(props::id, type->id);
-            json.insert(props::name, type->name);
-            jsons.append(json);
-        }
-    }
+    if (!route)
+        return QJsonArray();
 
+    QJsonArray jsons;
+    for (auto wptType : route->type()->waypointTypes)
+    {
+        jsons.append(QJsonObject::fromVariantMap(wptType->toVariantMap()));
+    }
     return jsons;
 }
 
@@ -181,7 +174,7 @@ void RoutesController::addWaypoint(const QVariant& routeId, const QString& wptTy
                          : args.value(geo::altitude, 0).toFloat();
     position[geo::altitude] = altitude;
 
-    Waypoint* wpt = new Waypoint(wptType, wptType->shortName);
+    Waypoint* wpt = new Waypoint(wptType);
     wpt->setPosition(position);
     route->addWaypoint(wpt);
 
@@ -204,7 +197,7 @@ void RoutesController::updateWaypoint(const QVariant& routeId, int index, const 
     if (m_activeMission && m_activeMission->route() == route)
     {
         waypoint->setConfirmed(false);
-        emit m_activeMission->operation()->uploadItem(route->index(waypoint));
+        emit m_activeMission->operation()->uploadItem(route->waypointIndex(waypoint));
     }
     // Promoute to storage
     m_routesRepository->saveWaypoint(route, waypoint);

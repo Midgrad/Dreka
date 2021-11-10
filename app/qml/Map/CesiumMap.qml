@@ -10,6 +10,8 @@ Item {
 
     readonly property alias centerPosition: mapControl.centerPosition
 
+    readonly property real controlHeight: mapControl.height + Controls.Theme.margins
+
     function registerController(id, controller) {
         webChannel.registerObject(id, controller);
     }

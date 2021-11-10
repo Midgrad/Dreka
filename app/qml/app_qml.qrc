@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
+        <file>Common/PositionEdit.qml</file>
+        <file>Common/ParametersEdit.qml</file>
         <file>Map/CesiumMap.qml</file>
         <file>Map/MapButton.qml</file>
         <file>Map/MapCompas.qml</file>

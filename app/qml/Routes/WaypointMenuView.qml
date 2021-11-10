@@ -38,5 +38,8 @@ Item {
         id: waypointEdit
         x: waypointMenu.x
         y: waypointMenu.y
+        waypoint: controller.waypoint
+        waypointIndex: controller.waypointIndex
+        height: Math.min(implicitHeight, root.height - map.controlHeight - waypointMenu.y)
     }
 }
