@@ -27,9 +27,14 @@ QJsonObject WaypointController::waypoint() const
     if (!m_waypoint)
         return QJsonObject();
 
-    QJsonObject waypoint = QJsonObject::fromVariantMap(m_waypoint->toVariantMap());
+    QVariantMap waypoint = m_waypoint->toVariantMap();
+
+    if (m_route)
+        waypoint.insert(props::route, m_route->id());
+
     // TODO: route items from waypoint
-    return waypoint;
+
+    return QJsonObject::fromVariantMap(waypoint);
 }
 
 int WaypointController::waypointIndex() const

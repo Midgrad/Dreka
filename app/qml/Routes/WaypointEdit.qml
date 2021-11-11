@@ -20,19 +20,26 @@ Controls.Popup {
         spacing: Controls.Theme.spacing
 
         RowLayout {
-            spacing: Controls.Theme.spacing
+            spacing: 1
 
             Controls.Button {
                 enabled: waypointIndex > 0
                 visible: waypointIndex !== -1
                 flat: true
+                rightCropped: true
                 iconSource: "qrc:/icons/left.svg"
                 tipText: qsTr("Previous waypoint")
                 onClicked: controller.setWaypointIndex(waypointIndex - 1)
             }
 
-            Controls.Label {
-                text: waypoint ? (waypoint.name + " " + waypointIndex) : "-"
+            Controls.Button {
+                enabled: waypoint
+                flat: true
+                leftCropped: true
+                rightCropped: true
+                text: waypoint ? (waypoint.name + " " + (waypointIndex + 1)) : "-"
+                tipText: qsTr("Center on map")
+                onClicked: centerWaypoint(waypoint.route, waypointIndex)
                 Layout.fillWidth: true
             }
 
@@ -40,6 +47,7 @@ Controls.Popup {
                 enabled: waypointIndex < controller.waypointsCount - 1
                 visible: waypointIndex !== -1
                 flat: true
+                leftCropped: true
                 iconSource: "qrc:/icons/right.svg"
                 tipText: qsTr("Next waypoint")
                 onClicked: controller.setWaypointIndex(waypointIndex + 1)

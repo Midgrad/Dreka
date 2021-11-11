@@ -30,6 +30,11 @@ RowLayout {
         }
     }
 
+    Connections {
+        target: waypointEdit
+        onCenterWaypoint: controller.centerWaypoint(routeId, index)
+    }
+
     RoutesController { id: controller }
 
     Component.onCompleted: {

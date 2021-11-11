@@ -6,6 +6,8 @@ import Dreka 1.0
 Item {
     id: root
 
+    signal centerWaypoint(var routeId, int index)
+
     WaypointController {
         id: controller
         onInvokeMenu: waypointMenu.popup(x, y)
@@ -41,5 +43,9 @@ Item {
         waypoint: controller.waypoint
         waypointIndex: controller.waypointIndex
         height: Math.min(implicitHeight, root.height - map.controlHeight - waypointMenu.y)
+        onWaypointIndexChanged: {
+            if (waypoint && waypointEdit.visible)
+                centerWaypoint(waypoint.route, waypointIndex);
+        }
     }
 }
