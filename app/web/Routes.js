@@ -135,11 +135,14 @@ class Route extends Draggable {
         if (super.onPick(pickedObjects))
             return true;
 
-        // Try to pick ground point
+        var hovered = null;
         this.waypoints.forEach(candidate => {
-            if (candidate.checkMatchGroundPoint(pickedObjects))
-                this.setHoveredPoint(candidate);
+            if (candidate.onPick(pickedObjects))
+                hovered = candidate;
         });
+
+        if (hovered)
+            this.setHoveredPoint(hovered);
     }
 
     onMove(cartesian) {

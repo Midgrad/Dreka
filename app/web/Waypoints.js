@@ -16,7 +16,7 @@ class Waypoint extends DraggablePoint {
 
         // Visual
         this.normalScale = 1.0;
-        this.hoveredScale = 1.2;
+        this.hoveredScale = 1.5;
 
         var that = this;
 
@@ -126,9 +126,38 @@ class Waypoint extends DraggablePoint {
             this.changedCallback(this.waypointData);
     }
 
-    // TODO: set hovered for terrain point and waypoint separatly
+    // Ground point hover
     setHovered(hovered) {
         this.groundPoint.point.pixelSize = hovered ? this.hoveredPointPixelSize : this.pointPixelSize;
+    }
+
+    // Waypoint hover
+    setHoveredPoint(hovered) {
+        this.point.billboard.scale = hovered ? this.hoveredScale : this.normalScale;
+    }
+
+    onPick(pickedObjects) {
+        var picked = null;
+        var hover = false;
+
+        // Pick ground point first
+        pickedObjects.forEach(object => {
+            if (this.groundPoint === object.id)
+                picked = this.groundPoint;
+        });
+
+        // Hover if we picked
+        hover = picked;
+
+        // Pick waypoint next
+        pickedObjects.forEach(object => {
+            if (this.point === object.id)
+                picked = this.point;
+        });
+
+        this.setHoveredPoint(picked);
+
+        return hover;
     }
 
     checkMatchPoint(objects) {
