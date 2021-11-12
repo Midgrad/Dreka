@@ -30,7 +30,7 @@ class Waypoint extends DraggablePoint {
             position: new Cesium.CallbackProperty(() => { return that.position; }, false),
             billboard: {
                 show: new Cesium.CallbackProperty(() => { return that.validPosition; }, false),
-                image: "./icons/wpt.svg",
+                image: "./signs/wpt.svg",
                 color: new Cesium.CallbackProperty(() => {
                         if (!that.waypointData.confirmed)
                             return Cesium.Color.SANDYBROWN;
