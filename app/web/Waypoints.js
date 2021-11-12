@@ -22,10 +22,10 @@ class Waypoint extends DraggablePoint {
 
         var radiusCallback = new Cesium.CallbackProperty(() => {
             var params = that.waypointData.params;
-            return params && params.radius ? params.radius : 0;
+            return params && params.accept_radius ? params.accept_radius : 0;
         }, false);
 
-        // SVG billboard with label
+        // SVG billboard with label and accept radius
         this.point = viewer.entities.add({
             position: new Cesium.CallbackProperty(() => { return that.position; }, false),
             billboard: {
@@ -56,10 +56,8 @@ class Waypoint extends DraggablePoint {
                 semiMinorAxis: radiusCallback,
                 semiMajorAxis: radiusCallback,
                 height: new Cesium.CallbackProperty(() => { return that.waypointData.altitude; }, false),
-                material: Cesium.Color.TRANSPARENT,
-                outlineColor: Cesium.Color.WHITE,
-                outlineWidth: 2,
-                outline: true,
+                material: Cesium.Color.CADETBLUE.withAlpha(0.5),
+                //outline: true,
             }
         });
 
