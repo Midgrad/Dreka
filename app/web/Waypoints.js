@@ -11,8 +11,10 @@ class Waypoint extends DraggablePoint {
         this.changedCallback = null;
 
         // Data
+        this.validPosition = false;
+        this.position = Cesium.Cartesian3.ZERO;
+        this.terrainPosition = Cesium.Cartesian3.ZERO;
         this.editMode = false;
-        this.update(waypointData);
 
         // Visual
         this.normalScale = 1.0;
@@ -20,51 +22,28 @@ class Waypoint extends DraggablePoint {
 
         var that = this;
 
-        var radiusCallback = new Cesium.CallbackProperty(() => {
-            var params = that.waypointData.params;
-            return params && params.accept_radius ? params.accept_radius : 0;
-        }, false);
-
         // SVG billboard with label and accept radius
         this.point = viewer.entities.add({
             position: new Cesium.CallbackProperty(() => { return that.position; }, false),
             billboard: {
-                show: new Cesium.CallbackProperty(() => { return that.validPosition; }, false),
                 image: "./signs/wpt.svg",
-                color: new Cesium.CallbackProperty(() => {
-                        if (!that.waypointData.confirmed)
-                            return Cesium.Color.SANDYBROWN;
-                        if (that.waypointData.current)
-                            return Cesium.Color.FUCHSIA;
-                        if (that.waypointData.reached)
-                            return Cesium.Color.SILVER;
-                        return Cesium.Color.WHITE;
-                }, false),
                 scale: this.normalScale,
                 disableDepthTestDistance: Number.POSITIVE_INFINITY
             },
             label: {
-                text: new Cesium.CallbackProperty(() => {
-                    return that.waypointData.name + " " + (that.index + 1); }, false),
-                show: new Cesium.CallbackProperty(() => { return that.validPosition && that.editMode; }, false),
                 showBackground: true,
                 pixelOffset: new Cesium.Cartesian2(0, -25),
                 font: "13px Helvetica",
                 disableDepthTestDistance: Number.POSITIVE_INFINITY
             },
             ellipse: {
-                semiMinorAxis: radiusCallback,
-                semiMajorAxis: radiusCallback,
-                height: new Cesium.CallbackProperty(() => { return that.waypointData.altitude; }, false),
                 material: Cesium.Color.CADETBLUE.withAlpha(0.5),
-                //outline: true,
             }
         });
 
         // Dash line to the terrain
         this.pylon = this.viewer.entities.add({
              polyline: {
-                 show: new Cesium.CallbackProperty(() => { return that.validPosition }, false),
                  positions: new Cesium.CallbackProperty(() => {
                      return [that.position, that.terrainPosition];
                  }, false),
@@ -78,15 +57,17 @@ class Waypoint extends DraggablePoint {
         this.groundPoint = this.viewer.entities.add({
             position: new Cesium.CallbackProperty(() => { return that.terrainPosition }, false),
             point: {
-                show: new Cesium.CallbackProperty(() => { return that.validPosition && that.editMode; }, false),
                 pixelSize: this.pointPixelSize,
                 color: Cesium.Color.CADETBLUE
             }
         });
+
+        this.update(waypointData);
     }
 
     clear() {
         this.viewer.entities.remove(this.point);
+        this.viewer.entities.remove(this.loiter);
         this.viewer.entities.remove(this.pylon);
         this.viewer.entities.remove(this.groundPoint);
     }
@@ -106,6 +87,7 @@ class Waypoint extends DraggablePoint {
         var latitude = this.waypointData.latitude;
         var longitude = this.waypointData.longitude;
         var altitude = this.waypointData.altitude;
+        var params = this.waypointData.params;
 
         if (Cesium.defined(latitude) && Cesium.defined(longitude) && Cesium.defined(altitude)) {
 
@@ -119,16 +101,38 @@ class Waypoint extends DraggablePoint {
             this.terrainPosition = Cesium.Cartesian3.ZERO;
         }
 
-        if (!this.validPosition)
-            return;
-        // Sample terrain position from the ground
-        var cartographic = Cesium.Cartographic.fromCartesian(this.terrainPosition);
-        var that = this;
-        var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [cartographic]);
-        Cesium.when(promise, updatedPositions => {
-                        that.terrainPosition = Cesium.Cartographic.toCartesian(cartographic);
-                        that.terrainAltitude = cartographic.height;
-                    });
+        if (this.validPosition) {
+            // Sample terrain position from the ground
+            var cartographic = Cesium.Cartographic.fromCartesian(this.terrainPosition);
+            var that = this;
+            var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [cartographic]);
+            Cesium.when(promise, updatedPositions => {
+                            that.terrainPosition = Cesium.Cartographic.toCartesian(cartographic);
+                            that.terrainAltitude = cartographic.height;
+                            that.pylon.polyline.show = true;
+                            that.groundPoint.point.show = that.editMode;
+                        });
+        } else {
+            this.pylon.polyline.show = false;
+            this.groundPoint.point.show = false;
+        }
+
+        this.point.billboard.show = this.validPosition;
+        this.point.billboard.color = this.waypointData.current ? Cesium.Color.FUCHSIA : Cesium.Color.WHITE;
+
+        this.point.label.text = this.waypointData.name + " " + (this.index + 1);
+        this.point.label.show = this.validPosition && this.editMode;
+
+        var acceptRadius = params && params.accept_radius ? params.accept_radius : 0;
+        this.point.ellipse.semiMinorAxis = acceptRadius;
+        this.point.ellipse.semiMajorAxis = acceptRadius;
+        this.point.ellipse.height = this.waypointData.altitude;
+        // TODO: confirmed, reached
+    }
+
+    setEditMode(edit) {
+        this.editMode = edit;
+        this.rebuild();
     }
 
     setDragging(dragging) {
@@ -200,6 +204,4 @@ class Waypoint extends DraggablePoint {
     }
 
     flyTo() { this.viewer.flyTo(this.point); }
-
-    setEditMode(edit) { this.editMode = edit; }
 }
