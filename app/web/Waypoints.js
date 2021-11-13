@@ -72,15 +72,18 @@ class Waypoint extends DraggablePoint {
                 outlineColor: Cesium.Color.WHITE
             }
         });
+        this.loiterArrows = [];
 
         this.update(waypointData);
     }
 
     clear() {
+        var that = this;
         this.viewer.entities.remove(this.point);
-        this.viewer.entities.remove(this.loiter);
         this.viewer.entities.remove(this.pylon);
         this.viewer.entities.remove(this.groundPoint);
+        this.viewer.entities.remove(this.loiter);
+        this.loiterArrows.forEach(arrow => that.viewer.entities.remove(arrow));
     }
 
     /**
@@ -146,6 +149,29 @@ class Waypoint extends DraggablePoint {
         this.loiter.ellipse.semiMinorAxis = loiterRadius;
         this.loiter.ellipse.semiMajorAxis = loiterRadius;
         this.loiter.ellipse.height = altitude;
+
+        this.loiterArrows.forEach(arrow => that.viewer.entities.remove(arrow));
+
+        var clockwise = params ? params.clockwise : undifined;
+        if (loiterRadius > 0 && Cesium.defined(clockwise) && this.validPosition) {
+            for (var angle = 0; angle < Cesium.Math.TWO_PI; angle += Cesium.Math.PI_OVER_FOUR) {
+                var arrow = this.viewer.entities.add({
+                    position: projectPoint(Cesium.Math.toRadians(latitude),
+                                           Cesium.Math.toRadians(longitude),
+                                           altitude, angle, loiterRadius),
+                    billboard: {
+                        image: "./signs/arw.svg",
+                        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                        alignedAxis: Cesium.Cartesian3.UNIT_Z,
+                        rotation: -angle + (clockwise ? -Cesium.Math.PI_OVER_TWO :
+                                                         Cesium.Math.PI_OVER_TWO),
+                        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0,
+                                                                                  loiterRadius * 15)
+                    }
+                });
+                this.loiterArrows.push(arrow);
+            }
+        }
     }
 
     setEditMode(edit) {

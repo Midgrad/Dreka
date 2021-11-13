@@ -117,7 +117,7 @@ class Route extends Draggable {
         this.enabled = editMode;
         this.waypoints.forEach(waypoint => waypoint.setEditMode(editMode));
     }
-
+    // TODO: deep to waypoint
     onClick(cartesian, x, y, objects) {
         if (!this.waypointClickedCallback)
             return;
