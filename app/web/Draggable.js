@@ -43,7 +43,7 @@ class DraggablePoint {
         console.log("You must impl checkMatch(objects) for your class")
     }
 }
-
+// TODO: more common draggable
 class Draggable {
     /**
      * @param {Cesium.Viewr} viewer

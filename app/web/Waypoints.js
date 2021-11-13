@@ -1,16 +1,18 @@
 class Waypoint extends DraggablePoint {
     /**
-     * @param {Cesium.Viewr} viewer
+     * @param {Cesium.Viewer} viewer
      * @param {JSON} waypointData
-     * @param {Cesium.Color} color
+     * @param {int} index
      */
-    constructor(viewer, waypointData) {
+    constructor(viewer, waypointData, index) {
         super(viewer);
 
         // Callbacks
         this.changedCallback = null;
+        this.clickedCallback = null;
 
         // Data
+        this.index = index;
         this.validPosition = false;
         this.position = Cesium.Cartesian3.ZERO;
         this.terrainPosition = Cesium.Cartesian3.ZERO;
@@ -182,18 +184,13 @@ class Waypoint extends DraggablePoint {
     setDragging(dragging) {
         super.setDragging(dragging);
 
-        if (this.changed && this.changedCallback)
+        if (this.changed)
             this.changedCallback(this.waypointData);
     }
 
     // Ground point hover
     setHovered(hovered) {
         this.groundPoint.point.pixelSize = hovered ? this.hoveredPointPixelSize : this.pointPixelSize;
-    }
-
-    // Waypoint hover
-    setHoveredPoint(hovered) {
-        this.point.billboard.scale = hovered ? this.hoveredScale : this.normalScale;
     }
 
     onPick(pickedObjects) {
@@ -215,21 +212,39 @@ class Waypoint extends DraggablePoint {
                 picked = this.point;
         });
 
-        this.setHoveredPoint(picked);
+        // Waypoint hover
+        this.point.billboard.scale = picked ? this.hoveredScale : this.normalScale;
+
+        // Pick loiter next
+        picked = null;
+        pickedObjects.forEach(object => {
+            if (this.loiter === object.id)
+                picked = this.loiter;
+        });
+
+        // Loiter hover
+        this.loiter.ellipse.outlineWidth = picked ? 4 : 2;
 
         return hover;
     }
 
-    checkMatchPoint(objects) {
+    onClick(cartesian, x, y, objects) {
+        // TODO: remove objects from onClick, use hovered
+        // Click on waypoint
         var result = null;
         objects.forEach(object => { if (this.point === object.id) result = this.point; });
-        return result;
-    }
+        if (result)
+            this.clickedCallback(x, y);
 
-    checkMatchGroundPoint(objects) {
-        var result = null;
-        objects.forEach(object => { if (this.groundPoint === object.id) result = this.groundPoint; });
-        return result;
+         // Click on loiter
+        result = null;
+        var params = this.waypointData.params;
+        var clockwise = params ? params.clockwise : undifined;
+        objects.forEach(object => { if (this.loiter === object.id) result = this.loiter; });
+        if (result && Cesium.defined(clockwise)) {
+            this.waypointData.params.clockwise = !clockwise;
+            this.changedCallback(this.waypointData);
+        }
     }
 
     onMove(cartesian) {

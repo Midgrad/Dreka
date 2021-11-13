@@ -35,17 +35,19 @@ class Route extends Draggable {
         if (this.waypoints.length > index) {
             this.waypoints[index].update(waypointData);
         } else {
-            var waypoint = new Waypoint(this.viewer, waypointData);
-            waypoint.index = index;
+            var waypoint = new Waypoint(this.viewer, waypointData, index);
             waypoint.setEditMode(this.editMode);
             this.waypoints.push(waypoint);
 
-            if (this.waypointChangedCallback) {
-                var that = this;
-                waypoint.changedCallback = (waypointData) => {
-                    that.waypointChangedCallback(waypoint.index, waypointData);
-                }
+            // Callbacks
+            var that = this;
+            waypoint.changedCallback = (waypointData) => {
+                that.waypointChangedCallback(waypoint.index, waypointData);
             }
+            waypoint.clickedCallback = (x, y) => {
+                that.waypointClickedCallback(waypoint.index, x, y);
+            }
+
             // Add line
             if (this.waypoints.length > 1)
                 this.addLine(this.waypoints[index - 1], this.waypoints[index]);
@@ -56,8 +58,10 @@ class Route extends Draggable {
         var that = this;
         var line = this.viewer.entities.add({
             polyline: {
-                show: new Cesium.CallbackProperty(() => { return first.validPosition && second.validPosition; }, false),
-                positions: new Cesium.CallbackProperty(() => { return [first.position, second.position]; }, false),
+                show: new Cesium.CallbackProperty(() => { return first.validPosition &&
+                                                                 second.validPosition; }, false),
+                positions: new Cesium.CallbackProperty(() => { return [first.position,
+                                                                       second.position]; }, false),
                 arcType: Cesium.ArcType.GEODESIC,
                 material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.WHITE),
                 width: 8.0
@@ -117,15 +121,9 @@ class Route extends Draggable {
         this.enabled = editMode;
         this.waypoints.forEach(waypoint => waypoint.setEditMode(editMode));
     }
-    // TODO: deep to waypoint
+
     onClick(cartesian, x, y, objects) {
-        if (!this.waypointClickedCallback)
-            return;
-        // Try to pick point
-        for (var index = 0; index < this.waypoints.length; ++index) {
-            if (this.waypoints[index].checkMatchPoint(objects))
-                this.waypointClickedCallback(index, x, y);
-        }
+        this.waypoints.forEach(waypoint => waypoint.onClick(cartesian, x, y, objects));
     }
 
     onPick(pickedObjects) {
@@ -210,14 +208,12 @@ class Routes {
             route = new Route(this.viewer, this.input)
             this.routes.set(routeId, route);
 
-            if (this.waypointChangedCallback) {
-                var that = this;
-                route.waypointChangedCallback = (index, waypointData) => {
-                    that.waypointChangedCallback(routeId, index, waypointData);
-                }
-                route.waypointClickedCallback = (index, x, y) => {
-                    that.waypointClickedCallback(routeId, index, x, y);
-                }
+            var that = this;
+            route.waypointChangedCallback = (index, waypointData) => {
+                that.waypointChangedCallback(routeId, index, waypointData);
+            }
+            route.waypointClickedCallback = (index, x, y) => {
+                that.waypointClickedCallback(routeId, index, x, y);
             }
         }
         route.setRouteData(data);
