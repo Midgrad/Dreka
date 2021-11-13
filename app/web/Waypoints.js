@@ -47,9 +47,9 @@ class Waypoint extends DraggablePoint {
                  positions: new Cesium.CallbackProperty(() => {
                      return [that.position, that.terrainPosition];
                  }, false),
-                 width: 1,
                  arcType: Cesium.ArcType.NONE,
-                 material: new Cesium.PolylineDashMaterialProperty(Cesium.Color.GAINSBORO)
+                 material: new Cesium.PolylineDashMaterialProperty(Cesium.Color.GAINSBORO),
+                 width: 1
              }
         });
 
@@ -59,6 +59,17 @@ class Waypoint extends DraggablePoint {
             point: {
                 pixelSize: this.pointPixelSize,
                 color: Cesium.Color.CADETBLUE
+            }
+        });
+
+        // Circle for loiters
+        this.loiter = viewer.entities.add({
+            position: new Cesium.CallbackProperty(() => { return that.position; }, false),
+            ellipse: {
+                fill: false,
+                outline: true,
+                outlineWidth: 2,
+                outlineColor: Cesium.Color.WHITE
             }
         });
 
@@ -120,14 +131,21 @@ class Waypoint extends DraggablePoint {
         this.point.billboard.show = this.validPosition;
         this.point.billboard.color = this.waypointData.current ? Cesium.Color.FUCHSIA : Cesium.Color.WHITE;
 
-        this.point.label.text = this.waypointData.name + " " + (this.index + 1);
         this.point.label.show = this.validPosition && this.editMode;
+        this.point.label.text = this.waypointData.name + " " + (this.index + 1);
 
         var acceptRadius = params && params.accept_radius ? params.accept_radius : 0;
+        this.point.ellipse.show = acceptRadius > 0 && this.validPosition;
         this.point.ellipse.semiMinorAxis = acceptRadius;
         this.point.ellipse.semiMajorAxis = acceptRadius;
-        this.point.ellipse.height = this.waypointData.altitude;
+        this.point.ellipse.height = altitude;
         // TODO: confirmed, reached
+
+        var loiterRadius = params && params.radius ? params.radius : 0;
+        this.loiter.ellipse.show = loiterRadius > 0 && this.validPosition;
+        this.loiter.ellipse.semiMinorAxis = loiterRadius;
+        this.loiter.ellipse.semiMajorAxis = loiterRadius;
+        this.loiter.ellipse.height = altitude;
     }
 
     setEditMode(edit) {

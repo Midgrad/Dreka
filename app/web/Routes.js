@@ -14,9 +14,6 @@ class Route extends Draggable {
         this.editMode = false;
         this.enabled = false;
 
-        // Visual
-        this.lineWidth = 8.0;
-
         // Entities
         this.waypoints = [];
         // Nominal track
@@ -62,8 +59,8 @@ class Route extends Draggable {
                 show: new Cesium.CallbackProperty(() => { return first.validPosition && second.validPosition; }, false),
                 positions: new Cesium.CallbackProperty(() => { return [first.position, second.position]; }, false),
                 arcType: Cesium.ArcType.GEODESIC,
-                width: new Cesium.CallbackProperty(() => { return that.lineWidth; }, false),
-                material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.WHITE)
+                material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.WHITE),
+                width: 8.0
             }
         });
         this.lines.push(line);
