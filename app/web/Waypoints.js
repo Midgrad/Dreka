@@ -55,15 +55,6 @@ class Waypoint extends DraggablePoint {
              }
         });
 
-        // DraggablePoint point on the ground
-        this.groundPoint = this.viewer.entities.add({
-            position: new Cesium.CallbackProperty(() => { return that.terrainPosition }, false),
-            point: {
-                pixelSize: this.pointPixelSize,
-                color: Cesium.Color.CADETBLUE
-            }
-        });
-
         // Circle for loiters
         this.loiter = viewer.entities.add({
             position: new Cesium.CallbackProperty(() => { return that.position; }, false),
@@ -75,6 +66,21 @@ class Waypoint extends DraggablePoint {
             }
         });
         this.loiterArrows = [];
+
+        // DraggablePoint point on the ground with loiter shadow
+        this.groundPoint = this.viewer.entities.add({
+            position: new Cesium.CallbackProperty(() => { return that.terrainPosition }, false),
+            point: {
+                pixelSize: this.pointPixelSize,
+                color: Cesium.Color.CADETBLUE
+            },
+            ellipse: {
+                fill: false,
+                outline: true,
+                outlineWidth: 1,
+                outlineColor: Cesium.Color.SLATEGRAY
+            }
+        });
 
         this.update(waypointData);
     }
@@ -127,6 +133,7 @@ class Waypoint extends DraggablePoint {
                             that.terrainAltitude = cartographic.height;
                             that.pylon.polyline.show = true;
                             that.groundPoint.point.show = that.editMode;
+                            this.groundPoint.ellipse.height = that.terrainAltitude;
                         });
         } else {
             this.pylon.polyline.show = false;
@@ -151,6 +158,10 @@ class Waypoint extends DraggablePoint {
         this.loiter.ellipse.semiMinorAxis = loiterRadius;
         this.loiter.ellipse.semiMajorAxis = loiterRadius;
         this.loiter.ellipse.height = altitude;
+
+        this.groundPoint.ellipse.show = loiterRadius > 0 && this.validPosition;
+        this.groundPoint.ellipse.semiMinorAxis = loiterRadius;
+        this.groundPoint.ellipse.semiMajorAxis = loiterRadius;
 
         this.loiterArrows.forEach(arrow => that.viewer.entities.remove(arrow));
 
@@ -257,7 +268,21 @@ class Waypoint extends DraggablePoint {
     }
 
     onMoveShift(dx, dy) {
+
+        // Modify altitude
         this.waypointData.altitude += dy;
+
+        var params = this.waypointData.params;
+        // Modify waypoint accept radius
+        var acceptRadius = params ? params.accept_radius : undefined;
+        if (Cesium.defined(acceptRadius))
+            this.waypointData.params.accept_radius = acceptRadius + dx;
+
+        // Modify loiter radius
+        var loiterRadius = params ? params.radius : undefined;
+        if (Cesium.defined(loiterRadius))
+            this.waypointData.params.radius = loiterRadius + dx;
+
         this.changed = true;
         this.rebuild();
     }
