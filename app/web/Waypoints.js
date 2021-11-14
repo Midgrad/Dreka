@@ -73,12 +73,6 @@ class Waypoint extends DraggablePoint {
             point: {
                 pixelSize: this.pointPixelSize,
                 color: Cesium.Color.CADETBLUE
-            },
-            ellipse: {
-                fill: false,
-                outline: true,
-                outlineWidth: 1,
-                outlineColor: Cesium.Color.SLATEGRAY
             }
         });
 
@@ -89,8 +83,8 @@ class Waypoint extends DraggablePoint {
         var that = this;
         this.viewer.entities.remove(this.point);
         this.viewer.entities.remove(this.pylon);
-        this.viewer.entities.remove(this.groundPoint);
         this.viewer.entities.remove(this.loiter);
+        this.viewer.entities.remove(this.groundPoint);
         this.loiterArrows.forEach(arrow => that.viewer.entities.remove(arrow));
     }
 
@@ -133,7 +127,6 @@ class Waypoint extends DraggablePoint {
                             that.terrainAltitude = cartographic.height;
                             that.pylon.polyline.show = true;
                             that.groundPoint.point.show = that.editMode;
-                            this.groundPoint.ellipse.height = that.terrainAltitude;
                         });
         } else {
             this.pylon.polyline.show = false;
@@ -158,10 +151,6 @@ class Waypoint extends DraggablePoint {
         this.loiter.ellipse.semiMinorAxis = loiterRadius;
         this.loiter.ellipse.semiMajorAxis = loiterRadius;
         this.loiter.ellipse.height = altitude;
-
-        this.groundPoint.ellipse.show = loiterRadius > 0 && this.validPosition;
-        this.groundPoint.ellipse.semiMinorAxis = loiterRadius;
-        this.groundPoint.ellipse.semiMajorAxis = loiterRadius;
 
         this.loiterArrows.forEach(arrow => that.viewer.entities.remove(arrow));
 
