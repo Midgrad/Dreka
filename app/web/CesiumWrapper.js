@@ -37,7 +37,7 @@ class CesiumWrapper {
 
         this.input = new Input(this.viewer);
         this.viewport = new Viewport(this.viewer);
-        this.input.subscribe("onMove", cartesian => { that.viewport.onMove(cartesian) });
+        this.input.subscribe("onMove", (movement, cartesian) => { return that.viewport.onMove(cartesian) });
 
         this.viewport.subscribeCamera((heading, pitch, cameraPosition, centerPosition, pixelScale) => {
             that.input.pixelScale = pixelScale;
@@ -46,8 +46,7 @@ class CesiumWrapper {
         this.webChannel = new QWebChannel(qt.webChannelTransport, (channel) => {
             var menuController = channel.objects.menuController;
             if (menuController) {
-                that.input.subscribe("onClick", (cartesian, x, y, objects) => {
-                    if (objects.length) return;
+                that.input.subscribe("onClick", (cartesian, x, y) => {
                     var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
                     var latitude = Cesium.Math.toDegrees(cartographic.latitude);
                     var longitude = Cesium.Math.toDegrees(cartographic.longitude);

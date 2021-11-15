@@ -1,13 +1,17 @@
-class Waypoint extends DraggablePoint {
+class Waypoint extends Draggable {
     /**
      * @param {Cesium.Viewer} viewer
+       @param {Input} input
      * @param {JSON} waypointData
      * @param {int} index
      */
-    constructor(viewer, waypointData, index) {
-        super(viewer);
+    constructor(viewer, input, waypointData, index) {
+        super(viewer, input);
 
         // Callbacks
+        var that = this;
+        input.subscribe("onClick", (cartesian, x, y) => { return that.onClick(cartesian, x, y) });
+
         this.changedCallback = null;
         this.clickedCallback = null;
 
@@ -17,19 +21,15 @@ class Waypoint extends DraggablePoint {
         this.position = Cesium.Cartesian3.ZERO;
         this.terrainPosition = Cesium.Cartesian3.ZERO;
         this.editMode = false;
-
-        // Visual
-        this.normalScale = 1.0;
-        this.hoveredScale = 1.5;
-
-        var that = this;
+        this.hoveredPoint = false;
+        this.hoveredLoiter = false;
 
         // SVG billboard with label and accept radius
         this.point = viewer.entities.add({
             position: new Cesium.CallbackProperty(() => { return that.position; }, false),
             billboard: {
                 image: "./signs/wpt.svg",
-                scale: this.normalScale,
+                scale: new Cesium.CallbackProperty(() => { return that.hoveredPoint ? 1.5 : 1.0; }, false),
                 disableDepthTestDistance: Number.POSITIVE_INFINITY
             },
             label: {
@@ -61,20 +61,11 @@ class Waypoint extends DraggablePoint {
             ellipse: {
                 fill: false,
                 outline: true,
-                outlineWidth: 2,
+                outlineWidth: new Cesium.CallbackProperty(() => { return that.hoveredLoiter ? 3.0 : 2.0; }, false),
                 outlineColor: Cesium.Color.WHITE
             }
         });
-        this.loiterArrows = [];
-
-        // DraggablePoint point on the ground with loiter shadow
-        this.groundPoint = this.viewer.entities.add({
-            position: new Cesium.CallbackProperty(() => { return that.terrainPosition }, false),
-            point: {
-                pixelSize: this.pointPixelSize,
-                color: Cesium.Color.CADETBLUE
-            }
-        });
+        // TODO: show loiter direction
 
         this.update(waypointData);
     }
@@ -84,8 +75,6 @@ class Waypoint extends DraggablePoint {
         this.viewer.entities.remove(this.point);
         this.viewer.entities.remove(this.pylon);
         this.viewer.entities.remove(this.loiter);
-        this.viewer.entities.remove(this.groundPoint);
-        this.loiterArrows.forEach(arrow => that.viewer.entities.remove(arrow));
     }
 
     /**
@@ -126,11 +115,9 @@ class Waypoint extends DraggablePoint {
                             that.terrainPosition = Cesium.Cartographic.toCartesian(cartographic);
                             that.terrainAltitude = cartographic.height;
                             that.pylon.polyline.show = true;
-                            that.groundPoint.point.show = that.editMode;
                         });
         } else {
             this.pylon.polyline.show = false;
-            this.groundPoint.point.show = false;
         }
 
         this.point.billboard.show = this.validPosition;
@@ -151,29 +138,7 @@ class Waypoint extends DraggablePoint {
         this.loiter.ellipse.semiMinorAxis = loiterRadius;
         this.loiter.ellipse.semiMajorAxis = loiterRadius;
         this.loiter.ellipse.height = altitude;
-
-        this.loiterArrows.forEach(arrow => that.viewer.entities.remove(arrow));
-
-        var clockwise = params ? params.clockwise : undifined;
-        if (loiterRadius > 0 && Cesium.defined(clockwise) && this.validPosition) {
-            for (var angle = 0; angle < Cesium.Math.TWO_PI; angle += Cesium.Math.PI_OVER_FOUR) {
-                var arrow = this.viewer.entities.add({
-                    position: projectPoint(Cesium.Math.toRadians(latitude),
-                                           Cesium.Math.toRadians(longitude),
-                                           altitude, angle, loiterRadius),
-                    billboard: {
-                        image: "./signs/arw.svg",
-                        disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                        alignedAxis: Cesium.Cartesian3.UNIT_Z,
-                        rotation: -angle + (clockwise ? -Cesium.Math.PI_OVER_TWO :
-                                                         Cesium.Math.PI_OVER_TWO),
-                        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0,
-                                                                                  loiterRadius * 15)
-                    }
-                });
-                this.loiterArrows.push(arrow);
-            }
-        }
+        // TODO: clockwise
     }
 
     setEditMode(edit) {
@@ -181,99 +146,97 @@ class Waypoint extends DraggablePoint {
         this.rebuild();
     }
 
-    setDragging(dragging) {
-        super.setDragging(dragging);
+    onPick(objects) {
+        if (!this.editMode)
+            return false;
 
-        if (this.changed)
-            this.changedCallback(this.waypointData);
-    }
-
-    // Ground point hover
-    setHovered(hovered) {
-        this.groundPoint.point.pixelSize = hovered ? this.hoveredPointPixelSize : this.pointPixelSize;
-    }
-
-    onPick(pickedObjects) {
-        var picked = null;
-        var hover = false;
-
-        // Pick ground point first
-        pickedObjects.forEach(object => {
-            if (this.groundPoint === object.id)
-                picked = this.groundPoint;
-        });
-
-        // Hover if we picked
-        hover = picked;
-
-        // Pick waypoint next
-        pickedObjects.forEach(object => {
-            if (this.point === object.id)
-                picked = this.point;
-        });
-
-        // Waypoint hover
-        this.point.billboard.scale = picked ? this.hoveredScale : this.normalScale;
+        // Pick waypoints first
+        this.hoveredPoint = objects.find(object => { return object.id === this.point });
+        if (this.hoveredPoint)
+            return true;
 
         // Pick loiter next
-        picked = null;
-        pickedObjects.forEach(object => {
-            if (this.loiter === object.id)
-                picked = this.loiter;
-        });
+        this.hoveredLoiter = objects.find(object => { return object.id === this.loiter });
+        if (this.hoveredLoiter)
+            return true;
 
-        // Loiter hover
-        this.loiter.ellipse.outlineWidth = picked ? 4 : 2;
-
-        return hover;
+        return false;
     }
 
-    onClick(cartesian, x, y, objects) {
-        // TODO: remove objects from onClick, use hovered
-        // Click on waypoint
-        var result = null;
-        objects.forEach(object => { if (this.point === object.id) result = this.point; });
-        if (result)
-            this.clickedCallback(x, y);
-
-         // Click on loiter
-        result = null;
-        var params = this.waypointData.params;
-        var clockwise = params ? params.clockwise : undifined;
-        objects.forEach(object => { if (this.loiter === object.id) result = this.loiter; });
-        if (result && Cesium.defined(clockwise)) {
-            this.waypointData.params.clockwise = !clockwise;
-            this.changedCallback(this.waypointData);
+    onUp(cartesian) {
+        if (this.dragging) {
+            this.setDragging(false);
+            if (this.changed)
+                this.changedCallback(this.waypointData);
+            return true;
         }
+
+        return false;
     }
 
-    onMove(cartesian) {
-        var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-        this.waypointData.latitude = Cesium.Math.toDegrees(cartographic.latitude);
-        this.waypointData.longitude = Cesium.Math.toDegrees(cartographic.longitude);
-        this.terrainAltitude = cartographic.height;
-        this.changed = true;
-        this.rebuild();
+    onDown(cartesian) {
+        if (this.hoveredPoint || this.hoveredLoiter) {
+            this.setDragging(true);
+            return true;
+        }
+
+        return false;
     }
 
-    onMoveShift(dx, dy) {
+    onMove(movement, badCartesian) { // TODO: shift - altitude only, ctrl - position only
+        if (!this.dragging)
+            return false;
 
-        // Modify altitude
-        this.waypointData.altitude += dy;
+        // TODO: to Common
+        var scene = this.viewer.scene;
+        var camera = scene.camera;
+        var cartesian = this.position;
+        var cartographic = scene.globe.ellipsoid.cartesianToCartographic(cartesian);
+        var surfaceNormal = scene.globe.ellipsoid.geodeticSurfaceNormal(cartesian);
+        var planeNormal = Cesium.Cartesian3.subtract(scene.camera.position, cartesian, new Cesium.Cartesian3());
+        planeNormal = Cesium.Cartesian3.normalize(planeNormal, planeNormal);
+        var ray = this.viewer.scene.camera.getPickRay(movement.endPosition);
+        var plane = Cesium.Plane.fromPointNormal(cartesian, planeNormal);
+        var newCartesian = Cesium.IntersectionTests.rayPlane(ray, plane);
 
-        var params = this.waypointData.params;
-        // Modify waypoint accept radius
-        var acceptRadius = params ? params.accept_radius : undefined;
-        if (Cesium.defined(acceptRadius))
-            this.waypointData.params.accept_radius = acceptRadius + dx;
+        if (this.hoveredPoint) {
+            this.position = newCartesian;
+            var newCartographic = Cesium.Cartographic.fromCartesian(newCartesian);
+            this.waypointData.latitude = Cesium.Math.toDegrees(newCartographic.latitude);
+            this.waypointData.longitude = Cesium.Math.toDegrees(newCartographic.longitude);
+            this.waypointData.altitude = newCartographic.height;
+            this.changed = true;
+            this.rebuild();
 
-        // Modify loiter radius
-        var loiterRadius = params ? params.radius : undefined;
-        if (Cesium.defined(loiterRadius))
-            this.waypointData.params.radius = loiterRadius + dx;
+            return true;
+        }
 
-        this.changed = true;
-        this.rebuild();
+        if (this.hoveredLoiter) {
+            var distance = Cesium.Cartesian3.distance(newCartesian, this.position);
+            var params = this.waypointData.params;
+
+            // Modify loiter radius
+            if (!Cesium.defined(params.radius))
+                return false;
+
+            this.waypointData.params.radius = distance;
+            this.changed = true;
+            this.rebuild();
+
+            return true;
+
+        }
+
+        return false;
+    }
+
+    onClick(cartesian, x, y) {
+        if (this.hoveredPoint) {
+            this.clickedCallback(x, y);
+            return true;
+        }
+        // TODO: Click on loiter
+        return false;
     }
 
     flyTo() { this.viewer.flyTo(this.point); }

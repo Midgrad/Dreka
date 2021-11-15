@@ -71,6 +71,7 @@ class Viewport {
         }
 
         this.cursorHandlers.forEach(handler => handler(this.cursorPosition));
+        return false;
     }
 
     flyTo(center, heading, pitch, duration) {

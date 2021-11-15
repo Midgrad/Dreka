@@ -1,8 +1,8 @@
 // Register handlers:
-//  onClick(cartesian, x, y, pickedObjects),
+//  onClick(cartesian, x, y),
 //  onDown(cartesian),
 //  onUp(cartesian),
-//  onMove(cartesian),
+//  onMove(movement),
 //  onMoveShift(dx, dy), - TODO: replace with onMove with shift modifier
 //  onPick([pickedObjects]) - TODO: replace with onMove
 class Input {
@@ -19,7 +19,7 @@ class Input {
         this.handlers["onPick"] = [];
 
         this.pickRadius = 10;
-        this.pickedObjects = [];
+        this.hoveredObjects = [];
 
         var that = this;
 
@@ -30,22 +30,24 @@ class Input {
         // Left button click
         var leftClickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
         leftClickHandler.setInputAction((event) => {
-            // Promoute mouse click event with position
-            that.pickPosition(event.position, cartesian => {
-                var handlers = that.handlers["onClick"];
-                for (var i = handlers.length - 1; i >= 0; i--) {
-                    if (handlers[i](cartesian, event.position.x, event.position.y, this.pickedObjects))
-                        break;
-                }
-            });
+            var cartesian = that.pickPosition(event.position);
+
+            var handlers = that.handlers["onClick"];
+            for (var i = handlers.length - 1; i >= 0; i--) {
+                if (handlers[i](cartesian, event.position.x, event.position.y))
+                    return;
+            }
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
         // Left button down
         var downCallback = (event) => {
-            // Promoute mouse down event with position
-            that.pickPosition(event.position, cartesian => {
-                that.handlers["onDown"].slice().reverse().forEach(handler => { handler(cartesian); });
-            });
+            var cartesian = that.pickPosition(event.position);
+
+            var handlers = that.handlers["onDown"];
+            for (var i = handlers.length - 1; i >= 0; i--) {
+                if (handlers[i](cartesian))
+                    return;
+            }
         }
 
         var leftDownHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
@@ -56,10 +58,13 @@ class Input {
 
         // Left button up
         var upCallback = (event) => {
-            // Promoute mouse up event with position
-            that.pickPosition(event.position, cartesian => {
-                that.handlers["onUp"].slice().reverse().forEach(handler => { handler(cartesian); });
-            });
+            var cartesian = that.pickPosition(event.position);
+
+            var handlers = that.handlers["onUp"];
+            for (var i = handlers.length - 1; i >= 0; i--) {
+                if (handlers[i](cartesian))
+                    return;
+            }
         }
 
         var leftUpHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
@@ -71,13 +76,16 @@ class Input {
         // Mouse move
         var moveHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
         moveHandler.setInputAction((movement) => {
+            var cartesian = that.pickPosition(movement.endPosition);
+
+            var handlers = that.handlers["onMove"];
+            for (var i = handlers.length - 1; i >= 0; i--) {
+                if (handlers[i](movement, cartesian))
+                    return;
+            }
+
             // Try to pick entity on map
             that.pickEntities(movement.endPosition);
-
-            // Promoute position for onMove handlers
-            that.pickPosition(movement.endPosition, cartesian => {
-                that.handlers["onMove"].slice().reverse().forEach(handler => { handler(cartesian); });
-            });
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
         // Mouse move with shift
@@ -94,18 +102,20 @@ class Input {
     }
 
     pickEntities(position) {
-        this.pickedObjects = this.viewer.scene.drillPick(position, undefined, this.pickRadius, this.pickRadius);
-        this.handlers["onPick"].slice().reverse().forEach(handler => { handler(this.pickedObjects); });
+        // Remember hoveredObjects
+        this.hoveredObjects = this.viewer.scene.drillPick(position, undefined,
+                                                          this.pickRadius, this.pickRadius);
+        // promoute pick event with picked objects
+        var handlers = this.handlers["onPick"];
+        for (var i = handlers.length - 1; i >= 0; i--) {
+            if (handlers[i](this.hoveredObjects))
+                break;
+        }
     }
 
-    pickPosition(position, callback) {
-        // Not work well with disabled depth test
-        // callback(this.viewer.scene.pickPosition(event.position));
-
+    pickPosition(position) {
         var ray = this.viewer.camera.getPickRay(position);
-        var intersection = this.viewer.scene.globe.pick(ray, this.viewer.scene);
-        if (intersection)
-            callback(intersection);
+        return this.viewer.scene.globe.pick(ray, this.viewer.scene);
     }
 
     subscribe(event, handler) {

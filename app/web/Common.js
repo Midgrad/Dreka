@@ -1,6 +1,6 @@
 var EQUATORIAL_RADIUS = 6378137.0;
 
-// All in radians
+// Get new coordinates by the distance and beraing, all data in radians
 function projectPoint(latitude, longitude, altitude, bearing, distance)
 {
     let angDisRad = distance / EQUATORIAL_RADIUS;
@@ -12,4 +12,16 @@ function projectPoint(latitude, longitude, altitude, bearing, distance)
     let resultLongitude = longitude + Math.atan2(y, x);
 
     return Cesium.Cartesian3.fromRadians(resultLongitude, resultLatitude, altitude);
+}
+
+// Get new cartesian3 between first and second
+function intermediate(first, second) {
+    var scratch = new Cesium.Cartesian3();
+
+    var difference = Cesium.Cartesian3.subtract(first, second, scratch);
+    var distance = -0.5 * Cesium.Cartesian3.magnitude(difference);
+    var direction = Cesium.Cartesian3.normalize(difference, scratch);
+
+    return Cesium.Cartesian3.add(first, Cesium.Cartesian3.multiplyByScalar(
+                                        direction, distance, scratch), scratch);
 }

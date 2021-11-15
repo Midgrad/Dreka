@@ -1,10 +1,11 @@
-class Route extends Draggable {
+class Route {
     /**
      * @param {Cesium.Viewr} viewer
        @param {Input} input
      */
     constructor(viewer, input) {
-        super(viewer, input)
+        this.viewer = viewer;
+        this.input = input;
 
         // Callbacks
         this.waypointChangedCallback = null;
@@ -12,7 +13,6 @@ class Route extends Draggable {
 
         // Data
         this.editMode = false;
-        this.enabled = false;
 
         // Entities
         this.waypoints = [];
@@ -35,7 +35,7 @@ class Route extends Draggable {
         if (this.waypoints.length > index) {
             this.waypoints[index].update(waypointData);
         } else {
-            var waypoint = new Waypoint(this.viewer, waypointData, index);
+            var waypoint = new Waypoint(this.viewer, this.input, waypointData, index);
             waypoint.setEditMode(this.editMode);
             this.waypoints.push(waypoint);
 
@@ -118,38 +118,7 @@ class Route extends Draggable {
 
     setEditMode(editMode) {
         this.editMode = editMode;
-        this.enabled = editMode;
         this.waypoints.forEach(waypoint => waypoint.setEditMode(editMode));
-    }
-
-    onClick(cartesian, x, y, objects) {
-        this.waypoints.forEach(waypoint => waypoint.onClick(cartesian, x, y, objects));
-    }
-
-    onPick(pickedObjects) {
-        if (super.onPick(pickedObjects))
-            return true;
-
-        var hovered = null;
-        this.waypoints.forEach(candidate => {
-            if (candidate.onPick(pickedObjects))
-                hovered = candidate;
-        });
-
-        if (hovered)
-            this.setHoveredPoint(hovered);
-    }
-
-    onMove(cartesian) {
-        if (this.hoveredPoint && this.hoveredPoint.dragging) {
-            this.hoveredPoint.onMove(cartesian);
-        }
-    }
-
-    onMoveShift(dx, dy) {
-        if (this.hoveredPoint && this.hoveredPoint.dragging) {
-            this.hoveredPoint.onMoveShift(dx, dy);
-        }
     }
 }
 

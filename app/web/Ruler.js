@@ -1,20 +1,33 @@
-class RulerPoint extends DraggablePoint {
+class RulerPoint extends Draggable {
     /**
      * @param {Cesium.Viewr} viewer
+       @param {Input} input
      * @param {Cesium.Cartesian} position
      */
-    constructor(viewer, position) {
-        super(viewer);
+    constructor(viewer, input, position) {
+        super(viewer, input);
+
+        var that = this;
+
+        // Callbacks
+        this.updateCallback = null;
 
         // Data
         this.position = position;
+        this.enabled = false;
+        this.hovered = true;
 
-        // DraggablePoint point
-        var that = this;
+        // Visual
+        this.pointPixelSize = 8.0;
+        this.hoveredPointPixelSize = 16.0;
+
+        // Draggable point
         this.point = this.viewer.entities.add({
             position: new Cesium.CallbackProperty(() => { return that.position }, false),
             point: {
-                pixelSize: this.pointPixelSize,
+                pixelSize: new Cesium.CallbackProperty(() => { return that.hovered ?
+                                                               that.hoveredPointPixelSize :
+                                                               that.pointPixelSize; }, false),
                 color: Cesium.Color.CADETBLUE
             }
         });
@@ -24,27 +37,57 @@ class RulerPoint extends DraggablePoint {
         this.viewer.entities.remove(this.point);
     }
 
-    setHovered(hovered) {
-        this.point.point.pixelSize = hovered ? this.hoveredPointPixelSize : this.pointPixelSize;
-    }
+    onPick(objects) {
+        if (!this.enabled)
+            return false;
 
-    checkMatch(objects) {
         var result = null;
         objects.forEach(object => {
             if (this.point === object.id)
-                 result = this.point;
+            result = this.point;
         });
+
+        this.hovered = result;
         return result;
+    }
+
+    onUp(cartesian) {
+        if (this.dragging) {
+            this.setDragging(false);
+            return true;
+        }
+        return false;
+    }
+
+    onDown(cartesian) {
+        if (this.hovered) {
+            this.setDragging(true);
+            return true;
+        }
+        return false;
+    }
+
+    onMove(movement, cartesian) {
+        if (this.dragging && Cesium.defined(cartesian)) {
+            this.position = cartesian;
+            this.updateCallback();
+            return true;
+        }
+        return false;
     }
 }
 
-class Ruler extends Draggable {
+class Ruler {
     /**
      * @param {Cesium.Viewr} viewer
        @param {Input} input
      */
     constructor(viewer, input) {
-        super(viewer, input);
+        this.viewer = viewer;
+        this.input = input;
+
+        // Callbacks
+        input.subscribe("onClick", (cartesian, x, y) => { return that.onClick(cartesian, x, y) });
 
         // Data
         this.distance = 0;
@@ -79,14 +122,17 @@ class Ruler extends Draggable {
      * @param {Cesium.Cartesian} position
      */
     addPoint(position) {
+        var that = this;
         var lastPoint = this.points.slice(-1).pop();
-        var newPoint = new RulerPoint(this.viewer, position);
+        var newPoint = new RulerPoint(this.viewer, this.input, position);
+        newPoint.updateCallback = () => { that.updateDistance(); }
+        newPoint.enabled = this.enabled;
         this.points.push(newPoint);
 
         if (lastPoint)
             this.addLabel(lastPoint, newPoint);
 
-        this.setHoveredPoint(newPoint);
+        // this.setHoveredPoint(newPoint);
 
         // Update ruler distance
         if (lastPoint && this.distanceCallback) {
@@ -114,8 +160,6 @@ class Ruler extends Draggable {
     }
 
     clear() {
-        // super.clear();
-
         for (var i = 0; i < this.labels.length; ++i) {
             this.viewer.entities.remove(this.labels[i]);
         }
@@ -146,31 +190,25 @@ class Ruler extends Draggable {
 
     setEnabled(enabled) {
         this.enabled = enabled;
+
+        if (this.points.length === 1)
+            this.clear();
+        else
+            this.points.forEach(point => { point.enabled = enabled; });
     }
 
-    onClick(cartesian, x, y, objects) {
-        if (objects.length === 0 && Cesium.defined(cartesian) && !this.hoveredPoint) {
-            this.addPoint(cartesian);
+    onClick(cartesian, x, y) {
+        if (!this.enabled)
+            return false;
+
+        // Don't add point if hover two last points
+        var length = this.points.length
+        if (length > 0 && this.points[length - 1].hovered)
             return true;
-        }
-        return false;
-    }
-
-    onPick(pickedObjects) {
-        if (super.onPick(pickedObjects))
+        if (length > 1 && this.points[length - 2].hovered)
             return true;
 
-        // Try to pick new point
-        this.points.forEach(candidate => {
-            if (candidate.checkMatch(pickedObjects))
-                this.setHoveredPoint(candidate);
-        });
-    }
-
-    onMove(cartesian) {
-        if (this.hoveredPoint && this.hoveredPoint.dragging) {
-            this.hoveredPoint.position = cartesian;
-            this.updateDistance();
-        }
+        this.addPoint(cartesian);
+        return true;
     }
 }
