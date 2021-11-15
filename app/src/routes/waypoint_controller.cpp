@@ -144,6 +144,15 @@ void WaypointController::setWaypointIndex(int index)
     emit waypointChanged();
 }
 
+void WaypointController::renameWaypoint(const QString& name)
+{
+    if (!m_route || !m_waypoint)
+        return;
+
+    m_waypoint->setName(name);
+    m_routesRepository->saveWaypoint(m_route, m_waypoint);
+}
+
 void WaypointController::changeWaypointType(const QString& typeId)
 {
     if (!m_route || !m_waypoint)

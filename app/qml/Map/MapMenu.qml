@@ -1,7 +1,8 @@
 import QtQuick 2.6
-import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
 import Dreka 1.0
+
+import "../Common"
 
 Item {
     id: root
@@ -19,13 +20,11 @@ Item {
             root.latitude = latitude;
             root.longitude = longitude;
             root.altitude = altitude;
-
-            if (menu.count)
-                menu.popup(x, y);
+            menu.open(x, y);
         }
     }
 
     Component.onCompleted: map.registerController("menuController", controller)
 
-    Controls.Menu { id: menu }
+    PointedMenu { id: menu }
 }

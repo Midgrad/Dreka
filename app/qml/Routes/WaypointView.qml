@@ -3,6 +3,8 @@ import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
 import Dreka 1.0
 
+import "../Common"
+
 Item {
     id: root
 
@@ -10,13 +12,13 @@ Item {
 
     WaypointController {
         id: controller
-        onInvokeMenu: waypointMenu.popup(x, y)
+        onInvokeMenu: menu.open(x, y)
     }
 
     Component.onCompleted: map.registerController("waypointController", controller)
 
-    Controls.Menu {
-        id: waypointMenu
+    PointedMenu {
+        id: menu
         title: qsTr("Edit Waypoint")
 
         Controls.MenuItem {
@@ -27,7 +29,7 @@ Item {
 
         Controls.MenuItem {
             text: qsTr("Parameters")
-            onTriggered: waypointEdit.open()
+            onTriggered: editor.open(menu.invokeX, menu.invokeY, editComponent)
         }
 
         Controls.MenuItem {
@@ -36,16 +38,16 @@ Item {
         }
     }
 
-    WaypointEdit {
-        id: waypointEdit
-        x: waypointMenu.x
-        y: waypointMenu.y
-        waypoint: controller.waypoint
-        waypointIndex: controller.waypointIndex
-        height: Math.min(implicitHeight, root.height - map.controlHeight - waypointMenu.y)
-        onWaypointIndexChanged: {
-            if (waypoint && waypointEdit.visible)
-                centerWaypoint(waypoint.route, waypointIndex);
+    PointedPopup {
+        id: editor
+    }
+
+    Component {
+        id: editComponent
+
+        WaypointEdit {
+            waypoint: controller.waypoint
+            waypointIndex: controller.waypointIndex
         }
     }
 }

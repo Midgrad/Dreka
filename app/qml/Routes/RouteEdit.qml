@@ -92,7 +92,7 @@ Item {
             id: list
             model: route ? route.waypoints : []
             emptyText: qsTr("No Waypoints")
-            delegate: Waypoint {
+            delegate: WaypointListItem {
                 width: parent.width
                 waypoint: controller.waypointData(route.id, modelData)
                 waypointIndex: index

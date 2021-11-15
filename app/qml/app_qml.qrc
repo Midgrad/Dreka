@@ -2,6 +2,9 @@
     <qresource prefix="/">
         <file>Common/PositionEdit.qml</file>
         <file>Common/ParametersEdit.qml</file>
+        <file>Common/Pointer.qml</file>
+        <file>Common/PointedPopup.qml</file>
+        <file>Common/PointedMenu.qml</file>
         <file>Map/CesiumMap.qml</file>
         <file>Map/MapButton.qml</file>
         <file>Map/MapCompas.qml</file>
@@ -17,8 +20,8 @@
         <file>Routes/RouteList.qml</file>
         <file>Routes/Route.qml</file>
         <file>Routes/RouteEdit.qml</file>
-        <file>Routes/Waypoint.qml</file>
-        <file>Routes/WaypointMenuView.qml</file>
+        <file>Routes/WaypointListItem.qml</file>
+        <file>Routes/WaypointView.qml</file>
         <file>Routes/WaypointEdit.qml</file>
         <file>Vehicles/VehiclesView.qml</file>
         <file>Vehicles/MissionView.qml</file>

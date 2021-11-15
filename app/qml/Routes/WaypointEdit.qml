@@ -5,52 +5,49 @@ import Dreka 1.0
 
 import "../Common"
 
-Controls.Popup {
+Item {
     id: root
 
     property var waypoint
     property int waypointIndex: -1
 
-    onWaypointChanged: if (!waypoint.id) close()
+    property bool editName: false
 
-    width: Controls.Theme.baseSize * 11
+    implicitWidth: Controls.Theme.baseSize * 11
+    implicitHeight: column.implicitHeight
 
     ColumnLayout {
+        id: column
         anchors.fill: parent
         spacing: Controls.Theme.spacing
 
         RowLayout {
-            spacing: 1
-
-            Controls.Button {
-                enabled: waypointIndex > 0
-                visible: waypointIndex !== -1
-                flat: true
-                rightCropped: true
-                iconSource: "qrc:/icons/left.svg"
-                tipText: qsTr("Previous waypoint")
-                onClicked: controller.setWaypointIndex(waypointIndex - 1)
-            }
+            spacing: Controls.Theme.spacing
 
             Controls.Button {
                 enabled: waypoint
                 flat: true
-                leftCropped: true
                 rightCropped: true
                 text: waypoint ? (waypoint.name + " " + (waypointIndex + 1)) : "-"
-                tipText: qsTr("Center on map")
-                onClicked: centerWaypoint(waypoint.route, waypointIndex)
+                tipText: qsTr("Edit name")
+                visible: !editName
+                onClicked: editName = true
                 Layout.fillWidth: true
             }
 
-            Controls.Button {
-                enabled: waypointIndex < controller.waypointsCount - 1
-                visible: waypointIndex !== -1
+            Controls.TextField {
+                id: nameEdit
                 flat: true
-                leftCropped: true
-                iconSource: "qrc:/icons/right.svg"
-                tipText: qsTr("Next waypoint")
-                onClicked: controller.setWaypointIndex(waypointIndex + 1)
+                visible: editName
+                Binding on text {
+                    value: waypoint ? waypoint.name : "-"
+                    when: !nameEdit.activeFocus
+                }
+                onEditingFinished: {
+                    controller.renameWaypoint(text);
+                    editName = false;
+                }
+                Layout.fillWidth: true
             }
 
             Controls.ComboBox {

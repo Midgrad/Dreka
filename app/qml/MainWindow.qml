@@ -31,7 +31,7 @@ Controls.ApplicationWindow {
         anchors.fill: map
     }
 
-    WaypointMenuView {
+    WaypointView {
         id: waypointEdit
         anchors.fill: map
     }
