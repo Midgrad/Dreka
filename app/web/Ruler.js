@@ -37,6 +37,31 @@ class RulerPoint extends Draggable {
         this.viewer.entities.remove(this.point);
     }
 
+    onUp(event, cartesian, modifier) {
+        if (this.dragging) {
+            this.setDragging(false);
+            return true;
+        }
+        return false;
+    }
+
+    onDown(event, cartesian, modifier) {
+        if (this.hovered) {
+            this.setDragging(true);
+            return true;
+        }
+        return false;
+    }
+
+    onMove(event, cartesian, modifier) {
+        if (this.dragging && Cesium.defined(cartesian)) {
+            this.position = cartesian;
+            this.updateCallback();
+            return true;
+        }
+        return false;
+    }
+
     onPick(objects) {
         if (!this.enabled)
             return false;
@@ -50,31 +75,6 @@ class RulerPoint extends Draggable {
         this.hovered = result;
         return result;
     }
-
-    onUp(cartesian) {
-        if (this.dragging) {
-            this.setDragging(false);
-            return true;
-        }
-        return false;
-    }
-
-    onDown(cartesian) {
-        if (this.hovered) {
-            this.setDragging(true);
-            return true;
-        }
-        return false;
-    }
-
-    onMove(movement, cartesian) {
-        if (this.dragging && Cesium.defined(cartesian)) {
-            this.position = cartesian;
-            this.updateCallback();
-            return true;
-        }
-        return false;
-    }
 }
 
 class Ruler {
@@ -87,7 +87,9 @@ class Ruler {
         this.input = input;
 
         // Callbacks
-        input.subscribe("onClick", (cartesian, x, y) => { return that.onClick(cartesian, x, y) });
+        input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
+            return that.onClick(event, cartesian, modifier);
+        });
 
         // Data
         this.distance = 0;
@@ -197,8 +199,8 @@ class Ruler {
             this.points.forEach(point => { point.enabled = enabled; });
     }
 
-    onClick(cartesian, x, y) {
-        if (!this.enabled)
+    onClick(event, cartesian, modifier) {
+        if (Cesium.defined(modifier) || !this.enabled)
             return false;
 
         // Don't add point if hover two last points

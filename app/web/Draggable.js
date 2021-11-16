@@ -6,12 +6,21 @@ class Draggable {
     constructor(viewer, input) {
         this.viewer = viewer;
 
-        var that = this;
         // Callbacks
-        input.subscribe("onPick", objects => { return that.onPick(objects); });
-        input.subscribe("onUp", cartesian => { return that.onUp(cartesian); });
-        input.subscribe("onDown", cartesian => { return that.onDown(cartesian); });
-        input.subscribe("onMove", (movement, cartesian) => { return that.onMove(movement, cartesian); });
+        var that = this;
+        input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
+            return that.onClick(event, cartesian, modifier);
+        });
+        input.subscribe(InputTypes.ON_UP, (event, cartesian, modifier) => {
+            return that.onUp(event, cartesian, modifier);
+        });
+        input.subscribe(InputTypes.ON_DOWN, (event, cartesian, modifier) => {
+            return that.onDown(event, cartesian, modifier);
+        });
+        input.subscribe(InputTypes.ON_MOVE, (event, cartesian, modifier) => {
+            return that.onMove(event, cartesian, modifier);
+        });
+        input.subscribe(InputTypes.ON_PICK, objects => { return that.onPick(objects); });
 
         // Data
         this.dragging = false;
@@ -27,8 +36,9 @@ class Draggable {
         scene.screenSpaceCameraController.enableTilt = !dragging;
     }
 
+    onClick(event, cartesian, modifier) { return false; }
+    onUp(event, cartesian, modifier) { return false; }
+    onDown(event, cartesian, modifier) { return false; }
+    onMove(event, cartesian, modifier) { return false; }
     onPick(objects) { return false; }
-    onUp(cartesian) { return false; }
-    onDown(cartesian) { return false; }
-    onMove(movement, cartesian) { return false; }
 }

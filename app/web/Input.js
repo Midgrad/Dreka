@@ -1,128 +1,113 @@
-// Register handlers:
-//  onClick(cartesian, x, y),
-//  onDown(cartesian),
-//  onUp(cartesian),
-//  onMove(movement),
-//  onMoveShift(dx, dy), - TODO: replace with onMove with shift modifier
-//  onPick([pickedObjects]) - TODO: replace with onMove
+/**
+ * InputTypes defines types of input events
+ *
+ * @enum {Number}
+ */
+var InputTypes = {
+    NONE: 0,
+    ON_CLICK: 1,
+    ON_DOWN: 2,
+    ON_UP: 3,
+    ON_MOVE: 4,
+    ON_PICK: 5
+};
+Object.freeze(InputTypes);
+
+/**
+ * Input subscribe listeners:
+ * ON_CLICK ON_DOWN ON_UP ON_MOVE with interface f(event, cartesian, modifier) => bool
+ * ON_PICK with interface f(hoveredObjects) => bool
+ *
+ * @enum {Number}
+ */
 class Input {
     constructor(viewer) {
-
         this.viewer = viewer;
 
-        this.handlers = new Map();
-        this.handlers["onClick"] = [];
-        this.handlers["onDown"] = [];
-        this.handlers["onUp"] = [];
-        this.handlers["onMove"] = [];
-        this.handlers["onMoveShift"] = [];
-        this.handlers["onPick"] = [];
+        // Callbacks
+        this.listeners = new Map();
+        this.listeners[InputTypes.ON_CLICK] = [];
+        this.listeners[InputTypes.ON_DOWN] = [];
+        this.listeners[InputTypes.ON_UP] = [];
+        this.listeners[InputTypes.ON_MOVE] = [];
+        this.listeners[InputTypes.ON_PICK] = [];
 
-        this.pickRadius = 10;
+        // Data
+        this.pickingRadius = 10;
         this.hoveredObjects = [];
-
-        var that = this;
+        this.handlers = [];
 
         // Remove conflicting default behavior
         this.viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
         this.viewer.scene.screenSpaceCameraController.enableLook = false;
 
-        // Left button click
-        var leftClickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-        leftClickHandler.setInputAction((event) => {
-            var cartesian = that.pickPosition(event.position);
+        // Lambda function to handle all input listeners
+        var that = this;
+        this.lambda = (event, inputType, modifier) => {
+            var cartesian = undefined;
+            if (Cesium.defined(event.position))
+                cartesian = that._pickPosition(event.position);
+            else if (Cesium.defined(event.endPosition))
+                cartesian = that._pickPosition(event.endPosition);
 
-            var handlers = that.handlers["onClick"];
-            for (var i = handlers.length - 1; i >= 0; i--) {
-                if (handlers[i](cartesian, event.position.x, event.position.y))
+            var listeners = that.listeners[inputType];
+            for (var i = listeners.length - 1; i >= 0; i--) {
+                if (listeners[i](event, cartesian, modifier))
                     return;
             }
-        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        };
 
-        // Left button down
-        var downCallback = (event) => {
-            var cartesian = that.pickPosition(event.position);
+        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, InputTypes.ON_CLICK, undefined);
+        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, InputTypes.ON_CLICK, Cesium.KeyboardEventModifier.SHIFT);
+        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, InputTypes.ON_CLICK, Cesium.KeyboardEventModifier.CTRL);
 
-            var handlers = that.handlers["onDown"];
-            for (var i = handlers.length - 1; i >= 0; i--) {
-                if (handlers[i](cartesian))
-                    return;
-            }
-        }
+        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_DOWN, InputTypes.ON_DOWN, undefined);
+        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_DOWN, InputTypes.ON_DOWN, Cesium.KeyboardEventModifier.SHIFT);
+        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_DOWN, InputTypes.ON_DOWN, Cesium.KeyboardEventModifier.CTRL);
 
-        var leftDownHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-        leftDownHandler.setInputAction(downCallback, Cesium.ScreenSpaceEventType.LEFT_DOWN);
-        var leftShiftDownHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-        leftShiftDownHandler.setInputAction(downCallback, Cesium.ScreenSpaceEventType.LEFT_DOWN,
-                                            Cesium.KeyboardEventModifier.SHIFT);
+        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_UP, InputTypes.ON_UP, undefined);
+        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_UP, InputTypes.ON_UP, Cesium.KeyboardEventModifier.SHIFT);
+        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_UP, InputTypes.ON_UP, Cesium.KeyboardEventModifier.CTRL);
 
-        // Left button up
-        var upCallback = (event) => {
-            var cartesian = that.pickPosition(event.position);
+        this._addHandler(Cesium.ScreenSpaceEventType.MOUSE_MOVE, InputTypes.ON_MOVE, undefined);
+        this._addHandler(Cesium.ScreenSpaceEventType.MOUSE_MOVE, InputTypes.ON_MOVE, Cesium.KeyboardEventModifier.SHIFT);
+        this._addHandler(Cesium.ScreenSpaceEventType.MOUSE_MOVE, InputTypes.ON_MOVE, Cesium.KeyboardEventModifier.CTRL);
 
-            var handlers = that.handlers["onUp"];
-            for (var i = handlers.length - 1; i >= 0; i--) {
-                if (handlers[i](cartesian))
-                    return;
-            }
-        }
-
-        var leftUpHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-        leftUpHandler.setInputAction(upCallback, Cesium.ScreenSpaceEventType.LEFT_UP);
-        var leftShiftUpHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-        leftShiftUpHandler.setInputAction(upCallback, Cesium.ScreenSpaceEventType.LEFT_UP,
-                                          Cesium.KeyboardEventModifier.SHIFT);
-
-        // Mouse move
-        var moveHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-        moveHandler.setInputAction((movement) => {
-            var cartesian = that.pickPosition(movement.endPosition);
-
-            var handlers = that.handlers["onMove"];
-            for (var i = handlers.length - 1; i >= 0; i--) {
-                if (handlers[i](movement, cartesian))
-                    return;
-            }
-
-            // Try to pick entity on map
-            that.pickEntities(movement.endPosition);
-        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-
-        // Mouse move with shift
-        var moveShiftHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-        moveShiftHandler.setInputAction((movement) => {
-            // Try to pick entity on map
-            that.pickEntities(movement.endPosition);
-
-            // Promoute scaled dx/dy for onMoveShift handlers
-            var dx = (movement.startPosition.x - movement.endPosition.x) * that.pixelScale;
-            var dy = (movement.startPosition.y - movement.endPosition.y) * that.pixelScale;
-            that.handlers["onMoveShift"].slice().reverse().forEach(handler => { handler(dx, dy); });
-        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE, Cesium.KeyboardEventModifier.SHIFT);
+        this.subscribe(InputTypes.ON_MOVE, (event, cartesian, modifier) => {
+            return that._pickEntities(event.endPosition);
+        });
     }
 
-    pickEntities(position) {
+    _addHandler(eventType, inputType, modifier) {
+        var that = this;
+        var handler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+        handler.setInputAction(event => { that.lambda(event, inputType, modifier); }, eventType, modifier);
+        this.handlers.push(handler);
+    }
+
+    _pickEntities(position) {
         // Remember hoveredObjects
         this.hoveredObjects = this.viewer.scene.drillPick(position, undefined,
-                                                          this.pickRadius, this.pickRadius);
+                                                          this.pickingRadius, this.pickingRadius);
         // promoute pick event with picked objects
-        var handlers = this.handlers["onPick"];
-        for (var i = handlers.length - 1; i >= 0; i--) {
-            if (handlers[i](this.hoveredObjects))
-                break;
+        var listeners = this.listeners[InputTypes.ON_PICK];
+        for (var i = listeners.length - 1; i >= 0; i--) {
+            if (listeners[i](this.hoveredObjects))
+                return true;
         }
+        return false;
     }
 
-    pickPosition(position) {
+    _pickPosition(position) {
         var ray = this.viewer.camera.getPickRay(position);
         return this.viewer.scene.globe.pick(ray, this.viewer.scene);
     }
 
-    subscribe(event, handler) {
-        this.handlers[event].push(handler);
+    subscribe(inputType, listener) {
+        this.listeners[inputType].push(listener);
     }
 
-    unsubscribe(event, handler) {
-        this.handlers[event] = this.handlers[event].filter(item => item !== handler)
+    unsubscribe(inputType, listener) {
+        this.listeners[inputType] = this.listeners[inputType].filter(item => item !== listener)
     }
 }

@@ -9,9 +9,6 @@ class Waypoint extends Draggable {
         super(viewer, input);
 
         // Callbacks
-        var that = this;
-        input.subscribe("onClick", (cartesian, x, y) => { return that.onClick(cartesian, x, y) });
-
         this.changedCallback = null;
         this.clickedCallback = null;
 
@@ -25,6 +22,7 @@ class Waypoint extends Draggable {
         this.hoveredLoiter = false;
 
         // SVG billboard with label and accept radius
+        var that = this;
         this.point = viewer.entities.add({
             position: new Cesium.CallbackProperty(() => { return that.position; }, false),
             billboard: {
@@ -61,7 +59,9 @@ class Waypoint extends Draggable {
             ellipse: {
                 fill: false,
                 outline: true,
-                outlineWidth: new Cesium.CallbackProperty(() => { return that.hoveredLoiter ? 3.0 : 2.0; }, false),
+                outlineWidth: new Cesium.CallbackProperty(() => {
+                    return that.hoveredLoiter ? 3.0 : 2.0;
+                }, false),
                 outlineColor: Cesium.Color.WHITE
             }
         });
@@ -146,24 +146,20 @@ class Waypoint extends Draggable {
         this.rebuild();
     }
 
-    onPick(objects) {
-        if (!this.editMode)
-            return false;
+    onClick(event, unusedCartesian, modifier) {
+        if (Cesium.defined(modifier))
+            return;
 
-        // Pick waypoints first
-        this.hoveredPoint = objects.find(object => { return object.id === this.point });
-        if (this.hoveredPoint)
+        if (this.hoveredPoint) {
+            // TODO: entity's center
+            this.clickedCallback(event.position.x, event.position.y);
             return true;
-
-        // Pick loiter next
-        this.hoveredLoiter = objects.find(object => { return object.id === this.loiter });
-        if (this.hoveredLoiter)
-            return true;
-
+        }
+        // TODO: Click on loiter to change clockwise
         return false;
     }
 
-    onUp(cartesian) {
+    onUp(event, cartesian, modifier) {
         if (this.dragging) {
             this.setDragging(false);
             if (this.changed)
@@ -174,7 +170,7 @@ class Waypoint extends Draggable {
         return false;
     }
 
-    onDown(cartesian) {
+    onDown(event, cartesian, modifier) {
         if (this.hoveredPoint || this.hoveredLoiter) {
             this.setDragging(true);
             return true;
@@ -183,7 +179,18 @@ class Waypoint extends Draggable {
         return false;
     }
 
-    onMove(movement, badCartesian) { // TODO: shift - altitude only, ctrl - position only
+    onMove(event, badCartesian, modifier) { // TODO: shift - altitude only, ctrl - position only
+
+
+//            const position = Cesium.Cartesian3.fromDegrees(129.507780, 42.9075, 0);
+//            const origMagnitude = Cesium.Cartesian3.magnitude(position);
+//            const verticalAmount = 10;
+//            const newMagnitude = origMagnitude + verticalAmount;
+//            const scalar = newMagnitude / origMagnitude;
+
+//            const newPosition = new Cesium.Cartesian3();
+//            Cesium.Cartesian3.multiplyByScalar(position, scalar, newPosition);
+
         if (!this.dragging)
             return false;
 
@@ -195,7 +202,7 @@ class Waypoint extends Draggable {
         var surfaceNormal = scene.globe.ellipsoid.geodeticSurfaceNormal(cartesian);
         var planeNormal = Cesium.Cartesian3.subtract(scene.camera.position, cartesian, new Cesium.Cartesian3());
         planeNormal = Cesium.Cartesian3.normalize(planeNormal, planeNormal);
-        var ray = this.viewer.scene.camera.getPickRay(movement.endPosition);
+        var ray = this.viewer.scene.camera.getPickRay(event.endPosition);
         var plane = Cesium.Plane.fromPointNormal(cartesian, planeNormal);
         var newCartesian = Cesium.IntersectionTests.rayPlane(ray, plane);
 
@@ -224,18 +231,25 @@ class Waypoint extends Draggable {
             this.rebuild();
 
             return true;
-
         }
 
         return false;
     }
 
-    onClick(cartesian, x, y) {
-        if (this.hoveredPoint) {
-            this.clickedCallback(x, y);
+    onPick(objects) {
+        if (!this.editMode)
+            return false;
+
+        // Pick waypoints first
+        this.hoveredPoint = objects.find(object => { return object.id === this.point });
+        if (this.hoveredPoint)
             return true;
-        }
-        // TODO: Click on loiter
+
+        // Pick loiter next
+        this.hoveredLoiter = objects.find(object => { return object.id === this.loiter });
+        if (this.hoveredLoiter)
+            return true;
+
         return false;
     }
 

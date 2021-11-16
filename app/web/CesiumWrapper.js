@@ -37,7 +37,9 @@ class CesiumWrapper {
 
         this.input = new Input(this.viewer);
         this.viewport = new Viewport(this.viewer);
-        this.input.subscribe("onMove", (movement, cartesian) => { return that.viewport.onMove(cartesian) });
+        this.input.subscribe(InputTypes.ON_MOVE, (event, cartesian, modifier) => {
+            return that.viewport.onMove(cartesian);
+        });
 
         this.viewport.subscribeCamera((heading, pitch, cameraPosition, centerPosition, pixelScale) => {
             that.input.pixelScale = pixelScale;
@@ -46,12 +48,16 @@ class CesiumWrapper {
         this.webChannel = new QWebChannel(qt.webChannelTransport, (channel) => {
             var menuController = channel.objects.menuController;
             if (menuController) {
-                that.input.subscribe("onClick", (cartesian, x, y) => {
+                that.input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
+                    if (Cesium.defined(modifier))
+                        return;
+
                     var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
                     var latitude = Cesium.Math.toDegrees(cartographic.latitude);
                     var longitude = Cesium.Math.toDegrees(cartographic.longitude);
                     var altitude = cartographic.height;
-                    menuController.invoke(x, y, latitude, longitude, altitude);
+                    menuController.invoke(event.position.x, event.position.y,
+                                          latitude, longitude, altitude);
                     return true;
                 });
             }
@@ -59,7 +65,6 @@ class CesiumWrapper {
             var rulerController = channel.objects.rulerController;
             if (rulerController) {
                 const ruler = new Ruler(that.viewer, that.input);
-                // TODO: subscribe input
                 rulerController.cleared.connect(() => { ruler.clear(); });
                 rulerController.rulerModeChanged.connect(mode => { ruler.setEnabled(mode) });
                 ruler.subscribeDistance(distance => { rulerController.distance = distance; });
