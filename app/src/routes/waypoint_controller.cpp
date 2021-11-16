@@ -144,6 +144,14 @@ void WaypointController::setWaypointIndex(int index)
     emit waypointChanged();
 }
 
+void WaypointController::setCurrentWaypointSelected(bool selected)
+{
+    if (!m_route || !m_waypoint)
+        return;
+
+    emit setWaypointSelected(m_route->id(), m_route->waypointIndex(m_waypoint), selected);
+}
+
 void WaypointController::renameWaypoint(const QString& name)
 {
     if (!m_route || !m_waypoint)

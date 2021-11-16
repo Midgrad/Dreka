@@ -20,6 +20,15 @@ class Route {
         this.lines = [];
     }
 
+    clear() {
+        var that = this;
+        this.lines.forEach(line => that.viewer.entities.remove(line));
+        this.lines = [];
+
+        this.waypoints.forEach(waypoint => waypoint.clear());
+        this.waypoints = [];
+    }
+
     setRouteData(routeData) {
         //this.visible = routeData.visible;
         this.name = routeData.name;
@@ -50,33 +59,17 @@ class Route {
 
             // Add line
             if (this.waypoints.length > 1)
-                this.addLine(this.waypoints[index - 1], this.waypoints[index]);
+                this._addLine(this.waypoints[index - 1], this.waypoints[index]);
         }
     }
 
-    addLine(first, second) {
-        var that = this;
-        var line = this.viewer.entities.add({
-            polyline: {
-                show: new Cesium.CallbackProperty(() => { return first.validPosition &&
-                                                                 second.validPosition; }, false),
-                positions: new Cesium.CallbackProperty(() => { return [first.position,
-                                                                       second.position]; }, false),
-                arcType: Cesium.ArcType.GEODESIC,
-                material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.WHITE),
-                width: 8.0
-            }
-        });
-        this.lines.push(line);
+    setEditMode(editMode) {
+        this.editMode = editMode;
+        this.waypoints.forEach(waypoint => waypoint.setEditMode(editMode));
     }
 
-    clear() {
-        var that = this;
-        this.lines.forEach(line => that.viewer.entities.remove(line));
-        this.lines = [];
-
-        this.waypoints.forEach(waypoint => waypoint.clear());
-        this.waypoints = [];
+    setWaypointSelected(index, selected) {
+        this.waypoints[index].setWaypointSelected(selected);
     }
 
     removeWaypoint(index) {
@@ -116,9 +109,20 @@ class Route {
         this.waypoints[index].flyTo();
     }
 
-    setEditMode(editMode) {
-        this.editMode = editMode;
-        this.waypoints.forEach(waypoint => waypoint.setEditMode(editMode));
+    _addLine(first, second) {
+        var that = this;
+        var line = this.viewer.entities.add({
+            polyline: {
+                show: new Cesium.CallbackProperty(() => { return first.validPosition &&
+                                                                 second.validPosition; }, false),
+                positions: new Cesium.CallbackProperty(() => { return [first.position,
+                                                                       second.position]; }, false),
+                arcType: Cesium.ArcType.GEODESIC,
+                material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.WHITE),
+                width: 8.0
+            }
+        });
+        this.lines.push(line);
     }
 }
 
@@ -140,6 +144,11 @@ class Routes {
         this.editingRoute = null
     }
 
+    clear() {
+        this.routes.forEach(route => { route.clear(); } );
+        this.routes.clear();
+    }
+
     setEditingRoute(routeId) {
         var route = this.routes.has(routeId) ? this.routes.get(routeId) : null;
 
@@ -153,20 +162,6 @@ class Routes {
 
         if (this.editingRoute)
             this.editingRoute.setEditMode(true);
-    }
-
-    centerRoute(routeId) {
-        if (!this.routes.has(routeId))
-            return;
-
-        this.routes.get(routeId).center();
-    }
-
-    centerWaypoint(routeId, index) {
-        if (!this.routes.has(routeId))
-            return;
-
-        this.routes.get(routeId).centerWaypoint(index);
     }
 
     setRouteData(routeId, data) {
@@ -201,8 +196,24 @@ class Routes {
         this.routes.get(routeId).removeWaypoint(index);
     }
 
-    clear() {
-        this.routes.forEach(route => { route.clear(); } );
-        this.routes.clear();
+    centerRoute(routeId) {
+        if (!this.routes.has(routeId))
+            return;
+
+        this.routes.get(routeId).center();
+    }
+
+    centerWaypoint(routeId, index) {
+        if (!this.routes.has(routeId))
+            return;
+
+        this.routes.get(routeId).centerWaypoint(index);
+    }
+
+    setWaypointSelected(routeId, index, selected) {
+        if (!this.routes.has(routeId))
+            return;
+
+        this.routes.get(routeId).setWaypointSelected(index, selected);
     }
 }

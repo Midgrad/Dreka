@@ -20,6 +20,12 @@ Item {
     PointedMenu {
         id: menu
         title: qsTr("Edit Waypoint")
+        onMenuVisibleChanged: {
+            if (menuVisible)
+                controller.setCurrentWaypointSelected(true);
+            else if (editor.sourceComponent !== editComponent)
+                controller.setCurrentWaypointSelected(false);
+        }
 
         Controls.MenuItem {
             text: qsTr("Goto")
@@ -48,6 +54,8 @@ Item {
         WaypointEdit {
             waypoint: controller.waypoint
             waypointIndex: controller.waypointIndex
+            Component.onCompleted: controller.setCurrentWaypointSelected(true);
+            Component.onDestruction: controller.setCurrentWaypointSelected(false);
         }
     }
 }

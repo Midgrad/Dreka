@@ -49,7 +49,7 @@ class CesiumWrapper {
             var menuController = channel.objects.menuController;
             if (menuController) {
                 that.input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
-                    if (Cesium.defined(modifier))
+                    if (Cesium.defined(modifier) || !Cesium.defined(cartesian))
                         return;
 
                     var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
@@ -140,6 +140,9 @@ class CesiumWrapper {
                     routes.waypointClickedCallback = (routeId, index, x, y) => {
                         waypointController.invokeWaypointMenu(routeId, index, x, y);
                     }
+                    waypointController.setWaypointSelected.connect((routeId, index, opened) => {
+                        routes.setWaypointSelected(routeId, index, opened);
+                    });
                 }
             }
 

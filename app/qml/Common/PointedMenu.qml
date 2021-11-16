@@ -10,6 +10,7 @@ Item {
     function addMenu(submenu) { menu.addMenu(submenu); }
     function removeMenu(submenu) { menu.removeMenu(submenu); }
 
+    property alias menuVisible: menu.visible
     property alias title: menu.title
     default property alias contentData: menu.contentData
 

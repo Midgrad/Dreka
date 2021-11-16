@@ -18,6 +18,7 @@ class Waypoint extends Draggable {
         this.position = Cesium.Cartesian3.ZERO;
         this.terrainPosition = Cesium.Cartesian3.ZERO;
         this.editMode = false;
+        this.waypointSelected = false;
         this.hoveredPoint = false;
         this.hoveredLoiter = false;
 
@@ -27,7 +28,9 @@ class Waypoint extends Draggable {
             position: new Cesium.CallbackProperty(() => { return that.position; }, false),
             billboard: {
                 image: "./signs/wpt.svg",
-                scale: new Cesium.CallbackProperty(() => { return that.hoveredPoint ? 1.5 : 1.0; }, false),
+                scale: new Cesium.CallbackProperty(() => {
+                    return (that.waypointSelected || that.hoveredPoint) ? 1.5 : 1.0;
+                }, false),
                 disableDepthTestDistance: Number.POSITIVE_INFINITY
             },
             label: {
@@ -85,10 +88,10 @@ class Waypoint extends Draggable {
         this.terrainAltitude = 0; // Don't trust terrain data
         this.changed = false;
 
-        this.rebuild();
+        this._rebuild();
     }
 
-    rebuild() {
+    _rebuild() {
         var latitude = this.waypointData.latitude;
         var longitude = this.waypointData.longitude;
         var altitude = this.waypointData.altitude;
@@ -123,7 +126,7 @@ class Waypoint extends Draggable {
         this.point.billboard.show = this.validPosition;
         this.point.billboard.color = this.waypointData.current ? Cesium.Color.FUCHSIA : Cesium.Color.WHITE;
 
-        this.point.label.show = this.validPosition && this.editMode;
+        this.point.label.show = this.validPosition && this.editMode && !this.waypointSelected;
         this.point.label.text = this.waypointData.name + " " + (this.index + 1);
 
         var acceptRadius = params && params.accept_radius ? params.accept_radius : 0;
@@ -143,7 +146,12 @@ class Waypoint extends Draggable {
 
     setEditMode(edit) {
         this.editMode = edit;
-        this.rebuild();
+        this._rebuild();
+    }
+
+    setWaypointSelected(selected) {
+        this.waypointSelected = selected;
+        this.point.label.show = this.validPosition && this.editMode && !this.waypointSelected;
     }
 
     onClick(event, unusedCartesian, modifier) {
@@ -213,7 +221,7 @@ class Waypoint extends Draggable {
             this.waypointData.longitude = Cesium.Math.toDegrees(newCartographic.longitude);
             this.waypointData.altitude = newCartographic.height;
             this.changed = true;
-            this.rebuild();
+            this._rebuild();
 
             return true;
         }
@@ -228,7 +236,7 @@ class Waypoint extends Draggable {
 
             this.waypointData.params.radius = distance;
             this.changed = true;
-            this.rebuild();
+            this._rebuild();
 
             return true;
         }

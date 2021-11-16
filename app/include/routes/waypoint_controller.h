@@ -34,6 +34,7 @@ public slots:
     void invokeWaypointMenu(const QVariant& routeId, int index, double x, double y);
     void setWaypoint(const QVariant& routeId, int index);
     void setWaypointIndex(int index);
+    void setCurrentWaypointSelected(bool selected);
 
     void renameWaypoint(const QString& name);
     void changeWaypointType(const QString& typeId);
@@ -46,6 +47,7 @@ signals:
     void routeChanged();
 
     void invokeMenu(double x, double y);
+    void setWaypointSelected(QVariant routeId, int index, bool opened);
 
 private:
     domain::IRoutesRepository* const m_routesRepository;
