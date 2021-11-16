@@ -159,8 +159,9 @@ class Waypoint extends Draggable {
             return;
 
         if (this.hoveredPoint) {
-            // TODO: entity's center
-            this.clickedCallback(event.position.x, event.position.y);
+            var screenPosition = this.waypointPosition();
+            this.clickedCallback(screenPosition ? screenPosition.x : event.position.x,
+                                 screenPosition ? screenPosition.y : event.position.y);
             return true;
         }
         // TODO: Click on loiter to change clockwise
@@ -262,4 +263,12 @@ class Waypoint extends Draggable {
     }
 
     flyTo() { this.viewer.flyTo(this.point); }
+
+    waypointPosition() {
+        var scene = this.viewer.scene;
+        var cartesian = Cesium.Cartesian3.fromDegrees(this.waypointData.longitude,
+                                                      this.waypointData.latitude,
+                                                      this.waypointData.altitude);
+        return Cesium.SceneTransforms.wgs84ToWindowCoordinates(scene, cartesian);
+    }
 }

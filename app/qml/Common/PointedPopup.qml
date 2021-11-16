@@ -4,19 +4,25 @@ import Industrial.Controls 1.0 as Controls
 Item {
     id: root
 
+    property alias closePolicy: popup.closePolicy
     property alias source: loader.source
     property alias sourceComponent: loader.sourceComponent
 
     function open(x, y, component) {
         loader.sourceComponent = component;
-        popup.x = x - popup.width / 2;
-        popup.y = y - popup.height - pointer.height;
+        move(x, y);
         popup.open();
     }
 
+    function move(x, y) {
+        popup.x = x - popup.width / 2;
+        popup.y = y - popup.height - pointer.height;
+    }
+
+    function close() { popup.close(); }
+
     Controls.Popup {
         id: popup
-        //closePolicy: Controls.Popup.NoAutoClose
         onClosed: loader.sourceComponent = null
 
         Loader {

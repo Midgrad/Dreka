@@ -69,6 +69,14 @@ Item {
                 onActivated: controller.changeWaypointType(currentItem.id);
                 Layout.fillWidth: true
             }
+
+            Controls.Button {
+                flat: true
+                leftCropped: true
+                iconSource: "qrc:/icons/close.svg"
+                tipText: qsTr("Close")
+                onClicked: editor.close()
+            }
         }
 
         Flickable {

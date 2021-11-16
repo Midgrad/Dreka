@@ -13,6 +13,7 @@ class Route {
 
         // Data
         this.editMode = false;
+        this.selectedIndex = -1;
 
         // Entities
         this.waypoints = [];
@@ -70,6 +71,18 @@ class Route {
 
     setWaypointSelected(index, selected) {
         this.waypoints[index].setWaypointSelected(selected);
+
+        if (selected)
+            this.selectedIndex = index;
+        else if (this.selectedIndex === index)
+            this.selectedIndex = null;
+    }
+
+    selectedWaypointPosition() {
+        if (this.selectedIndex === -1)
+            return undefined;
+
+        return this.waypoints[this.selectedIndex].waypointPosition();
     }
 
     removeWaypoint(index) {
@@ -141,7 +154,8 @@ class Routes {
 
         // Entities
         this.routes = new Map();
-        this.editingRoute = null
+        this.editingRoute = null;
+        this.selectedRoute = null;
     }
 
     clear() {
@@ -215,5 +229,16 @@ class Routes {
             return;
 
         this.routes.get(routeId).setWaypointSelected(index, selected);
+        if (selected)
+            this.selectedRoute = routeId;
+        else if (this.selectedRoute === routeId)
+            this.selectedRoute = null;
+    }
+
+    selectedWaypointPosition() {
+        if (!this.selectedRoute)
+            return undefined;
+
+        return this.routes.get(this.selectedRoute).selectedWaypointPosition();
     }
 }

@@ -24,6 +24,11 @@ Item {
         }
     }
 
+    function move(x, y) {
+        menu.x = x - menu.width / 2;
+        menu.y = y - menu.height - pointer.height;
+    }
+
     Controls.Menu {
         id: menu
         border.width: 0

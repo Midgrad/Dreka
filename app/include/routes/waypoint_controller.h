@@ -35,6 +35,7 @@ public slots:
     void setWaypoint(const QVariant& routeId, int index);
     void setWaypointIndex(int index);
     void setCurrentWaypointSelected(bool selected);
+    void updatePopupPosition(double x, double y);
 
     void renameWaypoint(const QString& name);
     void changeWaypointType(const QString& typeId);
@@ -46,6 +47,8 @@ signals:
     void waypointChanged();
     void routeChanged();
 
+    void closeEditor();
+    void updatePosition(double x, double y);
     void invokeMenu(double x, double y);
     void setWaypointSelected(QVariant routeId, int index, bool opened);
 

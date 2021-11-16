@@ -133,6 +133,8 @@ void WaypointController::setWaypointIndex(int index)
     if (m_waypoint == waypoint)
         return;
 
+    emit closeEditor();
+
     if (m_waypoint)
         disconnect(m_waypoint, nullptr, this, nullptr);
 
@@ -150,6 +152,11 @@ void WaypointController::setCurrentWaypointSelected(bool selected)
         return;
 
     emit setWaypointSelected(m_route->id(), m_route->waypointIndex(m_waypoint), selected);
+}
+
+void WaypointController::updatePopupPosition(double x, double y)
+{
+    emit updatePosition(x, y);
 }
 
 void WaypointController::renameWaypoint(const QString& name)

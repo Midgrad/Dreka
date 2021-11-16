@@ -11,6 +11,8 @@ Item {
     property real longitude: 0.0
     property real altitude: 0.0
 
+    property alias menuVisible: menu.menuVisible
+
     function addSubmenu(submenu) { menu.addMenu(submenu); }
     function removeSubmenu(submenu) { menu.removeMenu(submenu); }
 

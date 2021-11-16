@@ -143,6 +143,11 @@ class CesiumWrapper {
                     waypointController.setWaypointSelected.connect((routeId, index, opened) => {
                         routes.setWaypointSelected(routeId, index, opened);
                     });
+                    this.viewport.subscribeCamera(() => {
+                        var position = routes.selectedWaypointPosition();
+                        if (Cesium.defined(position))
+                            waypointController.updatePopupPosition(position.x, position.y);
+                    });
                 }
             }
 

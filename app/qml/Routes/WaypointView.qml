@@ -12,7 +12,19 @@ Item {
 
     WaypointController {
         id: controller
+        onCloseEditor: if (editor.sourceComponent) editor.close();
         onInvokeMenu: menu.open(x, y)
+        onUpdatePosition: {
+            if (menu.menuVisible)
+                menu.move(x, y)
+            else if (editor.sourceComponent)
+                editor.move(x, y)
+        }
+    }
+
+    Connections {
+        target: mapMenu
+        onMenuVisibleChanged: if (mapMenu.menuVisible) if (editor.sourceComponent) editor.close();
     }
 
     Component.onCompleted: map.registerController("waypointController", controller)
@@ -46,6 +58,7 @@ Item {
 
     PointedPopup {
         id: editor
+        closePolicy: Controls.Popup.CloseOnEscape
     }
 
     Component {
