@@ -32,6 +32,7 @@ Item {
     PointedMenu {
         id: menu
         title: qsTr("Edit Waypoint")
+        anchors.fill: parent
         onMenuVisibleChanged: {
             if (menuVisible)
                 controller.setCurrentWaypointSelected(true);
@@ -47,7 +48,7 @@ Item {
 
         Controls.MenuItem {
             text: qsTr("Parameters")
-            onTriggered: editor.open(menu.invokeX, menu.invokeY, editComponent)
+            onTriggered: editor.open(menu.pointed.x, menu.pointed.y, editComponent)
         }
 
         Controls.MenuItem {
@@ -58,6 +59,10 @@ Item {
 
     PointedPopup {
         id: editor
+        anchors.fill: parent
+        minY: menuBar.height + Controls.Theme.margins * 2
+        maxY: height - map.controlHeight
+        maxX: width - dashboard.width - Controls.Theme.margins * 2
         closePolicy: Controls.Popup.CloseOnEscape
     }
 

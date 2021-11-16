@@ -5,6 +5,7 @@ import Dreka 1.0
 
 import "Map"
 import "Routes"
+import "Waypoints"
 import "Vehicles"
 
 Controls.ApplicationWindow {
@@ -55,6 +56,7 @@ Controls.ApplicationWindow {
     }
 
     VehiclesView {
+        id: dashboard
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.margins: Controls.Theme.margins

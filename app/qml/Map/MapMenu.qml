@@ -28,5 +28,8 @@ Item {
 
     Component.onCompleted: map.registerController("menuController", controller)
 
-    PointedMenu { id: menu }
+    PointedMenu {
+        id: menu
+        anchors.fill: parent
+    }
 }

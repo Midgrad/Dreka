@@ -1,7 +1,7 @@
 import QtQuick 2.6
 import Industrial.Controls 1.0 as Controls
 
-Item {
+PointedItem {
     id: root
 
     property alias closePolicy: popup.closePolicy
@@ -14,27 +14,16 @@ Item {
         popup.open();
     }
 
-    function move(x, y) {
-        popup.x = x - popup.width / 2;
-        popup.y = y - popup.height - pointer.height;
-    }
-
-    function close() { popup.close(); }
-
-    Controls.Popup {
+    pointed: Controls.Popup {
         id: popup
-        onClosed: loader.sourceComponent = null
+        onClosed: {
+            root.hidePointer();
+            loader.sourceComponent = null;
+        }
 
         Loader {
             id: loader
             anchors.fill: parent
         }
-    }
-
-    Pointer {
-        id: pointer
-        x: popup.x + popup.width / 2 - width / 2
-        y: popup.y + popup.height
-        visible: popup.visible
     }
 }
