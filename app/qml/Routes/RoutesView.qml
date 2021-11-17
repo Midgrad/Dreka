@@ -45,25 +45,48 @@ RowLayout {
     spacing: 1
 
     Controls.Button {
-        visible: controller.selectedRoute !== undefined
-        rightCropped: true
-        iconSource: "qrc:/icons/left.svg"
-        tipText: qsTr("Back to routes")
-        onClicked: controller.selectRoute(null)
+        visible: controller.selectedRoute === undefined
+        tipText: highlighted ? qsTr("Close routes list") : qsTr("Open routes list")
+        iconSource: "qrc:/icons/route.svg"
+        highlighted: sidebar.sourceComponent == routeListComponent
+        onClicked: sidebar.sourceComponent = highlighted ? null : routeListComponent
     }
 
     Controls.Button {
-        leftCropped: controller.selectedRoute !== undefined
-        text: controller.selectedRoute ? controller.routeData(controller.selectedRoute).name : ""
-        tipText: routeList.visible ? qsTr("Close routes viewer") : qsTr("Open routes viewer")
-        iconSource: controller.selectedRoute ? "" : "qrc:/icons/route.svg"
-        highlighted: routeList.visible
-        onClicked: routeList.visible ? routeList.close() : routeList.open()
+        rightCropped: true
+        visible: controller.selectedRoute !== undefined
+        iconSource: "qrc:/icons/left.svg"
+        tipText: qsTr("Back to routes")
+        onClicked: {
+            if (sidebar.sourceComponent == routeEditComponent)
+                sidebar.sourceComponent = routeListComponent;
+            controller.selectRoute(null);
+        }
     }
 
-    RouteList {
-        id: routeList
-        y: root.height + Controls.Theme.margins
-        x: -root.parent.x
+    Controls.Button {
+        leftCropped: true
+        visible: controller.selectedRoute !== undefined
+        text: controller.selectedRoute ? controller.routeData(controller.selectedRoute).name : ""
+        tipText: highlighted ? qsTr("Close route viewer") : qsTr("Open route viewer")
+        highlighted: sidebar.sourceComponent == routeEditComponent
+        onClicked: sidebar.sourceComponent = highlighted ? null : routeEditComponent
+    }
+
+    Component {
+        id: routeListComponent
+
+        RouteList {
+            onExpand: {
+                controller.selectRoute(routeId);
+                sidebar.sourceComponent = routeEditComponent;
+            }
+        }
+    }
+
+    Component {
+        id: routeEditComponent
+
+        RouteEdit { route: controller.routeData(controller.selectedRoute) }
     }
 }

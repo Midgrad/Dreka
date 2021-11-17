@@ -4,12 +4,12 @@ import Industrial.Controls 1.0 as Controls
 import Industrial.Widgets 1.0 as Widgets
 import Dreka 1.0
 
-Controls.Popup {
+Controls.Frame {
     id: root
 
-    closePolicy: Controls.Popup.NoAutoClose
+    signal expand(var routeId)
+
     width: Controls.Theme.baseSize * 15
-    height: Math.min(implicitHeight, main.availableHeight)
 
     ColumnLayout {
         anchors.fill: parent
@@ -17,7 +17,6 @@ Controls.Popup {
 
         RowLayout {
             spacing: Controls.Theme.spacing
-            visible: !controller.selectedRoute
 
             Controls.FilterField {
                 id: filterField
@@ -37,35 +36,18 @@ Controls.Popup {
             }
         }
 
-        Loader {
-            sourceComponent: controller.selectedRoute ? editComponent : listComponent
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
-    }
-
-    Component {
-        id: listComponent
-
         Widgets.ListWrapper {
             emptyText: qsTr("No routes")
             model: controller.routeIds
-            width: root.width
             delegate: Route {
                 width: parent.width
+                height: visible ? implicitHeight : 0
+                visible: route.name.indexOf(filterField.text) > -1
                 route: controller.routeData(modelData)
-                onExpand: controller.selectRoute(modelData)
+                onExpand: root.expand(modelData)
             }
-        }
-    }
-
-    Component {
-        id: editComponent
-
-        RouteEdit {
-            width: root.width
-            route: controller.routeData(controller.selectedRoute)
-            onCollapse: controller.selectRoute(null)
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
     }
 }

@@ -60,9 +60,10 @@ Item {
     PointedPopup {
         id: editor
         anchors.fill: parent
+        minX: sidebar.width + Controls.Theme.margins * 2
         minY: menuBar.height + Controls.Theme.margins * 2
-        maxY: height - map.controlHeight
         maxX: width - dashboard.width - Controls.Theme.margins * 2
+        maxY: height - map.controlHeight
         closePolicy: Controls.Popup.CloseOnEscape
     }
 

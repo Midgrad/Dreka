@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
 import Industrial.Widgets 1.0 as Widgets
 
-Item {
+Controls.Frame {
     id: root
 
     property var route
@@ -15,10 +15,7 @@ Item {
 
     property bool editName: false
 
-    signal collapse()
-
-    implicitWidth: column.implicitWidth
-    implicitHeight: column.implicitHeight
+    width: Controls.Theme.baseSize * 15
 
     Connections {
         target: controller
@@ -29,6 +26,7 @@ Item {
     ColumnLayout {
         id: column
         anchors.fill: parent
+        anchors.leftMargin: -Controls.Theme.margins * 3
 
         RowLayout {
             spacing: Controls.Theme.spacing

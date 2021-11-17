@@ -11,9 +11,6 @@ import "Vehicles"
 Controls.ApplicationWindow {
     id: main
 
-    readonly property real availableHeight: main.height - map.controlHeight - menuBar.height -
-                                            Controls.Theme.margins * 2
-
     visible: true
     width: 1280
     height: 768
@@ -60,5 +57,15 @@ Controls.ApplicationWindow {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.margins: Controls.Theme.margins
+    }
+
+    Loader {
+        id: sidebar
+        anchors.top: menuBar.bottom
+        anchors.left: map.left
+        anchors.margins: Controls.Theme.margins
+        width: item ? item.width : 0
+        height: Math.min(implicitHeight, main.height - map.controlHeight - menuBar.height -
+                                         Controls.Theme.margins * 2)
     }
 }
