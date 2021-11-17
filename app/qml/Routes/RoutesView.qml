@@ -45,8 +45,18 @@ RowLayout {
     spacing: 1
 
     Controls.Button {
-        iconSource: "qrc:/icons/route.svg"
-        tipText: qsTr("Routes")
+        visible: controller.selectedRoute !== undefined
+        rightCropped: true
+        iconSource: "qrc:/icons/left.svg"
+        tipText: qsTr("Back to routes")
+        onClicked: controller.selectRoute(null)
+    }
+
+    Controls.Button {
+        leftCropped: controller.selectedRoute !== undefined
+        text: controller.selectedRoute ? controller.routeData(controller.selectedRoute).name : ""
+        tipText: routeList.visible ? qsTr("Close routes viewer") : qsTr("Open routes viewer")
+        iconSource: controller.selectedRoute ? "" : "qrc:/icons/route.svg"
         highlighted: routeList.visible
         onClicked: routeList.visible ? routeList.close() : routeList.open()
     }
