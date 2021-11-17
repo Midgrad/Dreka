@@ -13,8 +13,8 @@ PointedItem {
 
     function open(x, y) {
         if (menu.count) {
-            menu.visible = true;
             move(x, y);
+            menu.open();
         }
     }
 
