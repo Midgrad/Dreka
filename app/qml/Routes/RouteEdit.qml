@@ -13,6 +13,8 @@ Item {
     property int _dstWidth: root.width * 0.2
     property int _altWidth: root.width * 0.2
 
+    property bool editName: false
+
     signal collapse()
 
     implicitWidth: column.implicitWidth
@@ -34,15 +36,28 @@ Item {
             Controls.Button {
                 flat: true
                 rightCropped: true
-                iconSource: "qrc:/icons/left.svg"
-                tipText: qsTr("Back to routes")
-                onClicked: collapse()
+                text: route ? route.name : ""
+                tipText: qsTr("Edit name")
+                visible: !editName
+                onClicked: editName = true
+                Layout.fillWidth: true
+            }
+
+            Controls.TextField {
+                id: nameEdit
+                flat: true
+                visible: editName
+                Binding on text { value: route ? route.name : ""; when: !nameEdit.activeFocus }
+                onEditingFinished: {
+                    controller.renameRoute(route.id, text);
+                    editName = false;
+                }
+                Layout.fillWidth: true
             }
 
             Controls.Label {
-                text: route ? route.name : ""
-                Layout.alignment: Qt.AlignVCenter
-                Layout.fillWidth: true
+                text: route ? route.type : ""
+                type: Controls.Theme.Label
             }
 
             Controls.Button {

@@ -36,12 +36,12 @@ Item {
             text: route ? route.name : ""
             Layout.alignment: Qt.AlignVCenter
         }
-// TODO: assigned routes
-//        Controls.Label {
-//            text: mission ? mission.vehicle : ""
-//            type: Controls.Theme.Label
-//            Layout.alignment: Qt.AlignVCenter
-//        }
+
+        Controls.Label {
+            text: route ? route.type : ""
+            type: Controls.Theme.Label
+            Layout.alignment: Qt.AlignVCenter
+        }
 
         Item { Layout.fillWidth: true }
 

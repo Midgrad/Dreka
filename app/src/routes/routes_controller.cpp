@@ -22,6 +22,10 @@ RoutesController::RoutesController(QObject* parent) :
             &RoutesController::onRouteAdded);
     connect(m_routesRepository, &IRoutesRepository::routeRemoved, this,
             &RoutesController::onRouteRemoved);
+    connect(m_routesRepository, &IRoutesRepository::routeChanged, this, [this](Route* route) {
+        if (route == m_selectedRoute)
+            emit selectedRouteChanged(route->id());
+    });
 
     for (Route* route : m_routesRepository->routes())
     {
@@ -63,6 +67,7 @@ QJsonObject RoutesController::routeData(const QVariant& routeId) const
 
     QVariantMap routeData = route->toVariantMap();
     routeData[props::waypoints] = route->waypointsCount();
+    routeData[props::type] = route->type()->name;
 
     return QJsonObject::fromVariantMap(routeData);
 }
@@ -142,6 +147,17 @@ void RoutesController::updateRoute(const QVariant& routeId, const QJsonObject& d
         return;
 
     route->fromVariantMap(data.toVariantMap());
+    m_routesRepository->saveRoute(route);
+}
+
+void RoutesController::renameRoute(const QVariant& routeId, const QString& name)
+{
+    Route* route = m_routesRepository->route(routeId);
+    if (!route)
+        return;
+
+    route->setName(name);
+    m_routesRepository->saveRoute(route);
 }
 
 void RoutesController::removeRoute(const QVariant& routeId)
