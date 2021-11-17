@@ -188,46 +188,41 @@ class Waypoint extends Draggable {
         return false;
     }
 
-    onMove(event, badCartesian, modifier) { // TODO: shift - altitude only, ctrl - position only
-
-
-//            const position = Cesium.Cartesian3.fromDegrees(129.507780, 42.9075, 0);
-//            const origMagnitude = Cesium.Cartesian3.magnitude(position);
-//            const verticalAmount = 10;
-//            const newMagnitude = origMagnitude + verticalAmount;
-//            const scalar = newMagnitude / origMagnitude;
-
-//            const newPosition = new Cesium.Cartesian3();
-//            Cesium.Cartesian3.multiplyByScalar(position, scalar, newPosition);
-
+    onMove(event, badCartesian, modifier) {
         if (!this.dragging)
             return false;
 
-        // TODO: to Common
         var scene = this.viewer.scene;
         var camera = scene.camera;
         var cartesian = this.position;
-        var cartographic = scene.globe.ellipsoid.cartesianToCartographic(cartesian);
-        var surfaceNormal = scene.globe.ellipsoid.geodeticSurfaceNormal(cartesian);
-        var planeNormal = Cesium.Cartesian3.subtract(scene.camera.position, cartesian, new Cesium.Cartesian3());
-        planeNormal = Cesium.Cartesian3.normalize(planeNormal, planeNormal);
+
+        // Normal by camera if any modifier else normal by surface
+        var normal = Cesium.defined(modifier) ?
+            Cesium.Cartesian3.subtract(scene.camera.position, cartesian, new Cesium.Cartesian3()) :
+            scene.globe.ellipsoid.geodeticSurfaceNormal(cartesian);
+
+        if (!Cesium.defined(normal))
+            return false;
+
+        normal = Cesium.Cartesian3.normalize(normal, normal);
+
         var ray = this.viewer.scene.camera.getPickRay(event.endPosition);
-        var plane = Cesium.Plane.fromPointNormal(cartesian, planeNormal);
+        var plane = Cesium.Plane.fromPointNormal(cartesian, normal);
         var newCartesian = Cesium.IntersectionTests.rayPlane(ray, plane);
+        var changed = false;
 
         if (this.hoveredPoint) {
-            this.position = newCartesian;
+            // this.position = newCartesian;
             var newCartographic = Cesium.Cartographic.fromCartesian(newCartesian);
-            this.waypointData.latitude = Cesium.Math.toDegrees(newCartographic.latitude);
-            this.waypointData.longitude = Cesium.Math.toDegrees(newCartographic.longitude);
+            // Modify only altitude if SHIFT
+            if (modifier !== Cesium.KeyboardEventModifier.SHIFT) {
+                this.waypointData.latitude = Cesium.Math.toDegrees(newCartographic.latitude);
+                this.waypointData.longitude = Cesium.Math.toDegrees(newCartographic.longitude);
+            }
             this.waypointData.altitude = newCartographic.height;
-            this.changed = true;
-            this._rebuild();
-
-            return true;
+            changed = true;
         }
-
-        if (this.hoveredLoiter) {
+        else if (this.hoveredLoiter) {
             var distance = Cesium.Cartesian3.distance(newCartesian, this.position);
             var params = this.waypointData.params;
 
@@ -236,13 +231,14 @@ class Waypoint extends Draggable {
                 return false;
 
             this.waypointData.params.radius = distance;
-            this.changed = true;
-            this._rebuild();
-
-            return true;
+            changed = true;
         }
 
-        return false;
+        this.changed = changed;
+        if (changed)
+            this._rebuild();
+
+        return changed;
     }
 
     onPick(objects) {
