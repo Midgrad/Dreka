@@ -197,7 +197,8 @@ void RoutesController::addWaypoint(const QVariant& routeId, const QString& wptTy
     m_routesRepository->saveWaypoint(route, wpt);
 }
 
-void RoutesController::updateWaypoint(const QVariant& routeId, int index, const QJsonObject& data)
+void RoutesController::updateWaypointData(const QVariant& routeId, int index,
+                                          const QJsonObject& data)
 {
     Route* route = m_routesRepository->route(routeId);
     if (!route)
@@ -215,8 +216,21 @@ void RoutesController::updateWaypoint(const QVariant& routeId, int index, const 
         waypoint->setConfirmed(false);
         emit m_activeMission->operation()->uploadItem(route->waypointIndex(waypoint));
     }
-    // Promoute to storage
     m_routesRepository->saveWaypoint(route, waypoint);
+}
+
+void RoutesController::updateWaypointCalcData(const QVariant& routeId, int index,
+                                              const QJsonObject& calcData)
+{
+    Route* route = m_routesRepository->route(routeId);
+    if (!route)
+        return;
+
+    Waypoint* waypoint = route->waypoint(index);
+    if (!waypoint)
+        return;
+
+    waypoint->setCalcData(calcData.toVariantMap());
 }
 
 void RoutesController::onRouteAdded(Route* route)

@@ -172,7 +172,7 @@ class Waypoint extends Draggable {
         if (this.dragging) {
             this.setDragging(false);
             if (this.changed)
-                this.changedCallback(this.waypointData);
+                this.changedCallback();
             return true;
         }
 

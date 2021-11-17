@@ -51,8 +51,8 @@ Item {
         }
 
         Controls.Label {
-            text: waypoint && waypoint.params && waypoint.params.distance ?
-                      (Math.round(waypoint.params.distance) + " " + qsTr("m")) : "-"
+            text: waypoint && waypoint.calcData && waypoint.calcData.distance ?
+                      (Math.round(waypoint.calcData.distance) + " " + qsTr("m")) : "-"
             horizontalAlignment: Text.AlignHCenter
             Layout.minimumWidth: _dstWidth
         }

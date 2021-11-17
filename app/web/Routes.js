@@ -9,6 +9,7 @@ class Route {
 
         // Callbacks
         this.waypointChangedCallback = null;
+        this.calcDataChangedCallback = null;
         this.waypointClickedCallback = null;
 
         // Data
@@ -37,22 +38,22 @@ class Route {
 
     setWaypoint(index, waypointData) {
         // TODO: relative latitude
-        //        // Home altitude form first waypoint to waypoints with relative flag
-        //        if (this.points.length === 0)
-        //            this.homeAltitude = altitude;
-        //        else if (Cesium.defined(params.relative) && params.relative)
-        //            altitude += this.homeAltitude;
         if (this.waypoints.length > index) {
             this.waypoints[index].update(waypointData);
-        } else {
+        } else if (this.waypoints.length === index) {
             var waypoint = new Waypoint(this.viewer, this.input, waypointData, index);
             waypoint.setEditMode(this.editMode);
             this.waypoints.push(waypoint);
 
             // Callbacks
             var that = this;
-            waypoint.changedCallback = (waypointData) => {
-                that.waypointChangedCallback(waypoint.index, waypointData);
+            waypoint.changedCallback = () => {
+                // Update calculated data for changed and next wpt
+                that._updateCalcData(waypoint);
+                if (that.waypoints.length > waypoint.index + 1)
+                    that._updateCalcData(this.waypoints[index + 1]);
+
+                that.waypointChangedCallback(waypoint.index, waypoint.waypointData);
             }
             waypoint.clickedCallback = (x, y) => {
                 that.waypointClickedCallback(waypoint.index, x, y);
@@ -61,6 +62,10 @@ class Route {
             // Add line
             if (this.waypoints.length > 1)
                 this._addLine(this.waypoints[index - 1], this.waypoints[index]);
+
+            this._updateCalcData(waypoint);
+        } else {
+            console.warn("Wrong wpt index in setWaypoint")
         }
     }
 
@@ -137,6 +142,19 @@ class Route {
         });
         this.lines.push(line);
     }
+
+    _updateCalcData(waypoint) {
+        var index = waypoint.index;
+        var calcData = waypoint.waypointData.calcData;
+
+        var distance = index > 0 ? Cesium.Cartesian3.distance(
+                                      waypoint.position, this.waypoints[index - 1].position) :
+                                      undefined;
+        calcData.distance = distance;
+
+        waypoint.waypointData.calcData = calcData;
+        this.calcDataChangedCallback(index, calcData);
+    }
 }
 
 class Routes {
@@ -150,6 +168,7 @@ class Routes {
 
         // Callbacks
         this.waypointChangedCallback = null;
+        this.calcDataChangedCallback = null;
         this.waypointClickedCallback = null;
 
         // Entities
@@ -189,6 +208,9 @@ class Routes {
             var that = this;
             route.waypointChangedCallback = (index, waypointData) => {
                 that.waypointChangedCallback(routeId, index, waypointData);
+            }
+            route.calcDataChangedCallback = (index, calcData) => {
+                that.calcDataChangedCallback(routeId, index, calcData);
             }
             route.waypointClickedCallback = (index, x, y) => {
                 that.waypointClickedCallback(routeId, index, x, y);
