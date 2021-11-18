@@ -24,6 +24,7 @@
         <file>Routes/WaypointListItem.qml</file>
         <file>Waypoints/WaypointView.qml</file>
         <file>Waypoints/WaypointEdit.qml</file>
+        <file>Waypoints/PayloadListItem.qml</file>
         <file>Vehicles/VehiclesView.qml</file>
         <file>Vehicles/MissionView.qml</file>
         <file>Vehicles/GenericDashboard.qml</file>

@@ -7,6 +7,7 @@ RowLayout {
 
     property bool expanded: false
     property alias text: button.text
+    property alias buttonEnabled: button.enabled
 
     signal expand()
 

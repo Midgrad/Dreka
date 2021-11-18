@@ -53,7 +53,7 @@ Item {
 
         Controls.MenuItem {
             text: qsTr("Remove")
-            onTriggered: controller.remove()
+            onTriggered: controller.removeWaypoint()
         }
     }
 

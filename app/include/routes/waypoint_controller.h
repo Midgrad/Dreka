@@ -29,6 +29,7 @@ public:
     QJsonArray waypointItemTypes() const;
 
     QJsonArray waypointParameters() const;
+    Q_INVOKABLE QJsonArray waypointItemParameters(int index) const;
 
 public slots:
     void invokeWaypointMenu(const QVariant& routeId, int index, double x, double y);
@@ -41,7 +42,11 @@ public slots:
     void changeWaypointType(const QString& typeId);
     void setWaypointPosition(double latitude, double longitude, float altitude);
     void setWaypointParameter(const QString& parameterId, const QVariant& value);
-    void remove();
+    void removeWaypoint();
+
+    void addWaypointItem(const QString& typeId);
+    void setWaypointItemParameter(int index, const QString& parameterId, const QVariant& value);
+    void removeWaypointItem(int index);
 
 signals:
     void waypointChanged();

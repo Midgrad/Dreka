@@ -1,7 +1,6 @@
 import QtQuick 2.6
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
-import Dreka 1.0
 
 import "../Common"
 
@@ -130,6 +129,8 @@ Item {
                     longitude: waypoint.longitude ? waypoint.longitude : NaN
                     altitude: waypoint.altitude ? waypoint.altitude : NaN
                     onChanged: controller.setWaypointPosition(latitude, longitude, altitude)
+                    Layout.fillWidth: true
+                    Layout.leftMargin: Controls.Theme.margins
                 }
 
                 ListElement {
@@ -146,6 +147,57 @@ Item {
                     onParameterChanged: controller.setWaypointParameter(id, value)
                     Layout.fillWidth: true
                     Layout.leftMargin: Controls.Theme.margins
+                }
+
+                ListElement {
+                    text: qsTr("Payloads")
+                    buttonEnabled: !expanded && waypoint.items.length
+                    expanded: selectedItem == payloadsList
+                    onExpand: selectedItem = payloadsList
+                    Layout.fillWidth: true
+
+                    Controls.Label {
+                        text: "(" + waypoint.items.length + ")"
+                        type: Controls.Theme.Label
+                    }
+
+                    Controls.MenuButton {
+                        flat: true
+                        leftCropped: true
+                        iconSource: "qrc:/icons/plus.svg"
+                        tipText: qsTr("Add Payload")
+                        model: controller.waypointItemTypes
+                        textRole: "name"
+                        onTriggered: {
+                            controller.addWaypointItem(modelData.id);
+                            if (waypoint.items.length) {
+                                selectedItem = payloadsList;
+                            }
+                        }
+                    }
+                }
+
+                ColumnLayout {
+                    id: payloadsList
+                    visible: selectedItem == payloadsList
+                    spacing: 1
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.leftMargin: Controls.Theme.margins
+
+                    Repeater {
+                        model: waypoint.items
+                        onCountChanged: {
+                            if (count == 0 && selectedItem == payloadsList)
+                                selectedItem = parametersEdit
+                        }
+
+                        PayloadListItem {
+                            payload: modelData
+                            payloadIndex: index
+                            width: parent.width
+                        }
+                    }
                 }
             }
 
