@@ -36,7 +36,8 @@ public slots:
     void renameRoute(const QVariant& routeId, const QString& name);
     void removeRoute(const QVariant& routeId);
     void addWaypoint(const QVariant& routeId, const QString& wptTypeId, const QVariantMap& args);
-    void updateWaypoint(const QVariant& routeId, int index, const QJsonObject& data);
+    void updateWaypointData(const QVariant& routeId, int index, const QJsonObject& data);
+    void updateWaypointCalcData(const QVariant& routeId, int index, const QJsonObject& calcData);
 
 signals:
     void routeTypesChanged();

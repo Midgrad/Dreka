@@ -99,8 +99,12 @@ class CesiumWrapper {
             var routesController = channel.objects.routesController;
             if (routesController) {
                 const routes = new Routes(that.viewer, that.input);
+
                 routes.waypointChangedCallback = (routeId, index, waypointData) => {
-                    routesController.updateWaypoint(routeId, index, waypointData);
+                    routesController.updateWaypointData(routeId, index, waypointData);
+                }
+                routes.calcDataChangedCallback = (routeId, index, calcData) => {
+                    routesController.updateWaypointCalcData(routeId, index, calcData);
                 }
 
                 var setWaypoint = (routeId, index) => {

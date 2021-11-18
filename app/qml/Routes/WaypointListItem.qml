@@ -51,18 +51,16 @@ Item {
         }
 
         Controls.Label {
-            text: waypoint && waypoint.distance ? (Math.round(waypoint.distance) + " " + qsTr("m"))
-                                                : "-"
+            text: waypoint && waypoint.calcData && waypoint.calcData.distance ?
+                      (Math.round(waypoint.calcData.distance) + " " + qsTr("m")) : "-"
             horizontalAlignment: Text.AlignHCenter
             Layout.minimumWidth: _dstWidth
         }
 
         Controls.Label {
-            text: waypoint && waypoint.params && waypoint.params.altitude ?
-                      (Math.round(waypoint.params.altitude) + " " + qsTr("m")) : "-"
+            text: waypoint ? (Math.round(waypoint.altitude) + " " + qsTr("m")) : "-"
             horizontalAlignment: Text.AlignHCenter
             Layout.minimumWidth: _altWidth
         }
-
     }
 }

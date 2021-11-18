@@ -8,12 +8,12 @@ Controls.Frame {
 
     property var route
 
-    property int _wptWidth: root.width * 0.3
-    property int _typeWidth: root.width * 0.3
-    property int _dstWidth: root.width * 0.2
-    property int _altWidth: root.width * 0.2
-
     property bool editName: false
+
+    property int _wptWidth: column.width * 0.3
+    property int _typeWidth: column.width * 0.3
+    property int _dstWidth: column.width * 0.2
+    property int _altWidth: column.width * 0.2
 
     width: Controls.Theme.baseSize * 15
 
@@ -26,7 +26,6 @@ Controls.Frame {
     ColumnLayout {
         id: column
         anchors.fill: parent
-        anchors.leftMargin: -Controls.Theme.margins * 3
 
         RowLayout {
             spacing: Controls.Theme.spacing
