@@ -19,21 +19,21 @@ GridLayout {
     columnSpacing: 1
     columns: 3
 
-    Controls.Label {
-        visible: datum !== ""
-        text: qsTr("Datum")
-        Layout.fillWidth: true
-    }
+// TODO: datum switch
+//    Controls.Label {
+//        visible: datum !== ""
+//        text: qsTr("Datum")
+//        Layout.fillWidth: true
+//    }
 
-    Controls.ComboBox {
-        visible: datum !== ""
-        enabled: false // TODO: datum switch
-        flat: root.flat
-        table: true
-        displayText: datum
-        Layout.fillWidth: true
-        Layout.columnSpan: 2
-    }
+//    Controls.ComboBox {
+//        visible: datum !== ""
+//        flat: root.flat
+//        table: true
+//        displayText: datum
+//        Layout.fillWidth: true
+//        Layout.columnSpan: 2
+//    }
 
     Controls.Label {
         text: qsTr("Latitude")
@@ -66,16 +66,13 @@ GridLayout {
 
     Controls.Button {
         flat: root.flat
+        topCropped: true
         leftCropped: true
-        bottomCropped: true
-        iconSource: "qrc:/icons/center.svg"
-        tipText: qsTr("Teke from map")
-        onClicked: {
-            latitude = map.centerPosition.latitude;
-            longitude = map.centerPosition.longitude;
-            //NOTE: altitude = map.centerPosition.altitude;
-            changed();
-        }
+        iconSource: "qrc:/icons/swap.svg"
+        tipText: qsTr("Switch coordinates presentation")
+        onClicked: dms = !dms
+        Layout.rowSpan: 2
+        Layout.fillHeight: true
     }
 
     Controls.Label {
@@ -105,15 +102,6 @@ GridLayout {
         Binding on realValue { when: !lonSb.activeFocus; value: longitude }
         onRealValueChanged: if (activeFocus) { longitude = realValue; root.changed() }
         Layout.fillWidth: true
-    }
-
-    Controls.Button {
-        flat: root.flat
-        topCropped: true
-        leftCropped: true
-        iconSource: "qrc:/icons/swap.svg"
-        tipText: qsTr("Switch coordinates presentation")
-        onClicked: dms = !dms
     }
 
     Controls.Label {

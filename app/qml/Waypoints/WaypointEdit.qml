@@ -12,6 +12,7 @@ Item {
     property int waypointIndex: -1
 
     property bool editName: false
+    property var selectedItem: parametersEdit
 
     implicitWidth: Controls.Theme.baseSize * 11
     implicitHeight: column.implicitHeight
@@ -91,21 +92,77 @@ Item {
             ColumnLayout {
                 id: properties
                 width: parent.width
-                spacing: Controls.Theme.spacing
+                spacing: 1
+
+                RowLayout {
+                    spacing: 1
+
+                    // TODO: Custom ListElement
+                    Controls.Button {
+                        flat: true
+                        rightCropped: true
+                        text: qsTr("Position")
+                        horizontalAlignment: Text.AlignLeft
+                        disabledColor: textColor
+                        enabled: selectedItem != positionEdit
+                        iconSource: selectedItem == positionEdit ? "/icons/down.svg" : "/icons/right.svg"
+                        onClicked: selectedItem = positionEdit
+                        Layout.fillWidth: true
+                    }
+
+                    Controls.Button {
+                        flat: true
+                        leftCropped: true
+                        rightCropped: true
+                        iconSource: "qrc:/icons/aim.svg"
+                        tipText: qsTr("Take from map")
+                        onClicked: {
+                            positionEdit.latitude = map.centerPosition.latitude;
+                            positionEdit.longitude = map.centerPosition.longitude;
+                            positionEdit.changed();
+                        }
+                    }
+
+                    Controls.Button {
+                        flat: true
+                        leftCropped: true
+                        iconSource: "qrc:/icons/center.svg"
+                        tipText: qsTr("Goto on map")
+                        onClicked: controller.centerWaypoint(waypoint.route, waypointIndex)
+                    }
+                }
 
                 PositionEdit {
+                    id: positionEdit
+                    visible: selectedItem == positionEdit
                     datum: waypoint.datum ? waypoint.datum : ""
                     latitude: waypoint.latitude ? waypoint.latitude : NaN
                     longitude: waypoint.longitude ? waypoint.longitude : NaN
                     altitude: waypoint.altitude ? waypoint.altitude : NaN
                     onChanged: controller.setWaypointPosition(latitude, longitude, altitude)
                     Layout.fillWidth: true
+                    Layout.leftMargin: Controls.Theme.margins
+                }
+
+                Controls.Button {
+                    flat: true
+                    rightCropped: true
+                    text: qsTr("Parameters")
+                    horizontalAlignment: Text.AlignLeft
+                    disabledColor: textColor
+                    enabled: selectedItem != parametersEdit
+                    iconSource: selectedItem == parametersEdit ? "/icons/down.svg" : "/icons/right.svg"
+                    onClicked: selectedItem = parametersEdit
+                    Layout.fillWidth: true
                 }
 
                 ParametersEdit {
+                    id: parametersEdit
+                    visible: selectedItem == parametersEdit
                     parameters: controller.waypointParameters
                     onParameterChanged: controller.setWaypointParameter(id, value)
                     Layout.fillWidth: true
+                    Layout.leftMargin: Controls.Theme.margins
                 }
             }
 

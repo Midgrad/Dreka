@@ -47,6 +47,7 @@ signals:
     void waypointChanged();
     void routeChanged();
 
+    void centerWaypoint(QVariant routeId, int index);
     void closeEditor();
     void updatePosition(double x, double y);
     void invokeMenu(double x, double y);

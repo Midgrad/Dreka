@@ -137,6 +137,7 @@ class CesiumWrapper {
 
                 var waypointController = channel.objects.waypointController;
                 if (waypointController) {
+                    waypointController.centerWaypoint.connect((routeId, index) => { routes.centerWaypoint(routeId, index); });
                     routes.waypointClickedCallback = (routeId, index, x, y) => {
                         waypointController.invokeWaypointMenu(routeId, index, x, y);
                     }
@@ -195,7 +196,6 @@ var heightMaps = cesiumWrapper.viewer.terrainProvider;
 var heightCheck = setInterval(function () {
     if (heightMaps.ready) {
         clearInterval(heightCheck);
-
         cesiumWrapper.init();
     }
 }, 100);
