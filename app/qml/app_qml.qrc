@@ -2,7 +2,7 @@
     <qresource prefix="/">
         <file>Common/PositionEdit.qml</file>
         <file>Common/ParametersEdit.qml</file>
-        <file>Common/Pointer.qml</file>
+        <file>Common/ListElement.qml</file>
         <file>Common/PointedItem.qml</file>
         <file>Common/PointedPopup.qml</file>
         <file>Common/PointedMenu.qml</file>

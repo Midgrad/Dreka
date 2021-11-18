@@ -94,21 +94,11 @@ Item {
                 width: parent.width
                 spacing: 1
 
-                RowLayout {
-                    spacing: 1
-
-                    // TODO: Custom ListElement
-                    Controls.Button {
-                        flat: true
-                        rightCropped: true
-                        text: qsTr("Position")
-                        horizontalAlignment: Text.AlignLeft
-                        disabledColor: textColor
-                        enabled: selectedItem != positionEdit
-                        iconSource: selectedItem == positionEdit ? "/icons/down.svg" : "/icons/right.svg"
-                        onClicked: selectedItem = positionEdit
-                        Layout.fillWidth: true
-                    }
+                ListElement {
+                    text: qsTr("Position")
+                    expanded: selectedItem == positionEdit
+                    onExpand: selectedItem = positionEdit
+                    Layout.fillWidth: true
 
                     Controls.Button {
                         flat: true
@@ -140,19 +130,12 @@ Item {
                     longitude: waypoint.longitude ? waypoint.longitude : NaN
                     altitude: waypoint.altitude ? waypoint.altitude : NaN
                     onChanged: controller.setWaypointPosition(latitude, longitude, altitude)
-                    Layout.fillWidth: true
-                    Layout.leftMargin: Controls.Theme.margins
                 }
 
-                Controls.Button {
-                    flat: true
-                    rightCropped: true
+                ListElement {
                     text: qsTr("Parameters")
-                    horizontalAlignment: Text.AlignLeft
-                    disabledColor: textColor
-                    enabled: selectedItem != parametersEdit
-                    iconSource: selectedItem == parametersEdit ? "/icons/down.svg" : "/icons/right.svg"
-                    onClicked: selectedItem = parametersEdit
+                    expanded: selectedItem == parametersEdit
+                    onExpand: selectedItem = parametersEdit
                     Layout.fillWidth: true
                 }
 

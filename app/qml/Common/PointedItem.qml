@@ -6,6 +6,8 @@ Item {
 
     property var pointed: Item {}
 
+    property color pointerColor: Controls.Theme.colors.background
+
     property real minX: Controls.Theme.margins
     property real minY: Controls.Theme.margins
     property real maxX: width - Controls.Theme.margins * 2
@@ -41,11 +43,23 @@ Item {
     function close() { pointed.close(); }
     function hidePointer() { pointer.visible= false; }
 
-    Pointer {
+    Item {
         id: pointer
         x: pointed.x + pointed.width / 2 - width / 2
         y: pointed.y + pointed.height
+        width: Controls.Theme.baseSize
+        height: Controls.Theme.baseSize / 2
         visible: false
+        clip: true
+
+        Rectangle {
+            anchors.centerIn: parent
+            anchors.verticalCenterOffset: -parent.height
+            width: parent.width
+            height: width
+            rotation: 45
+            color: pointerColor
+        }
     }
 
     Rectangle {
