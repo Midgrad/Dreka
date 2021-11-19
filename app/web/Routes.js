@@ -231,6 +231,9 @@ class Routes {
     }
 
     removeRoute(routeId) {
+        if (this.selectedRoute === routeId)
+            this.selectedRoute = null;
+
         this.routes.get(routeId).clear();
         this.routes.delete(routeId);
     }

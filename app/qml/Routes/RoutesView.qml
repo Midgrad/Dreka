@@ -35,7 +35,17 @@ RowLayout {
         onCenterWaypoint: controller.centerWaypoint(routeId, index)
     }
 
-    RoutesController { id: controller }
+    RoutesController {
+        id: controller
+        onSelectedRouteChanged: {
+            if (controller.selectedRoute === undefined &&
+                    sidebar.sourceComponent == routeEditComponent)
+                sidebar.sourceComponent = routeListComponent;
+            else if (controller.selectedRoute !== undefined &&
+                     sidebar.sourceComponent == routeListComponent)
+                 sidebar.sourceComponent = routeEditComponent;
+        }
+    }
 
     Component.onCompleted: {
         map.registerController("routesController", controller);
@@ -77,10 +87,7 @@ RowLayout {
         id: routeListComponent
 
         RouteList {
-            onExpand: {
-                controller.selectRoute(routeId);
-                sidebar.sourceComponent = routeEditComponent;
-            }
+            onExpand: controller.selectRoute(routeId);
         }
     }
 
