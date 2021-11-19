@@ -48,7 +48,7 @@ QStringList MissionController::items() const
 
     QStringList list;
     int index = 0;
-    for (WaypointItem* item : m_mission->items())
+    for (WaypointItem* item : m_mission->route()->items())
     {
         list.append(item->name() + " " + QString::number(index));
         index++;
@@ -62,7 +62,7 @@ int MissionController::currentItem() const
     if (!m_mission)
         return -1;
 
-    return m_mission->currentItem();
+    return m_mission->route()->currentItem();
 }
 
 void MissionController::setVehicleId(const QVariant& vehicleId)
@@ -86,8 +86,10 @@ void MissionController::setMission(Mission* mission)
     {
         connect(mission->operation(), &MissionOperation::changed, this,
                 &MissionController::operationChanged);
-        connect(mission, &Mission::itemsChanged, this, &MissionController::itemsChanged);
-        connect(mission, &Mission::currentItemChanged, this, &MissionController::currentItemChanged);
+        connect(mission->route(), &MissionRoute::itemsChanged, this,
+                &MissionController::itemsChanged);
+        connect(mission->route(), &MissionRoute::currentItemChanged, this,
+                &MissionController::currentItemChanged);
     }
 
     emit missionChanged();
@@ -148,5 +150,5 @@ void MissionController::switchItem(int index)
     if (!m_mission)
         return;
 
-    emit m_mission->switchCurrentItem(index);
+    emit m_mission->route()->switchCurrentItem(index);
 }
