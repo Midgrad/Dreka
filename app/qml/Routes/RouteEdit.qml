@@ -33,7 +33,7 @@ Controls.Frame {
             Controls.Button {
                 flat: true
                 rightCropped: true
-                text: route ? route.name : ""
+                text: route.id ? route.name : ""
                 tipText: qsTr("Edit name")
                 visible: !editName
                 onClicked: editName = true
@@ -53,7 +53,7 @@ Controls.Frame {
             }
 
             Controls.Label {
-                text: route ? route.type : ""
+                text: route.id ? route.type : ""
                 type: Controls.Theme.Label
             }
 

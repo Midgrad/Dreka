@@ -33,7 +33,7 @@ QJsonObject WaypointController::waypoint() const
         waypoint.insert(props::route, m_route->id());
 
     QJsonArray array;
-    for (RouteItem* item : m_waypoint->items())
+    for (WaypointItem* item : m_waypoint->items())
     {
         array.append(QJsonObject::fromVariantMap(item->toVariantMap()));
     }
@@ -77,12 +77,12 @@ QJsonArray WaypointController::waypointItemTypes() const
     if (!m_waypoint)
         return QJsonArray();
 
-    QList<RouteItem*> items = m_waypoint->items();
+    QList<WaypointItem*> items = m_waypoint->items();
 
     QJsonArray jsons;
     for (auto itemType : m_waypoint->type()->itemTypes)
     {
-        auto it = std::find_if(items.begin(), items.end(), [itemType](RouteItem* item) {
+        auto it = std::find_if(items.begin(), items.end(), [itemType](WaypointItem* item) {
             return item->type() == itemType;
         });
         if (it != items.end())
@@ -113,7 +113,7 @@ QJsonArray WaypointController::waypointItemParameters(int index) const
     if (!m_waypoint || m_waypoint->count() <= index)
         return QJsonArray();
 
-    RouteItem* item = m_waypoint->item(index);
+    WaypointItem* item = m_waypoint->item(index);
 
     QJsonArray jsons;
     for (auto parameter : item->type()->parameters.values())
@@ -247,11 +247,11 @@ void WaypointController::addWaypointItem(const QString& typeId)
     if (!m_route || !m_waypoint)
         return;
 
-    const RouteItemType* type = m_waypoint->type()->itemType(typeId);
+    const WaypointItemType* type = m_waypoint->type()->itemType(typeId);
     if (!type)
         return;
 
-    RouteItem* item = new RouteItem(type);
+    WaypointItem* item = new WaypointItem(type);
     m_waypoint->addItem(item);
     m_routesRepository->saveWaypoint(m_route, m_waypoint);
 }
@@ -262,7 +262,7 @@ void WaypointController::setWaypointItemParameter(int index, const QString& para
     if (!m_route || !m_waypoint)
         return;
 
-    RouteItem* item = m_waypoint->item(index);
+    WaypointItem* item = m_waypoint->item(index);
     if (!item)
         return;
 
@@ -275,7 +275,7 @@ void WaypointController::removeWaypointItem(int index)
     if (!m_route || !m_waypoint)
         return;
 
-    RouteItem* item = m_waypoint->item(index);
+    WaypointItem* item = m_waypoint->item(index);
     if (!item)
         return;
 

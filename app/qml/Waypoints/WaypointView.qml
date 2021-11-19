@@ -34,10 +34,15 @@ Item {
         title: qsTr("Edit Waypoint")
         anchors.fill: parent
         onMenuVisibleChanged: {
-            if (menuVisible)
+            if (menuVisible) {
+                if (editor.sourceComponent)
+                    editor.close();
+
                 controller.setCurrentWaypointSelected(true);
-            else if (editor.sourceComponent !== editComponent)
+            }
+            else if (editor.sourceComponent != editComponent) {
                 controller.setCurrentWaypointSelected(false);
+            }
         }
 
         Controls.MenuItem {

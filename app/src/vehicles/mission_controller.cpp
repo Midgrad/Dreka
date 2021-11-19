@@ -53,7 +53,7 @@ QStringList MissionController::waypoints() const
     if (m_mission->route())
     {
         int index = 1;
-        for (RouteItem* waypoint : m_mission->route()->waypoints())
+        for (WaypointItem* waypoint : m_mission->route()->waypoints())
         {
             list.append(waypoint->name() + " " + QString::number(index));
             index++;

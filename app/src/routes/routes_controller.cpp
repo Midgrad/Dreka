@@ -78,7 +78,7 @@ QJsonObject RoutesController::waypointData(const QVariant& routeId, int index) c
     if (!route)
         return QJsonObject();
 
-    RouteItem* waypoint = route->waypoint(index);
+    WaypointItem* waypoint = route->waypoint(index);
     if (!waypoint)
         return QJsonObject();
 
@@ -238,13 +238,13 @@ void RoutesController::onRouteAdded(Route* route)
     emit routeAdded(route->id());
     emit routeIdsChanged();
 
-    connect(route, &Route::waypointAdded, this, [this, route](int index, RouteItem* waypoint) {
+    connect(route, &Route::waypointAdded, this, [this, route](int index, WaypointItem* waypoint) {
         emit waypointAdded(route->id(), index);
     });
-    connect(route, &Route::waypointRemoved, this, [this, route](int index, RouteItem* waypoint) {
+    connect(route, &Route::waypointRemoved, this, [this, route](int index, WaypointItem* waypoint) {
         emit waypointRemoved(route->id(), index);
     });
-    connect(route, &Route::waypointChanged, this, [this, route](int index, RouteItem* waypoint) {
+    connect(route, &Route::waypointChanged, this, [this, route](int index, WaypointItem* waypoint) {
         emit waypointChanged(route->id(), index);
     });
 }
