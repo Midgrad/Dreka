@@ -209,14 +209,14 @@ void RoutesController::updateWaypointData(const QVariant& routeId, int index,
         return;
 
     waypoint->fromVariantMap(data.toVariantMap());
-
-    // Promoute to the vehicle
-    if (m_activeMission && m_activeMission->route() == route)
-    {
-        waypoint->setConfirmed(false);
-        emit m_activeMission->operation()->uploadItem(route->waypointIndex(waypoint));
-    }
     m_routesRepository->saveWaypoint(route, waypoint);
+
+    // TODO: Promoute to the vehicle
+    //    if (m_activeMission && m_activeMission->route() == route)
+    //    {
+    //        // setConfirmed(false)
+    //        emit m_activeMission->operation()->uploadItem(route->waypointIndex(waypoint));
+    //    }
 }
 
 void RoutesController::updateWaypointCalcData(const QVariant& routeId, int index,

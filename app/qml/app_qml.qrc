@@ -27,6 +27,7 @@
         <file>Waypoints/PayloadListItem.qml</file>
         <file>Vehicles/VehiclesView.qml</file>
         <file>Vehicles/MissionView.qml</file>
+        <file>Vehicles/MissionPopup.qml</file>
         <file>Vehicles/GenericDashboard.qml</file>
         <file>Vehicles/Preflight.qml</file>
         <file>Vehicles/ChecklistItem.qml</file>

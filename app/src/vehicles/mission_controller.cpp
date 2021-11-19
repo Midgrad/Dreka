@@ -41,34 +41,28 @@ QJsonObject MissionController::operation() const
     return QJsonObject::fromVariantMap(m_mission->operation()->toVariantMap());
 }
 
-QStringList MissionController::waypoints() const
+QStringList MissionController::items() const
 {
     if (!m_mission)
         return QStringList();
 
     QStringList list;
-
-    list.append(m_mission->homePoint()->name());
-
-    if (m_mission->route())
+    int index = 0;
+    for (WaypointItem* item : m_mission->items())
     {
-        int index = 1;
-        for (WaypointItem* waypoint : m_mission->route()->waypoints())
-        {
-            list.append(waypoint->name() + " " + QString::number(index));
-            index++;
-        }
+        list.append(item->name() + " " + QString::number(index));
+        index++;
     }
 
     return list;
 }
 
-int MissionController::currentWaypoint() const
+int MissionController::currentItem() const
 {
     if (!m_mission)
         return -1;
 
-    return m_mission->currentWaypointIndex();
+    return m_mission->currentItem();
 }
 
 void MissionController::setVehicleId(const QVariant& vehicleId)
@@ -92,9 +86,8 @@ void MissionController::setMission(Mission* mission)
     {
         connect(mission->operation(), &MissionOperation::changed, this,
                 &MissionController::operationChanged);
-        connect(mission, &Mission::waypointsChanged, this, &MissionController::waypointsChanged);
-        connect(mission, &Mission::currentWaypointChanged, this,
-                &MissionController::currentWaypointChanged);
+        connect(mission, &Mission::itemsChanged, this, &MissionController::itemsChanged);
+        connect(mission, &Mission::currentItemChanged, this, &MissionController::currentItemChanged);
     }
 
     emit missionChanged();
@@ -150,10 +143,10 @@ void MissionController::cancel()
     emit m_mission->operation()->cancel();
 }
 
-void MissionController::switchWaypoint(int index)
+void MissionController::switchItem(int index)
 {
     if (!m_mission)
         return;
 
-    emit m_mission->switchWaypoint(index);
+    emit m_mission->switchCurrentItem(index);
 }

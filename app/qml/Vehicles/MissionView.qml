@@ -1,16 +1,14 @@
 import QtQuick 2.6
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
-import Industrial.Widgets 1.0 as Widgets
 import Dreka 1.0
 
-Controls.Popup {
+Row {
     id: root
 
-    readonly property alias waypoints: missionController.waypoints
-    readonly property alias currentWaypoint: missionController.currentWaypoint
+    readonly property real availableWidth: width - missionButton.width - wpBox.width - spacing * 2
 
-    function switchWaypoint(index) { missionController.switchWaypoint(index) }
+    spacing: 1
 
     MissionController {
         id: missionController
@@ -18,98 +16,37 @@ Controls.Popup {
         onMissionChanged: routes.setActiveMission(mission.id)
     }
 
-    readonly property var mission: missionController.mission
-    readonly property var operation: missionController.operation
+    Controls.Button {
+        id: missionButton
+        height: parent.height
+        flat: true
+        rightCropped: true
+        iconSource: "qrc:/icons/route.svg"
+        tipText: qsTr("Mission")
+        highlighted: missionPopup.visible
+        enabled: controller.selectedVehicle !== undefined
+        onClicked: missionPopup.visible ? missionPopup.close() : missionPopup.open()
 
-    ColumnLayout {
-        id: column
-        anchors.fill: parent
-        spacing: Controls.Theme.spacing
-
-        Widgets.PropertyTable {
-            flat: true
-            labelWidth: Controls.Theme.baseSize * 3
-            Layout.fillWidth: true
-
-            Controls.TextField {
-                id: nameEdit
-                labelText: qsTr("Mission")
-                Binding on text { value: mission.name ? mission.name : ""; when: !nameEdit.activeFocus }
-                onEditingFinished: missionController.save({ name: text });
-            }
-
-            Controls.ComboBox {
-                id: routeBox
-                labelText: qsTr("Route")
-                enabled: false
-                displayText: mission.route ? mission.route : ""
-            }
+        MissionPopup {
+            id: missionPopup
+            x: -width - Controls.Theme.margins - Controls.Theme.spacing
+            y: parent.y - height + parent.height
+            closePolicy: Controls.Popup.CloseOnPressOutsideParent
         }
+    }
 
-        Controls.ProgressBar {
-            id: progress
-            visible: !operation.complete
-            flat: true
-            radius: Controls.Theme.rounding
-            from: 0
-            to: operation.total ? operation.total : 0
-            value: operation.progress ? operation.progress : 0
-            Layout.fillWidth: true
-
-            Controls.Button {
-                anchors.fill: parent
-                flat: true
-                tipText: qsTr("Cancel")
-                text: progress.value + "/" + progress.to
-                onClicked: missionController.cancel()
-            }
+    Controls.ComboBox {
+        id: wpBox
+        width: root.width / 2
+        flat: true
+        labelText: qsTr("WPT")
+        enabled: controller.selectedVehicle !== undefined
+        model: missionController.items
+        displayText: missionController.items[missionController.currentItem]
+        Binding on currentIndex {
+            value: missionController.currentItem
+            when: !wpBox.activeFocus
         }
-
-        Controls.ButtonBar {
-            id: bar
-            flat: true
-            visible: operation.complete ? true : false
-            Layout.fillWidth: true
-
-            Controls.Button {
-                text: qsTr("Download")
-                borderColor: Controls.Theme.colors.controlBorder
-                enabled: mission.id ? true : false
-                onClicked: missionController.download()
-            }
-
-            Controls.Button {
-                text: qsTr("Upload")
-                borderColor: Controls.Theme.colors.controlBorder
-                enabled: mission.id ? true : false
-                onClicked: missionController.upload()
-            }
-
-            Controls.Button {
-                text: qsTr("Clear")
-                borderColor: Controls.Theme.colors.controlBorder
-                enabled: mission.id ? true : false
-                highlightColor: Controls.Theme.colors.negative
-                hoverColor: highlightColor
-                onClicked: missionController.clear()
-            }
-        }
-
-//        // TODO: ListButton
-//        Controls.Button {
-//            flat: true
-//            text: qsTr("Route")
-//            iconSource: routePropertiesVisible ? "qrc:/icons/down.svg" : "qrc:/icons/right.svg"
-//            onClicked: routePropertiesVisible = !routePropertiesVisible
-//            Layout.fillWidth: true
-//        }
-
-//        RouteView {
-//            id: routeList
-//            visible: routePropertiesVisible
-//            route: missionController.route(mission.id)
-//            Layout.fillWidth: true
-//            Layout.fillHeight: true
-//        }
+        onActivated: missionController.switchItem(index)
     }
 }

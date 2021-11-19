@@ -259,45 +259,12 @@ Column {
         }
     }
 
-    Row {
-        spacing: 0
-
-        Controls.Button {
-            id: missionButton
-            height: parent.height
-            flat: true
-            rightCropped: true
-            iconSource: "qrc:/icons/route.svg"
-            tipText: qsTr("Mission")
-            highlighted: mission.visible
-            enabled: controller.selectedVehicle !== undefined
-            onClicked: mission.visible ? mission.close() : mission.open()
-
-            MissionView {
-                id: mission
-                x: -width - Controls.Theme.margins - Controls.Theme.spacing
-                y: parent.y - height + parent.height
-                closePolicy: Controls.Popup.CloseOnPressOutsideParent
-            }
-        }
+    MissionView {
+        id: mission
+        width: parent.width
 
         Controls.ComboBox {
-            id: wpBox
-            width: root.width / 5 * 2
-            flat: true
-            labelText: qsTr("WPT")
-            enabled: controller.selectedVehicle !== undefined
-            model: mission.waypoints
-            displayText: mission.waypoints[mission.currentWaypoint]
-            Binding on currentIndex {
-                value: mission.currentWaypoint
-                when: !wpBox.activeFocus
-            }
-            onActivated: mission.switchWaypoint(index)
-        }
-
-        Controls.ComboBox {
-            width: root.width - wpBox.width - missionButton.width
+            width: mission.availableWidth
             flat: true
             labelText: qsTr("MODE")
             enabled: controller.selectedVehicle !== undefined
