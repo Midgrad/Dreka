@@ -84,13 +84,20 @@ class Route {
     }
 
     selectedWaypointPosition() {
-        if (this.selectedIndex === -1)
-            return undefined;
+        if (Cesium.defined(this.selectedIndex) &&
+            this.selectedIndex > -1 &&
+            this.selectedIndex < this.waypoints.length)
+            return this.waypoints[this.selectedIndex].waypointPosition();
 
-        return this.waypoints[this.selectedIndex].waypointPosition();
+        return undefined;
     }
 
     removeWaypoint(index) {
+        if (this.selectedIndex === index) {
+            this.waypoints[index].setWaypointSelected(false);
+            this.selectedIndex = null;
+        }
+
         var removeIndex = index < this.lines.length ? index : index - 1;
         var updateIndex = removeIndex - 1;
 
