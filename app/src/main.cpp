@@ -20,6 +20,7 @@
 #include <QtWebEngine>
 
 #include "sqlite_schema.h"
+#include "vehicles_repository_sql.h"
 
 #include "command_service.h"
 #include "gui_layout.h"
@@ -27,7 +28,7 @@
 #include "missions_repository_sql.h"
 #include "property_tree.h"
 #include "routes_repository_sql.h"
-#include "vehicles_repository_sql.h"
+#include "vehicles_service.h"
 
 #include "module_loader.h"
 #include "theme.h"
@@ -76,8 +77,9 @@ int main(int argc, char* argv[])
     domain::MissionsRepositorySql missionsRepository(&routesRepository, schema.db());
     app::Locator::provide<domain::IMissionsRepository>(&missionsRepository);
 
-    domain::VehiclesRepositorySql vehiclesRepository(schema.db());
-    app::Locator::provide<domain::IVehiclesRepository>(&vehiclesRepository);
+    data_source::VehiclesRepositorySql vehiclesRepository(schema.db());
+    domain::VehiclesService vehiclesService(&vehiclesRepository);
+    app::Locator::provide<domain::IVehiclesService>(&vehiclesService);
 
     domain::PropertyTree pTree;
     app::Locator::provide<domain::IPropertyTree>(&pTree);
@@ -121,7 +123,7 @@ int main(int argc, char* argv[])
     moduleLoader.loadModules();
 
     // TODO: soft caching, read only on demand
-    vehiclesRepository.readAll();
+    vehiclesService.readAll();
     missionsRepository.readAll();
 
     engine.rootContext()->setContextProperty("layout", layout.items());

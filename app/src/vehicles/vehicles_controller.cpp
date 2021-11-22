@@ -10,19 +10,19 @@ using namespace md::presentation;
 VehiclesController::VehiclesController(QObject* parent) :
     QObject(parent),
     m_pTree(md::app::Locator::get<IPropertyTree>()),
-    m_vehiclesRepository(md::app::Locator::get<IVehiclesRepository>()),
+    m_vehiclesService(md::app::Locator::get<IVehiclesService>()),
     m_commandsService(md::app::Locator::get<ICommandsService>())
 {
     Q_ASSERT(m_pTree);
-    Q_ASSERT(m_vehiclesRepository);
+    Q_ASSERT(m_vehiclesService);
     Q_ASSERT(m_commandsService);
 
     connect(m_pTree, &IPropertyTree::propertiesChanged, this,
             &VehiclesController::vehicleDataChanged);
 
-    connect(m_vehiclesRepository, &IVehiclesRepository::vehicleAdded, this,
+    connect(m_vehiclesService, &IVehiclesService::vehicleAdded, this,
             &VehiclesController::onVehiclesChanged);
-    connect(m_vehiclesRepository, &IVehiclesRepository::vehicleRemoved, this,
+    connect(m_vehiclesService, &IVehiclesService::vehicleRemoved, this,
             &VehiclesController::onVehiclesChanged);
     this->onVehiclesChanged();
 }
@@ -79,7 +79,7 @@ void VehiclesController::selectVehicle(const QVariant& vehicleId)
 void VehiclesController::onVehiclesChanged()
 {
     m_vehicles = QJsonArray();
-    for (domain::Vehicle* vehicle : m_vehiclesRepository->vehicles())
+    for (domain::Vehicle* vehicle : m_vehiclesService->vehicles())
     {
         m_vehicles += QJsonObject::fromVariantMap(vehicle->toVariantMap());
     }
