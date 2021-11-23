@@ -16,7 +16,7 @@ class WaypointController : public QObject
     Q_PROPERTY(int waypointsCount READ waypointsCount NOTIFY routeChanged)
     Q_PROPERTY(QJsonArray waypointTypes READ waypointTypes NOTIFY routeChanged)
     Q_PROPERTY(QJsonArray waypointItemTypes READ waypointItemTypes NOTIFY waypointChanged)
-    Q_PROPERTY(QJsonArray waypointParameters READ waypointParameters NOTIFY waypointChanged)
+    Q_PROPERTY(QJsonObject waypointParameters READ waypointParameters NOTIFY waypointChanged)
 
 public:
     explicit WaypointController(QObject* parent = nullptr);
@@ -28,8 +28,9 @@ public:
     QJsonArray waypointTypes() const;
     QJsonArray waypointItemTypes() const;
 
-    QJsonArray waypointParameters() const;
-    Q_INVOKABLE QJsonArray waypointItemParameters(int index) const;
+    QJsonObject waypointParameters() const;
+    Q_INVOKABLE QJsonObject waypointItemParameters(int index) const;
+    Q_INVOKABLE QJsonArray typeParameters(const QString& typeId);
 
 public slots:
     void invokeWaypointMenu(const QVariant& routeId, int index, double x, double y);
@@ -39,8 +40,7 @@ public slots:
     void updatePopupPosition(double x, double y);
 
     void renameWaypoint(const QString& name);
-    void changeWaypointType(const QString& typeId);
-    void setWaypointPosition(double latitude, double longitude, float altitude);
+    void changeWaypointItemType(const QString& typeId);
     void setWaypointParameter(const QString& parameterId, const QVariant& value);
     void removeWaypoint();
 
@@ -61,7 +61,7 @@ signals:
 private:
     domain::IRoutesRepository* const m_routesRepository;
     domain::Route* m_route = nullptr;
-    domain::Waypoint* m_waypoint = nullptr;
+    domain::WaypointItem* m_waypoint = nullptr;
 };
 } // namespace md::presentation
 

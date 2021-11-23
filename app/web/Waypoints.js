@@ -92,10 +92,10 @@ class Waypoint extends Draggable {
     }
 
     _rebuild() {
-        var latitude = this.waypointData.latitude;
-        var longitude = this.waypointData.longitude;
-        var altitude = this.waypointData.altitude;
         var params = this.waypointData.params;
+        var latitude = params ? params.latitude : undefined;
+        var longitude = params ? params.longitude : undefined;
+        var altitude = params ? params.altitude : undefined;
 
         if (Cesium.defined(latitude) && Cesium.defined(longitude) && Cesium.defined(altitude)) {
 
@@ -216,10 +216,10 @@ class Waypoint extends Draggable {
             var newCartographic = Cesium.Cartographic.fromCartesian(newCartesian);
             // Modify only altitude if SHIFT
             if (modifier !== Cesium.KeyboardEventModifier.SHIFT) {
-                this.waypointData.latitude = Cesium.Math.toDegrees(newCartographic.latitude);
-                this.waypointData.longitude = Cesium.Math.toDegrees(newCartographic.longitude);
+                this.waypointData.params.latitude = Cesium.Math.toDegrees(newCartographic.latitude);
+                this.waypointData.params.longitude = Cesium.Math.toDegrees(newCartographic.longitude);
             }
-            this.waypointData.altitude = newCartographic.height;
+            this.waypointData.params.altitude = newCartographic.height;
             changed = true;
         }
         else if (this.hoveredLoiter) {
@@ -262,9 +262,9 @@ class Waypoint extends Draggable {
 
     waypointPosition() {
         var scene = this.viewer.scene;
-        var cartesian = Cesium.Cartesian3.fromDegrees(this.waypointData.longitude,
-                                                      this.waypointData.latitude,
-                                                      this.waypointData.altitude);
+        var cartesian = Cesium.Cartesian3.fromDegrees(this.waypointData.params.longitude,
+                                                      this.waypointData.params.latitude,
+                                                      this.waypointData.params.altitude);
         return Cesium.SceneTransforms.wgs84ToWindowCoordinates(scene, cartesian);
     }
 }

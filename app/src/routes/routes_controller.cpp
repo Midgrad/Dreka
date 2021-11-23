@@ -179,19 +179,20 @@ void RoutesController::addWaypoint(const QVariant& routeId, const QString& wptTy
     if (!route)
         return;
 
-    const WaypointType* wptType = route->type()->waypointType(wptTypeId);
+    const WaypointItemType* wptType = route->type()->waypointType(wptTypeId);
     if (!wptType)
         return;
 
     // Special case for altitude
-    QVariantMap position = args;
-    float altitude = route->waypointsCount()
-                         ? route->waypoint(route->waypointsCount() - 1)->position().altitude()
-                         : args.value(geo::altitude, 0).toFloat();
-    position[geo::altitude] = altitude;
+    QVariantMap parameters = args;
+    float altitude =
+        route->waypointsCount()
+            ? route->waypoint(route->waypointsCount() - 1)->parameter(route::altitude.id).toFloat()
+            : args.value(geo::altitude, 0).toFloat();
+    parameters[geo::altitude] = altitude;
 
-    Waypoint* wpt = new Waypoint(wptType);
-    wpt->setPosition(position);
+    WaypointItem* wpt = new WaypointItem(wptType);
+    wpt->setParameters(parameters);
     route->addWaypoint(wpt);
 
     m_routesRepository->saveWaypoint(route, wpt);
@@ -204,7 +205,7 @@ void RoutesController::updateWaypointData(const QVariant& routeId, int index,
     if (!route)
         return;
 
-    Waypoint* waypoint = route->waypoint(index);
+    WaypointItem* waypoint = route->waypoint(index);
     if (!waypoint)
         return;
 
@@ -226,7 +227,7 @@ void RoutesController::updateWaypointCalcData(const QVariant& routeId, int index
     if (!route)
         return;
 
-    Waypoint* waypoint = route->waypoint(index);
+    WaypointItem* waypoint = route->waypoint(index);
     if (!waypoint)
         return;
 

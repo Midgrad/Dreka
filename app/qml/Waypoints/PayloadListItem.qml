@@ -32,7 +32,8 @@ ColumnLayout {
 
     ParametersEdit {
         id: parametersEdit
-        parameters: controller.waypointItemParameters(payloadIndex)
+        parameters: controller.typeParameters(payload.type)
+        parameterValues: controller.waypointItemParameters(payloadIndex)
         onParameterChanged: controller.setWaypointItemParameter(payloadIndex, id, value)
         Layout.fillWidth: true
         Layout.leftMargin: Controls.Theme.margins

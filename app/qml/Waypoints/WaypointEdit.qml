@@ -11,7 +11,7 @@ Item {
     property int waypointIndex: -1
 
     property bool editName: false
-    property var selectedItem: parametersEdit
+    property var selectedItem: waypointEdit
 
     implicitWidth: Controls.Theme.baseSize * 11
     implicitHeight: column.implicitHeight
@@ -66,7 +66,7 @@ Item {
                     }
                     return -1;
                 }
-                onActivated: controller.changeWaypointType(currentItem.id);
+                onActivated: controller.changeWaypointItemType(currentItem.id);
                 Layout.fillWidth: true
             }
 
@@ -94,23 +94,10 @@ Item {
                 spacing: 1
 
                 ListElement {
-                    text: qsTr("Position")
-                    expanded: selectedItem == positionEdit
-                    onExpand: selectedItem = positionEdit
+                    text: qsTr("Waypoint")
+                    expanded: selectedItem == waypointEdit
+                    onExpand: selectedItem = waypointEdit
                     Layout.fillWidth: true
-
-                    Controls.Button {
-                        flat: true
-                        leftCropped: true
-                        rightCropped: true
-                        iconSource: "qrc:/icons/aim.svg"
-                        tipText: qsTr("Take from map")
-                        onClicked: {
-                            positionEdit.latitude = map.centerPosition.latitude;
-                            positionEdit.longitude = map.centerPosition.longitude;
-                            positionEdit.changed();
-                        }
-                    }
 
                     Controls.Button {
                         flat: true
@@ -121,29 +108,11 @@ Item {
                     }
                 }
 
-                PositionEdit {
-                    id: positionEdit
-                    visible: selectedItem == positionEdit
-                    datum: waypoint.datum ? waypoint.datum : ""
-                    latitude: waypoint.latitude ? waypoint.latitude : NaN
-                    longitude: waypoint.longitude ? waypoint.longitude : NaN
-                    altitude: waypoint.altitude ? waypoint.altitude : NaN
-                    onChanged: controller.setWaypointPosition(latitude, longitude, altitude)
-                    Layout.fillWidth: true
-                    Layout.leftMargin: Controls.Theme.margins
-                }
-
-                ListElement {
-                    text: qsTr("Parameters")
-                    expanded: selectedItem == parametersEdit
-                    onExpand: selectedItem = parametersEdit
-                    Layout.fillWidth: true
-                }
-
                 ParametersEdit {
-                    id: parametersEdit
-                    visible: selectedItem == parametersEdit
-                    parameters: controller.waypointParameters
+                    id: waypointEdit
+                    visible: selectedItem == waypointEdit
+                    parameters: controller.typeParameters(waypoint.type)
+                    parameterValues: controller.waypointParameters
                     onParameterChanged: controller.setWaypointParameter(id, value)
                     Layout.fillWidth: true
                     Layout.leftMargin: Controls.Theme.margins
@@ -189,7 +158,7 @@ Item {
                         model: waypoint.items
                         onCountChanged: {
                             if (count == 0 && selectedItem == payloadsList)
-                                selectedItem = parametersEdit
+                                selectedItem = waypointEdit
                         }
 
                         PayloadListItem {

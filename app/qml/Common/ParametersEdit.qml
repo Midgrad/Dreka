@@ -6,9 +6,10 @@ Item {
     id: root
 
     property var parameters: []
+    property var parameterValues
 
     property bool flat: true
-    property int labelWidth: Controls.Theme.baseSize * 5
+    property int labelWidth: Controls.Theme.baseSize * 3.5
 
     signal parameterChanged(string id, var value)
 
@@ -19,8 +20,9 @@ Item {
         id: boolEdit
 
         Controls.CheckBox {
+            id: checkBox
             flat: root.flat
-            checked: parameter.value
+            Binding on checked { when: !checkBox.activeFocus; value: parameterValue }
             onClicked: root.parameterChanged(parameter.id, checked)
         }
     }
@@ -34,10 +36,7 @@ Item {
             from: parameter.minValue ? parameter.minValue : 0
             to: parameter.maxValue ? parameter.maxValue : Number.MAX_VALUE
             stepSize: parameter.step ? parameter.step : 1
-            Binding on value {
-                when: !intBox.activeFocus
-                value: parameter.value ? parameter.value : 0
-            }
+            Binding on value { when: !intBox.activeFocus; value: parameterValue }
             onEditingFinished: root.parameterChanged(parameter.id, value)
         }
     }
@@ -51,11 +50,20 @@ Item {
             realFrom: parameter.minValue ? parameter.minValue : 0
             realTo: parameter.maxValue ? parameter.maxValue : Number.MAX_VALUE * precision
             stepSize: parameter.step ? parameter.step : 1
-            Binding on realValue {
-                when: !realBox.activeFocus
-                value: parameter.value ? parameter.value : NaN
-            }
-            onRealValueChanged: if (activeFocus) root.parameterChanged(parameter.id, realValue)
+            Binding on realValue { when: !realBox.activeFocus; value: parameterValue }
+            onValueModified: if (activeFocus) root.parameterChanged(parameter.id, value * precision)
+        }
+    }
+
+    Component {
+        id: latLonEdit
+
+        Controls.CoordSpinBox {
+            id: coordBox
+            flat: root.flat
+            isLongitude: parameter.id === "longitude"
+            Binding on value { when: !coordBox.activeFocus; value: parameterValue }
+            onValueModified: root.parameterChanged(parameter.id, value)
         }
     }
 
@@ -77,12 +85,13 @@ Item {
 
                 Loader {
                     readonly property var parameter: modelData
-
+                    readonly property var parameterValue: parameterValues[parameter.id]
                     sourceComponent: {
                         switch (parameter.type) {
                         case "Bool": return boolEdit;
                         case "Int": return intEdit;
                         case "Real": return realEdit;
+                        case "LatLon": return latLonEdit;
                         }
                         return undefined;
                     }
@@ -94,9 +103,8 @@ Item {
                     leftCropped: true
                     iconSource: "qrc:/icons/restore.svg"
                     tipText: qsTr("Restore to default")
-                    enabled: modelData.defaultValue !== modelData.value
-                    onClicked: parameterChanged(modelData.id,
-                                                modelData.defaultValue ? modelData.defaultValue : NaN)
+                    enabled: modelData.defaultValue !== parameterValues[modelData.id]
+                    onClicked: parameterChanged(modelData.id, modelData.defaultValue)
                 }
             }
         }
