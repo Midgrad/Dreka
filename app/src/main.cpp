@@ -19,22 +19,28 @@
 #include <QVersionNumber>
 #include <QtWebEngine>
 
+// Data source
+#include "route_items_repository_sql.h"
+#include "routes_repository_sql.h"
 #include "sqlite_schema.h"
 #include "vehicles_repository_sql.h"
 
+// Domain
 #include "command_service.h"
 #include "gui_layout.h"
 #include "locator.h"
 #include "missions_repository_sql.h"
 #include "property_tree.h"
-#include "routes_repository_sql.h"
+#include "routes_service.h"
 #include "vehicles_service.h"
 
+// App
 #include "module_loader.h"
 #include "theme.h"
 #include "theme_activator.h"
 #include "theme_loader.h"
 
+// Presentation
 #include "clipboard_controller.h"
 #include "map_grid_controller.h"
 #include "map_layers_controller.h"
@@ -71,10 +77,10 @@ int main(int argc, char* argv[])
     schema.setup();
 
     // Domain services initialization
-    domain::RoutesRepositorySql routesRepository(schema.db());
-    app::Locator::provide<domain::IRoutesRepository>(&routesRepository);
+    domain::RoutesService routesService(schema.db());
+    app::Locator::provide<domain::IRoutesService>(&routesService);
 
-    domain::MissionsRepositorySql missionsRepository(&routesRepository, schema.db());
+    domain::MissionsRepositorySql missionsRepository(&routesService, schema.db());
     app::Locator::provide<domain::IMissionsRepository>(&missionsRepository);
 
     data_source::VehiclesRepositorySql vehiclesRepository(schema.db());

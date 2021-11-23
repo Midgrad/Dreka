@@ -1,7 +1,7 @@
 #ifndef WAYPOINT_CONTROLLER_H
 #define WAYPOINT_CONTROLLER_H
 
-#include "i_routes_repository.h"
+#include "i_routes_service.h"
 
 #include <QJsonArray>
 
@@ -59,9 +59,9 @@ signals:
     void setWaypointSelected(QVariant routeId, int index, bool opened);
 
 private:
-    domain::IRoutesRepository* const m_routesRepository;
+    domain::IRoutesService* const m_routesService;
     domain::Route* m_route = nullptr;
-    domain::WaypointItem* m_waypoint = nullptr;
+    domain::RouteItem* m_waypoint = nullptr;
 };
 } // namespace md::presentation
 

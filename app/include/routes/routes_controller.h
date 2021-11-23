@@ -2,7 +2,7 @@
 #define ROUTES_CONTROLLER_H
 
 #include "i_missions_repository.h"
-#include "i_routes_repository.h"
+#include "i_routes_service.h"
 
 #include <QJsonArray>
 
@@ -60,7 +60,7 @@ private slots:
     void onRouteRemoved(domain::Route* route);
 
 private:
-    domain::IRoutesRepository* const m_routesRepository;
+    domain::IRoutesService* const m_routesService;
     domain::IMissionsRepository* const m_missionsRepository;
     domain::Mission* m_activeMission = nullptr;
     domain::Route* m_selectedRoute = nullptr;

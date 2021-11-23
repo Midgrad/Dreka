@@ -48,7 +48,7 @@ QStringList MissionController::items() const
 
     QStringList list;
     int index = 0;
-    for (WaypointItem* item : m_mission->route()->items())
+    for (RouteItem* item : m_mission->route()->items())
     {
         list.append(item->name() + " " + QString::number(index));
         index++;
