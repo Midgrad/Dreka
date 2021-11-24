@@ -77,15 +77,17 @@ int main(int argc, char* argv[])
     schema.setup();
 
     // Domain services initialization
-    domain::RoutesService routesService(schema.db());
+    data_source::VehiclesRepositorySql vehiclesRepository(schema.db());
+    domain::VehiclesService vehiclesService(&vehiclesRepository);
+    app::Locator::provide<domain::IVehiclesService>(&vehiclesService);
+
+    data_source::RoutesRepositorySql routesRepository(schema.db());
+    data_source::RouteItemsRepositorySql routeItemsRepository(schema.db());
+    domain::RoutesService routesService(&routesRepository, &routeItemsRepository);
     app::Locator::provide<domain::IRoutesService>(&routesService);
 
     domain::MissionsRepositorySql missionsRepository(&routesService, schema.db());
     app::Locator::provide<domain::IMissionsRepository>(&missionsRepository);
-
-    data_source::VehiclesRepositorySql vehiclesRepository(schema.db());
-    domain::VehiclesService vehiclesService(&vehiclesRepository);
-    app::Locator::provide<domain::IVehiclesService>(&vehiclesService);
 
     domain::PropertyTree pTree;
     app::Locator::provide<domain::IPropertyTree>(&pTree);
@@ -130,6 +132,7 @@ int main(int argc, char* argv[])
 
     // TODO: soft caching, read only on demand
     vehiclesService.readAll();
+    routesService.readAll();
     missionsRepository.readAll();
 
     engine.rootContext()->setContextProperty("layout", layout.items());

@@ -38,7 +38,7 @@ QJsonObject WaypointController::waypoint() const
         array.append(QJsonObject::fromVariantMap(item->toVariantMap()));
     }
 
-    waypoint.insert(props::items, array);
+    waypoint.insert(props::routeItems, array);
 
     return QJsonObject::fromVariantMap(waypoint);
 }
@@ -48,7 +48,7 @@ int WaypointController::waypointIndex() const
     if (!m_route || !m_waypoint)
         return -1;
 
-    return m_route->waypointIndex(m_waypoint);
+    return m_route->index(m_waypoint);
 }
 
 int WaypointController::waypointsCount() const
@@ -56,7 +56,7 @@ int WaypointController::waypointsCount() const
     if (!m_route)
         return -1;
 
-    return m_route->waypointsCount();
+    return m_route->count();
 }
 
 QJsonArray WaypointController::waypointTypes() const
@@ -65,7 +65,7 @@ QJsonArray WaypointController::waypointTypes() const
         return QJsonArray();
 
     QJsonArray jsons;
-    for (auto wptType : m_route->type()->waypointTypes)
+    for (auto wptType : m_route->type()->itemTypes)
     {
         jsons.append(QJsonObject::fromVariantMap(wptType->toVariantMap()));
     }
@@ -150,7 +150,7 @@ void WaypointController::setWaypoint(const QVariant& routeId, int index)
 
         if (m_route)
         {
-            connect(m_route, &Route::waypointRemoved, this, [this](int index, RouteItem* waypoint) {
+            connect(m_route, &Route::itemRemoved, this, [this](int index, RouteItem* waypoint) {
                 if (m_waypoint == waypoint)
                     this->setWaypointIndex(-1);
             });
@@ -164,7 +164,7 @@ void WaypointController::setWaypoint(const QVariant& routeId, int index)
 
 void WaypointController::setWaypointIndex(int index)
 {
-    RouteItem* waypoint = m_route ? m_route->waypoint(index) : nullptr;
+    RouteItem* waypoint = m_route ? m_route->item(index) : nullptr;
 
     if (m_waypoint == waypoint)
         return;
@@ -187,7 +187,7 @@ void WaypointController::setCurrentWaypointSelected(bool selected)
     if (!m_route || !m_waypoint)
         return;
 
-    emit setWaypointSelected(m_route->id(), m_route->waypointIndex(m_waypoint), selected);
+    emit setWaypointSelected(m_route->id(), m_route->index(m_waypoint), selected);
 }
 
 void WaypointController::updatePopupPosition(double x, double y)
@@ -201,7 +201,7 @@ void WaypointController::renameWaypoint(const QString& name)
         return;
 
     m_waypoint->setName(name);
-    m_routesService->saveWaypoint(m_route, m_waypoint);
+    m_routesService->saveItem(m_route, m_waypoint);
 }
 
 void WaypointController::changeWaypointItemType(const QString& typeId)
@@ -209,7 +209,7 @@ void WaypointController::changeWaypointItemType(const QString& typeId)
     if (!m_route || !m_waypoint)
         return;
 
-    const RouteItemType* type = m_route->type()->waypointType(typeId);
+    const RouteItemType* type = m_route->type()->itemType(typeId);
     if (!type)
         return;
 
@@ -217,7 +217,7 @@ void WaypointController::changeWaypointItemType(const QString& typeId)
         return;
 
     m_waypoint->setType(type);
-    m_routesService->saveWaypoint(m_route, m_waypoint);
+    m_routesService->saveItem(m_route, m_waypoint);
 }
 
 void WaypointController::setWaypointParameter(const QString& parameterId, const QVariant& value)
@@ -226,7 +226,7 @@ void WaypointController::setWaypointParameter(const QString& parameterId, const 
         return;
 
     m_waypoint->setAndCheckParameter(parameterId, value);
-    m_routesService->saveWaypoint(m_route, m_waypoint);
+    m_routesService->saveItem(m_route, m_waypoint);
 }
 
 void WaypointController::removeWaypoint()
@@ -234,7 +234,7 @@ void WaypointController::removeWaypoint()
     if (!m_route || !m_waypoint)
         return;
 
-    m_route->removeWaypoint(m_waypoint);
+    m_route->removeItem(m_waypoint);
     m_routesService->saveRoute(m_route);
 }
 
@@ -249,7 +249,7 @@ void WaypointController::addWaypointItem(const QString& typeId)
 
     RouteItem* item = new RouteItem(type);
     m_waypoint->addItem(item);
-    m_routesService->saveWaypoint(m_route, m_waypoint);
+    m_routesService->saveItem(m_route, m_waypoint);
 }
 
 void WaypointController::setWaypointItemParameter(int index, const QString& parameterId,
@@ -263,7 +263,7 @@ void WaypointController::setWaypointItemParameter(int index, const QString& para
         return;
 
     item->setAndCheckParameter(parameterId, value);
-    m_routesService->saveWaypoint(m_route, m_waypoint);
+    m_routesService->saveItem(m_route, m_waypoint);
 }
 
 void WaypointController::removeWaypointItem(int index)
@@ -276,5 +276,5 @@ void WaypointController::removeWaypointItem(int index)
         return;
 
     m_waypoint->removeItem(item);
-    m_routesService->saveWaypoint(m_route, m_waypoint);
+    m_routesService->saveItem(m_route, m_waypoint);
 }
