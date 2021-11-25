@@ -102,7 +102,7 @@ Controls.Frame {
 
         Widgets.ListWrapper {
             id: list
-            model: route ? route.routeItems : []
+            model: route ? route.items : []
             emptyText: qsTr("No Waypoints")
             delegate: WaypointListItem {
                 width: parent.width

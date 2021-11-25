@@ -38,7 +38,7 @@ QJsonObject WaypointController::waypoint() const
         array.append(QJsonObject::fromVariantMap(item->toVariantMap()));
     }
 
-    waypoint.insert(props::routeItems, array);
+    waypoint.insert(props::items, array);
 
     return QJsonObject::fromVariantMap(waypoint);
 }

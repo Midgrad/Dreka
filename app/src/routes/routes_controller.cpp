@@ -64,7 +64,7 @@ QJsonObject RoutesController::routeData(const QVariant& routeId) const
         return QJsonObject();
 
     QVariantMap routeData = route->toVariantMap();
-    routeData[props::routeItems] = route->count();
+    routeData[props::items] = route->count();
     routeData[props::type] = route->type()->name;
 
     return QJsonObject::fromVariantMap(routeData);
