@@ -141,5 +141,8 @@ int main(int argc, char* argv[])
 
     engine.load(QUrl(QStringLiteral("qrc:/MainWindow.qml")));
 
+    QObject::connect(&app, &QGuiApplication::aboutToQuit, &moduleLoader,
+                     &app::ModuleLoader::unloadAllModules);
+
     return app.exec();
 }

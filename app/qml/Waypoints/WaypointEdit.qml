@@ -155,7 +155,7 @@ Item {
                     Layout.leftMargin: Controls.Theme.margins
 
                     Repeater {
-                        model: waypoint.items
+                        model: waypoint.routeItems
                         onCountChanged: {
                             if (count == 0 && selectedItem == payloadsList)
                                 selectedItem = waypointEdit
