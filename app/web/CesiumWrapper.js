@@ -120,7 +120,7 @@ class CesiumWrapper {
                         if (routesController.selectedRoute === routeId)
                             routes.setEditingRoute(routeId);
 
-                        for (var index = 0; index < routeData.waypoints; ++index)
+                        for (var index = 0; index < routeData.routeItems; ++index)
                             setWaypoint(routeId, index);
                     });
                 };

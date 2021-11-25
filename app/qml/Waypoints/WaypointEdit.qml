@@ -120,13 +120,13 @@ Item {
 
                 ListElement {
                     text: qsTr("Payloads")
-                    buttonEnabled: !expanded && waypoint.items.length
+                    buttonEnabled: !expanded && waypoint.routeItems.length
                     expanded: selectedItem == payloadsList
                     onExpand: selectedItem = payloadsList
                     Layout.fillWidth: true
 
                     Controls.Label {
-                        text: "(" + waypoint.items.length + ")"
+                        text: "(" + waypoint.routeItems.length + ")"
                         type: Controls.Theme.Label
                     }
 
@@ -139,7 +139,7 @@ Item {
                         textRole: "name"
                         onTriggered: {
                             controller.addWaypointItem(modelData.id);
-                            if (waypoint.items.length) {
+                            if (waypoint.routeItems.length) {
                                 selectedItem = payloadsList;
                             }
                         }

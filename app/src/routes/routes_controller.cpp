@@ -64,7 +64,7 @@ QJsonObject RoutesController::routeData(const QVariant& routeId) const
         return QJsonObject();
 
     QVariantMap routeData = route->toVariantMap();
-    routeData[props::waypoints] = route->waypointsCount();
+    routeData[props::routeItems] = route->count();
     routeData[props::type] = route->type()->name;
 
     return QJsonObject::fromVariantMap(routeData);
@@ -76,7 +76,7 @@ QJsonObject RoutesController::waypointData(const QVariant& routeId, int index) c
     if (!route)
         return QJsonObject();
 
-    RouteItem* waypoint = route->waypoint(index);
+    RouteItem* waypoint = route->item(index);
     if (!waypoint)
         return QJsonObject();
 
@@ -90,7 +90,7 @@ QJsonArray RoutesController::waypointTypes(const QVariant& routeId) const
         return QJsonArray();
 
     QJsonArray jsons;
-    for (auto wptType : route->type()->waypointTypes)
+    for (auto wptType : route->type()->itemTypes)
     {
         jsons.append(QJsonObject::fromVariantMap(wptType->toVariantMap()));
     }
@@ -177,23 +177,23 @@ void RoutesController::addWaypoint(const QVariant& routeId, const QString& wptTy
     if (!route)
         return;
 
-    const RouteItemType* wptType = route->type()->waypointType(wptTypeId);
+    const RouteItemType* wptType = route->type()->itemType(wptTypeId);
     if (!wptType)
         return;
 
     // Special case for altitude
-    QVariantMap parameters = args;
-    float altitude =
-        route->waypointsCount()
-            ? route->waypoint(route->waypointsCount() - 1)->parameter(route::altitude.id).toFloat()
-            : args.value(geo::altitude, 0).toFloat();
+    QVariantMap parameters = wptType->defaultParameters();
+    utils::mergeMap(parameters, args);
+    float altitude = route->count()
+                         ? route->item(route->count() - 1)->parameter(route::altitude.id).toFloat()
+                         : args.value(geo::altitude, 0).toFloat();
     parameters[geo::altitude] = altitude;
 
     RouteItem* wpt = new RouteItem(wptType);
     wpt->setParameters(parameters);
-    route->addWaypoint(wpt);
+    route->addItem(wpt);
 
-    m_routesService->saveWaypoint(route, wpt);
+    m_routesService->saveItem(route, wpt);
 }
 
 void RoutesController::updateWaypointData(const QVariant& routeId, int index,
@@ -203,12 +203,12 @@ void RoutesController::updateWaypointData(const QVariant& routeId, int index,
     if (!route)
         return;
 
-    RouteItem* waypoint = route->waypoint(index);
+    RouteItem* waypoint = route->item(index);
     if (!waypoint)
         return;
 
     waypoint->fromVariantMap(data.toVariantMap());
-    m_routesService->saveWaypoint(route, waypoint);
+    m_routesService->saveItem(route, waypoint);
 
     // TODO: Promoute to the vehicle
     //    if (m_activeMission && m_activeMission->route() == route)
@@ -225,7 +225,7 @@ void RoutesController::updateWaypointCalcData(const QVariant& routeId, int index
     if (!route)
         return;
 
-    RouteItem* waypoint = route->waypoint(index);
+    RouteItem* waypoint = route->item(index);
     if (!waypoint)
         return;
 
@@ -237,13 +237,13 @@ void RoutesController::onRouteAdded(Route* route)
     emit routeAdded(route->id());
     emit routeIdsChanged();
 
-    connect(route, &Route::waypointAdded, this, [this, route](int index, RouteItem* waypoint) {
+    connect(route, &Route::itemAdded, this, [this, route](int index, RouteItem* waypoint) {
         emit waypointAdded(route->id(), index);
     });
-    connect(route, &Route::waypointRemoved, this, [this, route](int index, RouteItem* waypoint) {
+    connect(route, &Route::itemRemoved, this, [this, route](int index, RouteItem* waypoint) {
         emit waypointRemoved(route->id(), index);
     });
-    connect(route, &Route::waypointChanged, this, [this, route](int index, RouteItem* waypoint) {
+    connect(route, &Route::itemChanged, this, [this, route](int index, RouteItem* waypoint) {
         emit waypointChanged(route->id(), index);
     });
 }
