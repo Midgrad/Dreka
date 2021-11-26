@@ -1,3 +1,44 @@
+class RouteItem extends LoiterSign {
+    /**
+     * @param {Cesium.Viewer} viewer
+       @param {Input} input
+     * @param {int} index
+     */
+    constructor(viewer, input, index) {
+        super(viewer, input, "./signs/wpt.svg");
+
+        // Data
+        this.index = index;
+
+        // Accept radius
+        var that = this;
+        this.accept = viewer.entities.add({
+            position: new Cesium.CallbackProperty(() => { return that.position; }, false),
+            ellipse: {
+                material: Cesium.Color.CADETBLUE.withAlpha(0.5),
+            }
+        });
+    }
+
+    clear() {
+        super.clear();
+        this.viewer.entities.remove(this.accept);
+    }
+
+    rebuild() {
+        super.rebuild()
+
+        var params = this.data.params;
+        var acceptRadius = params && params.accept_radius ? params.accept_radius : 0;
+        this.accept.ellipse.show = acceptRadius > 0 && this.validPosition;
+        this.accept.ellipse.semiMinorAxis = acceptRadius;
+        this.accept.ellipse.semiMajorAxis = acceptRadius;
+        this.accept.ellipse.height = params.altitude ? params.altitude : 0;
+
+        // TODO: confirmed, reached
+    }
+}
+
 class Route {
     /**
      * @param {Cesium.Viewr} viewer
@@ -36,12 +77,13 @@ class Route {
         this.name = routeData.name;
     }
 
-    setWaypoint(index, waypointData) {
+    setWaypoint(index, data) {
         // TODO: relative latitude
         if (this.waypoints.length > index) {
-            this.waypoints[index].update(waypointData);
+            this.waypoints[index].update(data);
         } else if (this.waypoints.length === index) {
-            var waypoint = new Waypoint(this.viewer, this.input, waypointData, index);
+            var waypoint = new RouteItem(this.viewer, this.input, index);
+            waypoint.update(data);
             waypoint.setEditMode(this.editMode);
             this.waypoints.push(waypoint);
 
@@ -53,7 +95,7 @@ class Route {
                 if (that.waypoints.length > waypoint.index + 1)
                     that._updateCalcData(this.waypoints[index + 1]);
 
-                that.waypointChangedCallback(waypoint.index, waypoint.waypointData);
+                that.waypointChangedCallback(waypoint.index, waypoint.data);
             }
             waypoint.clickedCallback = (x, y) => {
                 that.waypointClickedCallback(waypoint.index, x, y);
@@ -75,7 +117,7 @@ class Route {
     }
 
     setWaypointSelected(index, selected) {
-        this.waypoints[index].setWaypointSelected(selected);
+        this.waypoints[index].setSelected(selected);
 
         if (selected)
             this.selectedIndex = index;
@@ -94,7 +136,7 @@ class Route {
 
     removeWaypoint(index) {
         if (this.selectedIndex === index) {
-            this.waypoints[index].setWaypointSelected(false);
+            this.waypoints[index].setSelected(false);
             this.selectedIndex = null;
         }
 
@@ -152,14 +194,14 @@ class Route {
 
     _updateCalcData(waypoint) {
         var index = waypoint.index;
-        var calcData = waypoint.waypointData.calcData;
+        var calcData = waypoint.data.calcData;
 
         var distance = index > 0 ? Cesium.Cartesian3.distance(
                                       waypoint.position, this.waypoints[index - 1].position) :
                                       undefined;
         calcData.distance = distance;
 
-        waypoint.waypointData.calcData = calcData;
+        waypoint.data.calcData = calcData;
         this.calcDataChangedCallback(index, calcData);
     }
 }
@@ -213,8 +255,8 @@ class Routes {
             this.routes.set(routeId, route);
 
             var that = this;
-            route.waypointChangedCallback = (index, waypointData) => {
-                that.waypointChangedCallback(routeId, index, waypointData);
+            route.waypointChangedCallback = (index, data) => {
+                that.waypointChangedCallback(routeId, index, data);
             }
             route.calcDataChangedCallback = (index, calcData) => {
                 that.calcDataChangedCallback(routeId, index, calcData);
@@ -226,8 +268,8 @@ class Routes {
         route.setRouteData(data);
     }
 
-    setWaypointData(routeId, index, waypointData) {
-        this.routes.get(routeId).setWaypoint(index, waypointData);
+    setWaypointData(routeId, index, data) {
+        this.routes.get(routeId).setWaypoint(index, data);
     }
 
     removeRoute(routeId) {

@@ -158,7 +158,8 @@ class CesiumWrapper {
 
             var missionController = channel.objects.missionController;
             if (missionController) {
-                const home = new Sign(that.viewer, that.input, "./signs/home.svg", missionController.home);
+                const home = new Sign(that.viewer, that.input, "./signs/home.svg");
+                home.update(missionController.home);
                 missionController.homeChanged.connect(homeData => { home.update(homeData); });
             }
 

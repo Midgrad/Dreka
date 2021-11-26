@@ -2,10 +2,9 @@ class Sign extends Draggable {
     /**
      * @param {Cesium.Viewer} viewer
        @param {Input} input
-     * @param {JSON} data
-     * @param {int} index
+     * @param {URL} sign - url to svg icon
      */
-    constructor(viewer, input, sign, data) {
+    constructor(viewer, input, sign) {
         super(viewer, input);
 
         // Callbacks
@@ -19,9 +18,8 @@ class Sign extends Draggable {
         this.editMode = false;
         this.selected = false;
         this.hoveredPoint = false;
-        this.hoveredLoiter = false;
 
-        // SVG billboard with label and accept radius
+        // SVG billboard with label
         var that = this;
         this.point = viewer.entities.add({
             position: new Cesium.CallbackProperty(() => { return that.position; }, false),
@@ -51,29 +49,11 @@ class Sign extends Draggable {
                  width: 1
              }
         });
-
-        // Circle for loiters
-        this.loiter = viewer.entities.add({
-            position: new Cesium.CallbackProperty(() => { return that.position; }, false),
-            ellipse: {
-                fill: false,
-                outline: true,
-                outlineWidth: new Cesium.CallbackProperty(() => {
-                    return that.hoveredLoiter ? 3.0 : 2.0;
-                }, false),
-                outlineColor: Cesium.Color.WHITE
-            }
-        });
-        // TODO: show loiter direction
-
-        this.update(data);
     }
 
     clear() {
-        var that = this;
         this.viewer.entities.remove(this.point);
         this.viewer.entities.remove(this.pylon);
-        this.viewer.entities.remove(this.loiter);
     }
 
     /**
@@ -84,10 +64,10 @@ class Sign extends Draggable {
         this.terrainAltitude = 0; // Don't trust terrain data
         this.changed = false;
 
-        this._rebuild();
+        this.rebuild();
     }
 
-    _rebuild() {
+    rebuild() {
         var params = this.data.params;
         var latitude = params ? params.latitude : undefined;
         var longitude = params ? params.longitude : undefined;
@@ -122,19 +102,12 @@ class Sign extends Draggable {
         this.point.billboard.show = this.validPosition;
 
         this.point.label.show = this.validPosition && this.editMode && !this.selected;
-        this.point.label.text = this.data.name + " " + (this.index + 1);
-
-        var loiterRadius = params && params.radius ? params.radius : 0;
-        this.loiter.ellipse.show = loiterRadius > 0 && this.validPosition;
-        this.loiter.ellipse.semiMinorAxis = loiterRadius;
-        this.loiter.ellipse.semiMajorAxis = loiterRadius;
-        this.loiter.ellipse.height = altitude;
-        // TODO: clockwise
+        this.point.label.text = this.data.name;
     }
 
     setEditMode(edit) {
         this.editMode = edit;
-        this._rebuild();
+        this.rebuild();
     }
 
     setSelected(selected) {
@@ -152,7 +125,6 @@ class Sign extends Draggable {
                                  screenPosition ? screenPosition.y : event.position.y);
             return true;
         }
-        // TODO: Click on loiter to change clockwise
         return false;
     }
 
@@ -168,7 +140,7 @@ class Sign extends Draggable {
     }
 
     onDown(event, cartesian, modifier) {
-        if (this.hoveredPoint || this.hoveredLoiter) {
+        if (this.hoveredPoint) {
             this.setDragging(true);
             return true;
         }
@@ -196,8 +168,15 @@ class Sign extends Draggable {
         var ray = this.viewer.scene.camera.getPickRay(event.endPosition);
         var plane = Cesium.Plane.fromPointNormal(cartesian, normal);
         var newCartesian = Cesium.IntersectionTests.rayPlane(ray, plane);
-        var changed = false;
 
+        this.changed = this.onDrag(newCartesian, modifier);
+        if (this.changed)
+            this.rebuild();
+
+        return this.changed;
+    }
+
+    onDrag(newCartesian, modifier) {
         if (this.hoveredPoint) {
             // this.position = newCartesian;
             var newCartographic = Cesium.Cartographic.fromCartesian(newCartesian);
@@ -207,25 +186,9 @@ class Sign extends Draggable {
                 this.data.params.longitude = Cesium.Math.toDegrees(newCartographic.longitude);
             }
             this.data.params.altitude = newCartographic.height;
-            changed = true;
+            return true;
         }
-        else if (this.hoveredLoiter) {
-            var distance = Cesium.Cartesian3.distance(newCartesian, this.position);
-            var params = this.data.params;
-
-            // Modify loiter radius
-            if (!Cesium.defined(params.radius))
-                return false;
-
-            this.data.params.radius = distance;
-            changed = true;
-        }
-
-        this.changed = changed;
-        if (changed)
-            this._rebuild();
-
-        return changed;
+        return false;
     }
 
     onPick(objects) {
@@ -235,11 +198,6 @@ class Sign extends Draggable {
         // Pick waypoints first
         this.hoveredPoint = objects.find(object => { return object.id === this.point });
         if (this.hoveredPoint)
-            return true;
-
-        // Pick loiter next
-        this.hoveredLoiter = objects.find(object => { return object.id === this.loiter });
-        if (this.hoveredLoiter)
             return true;
 
         return false;
@@ -253,5 +211,97 @@ class Sign extends Draggable {
                                                       this.data.params.latitude,
                                                       this.data.params.altitude);
         return Cesium.SceneTransforms.wgs84ToWindowCoordinates(scene, cartesian);
+    }
+}
+
+class LoiterSign extends Sign {
+    /**
+     * @param {Cesium.Viewer} viewer
+       @param {Input} input
+     * @param {JSON} data
+     */
+    constructor(viewer, input, sign) {
+        super(viewer, input, sign);
+
+        // Data
+        this.hoveredLoiter = false;
+
+        var that = this;
+        // Circle for loiters
+        this.loiter = viewer.entities.add({
+            position: new Cesium.CallbackProperty(() => { return that.position; }, false),
+            ellipse: {
+                fill: false,
+                outline: true,
+                outlineWidth: new Cesium.CallbackProperty(() => {
+                    return that.hoveredLoiter ? 3.0 : 2.0;
+                }, false),
+                outlineColor: Cesium.Color.WHITE
+            }
+        });
+        // TODO: show loiter direction
+    }
+
+    clear() {
+        super.clear();
+        this.viewer.entities.remove(this.loiter);
+    }
+
+    rebuild() {
+        super.rebuild();
+
+        var params = this.data.params;
+        var loiterRadius = params && params.radius ? params.radius : 0;
+        this.loiter.ellipse.show = loiterRadius > 0 && this.validPosition;
+        this.loiter.ellipse.semiMinorAxis = loiterRadius;
+        this.loiter.ellipse.semiMajorAxis = loiterRadius;
+        this.loiter.ellipse.height = params.altitude ? params.altitude : 0;
+        // TODO: clockwise
+    }
+
+    onClick(event, unusedCartesian, modifier) {
+        // TODO: Click on loiter to change clockwise
+        return super.onClick(event, unusedCartesian, modifier);
+    }
+
+    onDown(event, cartesian, modifier) {
+        if (this.hoveredPoint || this.hoveredLoiter) {
+            this.setDragging(true);
+            return true;
+        }
+        return false;
+    }
+
+    onDrag(newCartesian, modifier) {
+        if (super.onDrag(newCartesian, modifier))
+            return true;
+
+        if (this.hoveredLoiter) {
+            var distance = Cesium.Cartesian3.distance(newCartesian, this.position);
+            var params = this.data.params;
+
+            // Modify loiter radius
+            if (!Cesium.defined(params.radius))
+                return false;
+
+            this.data.params.radius = distance;
+            return true;
+        }
+        return false;
+    }
+
+    onPick(objects) {
+        if (!this.editMode)
+            return false;
+
+        if (super.onPick(objects))
+            return true;
+
+        // Pick loiter
+        this.hoveredLoiter = objects.find(object => { return object.id === this.loiter });
+        if (this.hoveredLoiter)
+            return true;
+
+        return false;
     }
 }
