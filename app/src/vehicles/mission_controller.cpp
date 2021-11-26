@@ -13,16 +13,22 @@ MissionController::MissionController(QObject* parent) :
 {
     Q_ASSERT(m_missionsService);
 
-    connect(m_missionsService, &IMissionsService::missionChanged, this,
-            [this](Mission* mission) {
-                if (m_mission == mission)
-                    emit missionChanged();
-            });
-    connect(m_missionsService, &IMissionsService::missionRemoved, this,
-            [this](Mission* mission) {
-                if (m_mission == mission)
-                    this->setMission(nullptr);
-            });
+    connect(m_missionsService, &IMissionsService::missionChanged, this, [this](Mission* mission) {
+        if (m_mission == mission)
+            emit missionChanged();
+    });
+    connect(m_missionsService, &IMissionsService::missionRemoved, this, [this](Mission* mission) {
+        if (m_mission == mission)
+            this->setMission(nullptr);
+    });
+}
+
+QVariant MissionController::vehicleId() const
+{
+    if (!m_mission)
+        return QVariant();
+
+    return m_mission->vehicleId();
 }
 
 QJsonObject MissionController::mission() const
@@ -31,6 +37,14 @@ QJsonObject MissionController::mission() const
         return QJsonObject();
 
     return QJsonObject::fromVariantMap(m_mission->toVariantMap());
+}
+
+QJsonObject MissionController::home() const
+{
+    if (!m_mission)
+        return QJsonObject();
+
+    return QJsonObject::fromVariantMap(m_mission->route()->homePoint()->toVariantMap());
 }
 
 QJsonObject MissionController::operation() const
@@ -90,10 +104,14 @@ void MissionController::setMission(Mission* mission)
                 &MissionController::itemsChanged);
         connect(mission->route(), &MissionRoute::currentItemChanged, this,
                 &MissionController::currentItemChanged);
+        connect(mission->route()->homePoint(), &RouteItem::changed, this, [this]() {
+            emit homeChanged(this->home());
+        });
     }
 
     emit missionChanged();
     emit operationChanged();
+    emit homeChanged(this->home());
 }
 
 void MissionController::save(const QJsonObject& data)

@@ -10,8 +10,9 @@ class MissionController : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QVariant vehicleId WRITE setVehicleId)
+    Q_PROPERTY(QVariant vehicleId READ vehicleId WRITE setVehicleId NOTIFY missionChanged)
     Q_PROPERTY(QJsonObject mission READ mission NOTIFY missionChanged)
+    Q_PROPERTY(QJsonObject home READ home NOTIFY homeChanged)
     Q_PROPERTY(QJsonObject operation READ operation NOTIFY operationChanged)
     Q_PROPERTY(QStringList items READ items NOTIFY itemsChanged)
     Q_PROPERTY(int currentItem READ currentItem NOTIFY currentItemChanged)
@@ -19,7 +20,9 @@ class MissionController : public QObject
 public:
     explicit MissionController(QObject* parent = nullptr);
 
+    QVariant vehicleId() const;
     QJsonObject mission() const;
+    QJsonObject home() const;
     QJsonObject operation() const;
     QStringList items() const;
     int currentItem() const;
@@ -41,6 +44,7 @@ signals:
     void operationChanged();
     void itemsChanged();
     void currentItemChanged();
+    void homeChanged(QJsonObject home);
 
 private:
     domain::IMissionsService* const m_missionsService;

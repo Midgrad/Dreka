@@ -16,6 +16,10 @@ Row {
         onMissionChanged: routes.setActiveMission(mission.id)
     }
 
+    Component.onCompleted: {
+        map.registerController("missionController", missionController);
+    }
+
     Controls.Button {
         id: missionButton
         height: parent.height

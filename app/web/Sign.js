@@ -1,11 +1,11 @@
-class Waypoint extends Draggable { // TODO: override sign
+class Sign extends Draggable {
     /**
      * @param {Cesium.Viewer} viewer
        @param {Input} input
-     * @param {JSON} waypointData
+     * @param {JSON} data
      * @param {int} index
      */
-    constructor(viewer, input, waypointData, index) {
+    constructor(viewer, input, sign, data) {
         super(viewer, input);
 
         // Callbacks
@@ -13,12 +13,11 @@ class Waypoint extends Draggable { // TODO: override sign
         this.clickedCallback = null;
 
         // Data
-        this.index = index;
         this.validPosition = false;
         this.position = Cesium.Cartesian3.ZERO;
         this.terrainPosition = Cesium.Cartesian3.ZERO;
         this.editMode = false;
-        this.waypointSelected = false;
+        this.selected = false;
         this.hoveredPoint = false;
         this.hoveredLoiter = false;
 
@@ -27,9 +26,9 @@ class Waypoint extends Draggable { // TODO: override sign
         this.point = viewer.entities.add({
             position: new Cesium.CallbackProperty(() => { return that.position; }, false),
             billboard: {
-                image: "./signs/wpt.svg",
+                image: sign,
                 scale: new Cesium.CallbackProperty(() => {
-                    return (that.waypointSelected || that.hoveredPoint) ? 1.5 : 1.0;
+                    return (that.selected || that.hoveredPoint) ? 1.5 : 1.0;
                 }, false),
                 disableDepthTestDistance: Number.POSITIVE_INFINITY
             },
@@ -39,9 +38,6 @@ class Waypoint extends Draggable { // TODO: override sign
                 font: "13px Helvetica",
                 disableDepthTestDistance: Number.POSITIVE_INFINITY
             },
-            ellipse: {
-                material: Cesium.Color.CADETBLUE.withAlpha(0.5),
-            }
         });
 
         // Dash line to the terrain
@@ -70,7 +66,7 @@ class Waypoint extends Draggable { // TODO: override sign
         });
         // TODO: show loiter direction
 
-        this.update(waypointData);
+        this.update(data);
     }
 
     clear() {
@@ -81,10 +77,10 @@ class Waypoint extends Draggable { // TODO: override sign
     }
 
     /**
-     * @param {JSON} waypointData - JSON, must contain latitude, longitude, altitude (AMSL)
+     * @param {JSON} data - JSON, must contain latitude, longitude, altitude (AMSL)
      */
-    update(waypointData) {
-        this.waypointData = waypointData;
+    update(data) {
+        this.data = data;
         this.terrainAltitude = 0; // Don't trust terrain data
         this.changed = false;
 
@@ -92,7 +88,7 @@ class Waypoint extends Draggable { // TODO: override sign
     }
 
     _rebuild() {
-        var params = this.waypointData.params;
+        var params = this.data.params;
         var latitude = params ? params.latitude : undefined;
         var longitude = params ? params.longitude : undefined;
         var altitude = params ? params.altitude : undefined;
@@ -124,17 +120,9 @@ class Waypoint extends Draggable { // TODO: override sign
         }
 
         this.point.billboard.show = this.validPosition;
-        this.point.billboard.color = this.waypointData.current ? Cesium.Color.FUCHSIA : Cesium.Color.WHITE;
 
-        this.point.label.show = this.validPosition && this.editMode && !this.waypointSelected;
-        this.point.label.text = this.waypointData.name + " " + (this.index + 1);
-
-        var acceptRadius = params && params.accept_radius ? params.accept_radius : 0;
-        this.point.ellipse.show = acceptRadius > 0 && this.validPosition;
-        this.point.ellipse.semiMinorAxis = acceptRadius;
-        this.point.ellipse.semiMajorAxis = acceptRadius;
-        this.point.ellipse.height = altitude;
-        // TODO: confirmed, reached
+        this.point.label.show = this.validPosition && this.editMode && !this.selected;
+        this.point.label.text = this.data.name + " " + (this.index + 1);
 
         var loiterRadius = params && params.radius ? params.radius : 0;
         this.loiter.ellipse.show = loiterRadius > 0 && this.validPosition;
@@ -149,14 +137,14 @@ class Waypoint extends Draggable { // TODO: override sign
         this._rebuild();
     }
 
-    setWaypointSelected(selected) {
-        this.waypointSelected = selected;
-        this.point.label.show = this.validPosition && this.editMode && !this.waypointSelected;
+    setSelected(selected) {
+        this.selected = selected;
+        this.point.label.show = this.validPosition && this.editMode && !this.selected;
     }
 
     onClick(event, unusedCartesian, modifier) {
-        if (Cesium.defined(modifier))
-            return;
+        if (Cesium.defined(modifier) || !Cesium.defined(this.clickedCallback))
+            return false;
 
         if (this.hoveredPoint) {
             var screenPosition = this.waypointPosition();
@@ -171,7 +159,7 @@ class Waypoint extends Draggable { // TODO: override sign
     onUp(event, cartesian, modifier) {
         if (this.dragging) {
             this.setDragging(false);
-            if (this.changed)
+            if (this.changed && this.changedCallback)
                 this.changedCallback();
             return true;
         }
@@ -184,7 +172,6 @@ class Waypoint extends Draggable { // TODO: override sign
             this.setDragging(true);
             return true;
         }
-
         return false;
     }
 
@@ -216,21 +203,21 @@ class Waypoint extends Draggable { // TODO: override sign
             var newCartographic = Cesium.Cartographic.fromCartesian(newCartesian);
             // Modify only altitude if SHIFT
             if (modifier !== Cesium.KeyboardEventModifier.SHIFT) {
-                this.waypointData.params.latitude = Cesium.Math.toDegrees(newCartographic.latitude);
-                this.waypointData.params.longitude = Cesium.Math.toDegrees(newCartographic.longitude);
+                this.data.params.latitude = Cesium.Math.toDegrees(newCartographic.latitude);
+                this.data.params.longitude = Cesium.Math.toDegrees(newCartographic.longitude);
             }
-            this.waypointData.params.altitude = newCartographic.height;
+            this.data.params.altitude = newCartographic.height;
             changed = true;
         }
         else if (this.hoveredLoiter) {
             var distance = Cesium.Cartesian3.distance(newCartesian, this.position);
-            var params = this.waypointData.params;
+            var params = this.data.params;
 
             // Modify loiter radius
             if (!Cesium.defined(params.radius))
                 return false;
 
-            this.waypointData.params.radius = distance;
+            this.data.params.radius = distance;
             changed = true;
         }
 
@@ -262,9 +249,9 @@ class Waypoint extends Draggable { // TODO: override sign
 
     waypointPosition() {
         var scene = this.viewer.scene;
-        var cartesian = Cesium.Cartesian3.fromDegrees(this.waypointData.params.longitude,
-                                                      this.waypointData.params.latitude,
-                                                      this.waypointData.params.altitude);
+        var cartesian = Cesium.Cartesian3.fromDegrees(this.data.params.longitude,
+                                                      this.data.params.latitude,
+                                                      this.data.params.altitude);
         return Cesium.SceneTransforms.wgs84ToWindowCoordinates(scene, cartesian);
     }
 }
