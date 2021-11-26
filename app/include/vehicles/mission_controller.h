@@ -1,7 +1,7 @@
 #ifndef MISSION_CONTROLLER_H
 #define MISSION_CONTROLLER_H
 
-#include "i_missions_repository.h"
+#include "i_missions_service.h"
 #include "i_property_tree.h"
 
 namespace md::presentation
@@ -43,7 +43,7 @@ signals:
     void currentItemChanged();
 
 private:
-    domain::IMissionsRepository* const m_missionsRepository;
+    domain::IMissionsService* const m_missionsService;
     domain::Mission* m_mission = nullptr;
 };
 } // namespace md::presentation

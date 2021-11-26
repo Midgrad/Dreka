@@ -1,7 +1,7 @@
 #ifndef ROUTES_CONTROLLER_H
 #define ROUTES_CONTROLLER_H
 
-#include "i_missions_repository.h"
+#include "i_missions_service.h"
 #include "i_routes_service.h"
 
 #include <QJsonArray>
@@ -61,7 +61,7 @@ private slots:
 
 private:
     domain::IRoutesService* const m_routesService;
-    domain::IMissionsRepository* const m_missionsRepository;
+    domain::IMissionsService* const m_missionsService;
     domain::Mission* m_activeMission = nullptr;
     domain::Route* m_selectedRoute = nullptr;
 };

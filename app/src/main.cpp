@@ -20,6 +20,7 @@
 #include <QtWebEngine>
 
 // Data source
+#include "missions_repository_sql.h"
 #include "route_items_repository_sql.h"
 #include "routes_repository_sql.h"
 #include "sqlite_schema.h"
@@ -29,7 +30,7 @@
 #include "command_service.h"
 #include "gui_layout.h"
 #include "locator.h"
-#include "missions_repository_sql.h"
+#include "missions_service.h"
 #include "property_tree.h"
 #include "routes_service.h"
 #include "vehicles_service.h"
@@ -86,8 +87,10 @@ int main(int argc, char* argv[])
     domain::RoutesService routesService(&routesRepository, &routeItemsRepository);
     app::Locator::provide<domain::IRoutesService>(&routesService);
 
-    domain::MissionsRepositorySql missionsRepository(&routesService, schema.db());
-    app::Locator::provide<domain::IMissionsRepository>(&missionsRepository);
+    data_source::MissionsRepositorySql missionsRepository(schema.db());
+    domain::MissionsService missionsService(&routesService, &missionsRepository,
+                                            &routeItemsRepository);
+    app::Locator::provide<domain::IMissionsService>(&missionsService);
 
     domain::PropertyTree pTree;
     app::Locator::provide<domain::IPropertyTree>(&pTree);
@@ -133,7 +136,7 @@ int main(int argc, char* argv[])
     // TODO: soft caching, read only on demand
     vehiclesService.readAll();
     routesService.readAll();
-    missionsRepository.readAll();
+    missionsService.readAll();
 
     engine.rootContext()->setContextProperty("layout", layout.items());
     engine.rootContext()->setContextProperty("applicationDirPath",

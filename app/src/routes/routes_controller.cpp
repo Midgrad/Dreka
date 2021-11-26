@@ -11,10 +11,10 @@ using namespace md::presentation;
 RoutesController::RoutesController(QObject* parent) :
     QObject(parent),
     m_routesService(md::app::Locator::get<IRoutesService>()),
-    m_missionsRepository(md::app::Locator::get<IMissionsRepository>())
+    m_missionsService(md::app::Locator::get<IMissionsService>())
 {
     Q_ASSERT(m_routesService);
-    Q_ASSERT(m_missionsRepository);
+    Q_ASSERT(m_missionsService);
 
     connect(m_routesService, &IRoutesService::routeTypesChanged, this,
             &RoutesController::routeTypesChanged);
@@ -30,7 +30,7 @@ RoutesController::RoutesController(QObject* parent) :
         this->onRouteAdded(route);
     }
 
-    connect(m_missionsRepository, &IMissionsRepository::missionRemoved, this,
+    connect(m_missionsService, &IMissionsService::missionRemoved, this,
             [this](Mission* mission) {
                 if (m_activeMission == mission)
                     this->setActiveMission(QVariant());
@@ -99,7 +99,7 @@ QJsonArray RoutesController::waypointTypes(const QVariant& routeId) const
 
 void RoutesController::setActiveMission(const QVariant& missionId)
 {
-    m_activeMission = m_missionsRepository->mission(missionId);
+    m_activeMission = m_missionsService->mission(missionId);
 
     if (m_activeMission && m_activeMission->route() && !m_selectedRoute)
     {

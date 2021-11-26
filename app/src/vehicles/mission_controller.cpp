@@ -9,16 +9,16 @@ using namespace md::presentation;
 
 MissionController::MissionController(QObject* parent) :
     QObject(parent),
-    m_missionsRepository(md::app::Locator::get<IMissionsRepository>())
+    m_missionsService(md::app::Locator::get<IMissionsService>())
 {
-    Q_ASSERT(m_missionsRepository);
+    Q_ASSERT(m_missionsService);
 
-    connect(m_missionsRepository, &IMissionsRepository::missionChanged, this,
+    connect(m_missionsService, &IMissionsService::missionChanged, this,
             [this](Mission* mission) {
                 if (m_mission == mission)
                     emit missionChanged();
             });
-    connect(m_missionsRepository, &IMissionsRepository::missionRemoved, this,
+    connect(m_missionsService, &IMissionsService::missionRemoved, this,
             [this](Mission* mission) {
                 if (m_mission == mission)
                     this->setMission(nullptr);
@@ -67,7 +67,7 @@ int MissionController::currentItem() const
 
 void MissionController::setVehicleId(const QVariant& vehicleId)
 {
-    this->setMission(m_missionsRepository->missionForVehicle(vehicleId));
+    this->setMission(m_missionsService->missionForVehicle(vehicleId));
 }
 
 void MissionController::setMission(Mission* mission)
@@ -102,7 +102,7 @@ void MissionController::save(const QJsonObject& data)
         return;
 
     m_mission->fromVariantMap(data.toVariantMap());
-    m_missionsRepository->saveMission(m_mission);
+    m_missionsService->saveMission(m_mission);
 }
 
 void MissionController::remove()
@@ -110,7 +110,7 @@ void MissionController::remove()
     if (!m_mission)
         return;
 
-    m_missionsRepository->removeMission(m_mission);
+    m_missionsService->removeMission(m_mission);
 }
 
 void MissionController::upload()
