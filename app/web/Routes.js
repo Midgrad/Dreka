@@ -9,6 +9,7 @@ class RouteItem extends LoiterSign {
 
         // Data
         this.index = index;
+        this.hoveredAccept = false;
 
         // Accept radius
         var that = this;
@@ -16,6 +17,11 @@ class RouteItem extends LoiterSign {
             position: new Cesium.CallbackProperty(() => { return that.position; }, false),
             ellipse: {
                 material: Cesium.Color.CADETBLUE.withAlpha(0.5),
+                outline: true,
+                outlineWidth: new Cesium.CallbackProperty(() => {
+                    return that.hoveredAccept ? 3.0 : 2.0;
+                }, false),
+                outlineColor: Cesium.Color.CADETBLUE.withAlpha(0.5)
             }
         });
     }
@@ -37,6 +43,39 @@ class RouteItem extends LoiterSign {
 
         // TODO: confirmed, reached
     }
+
+    onDrag(newCartesian, modifier) {
+        if (super.onDrag(newCartesian, modifier))
+            return true;
+
+
+        if (this.hoveredAccept) {
+            var distance = Cesium.Cartesian3.distance(newCartesian, this.position);
+            var params = this.data.params;
+
+            // Modify accept radius
+            if (!Cesium.defined(params.accept_radius))
+                return false;
+
+            this.data.params.accept_radius = distance;
+            return true;
+        }
+        return false;
+    }
+
+    onPick(objects) {
+        if (!this.editMode)
+            return false;
+
+        if (super.onPick(objects))
+            return true;
+
+        // Pick accept
+        this.hoveredAccept = objects.find(object => { return object.id === this.accept });
+        return this.hoveredAccept;
+    }
+
+    hovered() { return super.hovered() || this.hoveredAccept; }
 }
 
 class Route {

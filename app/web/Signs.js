@@ -45,8 +45,8 @@ class Sign extends Draggable {
                      return [that.position, that.terrainPosition];
                  }, false),
                  arcType: Cesium.ArcType.NONE,
-                 material: new Cesium.PolylineDashMaterialProperty(Cesium.Color.GAINSBORO),
-                 width: 1
+                 material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.WHITE),
+                 width: 4.0
              }
         });
     }
@@ -140,7 +140,7 @@ class Sign extends Draggable {
     }
 
     onDown(event, cartesian, modifier) {
-        if (this.hoveredPoint) {
+        if (this.hovered()) {
             this.setDragging(true);
             return true;
         }
@@ -197,11 +197,10 @@ class Sign extends Draggable {
 
         // Pick waypoints first
         this.hoveredPoint = objects.find(object => { return object.id === this.point });
-        if (this.hoveredPoint)
-            return true;
-
-        return false;
+        return this.hoveredPoint;
     }
+
+    hovered() { return this.hoveredPoint; }
 
     flyTo() { this.viewer.flyTo(this.point); }
 
@@ -264,14 +263,6 @@ class LoiterSign extends Sign {
         return super.onClick(event, unusedCartesian, modifier);
     }
 
-    onDown(event, cartesian, modifier) {
-        if (this.hoveredPoint || this.hoveredLoiter) {
-            this.setDragging(true);
-            return true;
-        }
-        return false;
-    }
-
     onDrag(newCartesian, modifier) {
         if (super.onDrag(newCartesian, modifier))
             return true;
@@ -299,9 +290,8 @@ class LoiterSign extends Sign {
 
         // Pick loiter
         this.hoveredLoiter = objects.find(object => { return object.id === this.loiter });
-        if (this.hoveredLoiter)
-            return true;
-
-        return false;
+        return this.hoveredLoiter;
     }
+
+    hovered() { return super.hovered() || this.hoveredLoiter; }
 }
