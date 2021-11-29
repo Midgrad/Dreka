@@ -44,7 +44,7 @@ QJsonObject MissionController::home() const
     if (!m_mission)
         return QJsonObject();
 
-    return QJsonObject::fromVariantMap(m_mission->route()->homePoint()->toVariantMap());
+    return QJsonObject::fromVariantMap(m_mission->homePoint()->toVariantMap());
 }
 
 QJsonObject MissionController::operation() const
@@ -61,11 +61,17 @@ QStringList MissionController::items() const
         return QStringList();
 
     QStringList list;
-    int index = 0;
-    for (RouteItem* item : m_mission->route()->items())
+
+    list.append(m_mission->homePoint()->underlyingItem()->name());
+
+    if (m_mission->route())
     {
-        list.append(item->name() + " " + QString::number(index));
-        index++;
+        int index = 1;
+        for (MissionRouteItem* item : m_mission->route()->items())
+        {
+            list.append(item->underlyingItem()->name() + " " + QString::number(index));
+            index++;
+        }
     }
 
     return list;
@@ -100,13 +106,15 @@ void MissionController::setMission(Mission* mission)
     {
         connect(mission->operation(), &MissionOperation::changed, this,
                 &MissionController::operationChanged);
-        connect(mission->route(), &MissionRoute::itemsChanged, this,
-                &MissionController::itemsChanged);
-        connect(mission->route(), &MissionRoute::currentItemChanged, this,
-                &MissionController::currentItemChanged);
-        connect(mission->route()->homePoint(), &RouteItem::changed, this, [this]() {
+        connect(mission->homePoint(), &RouteItem::changed, this, [this]() {
             emit homeChanged(this->home());
         });
+
+        // TODO: mission route
+        //        connect(mission->route(), &MissionRoute::itemsChanged, this,
+        //                &MissionController::itemsChanged);
+        //        connect(mission->route(), &MissionRoute::currentItemChanged, this,
+        //                &MissionController::currentItemChanged);
     }
 
     emit missionChanged();
