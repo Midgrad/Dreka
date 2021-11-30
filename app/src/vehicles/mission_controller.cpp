@@ -21,6 +21,16 @@ MissionController::MissionController(QObject* parent) :
         if (m_mission == mission)
             this->setMission(nullptr);
     });
+    connect(m_missionsService, &IMissionsService::operationStarted, this,
+            [this](MissionOperation* operation) {
+                if (m_mission && m_mission == operation->mission())
+                    this->setOperation(operation);
+            });
+    connect(m_missionsService, &IMissionsService::operationEnded, this,
+            [this](MissionOperation* operation) {
+                if (m_operation == operation)
+                    this->setOperation(nullptr);
+            });
 }
 
 QVariant MissionController::vehicleId() const
@@ -49,10 +59,10 @@ QJsonObject MissionController::home() const
 
 QJsonObject MissionController::operation() const
 {
-    if (!m_mission)
+    if (!m_operation)
         return QJsonObject();
 
-    return QJsonObject::fromVariantMap(m_mission->operation()->toVariantMap());
+    return QJsonObject::fromVariantMap(m_operation->toVariantMap());
 }
 
 QStringList MissionController::items() const
@@ -79,7 +89,7 @@ QStringList MissionController::items() const
 
 int MissionController::currentItem() const
 {
-    if (!m_mission)
+    if (!m_mission || !m_mission->route())
         return -1;
 
     return m_mission->route()->currentItem();
@@ -104,17 +114,15 @@ void MissionController::setMission(Mission* mission)
 
     if (mission)
     {
-        connect(mission->operation(), &MissionOperation::changed, this,
-                &MissionController::operationChanged);
         connect(mission->homePoint(), &RouteItem::changed, this, [this]() {
             emit homeChanged(this->home());
         });
 
-        // TODO: mission route
-        //        connect(mission->route(), &MissionRoute::itemsChanged, this,
-        //                &MissionController::itemsChanged);
-        //        connect(mission->route(), &MissionRoute::currentItemChanged, this,
-        //                &MissionController::currentItemChanged);
+        // TODO: separate mission route
+        connect(mission->route(), &MissionRoute::itemsChanged, this,
+                &MissionController::itemsChanged);
+        connect(mission->route(), &MissionRoute::currentItemChanged, this,
+                &MissionController::currentItemChanged);
     }
 
     emit missionChanged();
@@ -144,7 +152,7 @@ void MissionController::upload()
     if (!m_mission)
         return;
 
-    emit m_mission->operation()->upload();
+    m_missionsService->startOperation(m_mission, MissionOperation::Upload);
 }
 
 void MissionController::download()
@@ -152,7 +160,7 @@ void MissionController::download()
     if (!m_mission)
         return;
 
-    emit m_mission->operation()->download();
+    m_missionsService->startOperation(m_mission, MissionOperation::Download);
 }
 
 void MissionController::clear()
@@ -160,15 +168,15 @@ void MissionController::clear()
     if (!m_mission)
         return;
 
-    emit m_mission->operation()->clear();
+    m_missionsService->startOperation(m_mission, MissionOperation::Clear);
 }
 
 void MissionController::cancel()
 {
-    if (!m_mission)
+    if (!m_operation)
         return;
 
-    emit m_mission->operation()->cancel();
+    m_missionsService->endOperation(m_operation);
 }
 
 void MissionController::switchItem(int index)
@@ -177,4 +185,20 @@ void MissionController::switchItem(int index)
         return;
 
     emit m_mission->route()->switchCurrentItem(index);
+}
+
+void MissionController::setOperation(domain::MissionOperation* operation)
+{
+    if (m_operation == operation)
+        return;
+
+    if (m_operation)
+        disconnect(m_operation, nullptr, this, nullptr);
+
+    m_operation = operation;
+
+    if (m_operation)
+        connect(m_operation, &MissionOperation::changed, this, &MissionController::operationChanged);
+
+    emit operationChanged();
 }

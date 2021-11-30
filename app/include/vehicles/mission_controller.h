@@ -2,11 +2,11 @@
 #define MISSION_CONTROLLER_H
 
 #include "i_missions_service.h"
-#include "i_property_tree.h"
 
 namespace md::presentation
 {
-class MissionController : public QObject
+class MissionController
+    : public QObject // TODO: MissionRouteController & MissionController with sync
 {
     Q_OBJECT
 
@@ -47,8 +47,11 @@ signals:
     void homeChanged(QJsonObject home);
 
 private:
+    void setOperation(domain::MissionOperation* operation);
+
     domain::IMissionsService* const m_missionsService;
     domain::Mission* m_mission = nullptr;
+    domain::MissionOperation* m_operation = nullptr;
 };
 } // namespace md::presentation
 
