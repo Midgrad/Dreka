@@ -31,11 +31,11 @@ find_package(Qt5 ${QT_REQUIRED_VERSION} COMPONENTS Core Quick WebEngine WebChann
 add_executable(${PROJECT_NAME} "")
 
 # Include
-HEADER_DIRECTORIES(INCLUDES "include")
+HEADER_DIRECTORIES(INCLUDES "src")
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDES} PRIVATE "src")
 
 # Sources
-file(GLOB_RECURSE SOURCES "include/*" "src/*")
+file(GLOB_RECURSE SOURCES "src/*")
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
 
 # Create translations QRC file

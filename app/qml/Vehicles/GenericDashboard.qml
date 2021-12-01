@@ -3,6 +3,8 @@ import Industrial.Controls 1.0 as Controls
 import Industrial.Indicators 1.0 as Indicators
 import Dreka 1.0
 
+import "../Missions"
+
 Column {
     id: root
 
@@ -259,9 +261,10 @@ Column {
         }
     }
 
-    MissionView {
+    MissionRouteView {
         id: mission
         width: parent.width
+        vehicleId: controller.selectedVehicle
 
         Controls.ComboBox {
             width: mission.availableWidth

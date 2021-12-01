@@ -156,11 +156,11 @@ class CesiumWrapper {
                 }
             }
 
-            var missionController = channel.objects.missionController;
-            if (missionController) {
+            var missionRouteController = channel.objects.missionRouteController;
+            if (missionRouteController) {
                 const home = new Sign(that.viewer, that.input, "./signs/home.svg");
-                home.update(missionController.home);
-                missionController.homeChanged.connect(homeData => { home.update(homeData); });
+                home.update(missionRouteController.home);
+                missionRouteController.homeChanged.connect(homeData => { home.update(homeData); });
             }
 
             var vehiclesController = channel.objects.vehiclesController;

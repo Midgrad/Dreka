@@ -48,7 +48,8 @@
 #include "map_menu_controller.h"
 #include "map_ruler_controller.h"
 #include "map_viewport_controller.h"
-#include "mission_controller.h"
+#include "mission_operation_controller.h"
+#include "mission_route_controller.h"
 #include "routes_controller.h"
 #include "vehicles_controller.h"
 #include "waypoint_controller.h"
@@ -114,7 +115,9 @@ int main(int argc, char* argv[])
     qmlRegisterType<presentation::RoutesController>("Dreka", 1, 0, "RoutesController");
     qmlRegisterType<presentation::WaypointController>("Dreka", 1, 0, "WaypointController");
     qmlRegisterType<presentation::VehiclesController>("Dreka", 1, 0, "VehiclesController");
-    qmlRegisterType<presentation::MissionController>("Dreka", 1, 0, "MissionController");
+    qmlRegisterType<presentation::MissionOperationController>("Dreka", 1, 0,
+                                                              "MissionOperationController");
+    qmlRegisterType<presentation::MissionRouteController>("Dreka", 1, 0, "MissionRouteController");
 
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);

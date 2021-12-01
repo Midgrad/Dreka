@@ -2,12 +2,17 @@ import QtQuick 2.6
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
 import Industrial.Widgets 1.0 as Widgets
+import Dreka 1.0
 
 Controls.Popup {
     id: root
 
-    readonly property var mission: missionController.mission
-    readonly property var operation: missionController.operation
+    property alias missionId: operationController.missionId
+
+    readonly property var mission: operationController.mission
+    readonly property var operation: operationController.operation
+
+    MissionOperationController { id: operationController }
 
     ColumnLayout {
         id: column
@@ -23,7 +28,7 @@ Controls.Popup {
                 id: nameEdit
                 labelText: qsTr("Mission")
                 Binding on text { value: mission.name ? mission.name : ""; when: !nameEdit.activeFocus }
-                onEditingFinished: missionController.save({ name: text });
+                onEditingFinished: operationController.save({ name: text });
             }
 
             Controls.ComboBox {
@@ -36,7 +41,7 @@ Controls.Popup {
 
         Controls.ProgressBar {
             id: progress
-            visible: !operation.complete
+            visible: operation.id !== undefined
             flat: true
             radius: Controls.Theme.rounding
             from: 0
@@ -49,28 +54,28 @@ Controls.Popup {
                 flat: true
                 tipText: qsTr("Cancel")
                 text: progress.value + "/" + progress.to
-                onClicked: missionController.cancel()
+                onClicked: operationController.cancel()
             }
         }
 
         Controls.ButtonBar {
             id: bar
             flat: true
-            visible: operation.complete ? true : false
+            visible: operation.id === undefined
             Layout.fillWidth: true
 
             Controls.Button {
                 text: qsTr("Download")
                 borderColor: Controls.Theme.colors.controlBorder
                 enabled: mission.id ? true : false
-                onClicked: missionController.download()
+                onClicked: operationController.download()
             }
 
             Controls.Button {
                 text: qsTr("Upload")
                 borderColor: Controls.Theme.colors.controlBorder
                 enabled: mission.id ? true : false
-                onClicked: missionController.upload()
+                onClicked: operationController.upload()
             }
 
             Controls.Button {
@@ -79,7 +84,7 @@ Controls.Popup {
                 enabled: mission.id ? true : false
                 highlightColor: Controls.Theme.colors.negative
                 hoverColor: highlightColor
-                onClicked: missionController.clear()
+                onClicked: operationController.clear()
             }
         }
 

@@ -8,17 +8,13 @@ Row {
 
     readonly property real availableWidth: width - missionButton.width - wpBox.width - spacing * 2
 
+    property alias vehicleId : missionRouteController.vehicleId
+
     spacing: 1
 
-    MissionController {
-        id: missionController
-        vehicleId: controller.selectedVehicle
-        onMissionChanged: routes.setActiveMission(mission.id)
-    }
+    MissionRouteController { id: missionRouteController }
 
-    Component.onCompleted: {
-        map.registerController("missionController", missionController);
-    }
+    Component.onCompleted: map.registerController("missionRouteController", missionRouteController)
 
     Controls.Button {
         id: missionButton
@@ -31,11 +27,12 @@ Row {
         enabled: controller.selectedVehicle !== undefined
         onClicked: missionPopup.visible ? missionPopup.close() : missionPopup.open()
 
-        MissionPopup {
+        MissionOperationView {
             id: missionPopup
             x: -width - Controls.Theme.margins - Controls.Theme.spacing
             y: parent.y - height + parent.height
             closePolicy: Controls.Popup.CloseOnPressOutsideParent
+            missionId: missionRouteController.mission.id
         }
     }
 
@@ -45,12 +42,12 @@ Row {
         flat: true
         labelText: qsTr("WPT")
         enabled: controller.selectedVehicle !== undefined
-        model: missionController.items
-        displayText: missionController.items[missionController.currentItem]
+        model: missionRouteController.routeItems
+        displayText: missionRouteController.routeItems[missionRouteController.currentItem]
         Binding on currentIndex {
-            value: missionController.currentItem
+            value: missionRouteController.currentItem
             when: !wpBox.activeFocus
         }
-        onActivated: missionController.switchItem(index)
+        onActivated: missionRouteController.switchItem(index)
     }
 }
