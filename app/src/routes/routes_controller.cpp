@@ -30,11 +30,10 @@ RoutesController::RoutesController(QObject* parent) :
         this->onRouteAdded(route);
     }
 
-    connect(m_missionsService, &IMissionsService::missionRemoved, this,
-            [this](Mission* mission) {
-                if (m_activeMission == mission)
-                    this->setActiveMission(QVariant());
-            });
+    connect(m_missionsService, &IMissionsService::missionRemoved, this, [this](Mission* mission) {
+        if (m_activeMission == mission)
+            this->setActiveMission(QVariant());
+    });
 }
 
 QJsonArray RoutesController::routeTypes() const
@@ -101,7 +100,7 @@ void RoutesController::setActiveMission(const QVariant& missionId)
 {
     m_activeMission = m_missionsService->mission(missionId);
 
-    if (m_activeMission && m_activeMission->route() && !m_selectedRoute)
+    if (m_activeMission && !m_selectedRoute)
     {
         this->selectRoute(m_activeMission->route()->id());
     }
