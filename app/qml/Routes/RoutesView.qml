@@ -6,8 +6,6 @@ import Dreka 1.0
 RowLayout {
     id: root
 
-    function setActiveMission(missionId) { controller.setActiveMission(missionId); }
-
     Controls.Menu {
         id: addWaypoint
         title: qsTr("Add Waypoint")

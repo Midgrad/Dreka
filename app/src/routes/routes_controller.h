@@ -29,7 +29,6 @@ public:
     Q_INVOKABLE QJsonArray waypointTypes(const QVariant& routeId) const;
 
 public slots:
-    void setActiveMission(const QVariant& missionId);
     void selectRoute(const QVariant& selectedRouteId);
     void addNewRoute(const QString& routeTypeId);
     void updateRoute(const QVariant& routeId, const QJsonObject& data);
@@ -61,8 +60,7 @@ private slots:
 
 private:
     domain::IRoutesService* const m_routesService;
-    domain::IMissionsService* const m_missionsService;
-    domain::Mission* m_activeMission = nullptr;
+
     domain::Route* m_selectedRoute = nullptr;
 };
 } // namespace md::presentation

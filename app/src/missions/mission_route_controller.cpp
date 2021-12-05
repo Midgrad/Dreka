@@ -44,7 +44,7 @@ QJsonObject MissionRouteController::home() const
     if (!m_mission)
         return QJsonObject();
 
-    return QJsonObject::fromVariantMap(m_mission->route()->homeItem()->toVariantMap());
+    return QJsonObject::fromVariantMap(m_mission->home()->toVariantMap());
 }
 
 QStringList MissionRouteController::routeItems() const
@@ -52,12 +52,18 @@ QStringList MissionRouteController::routeItems() const
     if (!m_mission)
         return QStringList();
 
-    int index = 0;
     QStringList list;
-    for (MissionRouteItem* item : m_mission->route()->items())
+
+    list.append(m_mission->home()->name());
+
+    if (m_route)
     {
-        list.append(item->name() + " " + QString::number(index));
-        index++;
+        int index = 1;
+        for (RouteItem* item : m_mission->route()->items())
+        {
+            list.append(item->name() + " " + QString::number(index));
+            index++;
+        }
     }
 
     return list;
@@ -68,7 +74,7 @@ int MissionRouteController::currentItem() const
     if (!m_mission)
         return -1;
 
-    return m_mission->route()->currentItem();
+    return m_mission->currentItem();
 }
 
 void MissionRouteController::setVehicleId(const QVariant& vehicleId)
@@ -88,17 +94,41 @@ void MissionRouteController::setMission(Mission* mission)
 
     m_mission = mission;
 
-    if (mission)
+    if (m_mission)
     {
-        connect(mission->route()->homeItem(), &MissionRouteItem::changed, this, [this]() {
+        connect(m_mission->home(), &RouteItem::changed, this, [this]() {
             emit homeChanged(this->home());
         });
-        connect(mission->route(), &MissionRoute::itemsChanged, this,
-                &MissionRouteController::routeItemsChanged);
+        connect(m_mission, &Mission::currentItemChanged, this,
+                &MissionRouteController::currentItemChanged);
+        connect(m_mission, &Mission::routeChanged, this, &MissionRouteController::routeItemsChanged);
     }
+    this->setRoute(mission->route());
 
     emit missionChanged();
     emit homeChanged(this->home());
+}
+
+void MissionRouteController::setRoute(domain::Route* route)
+{
+    if (m_route == route)
+        return;
+
+    if (m_route)
+    {
+        disconnect(m_route, nullptr, this, nullptr);
+    }
+
+    m_route = route;
+
+    if (m_route)
+    {
+        connect(m_route, &Route::itemAdded, this, &MissionRouteController::routeItemsChanged);
+        connect(m_route, &Route::itemRemoved, this, &MissionRouteController::routeItemsChanged);
+        connect(m_route, &Route::itemChanged, this, &MissionRouteController::routeItemsChanged);
+    }
+
+    emit routeItemsChanged();
 }
 
 void MissionRouteController::switchItem(int index)
@@ -106,5 +136,5 @@ void MissionRouteController::switchItem(int index)
     if (!m_mission)
         return;
 
-    emit m_mission->route()->switchCurrentItem(index);
+    emit m_mission->switchCurrentItem(index);
 }

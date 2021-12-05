@@ -27,6 +27,7 @@ public:
 public slots:
     void setVehicleId(const QVariant& vehicleId);
     void setMission(domain::Mission* mission);
+    void setRoute(domain::Route* route);
 
     void switchItem(int index);
 
@@ -39,6 +40,7 @@ signals:
 private:
     domain::IMissionsService* const m_missionsService;
     domain::Mission* m_mission = nullptr;
+    domain::Route* m_route = nullptr;
 };
 } // namespace md::presentation
 
