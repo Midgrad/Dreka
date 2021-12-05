@@ -100,6 +100,8 @@ class Sign extends Draggable {
         }
 
         this.point.billboard.show = this.validPosition;
+        this.point.billboard.color = this.data.current ? Cesium.Color.MAGENTA :
+                                        this.data.reached ? Cesium.Color.AQUAMARINE : Cesium.Color.WHITE
 
         this.point.label.show = this.validPosition && this.editMode && !this.selected;
         this.point.label.text = this.data.name;

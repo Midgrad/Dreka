@@ -10,11 +10,9 @@ using namespace md::presentation;
 
 RoutesController::RoutesController(QObject* parent) :
     QObject(parent),
-    m_routesService(md::app::Locator::get<IRoutesService>()),
-    m_missionsService(md::app::Locator::get<IMissionsService>())
+    m_routesService(md::app::Locator::get<IRoutesService>())
 {
     Q_ASSERT(m_routesService);
-    Q_ASSERT(m_missionsService);
 
     connect(m_routesService, &IRoutesService::routeTypesChanged, this,
             &RoutesController::routeTypesChanged);
@@ -29,11 +27,6 @@ RoutesController::RoutesController(QObject* parent) :
     {
         this->onRouteAdded(route);
     }
-
-    connect(m_missionsService, &IMissionsService::missionRemoved, this, [this](Mission* mission) {
-        if (m_activeMission == mission)
-            this->setActiveMission(QVariant());
-    });
 }
 
 QJsonArray RoutesController::routeTypes() const
@@ -94,16 +87,6 @@ QJsonArray RoutesController::waypointTypes(const QVariant& routeId) const
         jsons.append(QJsonObject::fromVariantMap(wptType->toVariantMap()));
     }
     return jsons;
-}
-
-void RoutesController::setActiveMission(const QVariant& missionId)
-{
-    m_activeMission = m_missionsService->mission(missionId);
-
-    if (m_activeMission && !m_selectedRoute)
-    {
-        this->selectRoute(m_activeMission->route()->id());
-    }
 }
 
 void RoutesController::selectRoute(const QVariant& selectedRouteId)
@@ -236,13 +219,13 @@ void RoutesController::onRouteAdded(Route* route)
     emit routeAdded(route->id());
     emit routeIdsChanged();
 
-    connect(route, &Route::itemAdded, this, [this, route](int index, RouteItem* waypoint) {
+    connect(route, &Route::itemAdded, this, [this, route](int index, RouteItem*) {
         emit waypointAdded(route->id(), index);
     });
-    connect(route, &Route::itemRemoved, this, [this, route](int index, RouteItem* waypoint) {
+    connect(route, &Route::itemRemoved, this, [this, route](int index, RouteItem*) {
         emit waypointRemoved(route->id(), index);
     });
-    connect(route, &Route::itemChanged, this, [this, route](int index, RouteItem* waypoint) {
+    connect(route, &Route::itemChanged, this, [this, route](int index, RouteItem*) {
         emit waypointChanged(route->id(), index);
     });
 }
