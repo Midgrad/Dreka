@@ -30,7 +30,7 @@ QJsonObject WaypointController::waypoint() const
     QVariantMap waypoint = m_waypoint->toVariantMap();
 
     if (m_route)
-        waypoint.insert(props::route, m_route->id());
+        waypoint.insert(props::route, m_route->id);
 
     QJsonArray array;
     for (RouteItem* item : m_waypoint->items())
@@ -187,7 +187,7 @@ void WaypointController::setCurrentWaypointSelected(bool selected)
     if (!m_route || !m_waypoint)
         return;
 
-    emit setWaypointSelected(m_route->id(), m_route->index(m_waypoint), selected);
+    emit setWaypointSelected(m_route->id, m_route->index(m_waypoint), selected);
 }
 
 void WaypointController::updatePopupPosition(double x, double y)
@@ -200,7 +200,7 @@ void WaypointController::renameWaypoint(const QString& name)
     if (!m_route || !m_waypoint)
         return;
 
-    m_waypoint->setName(name);
+    m_waypoint->name = name;
     m_routesService->saveItem(m_route, m_waypoint);
 }
 

@@ -20,7 +20,7 @@ RoutesController::RoutesController(QObject* parent) :
     connect(m_routesService, &IRoutesService::routeRemoved, this, &RoutesController::onRouteRemoved);
     connect(m_routesService, &IRoutesService::routeChanged, this, [this](Route* route) {
         if (route == m_selectedRoute)
-            emit selectedRouteChanged(route->id());
+            emit selectedRouteChanged(route->id);
     });
 
     for (Route* route : m_routesService->routes())
@@ -46,7 +46,7 @@ QVariantList RoutesController::routeIds() const
 
 QVariant RoutesController::selectedRoute() const
 {
-    return m_selectedRoute ? m_selectedRoute->id() : QVariant();
+    return m_selectedRoute ? m_selectedRoute->id.get() : QVariant();
 }
 
 QJsonObject RoutesController::routeData(const QVariant& routeId) const
@@ -112,12 +112,12 @@ void RoutesController::addNewRoute(const QString& routeTypeId)
     QStringList routeNames;
     for (Route* route : m_routesService->routes())
     {
-        routeNames += route->name();
+        routeNames += route->name;
     }
 
     auto route = new Route(routeType, utils::nameFromType(routeType->name, routeNames));
     m_routesService->saveRoute(route);
-    this->selectRoute(route->id());
+    this->selectRoute(route->id);
 }
 
 void RoutesController::updateRoute(const QVariant& routeId, const QJsonObject& data)
@@ -136,7 +136,7 @@ void RoutesController::renameRoute(const QVariant& routeId, const QString& name)
     if (!route)
         return;
 
-    route->setName(name);
+    route->name = name;
     m_routesService->saveRoute(route);
 }
 
@@ -211,22 +211,22 @@ void RoutesController::updateWaypointCalcData(const QVariant& routeId, int index
     if (!waypoint)
         return;
 
-    waypoint->setCalcData(calcData.toVariantMap());
+    waypoint->calcData = calcData.toVariantMap();
 }
 
 void RoutesController::onRouteAdded(Route* route)
 {
-    emit routeAdded(route->id());
+    emit routeAdded(route->id);
     emit routeIdsChanged();
 
     connect(route, &Route::itemAdded, this, [this, route](int index, RouteItem*) {
-        emit waypointAdded(route->id(), index);
+        emit waypointAdded(route->id, index);
     });
     connect(route, &Route::itemRemoved, this, [this, route](int index, RouteItem*) {
-        emit waypointRemoved(route->id(), index);
+        emit waypointRemoved(route->id, index);
     });
     connect(route, &Route::itemChanged, this, [this, route](int index, RouteItem*) {
-        emit waypointChanged(route->id(), index);
+        emit waypointChanged(route->id, index);
     });
 }
 
@@ -234,6 +234,6 @@ void RoutesController::onRouteRemoved(Route* route)
 {
     disconnect(route, nullptr, this, nullptr);
 
-    emit routeRemoved(route->id().toString());
+    emit routeRemoved(route->id);
     emit routeIdsChanged();
 }

@@ -30,7 +30,7 @@ QVariant MissionOperationController::missionId() const
     if (!m_mission)
         return QVariant();
 
-    return m_mission->id();
+    return m_mission->id;
 }
 
 QJsonObject MissionOperationController::mission() const

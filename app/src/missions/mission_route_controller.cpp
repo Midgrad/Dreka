@@ -28,7 +28,7 @@ QVariant MissionRouteController::vehicleId() const
     if (!m_mission)
         return QVariant();
 
-    return m_mission->vehicleId();
+    return m_mission->vehicleId;
 }
 
 QJsonObject MissionRouteController::mission() const
@@ -54,14 +54,14 @@ QStringList MissionRouteController::routeItems() const
 
     QStringList list;
 
-    list.append(m_mission->home()->name());
+    list.append(m_mission->home()->name);
 
     if (m_route)
     {
         int index = 1;
         for (RouteItem* item : m_mission->route()->items())
         {
-            list.append(item->name() + " " + QString::number(index));
+            list.append(item->name + " " + QString::number(index));
             index++;
         }
     }
@@ -96,14 +96,14 @@ void MissionRouteController::setMission(Mission* mission)
 
     if (m_mission)
     {
-        connect(m_mission->home(), &RouteItem::changed, this, [this]() {
+        connect(m_mission->home, &RouteItem::changed, this, [this]() {
             emit homeChanged(this->home());
         });
         connect(m_mission, &Mission::currentItemChanged, this,
                 &MissionRouteController::currentItemChanged);
         connect(m_mission, &Mission::routeChanged, this, &MissionRouteController::routeItemsChanged);
     }
-    this->setRoute(mission->route());
+    this->setRoute(mission->route);
 
     emit missionChanged();
     emit homeChanged(this->home());
