@@ -10,7 +10,7 @@ Item {
 
     signal centerWaypoint(var routeId, int index)
 
-    WaypointController {
+    RouteItemController {
         id: controller
         onCloseEditor: if (editor.sourceComponent) editor.close();
         onInvokeMenu: menu.open(x, y)
@@ -75,7 +75,7 @@ Item {
     Component {
         id: editComponent
 
-        WaypointEdit {
+        RouteItemEdit {
             waypoint: controller.waypoint
             waypointIndex: controller.waypointIndex
             Component.onCompleted: controller.setCurrentWaypointSelected(true);

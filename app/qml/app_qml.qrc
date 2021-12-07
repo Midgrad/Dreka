@@ -21,10 +21,10 @@
         <file>Routes/RouteList.qml</file>
         <file>Routes/Route.qml</file>
         <file>Routes/RouteEdit.qml</file>
-        <file>Routes/WaypointListItem.qml</file>
-        <file>Waypoints/WaypointView.qml</file>
-        <file>Waypoints/WaypointEdit.qml</file>
-        <file>Waypoints/PayloadListItem.qml</file>
+        <file>Routes/RouteItemListItem.qml</file>
+        <file>Routes/RouteItemView.qml</file>
+        <file>Routes/RouteItemEdit.qml</file>
+        <file>Routes/PayloadListItem.qml</file>
         <file>Missions/MissionRouteView.qml</file>
         <file>Missions/MissionOperationView.qml</file>
         <file>Vehicles/VehiclesView.qml</file>

@@ -7,7 +7,7 @@
 
 namespace md::presentation
 {
-class WaypointController : public QObject
+class RouteItemController : public QObject
 {
     Q_OBJECT
 
@@ -19,7 +19,7 @@ class WaypointController : public QObject
     Q_PROPERTY(QJsonObject waypointParameters READ waypointParameters NOTIFY waypointChanged)
 
 public:
-    explicit WaypointController(QObject* parent = nullptr);
+    explicit RouteItemController(QObject* parent = nullptr);
 
     QJsonObject waypoint() const;
     int waypointIndex() const;

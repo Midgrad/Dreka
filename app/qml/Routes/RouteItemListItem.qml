@@ -39,27 +39,23 @@ Item {
 
         Controls.Label {
             text: waypoint ? waypoint.name + " " + (waypointIndex + 1) : ""
-            horizontalAlignment: Text.AlignHCenter
             Layout.minimumWidth: _wptWidth
         }
 
         Controls.Label {
             text: waypoint ? waypoint.type : ""
             type: Controls.Theme.Label
-            horizontalAlignment: Text.AlignHCenter
             Layout.minimumWidth: _typeWidth
         }
 
         Controls.Label {
             text: waypoint && waypoint.calcData && waypoint.calcData.distance ?
                       (Math.round(waypoint.calcData.distance) + " " + qsTr("m")) : "-"
-            horizontalAlignment: Text.AlignHCenter
             Layout.minimumWidth: _dstWidth
         }
 
         Controls.Label {
             text: waypoint ? (Math.round(waypoint.params.altitude) + " " + qsTr("m")) : "-"
-            horizontalAlignment: Text.AlignHCenter
             Layout.minimumWidth: _altWidth
         }
     }

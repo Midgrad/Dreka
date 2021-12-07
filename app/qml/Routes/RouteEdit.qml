@@ -104,7 +104,7 @@ Controls.Frame {
             id: list
             model: route ? route.items : []
             emptyText: qsTr("No Waypoints")
-            delegate: WaypointListItem {
+            delegate: RouteItemListItem {
                 width: parent.width
                 waypoint: controller.waypointData(route.id, modelData)
                 waypointIndex: index

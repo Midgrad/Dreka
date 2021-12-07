@@ -5,7 +5,6 @@ import Dreka 1.0
 
 import "Map"
 import "Routes"
-import "Waypoints"
 import "Vehicles"
 
 Controls.ApplicationWindow {
@@ -29,7 +28,7 @@ Controls.ApplicationWindow {
         anchors.fill: map
     }
 
-    WaypointView {
+    RouteItemView {
         id: waypointEdit
         anchors.fill: map
     }
