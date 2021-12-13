@@ -21,7 +21,7 @@ Item {
         spacing: 1
 
         RowLayout {
-            spacing: Controls.Theme.spacing
+            spacing: 1
 
             Controls.Button {
                 flat: true
@@ -29,6 +29,7 @@ Item {
                 enabled: waypointIndex > 0
                 iconSource: "qrc:/icons/left.svg"
                 tipText: qsTr("Left")
+                onClicked: controller.setWaypointIndex(waypointIndex - 1)
             }
 
             Controls.Button {
@@ -62,9 +63,10 @@ Item {
                 flat: true
                 leftCropped: true
                 rightCropped: true
-                //enabled: TODO: waypointIndex < last
+                enabled: waypointIndex < controller.waypointsCount - 1
                 iconSource: "qrc:/icons/right.svg"
                 tipText: qsTr("Right")
+                onClicked: controller.setWaypointIndex(waypointIndex + 1)
             }
 
             Controls.Button {
@@ -121,7 +123,7 @@ Item {
 
                     Controls.Label {
                         text: qsTr("Type")
-                        Layout.preferredWidth: parametersEdit.labelWidth
+                        Layout.minimumWidth: parametersEdit.labelWidth
                     }
 
                     Controls.ComboBox {

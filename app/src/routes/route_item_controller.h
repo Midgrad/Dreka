@@ -15,7 +15,6 @@ class RouteItemController : public QObject
     Q_PROPERTY(int waypointIndex READ waypointIndex NOTIFY waypointChanged)
     Q_PROPERTY(int waypointsCount READ waypointsCount NOTIFY routeChanged)
     Q_PROPERTY(QJsonArray waypointTypes READ waypointTypes NOTIFY routeChanged)
-    Q_PROPERTY(QJsonArray waypointItemTypes READ waypointItemTypes NOTIFY waypointChanged)
     Q_PROPERTY(QJsonObject waypointParameters READ waypointParameters NOTIFY waypointChanged)
 
 public:
@@ -26,10 +25,8 @@ public:
     int waypointsCount() const;
 
     QJsonArray waypointTypes() const;
-    QJsonArray waypointItemTypes() const;
 
     QJsonObject waypointParameters() const;
-    Q_INVOKABLE QJsonObject waypointItemParameters(int index) const;
     Q_INVOKABLE QJsonArray typeParameters(const QString& typeId);
 
 public slots:
@@ -44,10 +41,6 @@ public slots:
     void setPosition(double latitude, double longitude, float altitude);
     void setWaypointParameter(const QString& parameterId, const QVariant& value);
     void removeWaypoint();
-
-    void addWaypointItem(const QString& typeId);
-    void setWaypointItemParameter(int index, const QString& parameterId, const QVariant& value);
-    void removeWaypointItem(int index);
 
 signals:
     void waypointChanged();

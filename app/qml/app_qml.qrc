@@ -24,7 +24,6 @@
         <file>Routes/RouteItemListItem.qml</file>
         <file>Routes/RouteItemView.qml</file>
         <file>Routes/RouteItemEdit.qml</file>
-        <file>Routes/PayloadListItem.qml</file>
         <file>Missions/MissionRouteView.qml</file>
         <file>Missions/MissionOperationView.qml</file>
         <file>Vehicles/VehiclesView.qml</file>

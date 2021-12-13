@@ -32,14 +32,6 @@ QJsonObject RouteItemController::waypoint() const
     if (m_route)
         waypoint.insert(props::route, m_route->id);
 
-    QJsonArray array;
-    for (RouteItem* item : m_waypoint->items())
-    {
-        array.append(QJsonObject::fromVariantMap(item->toVariantMap()));
-    }
-
-    waypoint.insert(props::items, array);
-
     return QJsonObject::fromVariantMap(waypoint);
 }
 
@@ -72,27 +64,6 @@ QJsonArray RouteItemController::waypointTypes() const
     return jsons;
 }
 
-QJsonArray RouteItemController::waypointItemTypes() const
-{
-    if (!m_waypoint)
-        return QJsonArray();
-
-    QList<RouteItem*> items = m_waypoint->items();
-
-    QJsonArray jsons;
-    for (auto itemType : m_waypoint->type()->childTypes)
-    {
-        auto it = std::find_if(items.begin(), items.end(), [itemType](RouteItem* item) {
-            return item->type() == itemType;
-        });
-        if (it != items.end())
-            continue;
-
-        jsons.append(QJsonObject::fromVariantMap(itemType->toVariantMap()));
-    }
-    return jsons;
-}
-
 QJsonObject RouteItemController::waypointParameters() const
 {
     if (!m_waypoint)
@@ -101,28 +72,13 @@ QJsonObject RouteItemController::waypointParameters() const
     return QJsonObject::fromVariantMap(m_waypoint->parameters());
 }
 
-QJsonObject RouteItemController::waypointItemParameters(int index) const
-{
-    if (!m_waypoint || m_waypoint->count() <= index)
-        return QJsonObject();
-
-    RouteItem* item = m_waypoint->item(index);
-    return QJsonObject::fromVariantMap(item->parameters());
-}
-
 QJsonArray RouteItemController::typeParameters(const QString& typeId)
 {
     if (!m_waypoint)
         return QJsonArray();
 
-    const RouteItemType* type = m_waypoint->type()->id == typeId
-                                    ? m_waypoint->type()
-                                    : m_waypoint->type()->childType(typeId);
-    if (!type)
-        return QJsonArray();
-
     QJsonArray jsons;
-    for (auto parameter : type->parameters.values())
+    for (auto parameter : m_waypoint->type()->parameters.values())
     {
         jsons.append(QJsonObject::fromVariantMap(parameter->toVariantMap()));
     }
@@ -169,15 +125,20 @@ void RouteItemController::setWaypointIndex(int index)
     if (m_waypoint == waypoint)
         return;
 
-    emit closeEditor();
-
     if (m_waypoint)
         disconnect(m_waypoint, nullptr, this, nullptr);
 
     m_waypoint = waypoint;
 
     if (m_waypoint)
+    {
+        emit setWaypointSelected(m_route->id, index, true);
         connect(m_waypoint, &RouteItem::changed, this, &RouteItemController::waypointChanged);
+    }
+    else
+    {
+        emit closeEditor();
+    }
 
     emit waypointChanged();
 }
@@ -245,45 +206,4 @@ void RouteItemController::removeWaypoint()
 
     m_route->removeItem(m_waypoint);
     m_routesService->saveRoute(m_route);
-}
-
-void RouteItemController::addWaypointItem(const QString& typeId)
-{
-    if (!m_route || !m_waypoint)
-        return;
-
-    const RouteItemType* type = m_waypoint->type()->childType(typeId);
-    if (!type)
-        return;
-
-    RouteItem* item = new RouteItem(type);
-    m_waypoint->addItem(item);
-    m_routesService->saveItem(m_route, m_waypoint);
-}
-
-void RouteItemController::setWaypointItemParameter(int index, const QString& parameterId,
-                                                   const QVariant& value)
-{
-    if (!m_route || !m_waypoint)
-        return;
-
-    RouteItem* item = m_waypoint->item(index);
-    if (!item)
-        return;
-
-    item->setAndCheckParameter(parameterId, value);
-    m_routesService->saveItem(m_route, m_waypoint);
-}
-
-void RouteItemController::removeWaypointItem(int index)
-{
-    if (!m_route || !m_waypoint)
-        return;
-
-    RouteItem* item = m_waypoint->item(index);
-    if (!item)
-        return;
-
-    m_waypoint->removeItem(item);
-    m_routesService->saveItem(m_route, m_waypoint);
 }
