@@ -220,6 +220,15 @@ void RouteItemController::changeWaypointItemType(const QString& typeId)
     m_routesService->saveItem(m_route, m_waypoint);
 }
 
+void RouteItemController::setPosition(double latitude, double longitude, float altitude)
+{
+    if (!m_route || !m_waypoint)
+        return;
+
+    m_waypoint->position.set(Geodetic(latitude, longitude, altitude));
+    m_routesService->saveItem(m_route, m_waypoint);
+}
+
 void RouteItemController::setWaypointParameter(const QString& parameterId, const QVariant& value)
 {
     if (!m_route || !m_waypoint)

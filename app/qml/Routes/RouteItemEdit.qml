@@ -11,7 +11,6 @@ Item {
     property int waypointIndex: -1
 
     property bool editName: false
-    property var selectedItem: waypointEdit
 
     implicitWidth: Controls.Theme.baseSize * 11
     implicitHeight: column.implicitHeight
@@ -19,14 +18,23 @@ Item {
     ColumnLayout {
         id: column
         anchors.fill: parent
-        spacing: Controls.Theme.spacing
+        spacing: 1
 
         RowLayout {
             spacing: Controls.Theme.spacing
 
             Controls.Button {
+                flat: true
+                rightCropped: true
+                enabled: waypointIndex > 0
+                iconSource: "qrc:/icons/left.svg"
+                tipText: qsTr("Left")
+            }
+
+            Controls.Button {
                 enabled: waypoint
                 flat: true
+                leftCropped: true
                 rightCropped: true
                 text: waypoint ? (waypoint.name + " " + (waypointIndex + 1)) : "-"
                 tipText: qsTr("Edit name")
@@ -50,24 +58,39 @@ Item {
                 Layout.fillWidth: true
             }
 
-            Controls.ComboBox {
-                id: wptTypeBox
+            Controls.Button {
                 flat: true
-                model: controller.waypointTypes
-                textRole: "name"
-                currentIndex: {
-                    if (!waypoint)
-                        return -1;
+                leftCropped: true
+                rightCropped: true
+                //enabled: TODO: waypointIndex < last
+                iconSource: "qrc:/icons/right.svg"
+                tipText: qsTr("Right")
+            }
 
-                    var types = controller.waypointTypes;
-                    for (var i = 0; i < types.length; ++i) {
-                        if (waypoint.type === types[i].id)
-                            return i;
-                    }
-                    return -1;
-                }
-                onActivated: controller.changeWaypointItemType(currentItem.id);
-                Layout.fillWidth: true
+            Controls.Button {
+                flat: true
+                leftCropped: true
+                rightCropped: true
+                iconSource: "qrc:/icons/plus.svg"
+                tipText: qsTr("Add item after current")
+            }
+
+            Controls.Button {
+                flat: true
+                leftCropped: true
+                rightCropped: true
+                iconColor: Controls.Theme.colors.negative
+                iconSource: "qrc:/icons/remove.svg"
+                tipText: qsTr("Remove item")
+            }
+
+            Controls.Button {
+                flat: true
+                leftCropped: true
+                rightCropped: true
+                iconSource: "qrc:/icons/center.svg"
+                tipText: qsTr("Goto on map")
+                onClicked: controller.centerWaypoint(waypoint.route, waypointIndex)
             }
 
             Controls.Button {
@@ -93,85 +116,49 @@ Item {
                 width: parent.width
                 spacing: 1
 
-                ListElement {
-                    text: qsTr("Waypoint")
-                    expanded: selectedItem == waypointEdit
-                    onExpand: selectedItem = waypointEdit
-                    Layout.fillWidth: true
+                RowLayout {
+                    spacing: 1
 
-                    Controls.Button {
+                    Controls.Label {
+                        text: qsTr("Type")
+                        Layout.preferredWidth: parametersEdit.labelWidth
+                    }
+
+                    Controls.ComboBox {
+                        id: itemTypeBox
                         flat: true
-                        leftCropped: true
-                        iconSource: "qrc:/icons/center.svg"
-                        tipText: qsTr("Goto on map")
-                        onClicked: controller.centerWaypoint(waypoint.route, waypointIndex)
+                        model: controller.waypointTypes
+                        textRole: "name"
+                        currentIndex: {
+                            if (!waypoint)
+                                return -1;
+
+                            var types = controller.waypointTypes;
+                            for (var i = 0; i < types.length; ++i) {
+                                if (waypoint.type === types[i].id)
+                                    return i;
+                            }
+                            return -1;
+                        }
+                        onActivated: controller.changeWaypointItemType(currentItem.id);
+                        Layout.fillWidth: true
                     }
                 }
 
+                PositionEdit {
+                    latitude: waypoint && waypoint.position ? waypoint.position.latitude : NaN
+                    longitude: waypoint && waypoint.position ? waypoint.position.longitude : NaN
+                    altitude: waypoint && waypoint.position ? waypoint.position.altitude : NaN
+                    onChanged: controller.setPosition(latitude, longitude, altitude)
+                }
+
                 ParametersEdit {
-                    id: waypointEdit
-                    visible: selectedItem == waypointEdit
+                    id: parametersEdit
                     parameters: controller.typeParameters(waypoint.type)
                     parameterValues: controller.waypointParameters
                     onParameterChanged: controller.setWaypointParameter(id, value)
                     Layout.fillWidth: true
-                    Layout.leftMargin: Controls.Theme.margins
                 }
-
-                ListElement {
-                    text: qsTr("Payloads")
-                    buttonEnabled: !expanded && waypoint.items.length
-                    expanded: selectedItem == payloadsList
-                    onExpand: selectedItem = payloadsList
-                    Layout.fillWidth: true
-
-                    Controls.Label {
-                        text: "(" + waypoint.items.length + ")"
-                        type: Controls.Theme.Label
-                    }
-
-                    Controls.MenuButton {
-                        flat: true
-                        leftCropped: true
-                        iconSource: "qrc:/icons/plus.svg"
-                        tipText: qsTr("Add Payload")
-                        model: controller.waypointItemTypes
-                        textRole: "name"
-                        onTriggered: {
-                            controller.addWaypointItem(modelData.id);
-                            if (waypoint.items.length) {
-                                selectedItem = payloadsList;
-                            }
-                        }
-                    }
-                }
-
-                ColumnLayout {
-                    id: payloadsList
-                    visible: selectedItem == payloadsList
-                    spacing: 1
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    Layout.leftMargin: Controls.Theme.margins
-
-                    Repeater {
-                        model: waypoint.items
-                        onCountChanged: {
-                            if (count == 0 && selectedItem == payloadsList)
-                                selectedItem = waypointEdit
-                        }
-
-                        PayloadListItem {
-                            payload: modelData
-                            payloadIndex: index
-                            width: parent.width
-                        }
-                    }
-                }
-            }
-
-            Controls.ScrollBar.vertical: Controls.ScrollBar {
-                visible: properties.height > root.height
             }
         }
     }

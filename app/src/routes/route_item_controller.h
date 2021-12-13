@@ -41,6 +41,7 @@ public slots:
 
     void renameWaypoint(const QString& name);
     void changeWaypointItemType(const QString& typeId);
+    void setPosition(double latitude, double longitude, float altitude);
     void setWaypointParameter(const QString& parameterId, const QVariant& value);
     void removeWaypoint();
 

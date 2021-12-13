@@ -68,10 +68,10 @@ class Sign extends Draggable {
     }
 
     rebuild() {
-        var params = this.data.params;
-        var latitude = params ? params.latitude : undefined;
-        var longitude = params ? params.longitude : undefined;
-        var altitude = params ? params.altitude : undefined;
+        var position = this.data.position;
+        var latitude = position ? position.latitude : undefined;
+        var longitude = position ? position.longitude : undefined;
+        var altitude = position ? position.altitude : undefined;
 
         if (Cesium.defined(latitude) && Cesium.defined(longitude) && Cesium.defined(altitude)) {
 
@@ -180,14 +180,13 @@ class Sign extends Draggable {
 
     onDrag(newCartesian, modifier) {
         if (this.hoveredPoint) {
-            // this.position = newCartesian;
             var newCartographic = Cesium.Cartographic.fromCartesian(newCartesian);
             // Modify only altitude if SHIFT
             if (modifier !== Cesium.KeyboardEventModifier.SHIFT) {
-                this.data.params.latitude = Cesium.Math.toDegrees(newCartographic.latitude);
-                this.data.params.longitude = Cesium.Math.toDegrees(newCartographic.longitude);
+                this.data.position.latitude = Cesium.Math.toDegrees(newCartographic.latitude);
+                this.data.position.longitude = Cesium.Math.toDegrees(newCartographic.longitude);
             }
-            this.data.params.altitude = newCartographic.height;
+            this.data.position.altitude = newCartographic.height;
             return true;
         }
         return false;
@@ -208,9 +207,9 @@ class Sign extends Draggable {
 
     waypointPosition() {
         var scene = this.viewer.scene;
-        var cartesian = Cesium.Cartesian3.fromDegrees(this.data.params.longitude,
-                                                      this.data.params.latitude,
-                                                      this.data.params.altitude);
+        var cartesian = Cesium.Cartesian3.fromDegrees(this.data.position.longitude,
+                                                      this.data.position.latitude,
+                                                      this.data.position.altitude);
         return Cesium.SceneTransforms.wgs84ToWindowCoordinates(scene, cartesian);
     }
 }
@@ -252,11 +251,12 @@ class LoiterSign extends Sign {
         super.rebuild();
 
         var params = this.data.params;
+        var position = this.data.position;
         var loiterRadius = params && params.radius ? params.radius : 0;
         this.loiter.ellipse.show = loiterRadius > 0 && this.validPosition;
         this.loiter.ellipse.semiMinorAxis = loiterRadius;
         this.loiter.ellipse.semiMajorAxis = loiterRadius;
-        this.loiter.ellipse.height = params.altitude ? params.altitude : 0;
+        this.loiter.ellipse.height = position && position.altitude ? position.altitude : 0;
         // TODO: clockwise
     }
 

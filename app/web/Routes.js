@@ -35,11 +35,12 @@ class RouteItem extends LoiterSign {
         super.rebuild()
 
         var params = this.data.params;
+        var position = this.data.position;
         var acceptRadius = params && params.accept_radius ? params.accept_radius : 0;
         this.accept.ellipse.show = acceptRadius > 0 && this.validPosition;
         this.accept.ellipse.semiMinorAxis = acceptRadius;
         this.accept.ellipse.semiMajorAxis = acceptRadius;
-        this.accept.ellipse.height = params.altitude ? params.altitude : 0;
+        this.accept.ellipse.height = position && position.altitude ? position.altitude : 0;
 
         // TODO: confirmed, reached
     }
