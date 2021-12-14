@@ -122,7 +122,7 @@ class Sign extends Draggable {
             return false;
 
         if (this.hoveredPoint) {
-            var screenPosition = this.waypointPosition();
+            var screenPosition = this.itemPosition();
             this.clickedCallback(screenPosition ? screenPosition.x : event.position.x,
                                  screenPosition ? screenPosition.y : event.position.y);
             return true;
@@ -205,7 +205,7 @@ class Sign extends Draggable {
 
     flyTo() { this.viewer.flyTo(this.point); }
 
-    waypointPosition() {
+    itemPosition() {
         var scene = this.viewer.scene;
         var cartesian = Cesium.Cartesian3.fromDegrees(this.data.position.longitude,
                                                       this.data.position.latitude,

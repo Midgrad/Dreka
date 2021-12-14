@@ -5,13 +5,13 @@ import Industrial.Controls 1.0 as Controls
 Item {
     id: root
 
-    property var waypoint
-    property int waypointIndex: 0
+    property var routeItem
+    property int inRouteIndex: 0
 
     Connections {
         target: controller
-        onWaypointChanged: if (route.id === routeId && waypointIndex === index)
-                               waypoint = controller.waypointData(route.id, waypointIndex)
+        onRouteItemChanged: if (route.id === routeId && inRouteIndex === index)
+                               routeItem = controller.routeItemData(route.id, inRouteIndex)
     }
 
     implicitWidth: row.implicitWidth
@@ -29,7 +29,7 @@ Item {
         id: mouseArea
         hoverEnabled: true
         anchors.fill: parent
-        onClicked: controller.centerWaypoint(route.id, waypointIndex)
+        onClicked: controller.centerRouteItem(route.id, inRouteIndex)
     }
 
     RowLayout {
@@ -38,24 +38,24 @@ Item {
         spacing: 0
 
         Controls.Label {
-            text: waypoint ? waypoint.name + " " + (waypointIndex + 1) : ""
+            text: routeItem ? routeItem.name + " " + (inRouteIndex + 1) : ""
             Layout.minimumWidth: _wptWidth
         }
 
         Controls.Label {
-            text: waypoint ? waypoint.type : ""
+            text: routeItem ? routeItem.type : ""
             type: Controls.Theme.Label
             Layout.minimumWidth: _typeWidth
         }
 
         Controls.Label {
-            text: waypoint && waypoint.calcData && waypoint.calcData.distance ?
-                      (Math.round(waypoint.calcData.distance) + " " + qsTr("m")) : "-"
+            text: routeItem && routeItem.calcData && routeItem.calcData.distance ?
+                      (Math.round(routeItem.calcData.distance) + " " + qsTr("m")) : "-"
             Layout.minimumWidth: _dstWidth
         }
 
         Controls.Label {
-            text: waypoint ? (Math.round(waypoint.params.altitude) + " " + qsTr("m")) : "-"
+            text: routeItem ? (Math.round(routeItem.params.altitude) + " " + qsTr("m")) : "-"
             Layout.minimumWidth: _altWidth
         }
     }

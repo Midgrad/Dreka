@@ -7,8 +7,8 @@ import "../Common"
 Item {
     id: root
 
-    property var waypoint
-    property int waypointIndex: -1
+    property var routeItem
+    property int inRouteIndex: -1
 
     property bool editName: false
 
@@ -26,18 +26,18 @@ Item {
             Controls.Button {
                 flat: true
                 rightCropped: true
-                enabled: waypointIndex > 0
+                enabled: inRouteIndex > 0
                 iconSource: "qrc:/icons/left.svg"
                 tipText: qsTr("Left")
-                onClicked: controller.setWaypointIndex(waypointIndex - 1)
+                onClicked: controller.setIndex(inRouteIndex - 1)
             }
 
             Controls.Button {
-                enabled: waypoint
+                enabled: routeItem
                 flat: true
                 leftCropped: true
                 rightCropped: true
-                text: waypoint ? (waypoint.name + " " + (waypointIndex + 1)) : "-"
+                text: routeItem ? (routeItem.name + " " + (inRouteIndex + 1)) : "-"
                 tipText: qsTr("Edit name")
                 visible: !editName
                 onClicked: editName = true
@@ -49,11 +49,11 @@ Item {
                 flat: true
                 visible: editName
                 Binding on text {
-                    value: waypoint ? waypoint.name : "-"
+                    value: routeItem ? routeItem.name : "-"
                     when: !nameEdit.activeFocus
                 }
                 onEditingFinished: {
-                    controller.renameWaypoint(text);
+                    controller.rename(text);
                     editName = false;
                 }
                 Layout.fillWidth: true
@@ -63,10 +63,10 @@ Item {
                 flat: true
                 leftCropped: true
                 rightCropped: true
-                enabled: waypointIndex < controller.waypointsCount - 1
+                enabled: inRouteIndex < controller.routeItemsCount - 1
                 iconSource: "qrc:/icons/right.svg"
                 tipText: qsTr("Right")
-                onClicked: controller.setWaypointIndex(waypointIndex + 1)
+                onClicked: controller.setIndex(inRouteIndex + 1)
             }
 
             Controls.Button {
@@ -92,7 +92,7 @@ Item {
                 rightCropped: true
                 iconSource: "qrc:/icons/center.svg"
                 tipText: qsTr("Goto on map")
-                onClicked: controller.centerWaypoint(waypoint.route, waypointIndex)
+                onClicked: controller.centerRouteItem(routeItem.route, inRouteIndex)
             }
 
             Controls.Button {
@@ -129,36 +129,36 @@ Item {
                     Controls.ComboBox {
                         id: itemTypeBox
                         flat: true
-                        model: controller.waypointTypes
+                        model: controller.itemTypes
                         textRole: "name"
                         currentIndex: {
-                            if (!waypoint)
+                            if (!routeItem)
                                 return -1;
 
-                            var types = controller.waypointTypes;
+                            var types = controller.itemTypes;
                             for (var i = 0; i < types.length; ++i) {
-                                if (waypoint.type === types[i].id)
+                                if (routeItem.type === types[i].id)
                                     return i;
                             }
                             return -1;
                         }
-                        onActivated: controller.changeWaypointItemType(currentItem.id);
+                        onActivated: controller.changeItemType(currentItem.id);
                         Layout.fillWidth: true
                     }
                 }
 
                 PositionEdit {
-                    latitude: waypoint && waypoint.position ? waypoint.position.latitude : NaN
-                    longitude: waypoint && waypoint.position ? waypoint.position.longitude : NaN
-                    altitude: waypoint && waypoint.position ? waypoint.position.altitude : NaN
+                    latitude: routeItem && routeItem.position ? routeItem.position.latitude : NaN
+                    longitude: routeItem && routeItem.position ? routeItem.position.longitude : NaN
+                    altitude: routeItem && routeItem.position ? routeItem.position.altitude : NaN
                     onChanged: controller.setPosition(latitude, longitude, altitude)
                 }
 
                 ParametersEdit {
                     id: parametersEdit
-                    parameters: controller.typeParameters(waypoint.type)
-                    parameterValues: controller.waypointParameters
-                    onParameterChanged: controller.setWaypointParameter(id, value)
+                    parameters: controller.typeParameters(routeItem.type)
+                    parameterValues: controller.itemParameters
+                    onParameterChanged: controller.setParameter(id, value)
                     Layout.fillWidth: true
                 }
             }

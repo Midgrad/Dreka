@@ -100,16 +100,16 @@ class CesiumWrapper {
             if (routesController) {
                 const routes = new Routes(that.viewer, that.input);
 
-                routes.waypointChangedCallback = (routeId, index, waypointData) => {
-                    routesController.updateWaypointData(routeId, index, waypointData);
+                routes.routeItemChangedCallback = (routeId, index, routeItemData) => {
+                    routesController.updateRouteItemData(routeId, index, routeItemData);
                 }
                 routes.calcDataChangedCallback = (routeId, index, calcData) => {
-                    routesController.updateWaypointCalcData(routeId, index, calcData);
+                    routesController.updateRouteItemCalcData(routeId, index, calcData);
                 }
 
-                var setWaypoint = (routeId, index) => {
-                    routesController.waypointData(routeId, index, waypointData => {
-                        routes.setWaypointData(routeId, index, waypointData);
+                var setRouteItem = (routeId, index) => {
+                    routesController.routeItemData(routeId, index, routeItemData => {
+                        routes.setRouteItemData(routeId, index, routeItemData);
                     });
                 }
 
@@ -121,7 +121,7 @@ class CesiumWrapper {
                             routes.setEditingRoute(routeId);
 
                         for (var index = 0; index < routeData.items; ++index)
-                            setWaypoint(routeId, index);
+                            setRouteItem(routeId, index);
                     });
                 };
 
@@ -131,27 +131,27 @@ class CesiumWrapper {
                 routesController.routeChanged.connect(routeId => setRoute(routeId));
                 routesController.routeRemoved.connect(routeId => routes.removeRoute(routeId));
 
-                routesController.waypointAdded.connect((routeId, index) => setWaypoint(routeId, index));
-                routesController.waypointChanged.connect((routeId, index) => setWaypoint(routeId, index));
-                routesController.waypointRemoved.connect((routeId, index) => routes.removeWaypoint(routeId, index));
+                routesController.routeItemAdded.connect((routeId, index) => setRouteItem(routeId, index));
+                routesController.routeItemChanged.connect((routeId, index) => setRouteItem(routeId, index));
+                routesController.routeItemRemoved.connect((routeId, index) => routes.removeRouteItem(routeId, index));
 
                 routesController.centerRoute.connect(routeId => { routes.centerRoute(routeId); });
                 routesController.selectedRouteChanged.connect(routeId => { routes.setEditingRoute(routeId); });
-                routesController.centerWaypoint.connect((routeId, index) => { routes.centerWaypoint(routeId, index); });
+                routesController.centerRouteItem.connect((routeId, index) => { routes.centerRouteItem(routeId, index); });
 
-                var waypointController = channel.objects.waypointController;
-                if (waypointController) {
-                    waypointController.centerWaypoint.connect((routeId, index) => { routes.centerWaypoint(routeId, index); });
-                    routes.waypointClickedCallback = (routeId, index, x, y) => {
-                        waypointController.invokeWaypointMenu(routeId, index, x, y);
+                var routeItemController = channel.objects.routeItemController;
+                if (routeItemController) {
+                    routeItemController.centerRouteItem.connect((routeId, index) => { routes.centerRouteItem(routeId, index); });
+                    routes.routeItemClickedCallback = (routeId, index, x, y) => {
+                        routeItemController.invokeMenu(routeId, index, x, y);
                     }
-                    waypointController.setWaypointSelected.connect((routeId, index, opened) => {
-                        routes.setWaypointSelected(routeId, index, opened);
+                    routeItemController.setItemSelected.connect((routeId, index, opened) => {
+                        routes.setItemSelected(routeId, index, opened);
                     });
                     this.viewport.subscribeCamera(() => {
-                        var position = routes.selectedWaypointPosition();
+                        var position = routes.selectedItemPosition();
                         if (Cesium.defined(position))
-                            waypointController.updatePopupPosition(position.x, position.y);
+                            routeItemController.updatePopupPosition(position.x, position.y);
                     });
                 }
             }

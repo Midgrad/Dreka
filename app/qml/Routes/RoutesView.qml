@@ -7,12 +7,12 @@ RowLayout {
     id: root
 
     Controls.Menu {
-        id: addWaypoint
-        title: qsTr("Add Waypoint")
+        id: addRouteItem
+        title: qsTr("Add route item")
         enabled: controller.selectedRoute !== undefined
 
         Repeater {
-            model: controller.waypointTypes(controller.selectedRoute)
+            model: controller.routeItemTypes(controller.selectedRoute)
 
             Controls.MenuItem {
                 text: modelData.name
@@ -22,15 +22,15 @@ RowLayout {
                     args["longitude"] = mapMenu.longitude;
                     args["altitude"] = mapMenu.altitude;
 
-                    controller.addWaypoint(controller.selectedRoute, modelData.id, args);
+                    controller.addRouteItem(controller.selectedRoute, modelData.id, args);
                 }
             }
         }
     }
 
     Connections {
-        target: waypointEdit
-        onCenterWaypoint: controller.centerWaypoint(routeId, index)
+        target: routeItemEdit
+        onCenterRouteItem: controller.centerRouteItem(routeId, index)
     }
 
     RoutesController {
@@ -47,7 +47,7 @@ RowLayout {
 
     Component.onCompleted: {
         map.registerController("routesController", controller);
-        mapMenu.addSubmenu(addWaypoint);
+        mapMenu.addSubmenu(addRouteItem);
     }
 
     spacing: 1

@@ -29,7 +29,7 @@ Controls.ApplicationWindow {
     }
 
     RouteItemView {
-        id: waypointEdit
+        id: routeItemEdit
         anchors.fill: map
     }
 

@@ -25,8 +25,8 @@ public:
     QVariant selectedRoute() const;
 
     Q_INVOKABLE QJsonObject routeData(const QVariant& routeId) const;
-    Q_INVOKABLE QJsonObject waypointData(const QVariant& routeId, int index) const;
-    Q_INVOKABLE QJsonArray waypointTypes(const QVariant& routeId) const;
+    Q_INVOKABLE QJsonObject routeItemData(const QVariant& routeId, int index) const;
+    Q_INVOKABLE QJsonArray routeItemTypes(const QVariant& routeId) const;
 
 public slots:
     void selectRoute(const QVariant& selectedRouteId);
@@ -34,9 +34,10 @@ public slots:
     void updateRoute(const QVariant& routeId, const QJsonObject& data);
     void renameRoute(const QVariant& routeId, const QString& name);
     void removeRoute(const QVariant& routeId);
-    void addWaypoint(const QVariant& routeId, const QString& wptTypeId, const QVariantMap& position);
-    void updateWaypointData(const QVariant& routeId, int index, const QJsonObject& data);
-    void updateWaypointCalcData(const QVariant& routeId, int index, const QJsonObject& calcData);
+    void addRouteItem(const QVariant& routeId, const QString& wptTypeId,
+                      const QVariantMap& position);
+    void updateRouteItemData(const QVariant& routeId, int index, const QJsonObject& data);
+    void updateRouteItemCalcData(const QVariant& routeId, int index, const QJsonObject& calcData);
 
 signals:
     void routeTypesChanged();
@@ -47,12 +48,12 @@ signals:
     void routeRemoved(QVariant routeId);
     void routeChanged(QVariant routeId);
 
-    void waypointAdded(QVariant routeId, int index);
-    void waypointRemoved(QVariant routeId, int index);
-    void waypointChanged(QVariant routeId, int index);
+    void routeItemAdded(QVariant routeId, int index);
+    void routeItemRemoved(QVariant routeId, int index);
+    void routeItemChanged(QVariant routeId, int index);
 
     void centerRoute(QVariant routeId);
-    void centerWaypoint(QVariant routeId, int index);
+    void centerRouteItem(QVariant routeId, int index);
 
 private slots:
     void onRouteAdded(domain::Route* route);

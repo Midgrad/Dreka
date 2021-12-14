@@ -19,8 +19,8 @@ Controls.Frame {
 
     Connections {
         target: controller
-        onWaypointAdded: if (route.id === routeId) route = controller.routeData(route.id)
-        onWaypointRemoved: if (route.id === routeId) route = controller.routeData(route.id)
+        onRouteItemAdded: if (route.id === routeId) route = controller.routeData(route.id)
+        onRouteItemRemoved: if (route.id === routeId) route = controller.routeData(route.id)
     }
 
     ColumnLayout {
@@ -103,11 +103,11 @@ Controls.Frame {
         Widgets.ListWrapper {
             id: list
             model: route ? route.items : []
-            emptyText: qsTr("No Waypoints")
+            emptyText: qsTr("No route items")
             delegate: RouteItemListItem {
                 width: parent.width
-                waypoint: controller.waypointData(route.id, modelData)
-                waypointIndex: index
+                routeItem: controller.routeItemData(route.id, modelData)
+                inRouteIndex: index
             }
             Layout.fillWidth: true
             Layout.fillHeight: true

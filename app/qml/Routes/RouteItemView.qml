@@ -8,12 +8,12 @@ import "../Common"
 Item {
     id: root
 
-    signal centerWaypoint(var routeId, int index)
+    signal centerRouteItem(var routeId, int index)
 
     RouteItemController {
         id: controller
         onCloseEditor: if (editor.sourceComponent) editor.close();
-        onInvokeMenu: menu.open(x, y)
+        onMenuInvoked: menu.open(x, y)
         onUpdatePosition: {
             if (menu.menuVisible)
                 menu.move(x, y)
@@ -27,21 +27,21 @@ Item {
         onMenuVisibleChanged: if (mapMenu.menuVisible) if (editor.sourceComponent) editor.close();
     }
 
-    Component.onCompleted: map.registerController("waypointController", controller)
+    Component.onCompleted: map.registerController("routeItemController", controller)
 
     PointedMenu {
         id: menu
-        title: qsTr("Edit Waypoint")
+        title: qsTr("Route item")
         anchors.fill: parent
         onMenuVisibleChanged: {
             if (menuVisible) {
                 if (editor.sourceComponent)
                     editor.close();
 
-                controller.setCurrentWaypointSelected(true);
+                controller.setCurrentItemSelected(true);
             }
             else if (editor.sourceComponent != editComponent) {
-                controller.setCurrentWaypointSelected(false);
+                controller.setCurrentItemSelected(false);
             }
         }
 
@@ -58,7 +58,7 @@ Item {
 
         Controls.MenuItem {
             text: qsTr("Remove")
-            onTriggered: controller.removeWaypoint()
+            onTriggered: controller.remove()
         }
     }
 
@@ -76,10 +76,10 @@ Item {
         id: editComponent
 
         RouteItemEdit {
-            waypoint: controller.waypoint
-            waypointIndex: controller.waypointIndex
-            Component.onCompleted: controller.setCurrentWaypointSelected(true);
-            Component.onDestruction: controller.setCurrentWaypointSelected(false);
+            routeItem: controller.routeItem
+            inRouteIndex: controller.inRouteIndex
+            Component.onCompleted: controller.setCurrentItemSelected(true);
+            Component.onDestruction: controller.setCurrentItemSelected(false);
         }
     }
 }
