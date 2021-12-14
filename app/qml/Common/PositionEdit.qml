@@ -105,7 +105,7 @@ GridLayout {
     }
 
     Controls.Label {
-        text: qsTr("Altitude")
+        text: qsTr("Alt. MSL, m")
         Layout.fillWidth: true
     }
 

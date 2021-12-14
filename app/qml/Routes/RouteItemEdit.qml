@@ -140,6 +140,26 @@ Item {
                     onChanged: controller.setPosition(latitude, longitude, altitude)
                 }
 
+                RowLayout {
+                    spacing: 1
+
+                    Controls.Label {
+                        text: qsTr("Terrain alt, m")
+                        Layout.minimumWidth: parametersEdit.labelWidth
+                    }
+
+                    Controls.SpinBox {
+                        enabled: false
+                        flat: true
+                        value: routeItem && routeItem.calcData && routeItem.calcData.terrainAltitude ?
+                                   routeItem.calcData.terrainAltitude : 0
+                        from: 0
+                        to: 1000000
+                        isValid: value > 0
+                        Layout.fillWidth: true
+                    }
+                }
+
                 ParametersEdit {
                     id: parametersEdit
                     parameters: controller.typeParameters(routeItem.type)

@@ -55,7 +55,8 @@ Item {
         }
 
         Controls.Label {
-            text: routeItem ? (Math.round(routeItem.params.altitude) + " " + qsTr("m")) : "-"
+            text: routeItem && routeItem.calcData && routeItem.calcData.terrainAltitude ?
+                      (Math.round(routeItem.calcData.terrainAltitude) + " " + qsTr("m")) : "-"
             Layout.minimumWidth: _altWidth
         }
     }

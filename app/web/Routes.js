@@ -238,6 +238,7 @@ class Route {
                                       item.position, this.items[index - 1].position) :
                                       undefined;
         calcData.distance = distance;
+        calcData.terrainAltitude = item.data.position.altitude - item.terrainAltitude;
 
         item.data.calcData = calcData;
         this.calcDataChangedCallback(index, calcData);
