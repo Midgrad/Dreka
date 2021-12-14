@@ -118,7 +118,6 @@ class Route {
     }
 
     setWaypoint(index, data) {
-        // TODO: relative latitude
         if (this.waypoints.length > index) {
             this.waypoints[index].update(data);
         } else if (this.waypoints.length === index) {
