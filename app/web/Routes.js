@@ -155,29 +155,28 @@ class Route {
         this.items.forEach(item => item.setEditMode(editMode));
     }
 
-    setItemSelected(index, selected) {
-        this.items[index].setSelected(selected);
+    deselectItem() {
+        if (this.selectedIndex > -1)
+            this.items[this.selectedIndex].setSelected(false);
 
-        if (selected)
-            this.selectedIndex = index;
-        else if (this.selectedIndex === index)
-            this.selectedIndex = null;
+        this.selectedIndex = -1;
+    }
+
+    selectItem(index) {
+        this.selectedIndex = index;
+        this.items[this.selectedIndex].setSelected(true);
     }
 
     selectedItemPosition() {
-        if (Cesium.defined(this.selectedIndex) &&
-            this.selectedIndex > -1 &&
-            this.selectedIndex < this.items.length)
+        if (this.selectedIndex > -1)
             return this.items[this.selectedIndex].itemPosition();
 
         return undefined;
     }
 
     removeRouteItem(index) {
-        if (this.selectedIndex === index) {
-            this.items[index].setSelected(false);
-            this.selectedIndex = null;
-        }
+        if (this.selectedIndex === index)
+            this.deselectItem();
 
         var removeIndex = index < this.lines.length ? index : index - 1;
         var updateIndex = removeIndex - 1;
@@ -337,21 +336,20 @@ class Routes {
         this.routes.get(routeId).centerRouteItem(index);
     }
 
-    setItemSelected(routeId, index, selected) {
-        if (!this.routes.has(routeId))
-            return;
+    setItemSelected(routeId, index) {
+        if (this.selectedRoute)
+            this.selectedRoute.deselectItem();
 
-        this.routes.get(routeId).setItemSelected(index, selected);
-        if (selected)
-            this.selectedRoute = routeId;
-        else if (this.selectedRoute === routeId)
-            this.selectedRoute = null;
+        this.selectedRoute = this.routes.has(routeId) ? this.routes.get(routeId) : null;
+
+        if (this.selectedRoute)
+            this.selectedRoute.selectItem(index);
     }
 
     selectedItemPosition() {
         if (!this.selectedRoute)
             return undefined;
 
-        return this.routes.get(this.selectedRoute).selectedItemPosition();
+        return this.selectedRoute.selectedItemPosition();
     }
 }

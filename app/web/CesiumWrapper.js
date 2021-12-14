@@ -145,8 +145,8 @@ class CesiumWrapper {
                     routes.routeItemClickedCallback = (routeId, index, x, y) => {
                         routeItemController.invokeMenu(routeId, index, x, y);
                     }
-                    routeItemController.setItemSelected.connect((routeId, index, opened) => {
-                        routes.setItemSelected(routeId, index, opened);
+                    routeItemController.itemSelected.connect((routeId, index) => {
+                        routes.setItemSelected(routeId, index);
                     });
                     this.viewport.subscribeCamera(() => {
                         var position = routes.selectedItemPosition();

@@ -33,7 +33,6 @@ public slots:
     void invokeMenu(const QVariant& routeId, int index, double x, double y);
     void setRouteItem(const QVariant& routeId, int index);
     void setIndex(int index);
-    void setCurrentItemSelected(bool selected);
     void updatePopupPosition(double x, double y);
 
     void rename(const QString& name);
@@ -50,7 +49,7 @@ signals:
     void closeEditor();
     void updatePosition(double x, double y);
     void menuInvoked(double x, double y);
-    void setItemSelected(QVariant routeId, int index, bool opened);
+    void itemSelected(QVariant routeId, int index);
 
 private:
     domain::IRoutesService* const m_routesService;

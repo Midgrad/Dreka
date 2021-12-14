@@ -132,23 +132,16 @@ void RouteItemController::setIndex(int index)
 
     if (m_routeItem)
     {
-        emit setItemSelected(m_route->id, index, true);
+        emit itemSelected(m_route->id, index);
         connect(m_routeItem, &RouteItem::changed, this, &RouteItemController::routeItemChanged);
     }
     else
     {
+        emit itemSelected(QVariant(), index);
         emit closeEditor();
     }
 
     emit routeItemChanged();
-}
-
-void RouteItemController::setCurrentItemSelected(bool selected)
-{
-    if (!m_route || !m_routeItem)
-        return;
-
-    emit setItemSelected(m_route->id, m_route->index(m_routeItem), selected);
 }
 
 void RouteItemController::updatePopupPosition(double x, double y)

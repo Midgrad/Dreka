@@ -66,27 +66,13 @@ Item {
                 enabled: inRouteIndex < controller.routeItemsCount - 1
                 iconSource: "qrc:/icons/right.svg"
                 tipText: qsTr("Right")
-                onClicked: controller.setIndex(inRouteIndex + 1)
+                onClicked: {
+                    controller.setIndex(inRouteIndex + 1);
+                    controller.centerRouteItem(routeItem.route, inRouteIndex);
+                }
             }
 
-            Controls.Button {
-                flat: true
-                leftCropped: true
-                rightCropped: true
-                iconSource: "qrc:/icons/plus.svg"
-                tipText: qsTr("Add item after current")
-            }
-
-            Controls.Button {
-                flat: true
-                leftCropped: true
-                rightCropped: true
-                iconColor: Controls.Theme.colors.negative
-                iconSource: "qrc:/icons/remove.svg"
-                tipText: qsTr("Remove item")
-            }
-
-            Controls.Button {
+            Controls.Button { // TODO: pin button
                 flat: true
                 leftCropped: true
                 rightCropped: true

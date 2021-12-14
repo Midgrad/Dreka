@@ -37,11 +37,9 @@ Item {
             if (menuVisible) {
                 if (editor.sourceComponent)
                     editor.close();
-
-                controller.setCurrentItemSelected(true);
             }
             else if (editor.sourceComponent != editComponent) {
-                controller.setCurrentItemSelected(false);
+                controller.setIndex(-1);
             }
         }
 
@@ -70,6 +68,7 @@ Item {
         maxX: width - dashboard.width - Controls.Theme.margins * 2
         maxY: height - map.controlHeight
         closePolicy: Controls.Popup.CloseOnEscape
+        onClosed: controller.setIndex(-1)
     }
 
     Component {
@@ -78,8 +77,6 @@ Item {
         RouteItemEdit {
             routeItem: controller.routeItem
             inRouteIndex: controller.inRouteIndex
-            Component.onCompleted: controller.setCurrentItemSelected(true);
-            Component.onDestruction: controller.setCurrentItemSelected(false);
         }
     }
 }

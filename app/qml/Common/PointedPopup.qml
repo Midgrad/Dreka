@@ -14,11 +14,14 @@ PointedItem {
         popup.open();
     }
 
+    signal closed()
+
     pointed: Controls.Popup {
         id: popup
         onClosed: {
             root.hidePointer();
             loader.sourceComponent = null;
+            root.closed();
         }
 
         Loader {

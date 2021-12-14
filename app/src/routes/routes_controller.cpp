@@ -152,30 +152,29 @@ void RoutesController::removeRoute(const QVariant& routeId)
     m_routesService->removeRoute(route);
 }
 
-void RoutesController::addRouteItem(const QVariant& routeId, const QString& wptTypeId,
+void RoutesController::addRouteItem(const QVariant& routeId, const QString& typeId,
                                     const QVariantMap& position)
 {
     Route* route = m_routesService->route(routeId);
     if (!route)
         return;
 
-    const RouteItemType* wptType = route->type()->itemType(wptTypeId);
-    if (!wptType)
+    const RouteItemType* type = route->type()->itemType(typeId);
+    if (!type)
         return;
 
     // Special case for altitude
-    QVariantMap parameters = wptType->defaultParameters();
+    QVariantMap parameters = type->defaultParameters();
 
     float altitude = route->count() ? route->item(route->count() - 1)->position().altitude()
                                     : position.value(geo::altitude, 0).toFloat();
     parameters[geo::altitude] = altitude;
 
-    RouteItem* wpt = new RouteItem(wptType, utils::generateId(), wptType->name, parameters,
-                                   position);
-    wpt->setParameters(parameters);
-    route->addItem(wpt);
+    RouteItem* item = new RouteItem(type, utils::generateId(), type->name, parameters, position);
+    item->setParameters(parameters);
+    route->addItem(item);
 
-    m_routesService->saveItem(route, wpt);
+    m_routesService->saveItem(route, item);
 }
 
 void RoutesController::updateRouteItemData(const QVariant& routeId, int index,
