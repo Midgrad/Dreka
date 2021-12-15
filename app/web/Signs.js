@@ -10,6 +10,7 @@ class Sign extends Draggable {
         // Callbacks
         this.changedCallback = null;
         this.clickedCallback = null;
+        this.terrainCallback = null;
 
         // Data
         this.validPosition = false;
@@ -94,6 +95,8 @@ class Sign extends Draggable {
                             that.terrainPosition = Cesium.Cartographic.toCartesian(cartographic);
                             that.terrainAltitude = cartographic.height;
                             that.pylon.polyline.show = true;
+                            if (that.terrainCallback && !this.dragging)
+                                that.terrainCallback(that.data.position.altitude - that.terrainAltitude);
                         });
         } else {
             this.pylon.polyline.show = false;

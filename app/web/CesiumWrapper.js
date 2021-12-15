@@ -103,8 +103,8 @@ class CesiumWrapper {
                 routes.routeItemChangedCallback = (routeId, index, routeItemData) => {
                     routesController.updateRouteItemData(routeId, index, routeItemData);
                 }
-                routes.calcDataChangedCallback = (routeId, index, calcData) => {
-                    routesController.updateRouteItemCalcData(routeId, index, calcData);
+                routes.updateCalcDataCallback = (routeId, index, key, value) => {
+                    routesController.setRouteItemCalcParam(routeId, index, key, value);
                 }
 
                 var setRouteItem = (routeId, index) => {

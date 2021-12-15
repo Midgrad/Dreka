@@ -92,7 +92,7 @@ class Route {
 
         // Callbacks
         this.routeItemChangedCallback = null;
-        this.calcDataChangedCallback = null;
+        this.updateCalcDataCallback = null;
         this.routeItemClickedCallback = null;
 
         // Data
@@ -132,21 +132,24 @@ class Route {
             var that = this;
             item.changedCallback = () => {
                 // Update calculated data for changed and next wpt
-                that._updateCalcData(item);
+                that._updateDistanceCalcData(item);
                 if (that.items.length > item.index + 1)
-                    that._updateCalcData(this.items[index + 1]);
+                    that._updateDistanceCalcData(this.items[index + 1]);
 
                 that.routeItemChangedCallback(item.index, item.data);
             }
             item.clickedCallback = (x, y) => {
                 that.routeItemClickedCallback(item.index, x, y);
             }
+            item.terrainCallback = (terrainAltitude) => {
+                that.updateCalcDataCallback(item.index, "terrainAltitude", terrainAltitude);
+            }
 
             // Add line
             if (this.items.length > 1)
                 this._addLine(this.items[index - 1], this.items[index]);
 
-            this._updateCalcData(item);
+            this._updateDistanceCalcData(item);
         } else {
             console.warn("Wrong wpt index in setRouteItem")
         }
@@ -232,18 +235,11 @@ class Route {
         this.lines.push(line);
     }
 
-    _updateCalcData(item) {
+    _updateDistanceCalcData(item) {
         var index = item.index;
-        var calcData = item.data.calcData;
-
         var distance = index > 0 ? Cesium.Cartesian3.distance(
-                                      item.position, this.items[index - 1].position) :
-                                      undefined;
-        calcData.distance = distance;
-        calcData.terrainAltitude = item.data.position.altitude - item.terrainAltitude;
-
-        item.data.calcData = calcData;
-        this.calcDataChangedCallback(index, calcData);
+                                      item.position, this.items[index - 1].position) : 0;
+        this.updateCalcDataCallback(index, "distance", distance);
     }
 }
 
@@ -258,7 +254,7 @@ class Routes {
 
         // Callbacks
         this.routeItemChangedCallback = null;
-        this.calcDataChangedCallback = null;
+        this.updateCalcDataCallback = null;
         this.routeItemClickedCallback = null;
 
         // Entities
@@ -299,8 +295,8 @@ class Routes {
             route.routeItemChangedCallback = (index, data) => {
                 that.routeItemChangedCallback(routeId, index, data);
             }
-            route.calcDataChangedCallback = (index, calcData) => {
-                that.calcDataChangedCallback(routeId, index, calcData);
+            route.updateCalcDataCallback = (index, key, value) => {
+                that.updateCalcDataCallback(routeId, index, key, value);
             }
             route.routeItemClickedCallback = (index, x, y) => {
                 that.routeItemClickedCallback(routeId, index, x, y);

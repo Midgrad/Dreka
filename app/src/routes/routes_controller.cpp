@@ -168,9 +168,11 @@ void RoutesController::addRouteItem(const QVariant& routeId, const QString& type
 
     float altitude = route->count() ? route->item(route->count() - 1)->position().altitude()
                                     : position.value(geo::altitude, 0).toFloat();
-    parameters[geo::altitude] = altitude;
+    QVariantMap newPosition = position;
+    newPosition[geo::altitude] = altitude;
 
-    RouteItem* item = new RouteItem(type, utils::generateId(), type->name, parameters, position);
+    RouteItem* item = new RouteItem(type, utils::generateId(), type->shortName, parameters,
+                                    newPosition);
     item->setParameters(parameters);
     route->addItem(item);
 
@@ -194,8 +196,8 @@ void RoutesController::updateRouteItemData(const QVariant& routeId, int index,
     // TODO: Promoute to the vehicle
 }
 
-void RoutesController::updateRouteItemCalcData(const QVariant& routeId, int index,
-                                               const QJsonObject& calcData)
+void RoutesController::setRouteItemCalcParam(const QVariant& routeId, int index, const QString& key,
+                                             const QVariant& value)
 {
     Route* route = m_routesService->route(routeId);
     if (!route)
@@ -205,7 +207,16 @@ void RoutesController::updateRouteItemCalcData(const QVariant& routeId, int inde
     if (!routeItem)
         return;
 
-    routeItem->calcData = calcData.toVariantMap();
+    qDebug() << key << value;
+
+    auto calcData = routeItem->calcData();
+    if (calcData.value(key) == value)
+        return;
+
+    calcData[key] = value;
+    routeItem->calcData.set(calcData);
+
+    m_routesService->saveItem(route, routeItem);
 }
 
 void RoutesController::onRouteAdded(Route* route)
