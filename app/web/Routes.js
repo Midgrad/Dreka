@@ -42,6 +42,8 @@ class RouteItem extends LoiterSign {
         this.accept.ellipse.semiMajorAxis = acceptRadius;
         this.accept.ellipse.height = position && position.altitude ? position.altitude : 0;
 
+        this.point.label.text = this.data.name + " " + (this.index + 1).toString();
+
         // TODO: confirmed, reached
     }
 

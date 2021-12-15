@@ -13,7 +13,19 @@ GridLayout {
     property real longitude: 0.0
     property real altitude: 0.0
 
-    signal changed()
+    signal changed(real latitude, real longitude, real altitude)
+
+    onLatitudeChanged: {
+        latCsb.value = latitude;
+        latSb.value = latitude;
+    }
+
+    onLongitudeChanged: {
+        lonCsb.value = longitude;
+        lonSb.value = longitude;
+    }
+
+    onAltitudeChanged: altSb.value = altitude
 
     rowSpacing: 1
     columnSpacing: 1
@@ -46,8 +58,8 @@ GridLayout {
         flat: root.flat
         table: true
         isLongitude: false
-        Binding on value { when: !latCsb.activeFocus; value: latitude }
-        onValueModified: { latitude = value; root.changed() }
+        value: latitude
+        onValueModified: root.changed(value, longitude, altitude)
         Layout.fillWidth: true
     }
 
@@ -56,11 +68,11 @@ GridLayout {
         visible: !dms
         flat: root.flat
         table: true
-        realFrom: -90
-        realTo: 90
-        precision: 0.000001
-        Binding on realValue { when: !latSb.activeFocus; value: latitude }
-        onRealValueChanged: if (activeFocus) { latitude = realValue; root.changed() }
+        from: -90
+        to: 90
+        precision: 6
+        value: latitude
+        onValueModified: root.changed(value, longitude, altitude)
         Layout.fillWidth: true
     }
 
@@ -86,8 +98,8 @@ GridLayout {
         flat: root.flat
         table: true
         isLongitude: true
-        Binding on value { when: !lonCsb.activeFocus; value: longitude }
-        onValueModified: { longitude = value; root.changed() }
+        value: longitude
+        onValueModified: root.changed(latitude, value, altitude)
         Layout.fillWidth: true
     }
 
@@ -96,11 +108,11 @@ GridLayout {
         visible: !dms
         flat: root.flat
         table: true
-        realFrom: -180
-        realTo: 180
-        precision: 0.000001
-        Binding on realValue { when: !lonSb.activeFocus; value: longitude }
-        onRealValueChanged: if (activeFocus) { longitude = realValue; root.changed() }
+        from: -180
+        to: 180
+        precision: 6
+        value: longitude
+        onValueModified: root.changed(latitude, value, altitude)
         Layout.fillWidth: true
     }
 
@@ -113,10 +125,10 @@ GridLayout {
         id: altSb
         flat: root.flat
         table: true
-        realFrom: -500
-        realTo: 100000
-        Binding on realValue { when: !altSb.activeFocus; value: altitude }
-        onRealValueChanged: if (activeFocus) { altitude = realValue; root.changed() }
+        from: -500
+        to: 100000
+        value: altitude
+        onValueModified: root.changed(latitude, longitude, value)
         Layout.fillWidth: true
         Layout.columnSpan: 2
     }

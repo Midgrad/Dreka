@@ -37,7 +37,7 @@ Item {
             to: parameter.maxValue ? parameter.maxValue : Number.MAX_VALUE
             stepSize: parameter.step ? parameter.step : 1
             Binding on value { when: !intBox.activeFocus; value: parameterValue }
-            onEditingFinished: root.parameterChanged(parameter.id, value)
+            onValueModified: root.parameterChanged(parameter.id, value)
         }
     }
 
@@ -47,11 +47,11 @@ Item {
         Controls.RealSpinBox { // TODO: works bad
             id: realBox
             flat: root.flat
-            realFrom: parameter.minValue ? parameter.minValue : 0
-            realTo: parameter.maxValue ? parameter.maxValue : Number.MAX_VALUE * precision
+            from: parameter.minValue ? parameter.minValue : -Number.MAX_VALUE
+            to: parameter.maxValue ? parameter.maxValue : Number.MAX_VALUE
             stepSize: parameter.step ? parameter.step : 1
-            Binding on realValue { when: !realBox.activeFocus; value: parameterValue }
-            onValueModified: if (activeFocus) root.parameterChanged(parameter.id, value * precision)
+            Binding on value { when: !realBox.activeFocus; value: parameterValue }
+            onValueModified: root.parameterChanged(parameter.id, value)
         }
     }
 
