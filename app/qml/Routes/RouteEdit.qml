@@ -87,14 +87,14 @@ Controls.Frame {
 
             Controls.Label {
                 type: Controls.Theme.Label
-                text: qsTr("DIST")
+                text: qsTr("DIST, m")
                 horizontalAlignment: Text.AlignHCenter
                 Layout.minimumWidth: _dstWidth
             }
 
             Controls.Label {
                 type: Controls.Theme.Label
-                text: qsTr("ALT")
+                text: qsTr("ALT AGL, m")
                 horizontalAlignment: Text.AlignHCenter
                 Layout.minimumWidth: _altWidth
             }

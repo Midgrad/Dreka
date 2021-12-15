@@ -144,7 +144,7 @@ Item {
                     spacing: 1
 
                     Controls.Label {
-                        text: qsTr("Terrain alt, m")
+                        text: qsTr("Alt. AGL, m")
                         Layout.minimumWidth: parametersEdit.labelWidth
                     }
 

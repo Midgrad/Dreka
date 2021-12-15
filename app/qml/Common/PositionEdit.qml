@@ -6,6 +6,7 @@ GridLayout {
     id: root
 
     property bool flat: true
+    property int labelWidth: Controls.Theme.baseSize * 3.5
     property bool dms: true
 
     property string datum: ""
@@ -49,7 +50,7 @@ GridLayout {
 
     Controls.Label {
         text: qsTr("Latitude")
-        Layout.fillWidth: true
+        Layout.preferredWidth: labelWidth
     }
 
     Controls.CoordSpinBox {
@@ -89,7 +90,7 @@ GridLayout {
 
     Controls.Label {
         text: qsTr("Longitude")
-        Layout.fillWidth: true
+        Layout.preferredWidth: labelWidth
     }
 
     Controls.CoordSpinBox {
@@ -118,7 +119,7 @@ GridLayout {
 
     Controls.Label {
         text: qsTr("Alt. MSL, m")
-        Layout.fillWidth: true
+        Layout.preferredWidth: labelWidth
     }
 
     Controls.RealSpinBox {
