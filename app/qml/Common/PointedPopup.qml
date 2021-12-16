@@ -10,8 +10,8 @@ PointedItem {
 
     function open(x, y, component) {
         loader.sourceComponent = component;
-        move(x, y);
         popup.open();
+        move(x, y);
     }
 
     signal closed()

@@ -68,7 +68,7 @@ Item {
         maxX: width - dashboard.width - Controls.Theme.margins * 2
         maxY: height - map.controlHeight
         closePolicy: Controls.Popup.CloseOnEscape
-        onClosed: controller.setIndex(-1)
+        onClosed: if (!menu.visible) controller.setIndex(-1)
     }
 
     Component {

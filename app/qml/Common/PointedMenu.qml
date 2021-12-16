@@ -22,8 +22,8 @@ PointedItem {
 
     function open(x, y) {
         if (enabledCount) {
-            move(x, y);
             menu.open();
+            move(x, y);
         }
     }
 
