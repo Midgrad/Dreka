@@ -80,8 +80,15 @@ void MissionOperationController::setMission(Mission* mission)
     if (m_mission == mission)
         return;
 
+    if (m_mission)
+        disconnect(m_mission, nullptr, this, nullptr);
+
     m_mission = mission;
     m_operation = m_missionsService->operationForMission(mission);
+
+    if (m_mission)
+        connect(m_mission, &Mission::routeChanged, this,
+                &MissionOperationController::missionChanged);
 
     emit missionChanged();
     emit operationChanged();

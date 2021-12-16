@@ -37,7 +37,17 @@ Controls.Popup {
                 model: operationController.routes
                 textRole: "name"
                 onActivated: operationController.assignRoute(model[index].id);
-                displayText: mission && mission.route ? mission.route.name : qsTr("No Route")
+                displayText: {
+                    if (!mission)
+                        return "";
+
+                    for (var i = 0; i < model.length; ++i) {
+                        if (model[i].id === mission.route)
+                            return model[i].name;
+                    }
+
+                    return ""
+                }
             }
         }
 
@@ -69,21 +79,21 @@ Controls.Popup {
             Controls.Button {
                 text: qsTr("Download")
                 borderColor: Controls.Theme.colors.controlBorder
-                enabled: mission.id ? true : false
+                enabled: mission.id && mission.route ? true : false
                 onClicked: operationController.download()
             }
 
             Controls.Button {
                 text: qsTr("Upload")
                 borderColor: Controls.Theme.colors.controlBorder
-                enabled: mission.id ? true : false
+                enabled: mission.id && mission.route ? true : false
                 onClicked: operationController.upload()
             }
 
             Controls.Button {
                 text: qsTr("Clear")
                 borderColor: Controls.Theme.colors.controlBorder
-                enabled: mission.id ? true : false
+                enabled: mission.id && mission.route ? true : false
                 highlightColor: Controls.Theme.colors.negative
                 hoverColor: highlightColor
                 onClicked: operationController.clear()
