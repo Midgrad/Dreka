@@ -32,8 +32,8 @@ public slots:
     void setMission(domain::Mission* mission);
 
     void assignRoute(const QVariant& routeId);
+    void rename(const QString& name);
 
-    void save(const QJsonObject& data);
     void remove();
     void upload();
     void download();

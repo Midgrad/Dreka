@@ -28,7 +28,7 @@ Controls.Popup {
                 id: nameEdit
                 labelText: qsTr("Mission")
                 Binding on text { value: mission.name ? mission.name : ""; when: !nameEdit.activeFocus }
-                onEditingFinished: operationController.save({ name: text });
+                onEditingFinished: operationController.rename(text);
             }
 
             Controls.ComboBox {
@@ -37,8 +37,7 @@ Controls.Popup {
                 model: operationController.routes
                 textRole: "name"
                 onActivated: operationController.assignRoute(model[index].id);
-                //enabled: false
-                //displayText: mission.route ? mission.route : ""
+                displayText: mission && mission.route ? mission.route.name : qsTr("No Route")
             }
         }
 

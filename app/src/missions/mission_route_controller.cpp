@@ -59,7 +59,7 @@ QStringList MissionRouteController::routeItems() const
     if (m_route)
     {
         int index = 1;
-        for (RouteItem* item : m_mission->route()->items())
+        for (RouteItem* item : m_route->items())
         {
             list.append(item->name + " " + QString::number(index));
             index++;
@@ -101,7 +101,7 @@ void MissionRouteController::setMission(Mission* mission)
         });
         connect(m_mission, &Mission::currentItemChanged, this,
                 &MissionRouteController::currentItemChanged);
-        connect(m_mission, &Mission::routeChanged, this, &MissionRouteController::routeItemsChanged);
+        connect(m_mission, &Mission::routeChanged, this, &MissionRouteController::setRoute);
     }
     this->setRoute(mission->route);
 

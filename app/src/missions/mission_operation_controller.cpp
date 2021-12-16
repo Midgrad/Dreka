@@ -89,15 +89,21 @@ void MissionOperationController::setMission(Mission* mission)
 
 void MissionOperationController::assignRoute(const QVariant& routeId)
 {
-    qDebug() << routeId;
+    if (!m_mission)
+        return;
+
+    Route* route = m_routesService->route(routeId);
+
+    m_mission->route.set(route);
+    m_missionsService->saveMission(m_mission);
 }
 
-void MissionOperationController::save(const QJsonObject& data)
+void MissionOperationController::rename(const QString& name)
 {
     if (!m_mission)
         return;
 
-    m_mission->fromVariantMap(data.toVariantMap());
+    m_mission->name.set(name);
     m_missionsService->saveMission(m_mission);
 }
 
