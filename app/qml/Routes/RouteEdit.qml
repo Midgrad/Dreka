@@ -6,7 +6,8 @@ import Industrial.Widgets 1.0 as Widgets
 Controls.Frame {
     id: root
 
-    property var route
+    property var routeId
+    property var route: controller.routeData(routeId)
 
     property bool editName: false
 
@@ -19,8 +20,9 @@ Controls.Frame {
 
     Connections {
         target: controller
-        onRouteItemAdded: if (route.id === routeId) route = controller.routeData(route.id)
-        onRouteItemRemoved: if (route.id === routeId) route = controller.routeData(route.id)
+        onRouteItemAdded: if (routeId === root.routeId) route = controller.routeData(route.id)
+        onRouteItemRemoved: if (routeId === root.routeId) route = controller.routeData(route.id)
+        onRouteChanged: if (routeId === root.routeId) route = controller.routeData(routeId)
     }
 
     ColumnLayout {
@@ -62,6 +64,7 @@ Controls.Frame {
                 leftCropped: true
                 highlightColor: Controls.Theme.colors.negative
                 iconSource: "qrc:/icons/remove.svg"
+                enabled: route.id && !route.block
                 tipText: qsTr("Remove")
                 onClicked: controller.removeRoute(route.id)
             }

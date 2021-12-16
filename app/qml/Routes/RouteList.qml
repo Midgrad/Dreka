@@ -42,9 +42,9 @@ Controls.Frame {
             delegate: Route {
                 width: parent.width
                 height: visible ? implicitHeight : 0
-                visible: route.name.indexOf(filterField.text) > -1
-                route: controller.routeData(modelData)
-                onExpand: root.expand(modelData)
+                visible: route && route.name.indexOf(filterField.text) > -1
+                routeId: modelData
+                onExpand: root.expand(routeId)
             }
             Layout.fillWidth: true
             Layout.fillHeight: true

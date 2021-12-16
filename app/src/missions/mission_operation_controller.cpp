@@ -26,10 +26,19 @@ MissionOperationController::MissionOperationController(QObject* parent) :
                     this->setOperation(nullptr);
             });
 
-    connect(m_routesService, &IRoutesService::routeAdded, this,
-            &MissionOperationController::routesChanged);
-    connect(m_routesService, &IRoutesService::routeRemoved, this,
-            &MissionOperationController::routesChanged);
+    connect(m_routesService, &IRoutesService::routeAdded, this, [this](Route* route) {
+        connect(route, &Route::changed, this, &MissionOperationController::routesChanged);
+        emit routesChanged();
+    });
+    connect(m_routesService, &IRoutesService::routeRemoved, this, [this](Route* route) {
+        disconnect(route, nullptr, this, nullptr);
+        emit routesChanged();
+    });
+
+    for (Route* route : m_routesService->routes())
+    {
+        connect(route, &Route::changed, this, &MissionOperationController::routesChanged);
+    }
 }
 
 QVariant MissionOperationController::missionId() const
@@ -101,7 +110,7 @@ void MissionOperationController::assignRoute(const QVariant& routeId)
 
     Route* route = m_routesService->route(routeId);
 
-    m_mission->route.set(route);
+    m_mission->assignRoute(route);
     m_missionsService->saveMission(m_mission);
 }
 

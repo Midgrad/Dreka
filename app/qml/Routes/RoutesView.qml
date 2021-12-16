@@ -92,6 +92,6 @@ RowLayout {
     Component {
         id: routeEditComponent
 
-        RouteEdit { route: controller.routeData(controller.selectedRoute) }
+        RouteEdit { routeId: controller.selectedRoute }
     }
 }

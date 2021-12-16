@@ -5,12 +5,18 @@ import Industrial.Controls 1.0 as Controls
 Item {
     id: root
 
-    property var route
+    property var routeId
+    property var route: controller.routeData(routeId)
 
     signal expand()
 
+    Connections {
+        target: controller
+        onRouteChanged: if (routeId === root.routeId) route = controller.routeData(routeId)
+    }
+
     implicitWidth: row.implicitWidth
-    implicitHeight: Controls.Theme.baseSize
+    implicitHeight: Controls.Theme.baseSize * 1.5
 
     Rectangle {
         id: hover
@@ -30,20 +36,30 @@ Item {
     RowLayout {
         id: row
         anchors.fill: parent
+        anchors.leftMargin: Controls.Theme.margins
         spacing: Controls.Theme.spacing
 
-        Controls.Label {
-            text: route ? route.name : ""
-            Layout.alignment: Qt.AlignVCenter
-        }
+        ColumnLayout {
+            spacing: 1
 
-        Controls.Label {
-            text: route ? route.type : ""
-            type: Controls.Theme.Label
-            Layout.alignment: Qt.AlignVCenter
+            Controls.Label {
+                text: route ? route.name : ""
+                Layout.alignment: Qt.AlignVCenter
+            }
+
+            Controls.Label {
+                text: route ? route.type : ""
+                type: Controls.Theme.Label
+                Layout.alignment: Qt.AlignVCenter
+            }
         }
 
         Item { Layout.fillWidth: true }
+
+        Controls.Label {
+            text: route ? route.block : ""
+            type: Controls.Theme.Label
+        }
 
         Controls.Button {
             flat: true

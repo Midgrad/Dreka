@@ -18,10 +18,6 @@ RoutesController::RoutesController(QObject* parent) :
             &RoutesController::routeTypesChanged);
     connect(m_routesService, &IRoutesService::routeAdded, this, &RoutesController::onRouteAdded);
     connect(m_routesService, &IRoutesService::routeRemoved, this, &RoutesController::onRouteRemoved);
-    connect(m_routesService, &IRoutesService::routeChanged, this, [this](Route* route) {
-        if (route == m_selectedRoute)
-            emit selectedRouteChanged(route->id);
-    });
 
     for (Route* route : m_routesService->routes())
     {
@@ -230,6 +226,9 @@ void RoutesController::onRouteAdded(Route* route)
     });
     connect(route, &Route::itemChanged, this, [this, route](int index, RouteItem*) {
         emit routeItemChanged(route->id, index);
+    });
+    connect(route, &Route::changed, this, [route, this]() {
+        emit routeChanged(route->id);
     });
 }
 
