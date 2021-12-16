@@ -207,8 +207,6 @@ void RoutesController::setRouteItemCalcParam(const QVariant& routeId, int index,
     if (!routeItem)
         return;
 
-    qDebug() << key << value;
-
     auto calcData = routeItem->calcData();
     if (calcData.value(key) == value)
         return;

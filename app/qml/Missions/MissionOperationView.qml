@@ -31,12 +31,15 @@ Controls.Popup {
                 onEditingFinished: operationController.save({ name: text });
             }
 
-//            Controls.ComboBox {
-//                id: routeBox
-//                labelText: qsTr("Route")
-//                enabled: false
-//                displayText: mission.route ? mission.route : ""
-//            }
+            Controls.ComboBox {
+                id: routeBox
+                labelText: qsTr("Route")
+                model: operationController.routes
+                textRole: "name"
+                onActivated: operationController.assignRoute(model[index].id);
+                //enabled: false
+                //displayText: mission.route ? mission.route : ""
+            }
         }
 
         Controls.ProgressBar {

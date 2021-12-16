@@ -38,7 +38,7 @@ Row {
 
     Controls.ComboBox {
         id: wpBox
-        width: root.width / 2
+        width: root.width / 2.5
         flat: true
         labelText: qsTr("WPT")
         enabled: controller.selectedVehicle !== undefined

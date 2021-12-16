@@ -9,9 +9,11 @@ using namespace md::presentation;
 
 MissionOperationController::MissionOperationController(QObject* parent) :
     QObject(parent),
-    m_missionsService(md::app::Locator::get<IMissionsService>())
+    m_missionsService(md::app::Locator::get<IMissionsService>()),
+    m_routesService(md::app::Locator::get<IRoutesService>())
 {
     Q_ASSERT(m_missionsService);
+    Q_ASSERT(m_routesService);
 
     connect(m_missionsService, &IMissionsService::operationStarted, this,
             [this](MissionOperation* operation) {
@@ -23,6 +25,11 @@ MissionOperationController::MissionOperationController(QObject* parent) :
                 if (m_operation == operation)
                     this->setOperation(nullptr);
             });
+
+    connect(m_routesService, &IRoutesService::routeAdded, this,
+            &MissionOperationController::routesChanged);
+    connect(m_routesService, &IRoutesService::routeRemoved, this,
+            &MissionOperationController::routesChanged);
 }
 
 QVariant MissionOperationController::missionId() const
@@ -49,6 +56,20 @@ QJsonObject MissionOperationController::operation() const
     return QJsonObject::fromVariantMap(m_operation->toVariantMap());
 }
 
+QJsonArray MissionOperationController::routes() const
+{
+    QJsonArray jsons;
+
+    jsons.append(QJsonObject::fromVariantMap(
+        { { props::id, QVariant() }, { props::name, tr("No route") } }));
+    for (Route* route : m_routesService->routes())
+    {
+        jsons.append(QJsonObject::fromVariantMap(route->toVariantMap()));
+    }
+
+    return jsons;
+}
+
 void MissionOperationController::setMissionId(const QVariant& missionId)
 {
     this->setMission(m_missionsService->mission(missionId));
@@ -64,6 +85,11 @@ void MissionOperationController::setMission(Mission* mission)
 
     emit missionChanged();
     emit operationChanged();
+}
+
+void MissionOperationController::assignRoute(const QVariant& routeId)
+{
+    qDebug() << routeId;
 }
 
 void MissionOperationController::save(const QJsonObject& data)

@@ -2,6 +2,9 @@
 #define MISSION_OPERATION_CONTROLLER_H
 
 #include "i_missions_service.h"
+#include "i_routes_service.h"
+
+#include <QJsonArray>
 
 namespace md::presentation
 {
@@ -13,6 +16,8 @@ class MissionOperationController : public QObject
     Q_PROPERTY(QJsonObject mission READ mission NOTIFY missionChanged)
     Q_PROPERTY(QJsonObject operation READ operation NOTIFY operationChanged)
 
+    Q_PROPERTY(QJsonArray routes READ routes NOTIFY routesChanged)
+
 public:
     explicit MissionOperationController(QObject* parent = nullptr);
 
@@ -20,9 +25,13 @@ public:
     QJsonObject mission() const;
     QJsonObject operation() const;
 
+    QJsonArray routes() const;
+
 public slots:
     void setMissionId(const QVariant& missionId);
     void setMission(domain::Mission* mission);
+
+    void assignRoute(const QVariant& routeId);
 
     void save(const QJsonObject& data);
     void remove();
@@ -34,11 +43,14 @@ public slots:
 signals:
     void missionChanged();
     void operationChanged();
+    void routesChanged();
 
 private:
     void setOperation(domain::MissionOperation* operation);
 
     domain::IMissionsService* const m_missionsService;
+    domain::IRoutesService* const m_routesService;
+
     domain::Mission* m_mission = nullptr;
     domain::MissionOperation* m_operation = nullptr;
 };
