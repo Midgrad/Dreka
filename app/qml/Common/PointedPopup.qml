@@ -4,6 +4,8 @@ import Industrial.Controls 1.0 as Controls
 PointedItem {
     id: root
 
+    readonly property bool opened: loader.sourceComponent != null
+
     property alias closePolicy: popup.closePolicy
     property alias source: loader.source
     property alias sourceComponent: loader.sourceComponent
@@ -14,14 +16,11 @@ PointedItem {
         move(x, y);
     }
 
-    signal closed()
-
     pointed: Controls.Popup {
         id: popup
         onClosed: {
             root.hidePointer();
             loader.sourceComponent = null;
-            root.closed();
         }
 
         Loader {
