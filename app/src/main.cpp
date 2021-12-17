@@ -20,6 +20,7 @@
 #include <QtWebEngine>
 
 // Data source
+#include "home_items_repository_sql.h"
 #include "missions_repository_sql.h"
 #include "route_items_repository_sql.h"
 #include "routes_repository_sql.h"
@@ -50,9 +51,9 @@
 #include "map_viewport_controller.h"
 #include "mission_operation_controller.h"
 #include "mission_route_controller.h"
+#include "route_item_controller.h"
 #include "routes_controller.h"
 #include "vehicles_controller.h"
-#include "route_item_controller.h"
 
 namespace
 {
@@ -89,8 +90,9 @@ int main(int argc, char* argv[])
     app::Locator::provide<domain::IRoutesService>(&routesService);
 
     data_source::MissionsRepositorySql missionsRepository(schema.db());
+    data_source::HomeItemsRepositorySql homeItemsRepository(schema.db());
     domain::MissionsService missionsService(&routesService, &missionsRepository,
-                                            &routeItemsRepository);
+                                            &homeItemsRepository);
     app::Locator::provide<domain::IMissionsService>(&missionsService);
 
     domain::PropertyTree pTree;
