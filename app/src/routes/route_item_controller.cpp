@@ -22,6 +22,11 @@ RouteItemController::RouteItemController(QObject* parent) :
     });
 }
 
+bool RouteItemController::canGoto() const
+{
+    return m_route && m_routeItem && m_route->block().length() && !m_routeItem->current();
+}
+
 QJsonObject RouteItemController::routeItem() const
 {
     if (!m_routeItem)
@@ -199,4 +204,12 @@ void RouteItemController::remove()
 
     m_route->removeItem(m_routeItem);
     m_routesService->saveRoute(m_route);
+}
+
+void RouteItemController::gotoItem()
+{
+    if (!m_routeItem)
+        return;
+
+    m_routeItem->goTo();
 }

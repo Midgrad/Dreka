@@ -11,6 +11,7 @@ class RouteItemController : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(bool canGoto READ canGoto NOTIFY routeItemChanged)
     Q_PROPERTY(QJsonObject routeItem READ routeItem NOTIFY routeItemChanged)
     Q_PROPERTY(int inRouteIndex READ inRouteIndex NOTIFY routeItemChanged)
     Q_PROPERTY(int routeItemsCount READ routeItemsCount NOTIFY routeChanged)
@@ -20,6 +21,7 @@ class RouteItemController : public QObject
 public:
     explicit RouteItemController(QObject* parent = nullptr);
 
+    bool canGoto() const;
     QJsonObject routeItem() const;
     int inRouteIndex() const;
     int routeItemsCount() const;
@@ -40,6 +42,7 @@ public slots:
     void setPosition(double latitude, double longitude, float altitude);
     void setParameter(const QString& parameterId, const QVariant& value);
     void remove();
+    void gotoItem();
 
 signals:
     void routeItemChanged();

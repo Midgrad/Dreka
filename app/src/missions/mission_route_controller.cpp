@@ -136,5 +136,5 @@ void MissionRouteController::switchItem(int index)
     if (!m_mission)
         return;
 
-    emit m_mission->switchCurrentItem(index);
+    emit m_mission->goTo(index);
 }

@@ -45,8 +45,8 @@ Item {
 
         Controls.MenuItem {
             text: qsTr("Goto")
-            enabled: false // TODO: wpt in mission
-            onTriggered: console.log("Go to waypint") // TODO:
+            enabled: controller.canGoto
+            onTriggered: controller.gotoItem();
         }
 
         Controls.MenuItem {
