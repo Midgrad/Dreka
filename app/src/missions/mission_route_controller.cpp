@@ -47,6 +47,14 @@ QJsonObject MissionRouteController::home() const
     return QJsonObject::fromVariantMap(m_mission->home()->toVariantMap());
 }
 
+QJsonObject MissionRouteController::target() const
+{
+    if (!m_mission)
+        return QJsonObject();
+
+    return QJsonObject::fromVariantMap(m_mission->target()->toVariantMap());
+}
+
 QStringList MissionRouteController::routeItems() const
 {
     if (!m_mission)
@@ -96,8 +104,11 @@ void MissionRouteController::setMission(Mission* mission)
 
     if (m_mission)
     {
-        connect(m_mission->home, &RouteItem::changed, this, [this]() {
+        connect(m_mission->home(), &RouteItem::changed, this, [this]() {
             emit homeChanged(this->home());
+        });
+        connect(m_mission->target(), &RouteItem::changed, this, [this]() {
+            emit targetChanged(this->target());
         });
         connect(m_mission, &Mission::currentItemChanged, this,
                 &MissionRouteController::currentItemChanged);
