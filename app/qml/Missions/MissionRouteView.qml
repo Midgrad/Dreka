@@ -14,7 +14,20 @@ Row {
 
     MissionRouteController { id: missionRouteController }
 
-    Component.onCompleted: map.registerController("missionRouteController", missionRouteController)
+    Controls.MenuItem {
+        id: navToItem
+        enabled: controller.selectedVehicle !== undefined // TODO: online
+        text: qsTr("Nav to")
+        onTriggered: {
+            controller.sendCommand("setMode", [ "NavTo" ]); // FIXME: to domain, packed commands
+            missionRouteController.navTo(mapMenu.latitude, mapMenu.longitude);
+        }
+    }
+
+    Component.onCompleted: {
+        map.registerController("missionRouteController", missionRouteController);
+        mapMenu.addItem(navToItem);
+    }
 
     Controls.Button {
         id: missionButton

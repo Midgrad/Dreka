@@ -149,3 +149,11 @@ void MissionRouteController::switchItem(int index)
 
     emit m_mission->goTo(index);
 }
+
+void MissionRouteController::navTo(double latitude, double longitude)
+{
+    if (!m_mission)
+        return;
+
+    emit m_mission->navTo(latitude, longitude, m_mission->target()->position().altitude);
+}

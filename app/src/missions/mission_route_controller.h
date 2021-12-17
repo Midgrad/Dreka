@@ -32,6 +32,7 @@ public slots:
     void setRoute(domain::Route* route);
 
     void switchItem(int index);
+    void navTo(double latitude, double longitude);
 
 signals:
     void missionChanged();

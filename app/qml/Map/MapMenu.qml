@@ -15,6 +15,8 @@ Item {
 
     function addSubmenu(submenu) { menu.addMenu(submenu); }
     function removeSubmenu(submenu) { menu.removeMenu(submenu); }
+    function addItem(item) { menu.addItem(item); }
+    function removeItem(item) { menu.removeItem(item); }
 
     MapMenuController {
         id: controller

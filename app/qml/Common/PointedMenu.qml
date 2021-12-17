@@ -6,6 +6,8 @@ PointedItem {
 
     function addMenu(submenu) { menu.addMenu(submenu); }
     function removeMenu(submenu) { menu.removeMenu(submenu); }
+    function addItem(item) { menu.addItem(item); }
+    function removeItem(item) { menu.removeItem(item); }
 
     property alias menuVisible: menu.visible
     property alias title: menu.title
