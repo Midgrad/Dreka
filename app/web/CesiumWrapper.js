@@ -56,6 +56,7 @@ class CesiumWrapper {
                                           latitude, longitude, altitude);
                     return true;
                 });
+                that.viewport.subscribeCamera(() => { menuController.drop(); });
             }
 
             var rulerController = channel.objects.rulerController;

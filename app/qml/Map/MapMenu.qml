@@ -26,6 +26,7 @@ Item {
             root.altitude = altitude;
             menu.open(x, y);
         }
+        onDropped: menu.close()
     }
 
     Component.onCompleted: map.registerController("menuController", controller)

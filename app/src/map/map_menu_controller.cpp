@@ -12,3 +12,8 @@ void MapMenuController::invoke(int x, int y, double latitude, double longitude, 
 {
     emit invoked(x, y, latitude, longitude, altitude);
 }
+
+void MapMenuController::drop()
+{
+    emit dropped();
+}

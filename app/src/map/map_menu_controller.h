@@ -14,9 +14,11 @@ public:
 
 public slots:
     void invoke(int x, int y, double latitude, double longitude, float altitude);
+    void drop();
 
 signals:
     void invoked(int x, int y, double latitude, double longitude, float altitude);
+    void dropped();
 };
 } // namespace md::presentation
 
