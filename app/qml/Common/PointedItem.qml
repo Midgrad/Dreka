@@ -16,28 +16,15 @@ Item {
     property int highlightWidth: 8
 
     function move(x, y) {
-        var pX = x - pointed.width / 2;
-        var pY = y - pointed.height - pointer.height;
-        var pointerVisible = true;
-        if (pX < minX) {
-            pointerVisible = false;
-            pX = minX;
-        } else if (pX > maxX - pointed.width) {
-            pointerVisible = false;
-            pX = maxX - pointed.width;
-        }
-
-        if (pY < minY) {
-            pointerVisible = false;
-            pY = minY;
-        } else if (pY > maxY - pointed.height) {
-            pointerVisible = false;
-            pY = maxY - pointed.height;
-        }
-
-        pointed.x = pX;
-        pointed.y = pY;
-        pointer.visible = pointerVisible;
+        pointed.x = Qt.binding(function() {
+            return Math.max(Math.min(x - pointed.width / 2, maxX), minX);
+        });
+        pointed.y = Qt.binding(function() {
+            return Math.max(Math.min(y - pointed.height - pointer.height, maxY), minY);
+        });
+        pointer.visible = Qt.binding(function() {
+            return pointed.x > minX && pointed.x < maxX && pointed.y > minY && pointed.y < maxY;
+        });
     }
 
     function close() { pointed.close(); }
