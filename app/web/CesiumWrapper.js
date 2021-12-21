@@ -41,10 +41,6 @@ class CesiumWrapper {
             return that.viewport.onMove(cartesian);
         });
 
-        this.viewport.subscribeCamera((heading, pitch, cameraPosition, centerPosition, pixelScale) => {
-            that.input.pixelScale = pixelScale;
-        });
-
         this.webChannel = new QWebChannel(qt.webChannelTransport, (channel) => {
             var menuController = channel.objects.menuController;
             if (menuController) {

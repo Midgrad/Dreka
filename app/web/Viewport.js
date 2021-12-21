@@ -16,29 +16,38 @@ class Viewport {
         var that = this;
         // Do it every time postRender, cause camera.changed is too slow
         this.viewer.scene.postRender.addEventListener(function() {
+
+            var newCameraPosition = that.convert(Cesium.Cartographic.fromCartesian(
+                                                     that.viewer.camera.positionWC));
+            var newWidth = that.viewer.scene.canvas.clientWidth;
+            var newHeight = that.viewer.scene.canvas.clientHeight
+
+            if (Cesium.Cartographic.equals(that.cameraPosition, newCameraPosition) &&
+                that.width === newWidth &&
+                that.height === newHeight)
+                return;
+
+            // Get the camera position
+            that.cameraPosition = newCameraPosition;
+
             // Get camera pitch & roll
             that.heading = Cesium.Math.toDegrees(that.viewer.camera.heading);
             that.pitch = Cesium.Math.toDegrees(that.viewer.camera.pitch);
 
-            // Get the camera position
-            var position = Cesium.Cartographic.fromCartesian(that.viewer.camera.positionWC);
-            that.cameraPosition = that.convert(position);
-
             // Find map center coordinates
             var globe = that.viewer.scene.globe;
-            var width = that.viewer.scene.canvas.clientWidth;
-            var height = that.viewer.scene.canvas.clientHeight;
+            that.width = newWidth;
+            that.height = newHeight;
 
-            var center = that.viewer.camera.getPickRay(new Cesium.Cartesian2(width / 2, height / 2));
+            var center = that.viewer.camera.getPickRay(new Cesium.Cartesian2(that.width / 2, that.height / 2));
             var centerPosition = globe.pick(center, that.viewer.scene);
             if (Cesium.defined(centerPosition)) {
-                position = globe.ellipsoid.cartesianToCartographic(centerPosition);
-                that.centerPosition = that.convert(position);
+                that.centerPosition = that.convert(globe.ellipsoid.cartesianToCartographic(centerPosition));
             }
 
             // Find the distance between two pixels int the center of the screen.
-            var left = that.viewer.camera.getPickRay(new Cesium.Cartesian2((width / 2) | 0, height / 2));
-            var right = that.viewer.camera.getPickRay(new Cesium.Cartesian2(1 + (width / 2) | 0, height / 2));
+            var left = that.viewer.camera.getPickRay(new Cesium.Cartesian2((that.width / 2) | 0, that.height / 2));
+            var right = that.viewer.camera.getPickRay(new Cesium.Cartesian2(1 + (that.width / 2) | 0, that.height / 2));
 
             var leftPosition = globe.pick(left, that.viewer.scene);
             var rightPosition = globe.pick(right, that.viewer.scene);
