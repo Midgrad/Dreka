@@ -11,6 +11,13 @@ Item {
     property int inRouteIndex: -1
 
     property bool editName: false
+    property bool pinned: true
+
+    signal move(int x, int y)
+
+    function updatePosition(x, y) {
+        if (pinned) move(x, y);
+    }
 
     implicitWidth: Controls.Theme.baseSize * 11
     implicitHeight: column.implicitHeight
@@ -68,7 +75,7 @@ Item {
                 tipText: qsTr("Right")
                 onClicked: {
                     controller.setIndex(inRouteIndex + 1);
-                    controller.centerRouteItem(routeItem.route, inRouteIndex);
+                    if (pinned) controller.centerRouteItem(routeItem.route, inRouteIndex);
                 }
             }
 
@@ -76,9 +83,9 @@ Item {
                 flat: true
                 leftCropped: true
                 rightCropped: true
-                iconSource: "qrc:/icons/center.svg"
-                tipText: qsTr("Goto on map")
-                onClicked: controller.centerRouteItem(routeItem.route, inRouteIndex)
+                iconSource: pinned ? "qrc:/icons/unpin.svg" : "qrc:/icons/pin.svg"
+                tipText: pinned ? qsTr("Unpin from the map") : qsTr("Pin to the map")
+                onClicked: pinned = !pinned
             }
 
             Controls.Button {

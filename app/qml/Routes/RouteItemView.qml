@@ -16,9 +16,9 @@ Item {
         onMenuInvoked: menu.open(x, y)
         onUpdatePosition: {
             if (menu.menuVisible)
-                menu.move(x, y)
-            else if (editor.sourceComponent)
-                editor.move(x, y)
+                menu.move(x, y);
+            else if (editor.item)
+                editor.item.updatePosition(x, y);
         }
     }
 
@@ -51,7 +51,7 @@ Item {
 
         Controls.MenuItem {
             text: qsTr("Parameters")
-            onTriggered: editor.open(menu.pointed.x, menu.pointed.y, editComponent)
+            onTriggered: editor.open(menu.lastX, menu.lastY, editComponent)
         }
 
         Controls.MenuItem {
@@ -69,6 +69,7 @@ Item {
         maxY: height - map.controlHeight
         closePolicy: Controls.Popup.CloseOnEscape
         onOpenedChanged: if (!opened && !menu.menuVisible) controller.setIndex(-1)
+        pointerVisible: item && item.pinned
     }
 
     Component {
@@ -77,6 +78,7 @@ Item {
         RouteItemEdit {
             routeItem: controller.routeItem
             inRouteIndex: controller.inRouteIndex
+            onMove: editor.move(x, y)
         }
     }
 }

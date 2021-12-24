@@ -14,5 +14,7 @@
         <file>generic_aircraft.svg</file>
         <file>calibrate.svg</file>
         <file>gps.svg</file>
+        <file>pin.svg</file>
+        <file>unpin.svg</file>
     </qresource>
 </RCC>

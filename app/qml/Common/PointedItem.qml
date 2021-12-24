@@ -8,14 +8,19 @@ Item {
 
     property color pointerColor: Controls.Theme.colors.background
 
+    property real lastX: -1.0
+    property real lastY: -1.0
     property real minX: Controls.Theme.margins
     property real minY: Controls.Theme.margins
     property real maxX: width - Controls.Theme.margins * 2
     property real maxY: height - Controls.Theme.margins * 2
+    property bool pointerVisible: true
 
     property int highlightWidth: 8
 
     function move(x, y) {
+        lastX = x;
+        lastY = y;
         pointed.x = Qt.binding(function() {
             return Math.max(Math.min(x - pointed.width / 2, maxX), minX);
         });
@@ -23,7 +28,8 @@ Item {
             return Math.max(Math.min(y - pointed.height - pointer.height, maxY), minY);
         });
         pointer.visible = Qt.binding(function() {
-            return pointed.x > minX && pointed.x < maxX && pointed.y > minY && pointed.y < maxY;
+            return pointerVisible && pointed.x > minX && pointed.x < maxX &&
+                                     pointed.y > minY && pointed.y < maxY;
         });
     }
 

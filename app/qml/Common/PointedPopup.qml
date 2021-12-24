@@ -9,6 +9,7 @@ PointedItem {
     property alias closePolicy: popup.closePolicy
     property alias source: loader.source
     property alias sourceComponent: loader.sourceComponent
+    property alias item: loader.item
 
     function open(x, y, component) {
         loader.sourceComponent = component;
