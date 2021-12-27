@@ -13,12 +13,6 @@ Item {
     property bool editName: false
     property bool pinned: true
 
-    signal move(int x, int y)
-
-    function updatePosition(x, y) {
-        if (pinned) move(x, y);
-    }
-
     implicitWidth: Controls.Theme.baseSize * 11
     implicitHeight: column.implicitHeight
 

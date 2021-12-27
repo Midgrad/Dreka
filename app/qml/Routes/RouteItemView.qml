@@ -18,7 +18,7 @@ Item {
             if (menu.menuVisible)
                 menu.move(x, y);
             else if (editor.item)
-                editor.item.updatePosition(x, y);
+                editor.move(x, y);
         }
     }
 
@@ -78,7 +78,6 @@ Item {
         RouteItemEdit {
             routeItem: controller.routeItem
             inRouteIndex: controller.inRouteIndex
-            onMove: editor.move(x, y)
         }
     }
 }
