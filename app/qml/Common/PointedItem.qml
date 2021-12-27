@@ -22,14 +22,14 @@ Item {
         lastX = x;
         lastY = y;
         pointed.x = Qt.binding(function() {
-            return Math.max(Math.min(x - pointed.width / 2, maxX), minX);
+            return Math.max(Math.min(x - pointed.width / 2, maxX - pointed.width), minX);
         });
         pointed.y = Qt.binding(function() {
-            return Math.max(Math.min(y - pointed.height - pointer.height, maxY), minY);
+            return Math.max(Math.min(y - pointed.height - pointer.height, maxY - pointed.height), minY);
         });
         pointer.visible = Qt.binding(function() {
-            return pointerVisible && pointed.x > minX && pointed.x < maxX &&
-                                     pointed.y > minY && pointed.y < maxY;
+            return pointerVisible && pointed.x > minX && pointed.x < maxX - pointed.width &&
+                                     pointed.y > minY && pointed.y < maxY - pointed.height;
         });
     }
 
