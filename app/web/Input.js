@@ -39,6 +39,7 @@ class Input {
 
         // Remove conflicting default behavior
         this.viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+        this.viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK, Cesium.KeyboardEventModifier.CTRL);
         this.viewer.scene.screenSpaceCameraController.enableLook = false;
 
         // Lambda function to handle all input listeners
