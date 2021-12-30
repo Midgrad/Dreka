@@ -35,9 +35,9 @@ public slots:
 
 signals:
     void vehiclesChanged();
-    void selectedVehicleChanged();
+    void selectedVehicleChanged(QVariant vehicleId);
     void trackingChanged();
-    void trackLengthChanged();
+    void trackLengthChanged(int trackLength);
 
     void vehicleDataChanged(QVariant vehicleId, QVariantMap data);
 

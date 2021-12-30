@@ -108,7 +108,7 @@ class Vehicle {
 class Vehicles {
     constructor(viewer) {
         this.vehicles = new Map();
-        this.selectedVehicle = null;
+        this.selectedVehicleId = null;
         this.viewer = viewer;
 
         this.trackLength = 250;
@@ -118,13 +118,13 @@ class Vehicles {
         this.trackLength = trackLength;
     }
 
-    selectVehicle(vehicleId) {
-        this.selectedVehicle = this.vehicles.has(vehicleId) ? this.vehicles.get(vehicleId) : null;
-    }
+    selectVehicle(vehicleId) { this.selectedVehicleId = vehicleId; }
 
     setTracking(tracking) {
-        if (this.selectedVehicle && tracking) {
-            this.viewer.trackedEntity = this.selectedVehicle.vehicle;
+        var selectedVehicle = this.vehicles.has(this.selectedVehicleId) ?
+                                  this.vehicles.get(this.selectedVehicleId) : null;
+        if (selectedVehicle && tracking) {
+            this.viewer.trackedEntity = selectedVehicle.vehicle;
         }
         else {
             this.viewer.trackedEntity = undefined;

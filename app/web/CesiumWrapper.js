@@ -182,15 +182,14 @@ class CesiumWrapper {
                     });
                 });
 
-                vehiclesController.trackLengthChanged.connect(() => {
-                    vehicles.setTrackLength(vehiclesController.trackLength);
+                vehiclesController.trackLengthChanged.connect(trackLength => {
+                    vehicles.setTrackLength(trackLength);
                 });
                 vehicles.setTrackLength(vehiclesController.trackLength);
 
-                vehiclesController.selectedVehicleChanged.connect(() => {
-                    vehicles.selectVehicle(vehiclesController.selectedVehicle);
-                });
-                vehicles.selectVehicle(vehiclesController.selectedVehicle);
+                var selectVehicle = vehicleId => { vehicles.selectVehicle(vehicleId); }
+                vehiclesController.selectedVehicleChanged.connect(selectVehicle);
+                selectVehicle(vehiclesController.selectedVehicle);
 
                 vehiclesController.trackingChanged.connect(() => {
                     vehicles.setTracking(vehiclesController.tracking);

@@ -73,7 +73,7 @@ void VehiclesController::selectVehicle(const QVariant& vehicleId)
 
     this->setTracking(false);
     m_selectedVehicleId = vehicleId;
-    emit selectedVehicleChanged();
+    emit selectedVehicleChanged(vehicleId);
 }
 
 void VehiclesController::onVehiclesChanged()
