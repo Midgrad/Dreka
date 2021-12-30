@@ -6,13 +6,15 @@ class Vehicle {
         this.parent = parent;
         this.viewer = viewer;
 
-        this.position = Cesium.Cartesian3.fromDegrees(NaN, NaN, NaN);
-        this.groundPosition = Cesium.Cartesian3.fromDegrees(NaN, NaN, NaN);
+        this.position = Cesium.Cartesian3.ZERO;
+        this.terrainPosition = Cesium.Cartesian3.ZERO;
         this.hpr = new Cesium.HeadingPitchRoll(0, 0, 0);
 
         var that = this;
 
         this.track = [];
+
+        // Vehicle 3D model
         this.vehicle = viewer.entities.add({
             name: callsign,
             model: {
@@ -29,16 +31,19 @@ class Vehicle {
                 material: Cesium.Color.TRANSPARENT
             }
         });
-//        this.pylon = viewer.entities.add({
-//            polyline: {
-//                positions: new Cesium.CallbackProperty(function() {
-//                    return [that.position, that.groundPosition];
-//                }, false),
-//                width: 5,
-//                arcType: Cesium.ArcType.NONE,
-//                material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.AQUA)
-//            },
-//        });
+
+        // TODO: common pylon
+        // Dash line to the terrain
+        this.pylon = this.viewer.entities.add({
+             polyline: {
+                 positions: new Cesium.CallbackProperty(() => {
+                     return [that.position, that.terrainPosition];
+                 }, false),
+                 arcType: Cesium.ArcType.NONE,
+                 material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.AQUA),
+                 width: 4.0
+             }
+        });
     }
 
     done() {
@@ -56,6 +61,7 @@ class Vehicle {
 
         // Get the position
         this.position = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, data.altitudeAmsl);
+        this.terrainPosition = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude, data.altitudeAmsl);
 
         // Get the orientation
         if (Cesium.defined(data.heading) && Cesium.defined(data.pitch) && Cesium.defined(data.roll))
@@ -87,21 +93,17 @@ class Vehicle {
             }
         }
 
-//        // Update ground position with terrain sample
-//        var that = this;
-//        var terrainPoint = Cesium.Cartographic.fromDegrees(data.longitude, data.latitude, 0);
-//        if (Cesium.defined(terrainPoint)) {
-//            var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [terrainPoint]);
-//            Cesium.when(promise, function(updatedPositions) {
-//                if (!updatedPositions || !Array.isArray(updatedPositions))
-//                    return;
-
-//                var cartesian = Cesium.Cartesian3.fromDegrees(data.longitude, data.latitude,
-//                                                              updatedPositions[0].height);
-//                if (Cesium.defined(cartesian))
-//                    that.groundPosition = cartesian;
-//            });
-//        }
+        // Sample terrain position from the ground
+        var cartographic = Cesium.Cartographic.fromCartesian(this.terrainPosition);
+        var that = this;
+        var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [cartographic]);
+        Cesium.when(promise, updatedPositions => {
+                        that.terrainPosition = Cesium.Cartographic.toCartesian(cartographic);
+                        that.terrainAltitude = cartographic.height;
+                        that.pylon.polyline.show = true;
+                        if (that.terrainCallback && !this.dragging)
+                            that.terrainCallback(that.data.position.altitude - that.terrainAltitude);
+                    });
     }
 }
 
