@@ -230,7 +230,7 @@ Column {
             textOffset: fontSize * 1.5
             arrowSize: width * 0.2
             mark: "qrc:/icons/generic_aircraft.svg"
-            online: guardBool(params.online)
+            online: controller.selectedVehicle !== undefined && controller.selectedVehicle.online
             heading: guardNaN(params.heading)
             course: guardNaN(params.course)
         }

@@ -53,6 +53,7 @@ Controls.Popup {
 
         Controls.ProgressBar {
             id: progress
+            enabled: bar.enabled
             visible: operation.id !== undefined
             flat: true
             radius: Controls.Theme.rounding
@@ -74,26 +75,25 @@ Controls.Popup {
             id: bar
             flat: true
             visible: operation.id === undefined
+            enabled: mission.id && mission.route &&
+                     controller.selectedVehicle !== undefined && controller.selectedVehicle.online ? true : false
             Layout.fillWidth: true
 
             Controls.Button {
                 text: qsTr("Download")
                 borderColor: Controls.Theme.colors.controlBorder
-                enabled: mission.id && mission.route ? true : false
                 onClicked: operationController.download()
             }
 
             Controls.Button {
                 text: qsTr("Upload")
                 borderColor: Controls.Theme.colors.controlBorder
-                enabled: mission.id && mission.route ? true : false
                 onClicked: operationController.upload()
             }
 
             Controls.Button {
                 text: qsTr("Clear")
                 borderColor: Controls.Theme.colors.controlBorder
-                enabled: mission.id && mission.route ? true : false
                 highlightColor: Controls.Theme.colors.negative
                 hoverColor: highlightColor
                 onClicked: operationController.clear()
