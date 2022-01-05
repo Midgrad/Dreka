@@ -34,7 +34,10 @@ QJsonArray VehiclesController::vehicles() const
 
 QVariant VehiclesController::selectedVehicle() const
 {
-    return m_selectedVehicleId;
+    if (!m_selectedVehicle)
+        return QVariant();
+
+    return m_selectedVehicle->toVariantMap();
 }
 
 bool VehiclesController::isTracking() const
@@ -63,29 +66,43 @@ void VehiclesController::setTracking(bool tracking)
 
 void VehiclesController::sendCommand(const QString& commandId, const QVariantList& args)
 {
-    m_commandsService->requestCommand(commandId)->exec(m_selectedVehicleId, args);
+    if (!m_selectedVehicle)
+        return;
+
+    m_commandsService->requestCommand(commandId)->exec(m_selectedVehicle->id(), args);
 }
 
 void VehiclesController::selectVehicle(const QVariant& vehicleId)
 {
-    if (m_selectedVehicleId == vehicleId)
+    Vehicle* vehicle = m_vehiclesService->vehicle(vehicleId);
+
+    if (m_selectedVehicle == vehicle)
         return;
 
     this->setTracking(false);
-    m_selectedVehicleId = vehicleId;
-    emit selectedVehicleChanged(vehicleId);
+
+    if (m_selectedVehicle)
+        disconnect(m_selectedVehicle, nullptr, this, nullptr);
+
+    m_selectedVehicle = vehicle;
+
+    if (m_selectedVehicle)
+        connect(m_selectedVehicle, &Vehicle::changed, this,
+                &VehiclesController::selectedVehicleChanged);
+
+    emit selectedVehicleChanged();
 }
 
 void VehiclesController::onVehiclesChanged()
 {
     m_vehicles = QJsonArray();
-    for (domain::Vehicle* vehicle : m_vehiclesService->vehicles())
+    for (Vehicle* vehicle : m_vehiclesService->vehicles())
     {
         m_vehicles += QJsonObject::fromVariantMap(vehicle->toVariantMap());
     }
     emit vehiclesChanged();
 
-    if (m_selectedVehicleId.isNull() && m_vehicles.count())
+    if (!m_selectedVehicle && m_vehicles.count())
     {
         this->selectVehicle(m_vehicles.first().toObject().value(props::id).toString());
     }

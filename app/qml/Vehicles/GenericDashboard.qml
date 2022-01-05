@@ -12,8 +12,10 @@ Column {
 
     Connections {
         target: controller
-        onSelectedVehicleChanged: params = controller.vehicleData(controller.selectedVehicle)
-        onVehicleDataChanged: if (vehicleId === controller.selectedVehicle) params = data
+        onSelectedVehicleChanged: if (controller.selectedVehicle !== undefined)
+                                      params = controller.vehicleData(controller.selectedVehicle.id)
+        onVehicleDataChanged: if (controller.selectedVehicle !== undefined &&
+                                      vehicleId === controller.selectedVehicle.id) params = data
     }
 
     function guardNaN(value) { return value ? value : NaN; }
@@ -29,7 +31,7 @@ Column {
             flat: true
             rightCropped: true
             iconSource: "qrc:/icons/calibrate.svg"
-            enabled: controller.selectedVehicle !== undefined
+            enabled: controller.selectedVehicle !== undefined && controller.selectedVehicle.id
             tipText: qsTr("Preparation")
             highlighted: preflight.visible
             onClicked: preflight.visible ? preflight.close() : preflight.open()
@@ -96,7 +98,6 @@ Column {
         Controls.Button {
             id: switchButton
             flat: true
-            enabled: controller.selectedVehicle !== undefined
             leftCropped: true
             iconSource: "qrc:/icons/swap.svg"
             tipText: qsTr("Switch coordinates presentation")
@@ -141,7 +142,7 @@ Column {
             markWidth: 2
             markFactor: 0.8
             zigzag: 7
-            online: guardBool(params.online)
+            online: controller.selectedVehicle !== undefined && controller.selectedVehicle.online
             ready: guardBool(params.armed)
             pitch: guardNaN(params.pitch)
             roll: guardNaN(params.roll)
@@ -264,13 +265,13 @@ Column {
     MissionRouteView {
         id: mission
         width: parent.width
-        vehicleId: controller.selectedVehicle
+        vehicleId: controller.selectedVehicle !== undefined ? controller.selectedVehicle.id : null
 
         Controls.ComboBox {
             width: mission.availableWidth
             flat: true
             labelText: qsTr("MODE")
-            enabled: controller.selectedVehicle !== undefined
+            enabled: controller.selectedVehicle !== undefined && controller.selectedVehicle.online
             model: params.modes ? params.modes : []
             displayText: params.mode ? params.mode : "-"
             onActivated: controller.sendCommand("setMode", [ model[index] ])

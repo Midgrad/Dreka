@@ -187,9 +187,12 @@ class CesiumWrapper {
                 });
                 vehicles.setTrackLength(vehiclesController.trackLength);
 
-                var selectVehicle = vehicleId => { vehicles.selectVehicle(vehicleId); }
+                var selectVehicle = () => {
+                    vehicles.selectVehicle(vehiclesController.selectedVehicle ?
+                                               vehiclesController.selectedVehicle.id : null);
+                }
                 vehiclesController.selectedVehicleChanged.connect(selectVehicle);
-                selectVehicle(vehiclesController.selectedVehicle);
+                selectVehicle();
 
                 vehiclesController.trackingChanged.connect(() => {
                     vehicles.setTracking(vehiclesController.tracking);

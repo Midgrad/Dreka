@@ -35,7 +35,7 @@ public slots:
 
 signals:
     void vehiclesChanged();
-    void selectedVehicleChanged(QVariant vehicleId);
+    void selectedVehicleChanged();
     void trackingChanged();
     void trackLengthChanged(int trackLength);
 
@@ -49,7 +49,7 @@ private:
     domain::IVehiclesService* const m_vehiclesService;
     domain::ICommandsService* const m_commandsService;
     QJsonArray m_vehicles;
-    QVariant m_selectedVehicleId;
+    domain::Vehicle* m_selectedVehicle = nullptr;
     bool m_tracking = false;
 };
 } // namespace md::presentation
