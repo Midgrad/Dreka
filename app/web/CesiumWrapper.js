@@ -172,31 +172,24 @@ class CesiumWrapper {
             var vehiclesController = channel.objects.vehiclesController;
             if (vehiclesController) {
                 const vehicles = new Vehicles(that.viewer);
-                vehiclesController.vehicleDataChanged.connect((vehicleId, data) => {
-                    vehicles.setVehicleData(vehicleId, data);
-                });
+
+                var selectVehicle = () => { vehicles.selectVehicle(vehiclesController.selectedVehicle); }
+                vehiclesController.selectedVehicleChanged.connect(selectVehicle);
+                selectVehicle();
+
+                vehiclesController.vehicleChanged.connect((vehicleId, vehicle) => { vehicles.setVehicle(vehicleId, vehicle); });
+                vehiclesController.vehicleDataChanged.connect((vehicleId, data) => { vehicles.setVehicleData(vehicleId, data); });
+                vehiclesController.trackingChanged.connect(() => { vehicles.setTracking(vehiclesController.tracking); });
 
                 vehiclesController.vehicles.forEach(vehicle => {
-                    vehiclesController.vehicleData(vehicle.id, function(vehicleData) {
-                        vehicles.setVehicleData(vehicle.id, vehicleData);
-                    });
+                    vehiclesController.vehicle(vehicle.id, (vehicle) => { vehicles.setVehicle(vehicle.id, vehicle); });
+                    vehiclesController.vehicleData(vehicle.id, (vehicleData) => { vehicles.setVehicleData(vehicle.id, vehicleData); });
                 });
 
                 vehiclesController.trackLengthChanged.connect(trackLength => {
                     vehicles.setTrackLength(trackLength);
                 });
                 vehicles.setTrackLength(vehiclesController.trackLength);
-
-                var selectVehicle = () => {
-                    vehicles.selectVehicle(vehiclesController.selectedVehicle ?
-                                               vehiclesController.selectedVehicle.id : null);
-                }
-                vehiclesController.selectedVehicleChanged.connect(selectVehicle);
-                selectVehicle();
-
-                vehiclesController.trackingChanged.connect(() => {
-                    vehicles.setTracking(vehiclesController.tracking);
-                });
             }
 
             var adsbController = channel.objects.adsbController;

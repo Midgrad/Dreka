@@ -16,7 +16,7 @@ Row {
 
     Controls.MenuItem {
         id: navToItem
-        enabled: controller.selectedVehicle !== undefined && controller.selectedVehicle.online
+        enabled: online
         text: qsTr("Nav to")
         onTriggered: {
             controller.sendCommand("setMode", [ "NavTo" ]); // FIXME: to domain, packed commands
@@ -37,7 +37,7 @@ Row {
         iconSource: "qrc:/icons/route.svg"
         tipText: qsTr("Mission")
         highlighted: missionPopup.visible
-        enabled: controller.selectedVehicle !== undefined
+        enabled: controller.selectedVehicle
         onClicked: missionPopup.visible ? missionPopup.close() : missionPopup.open()
 
         MissionOperationView {
@@ -54,7 +54,7 @@ Row {
         width: root.width / 2.5
         flat: true
         labelText: qsTr("WPT")
-        enabled: controller.selectedVehicle !== undefined && controller.selectedVehicle.online
+        enabled: online
         model: missionRouteController.routeItems
         displayText: missionRouteController.routeItems[missionRouteController.currentItem]
         Binding on currentIndex {

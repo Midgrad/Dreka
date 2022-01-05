@@ -1,7 +1,7 @@
 // TODO: common with Adsb
 
 class Vehicle {
-    constructor(viewer, callsign, parent) {
+    constructor(viewer, parent) {
 
         this.parent = parent;
         this.viewer = viewer;
@@ -16,20 +16,23 @@ class Vehicle {
 
         // Vehicle 3D model
         this.vehicle = viewer.entities.add({
-            name: callsign,
             model: {
                 uri: "./models/fixed_wing.glb",
                 minimumPixelSize: 128,
                 maximumScale: 40000,
-                color: Cesium.Color.TEAL,
                 colorBlendMode: Cesium.ColorBlendMode.REPLACE,
-                silhouetteColor: Cesium.Color.AQUA,
                 silhouetteSize: 3
             },
             box: {
                 dimensions: new Cesium.Cartesian3(500.0, 500.0, 500.0),
                 material: Cesium.Color.TRANSPARENT
-            }
+            },
+            label: {
+                showBackground: true,
+                pixelOffset: new Cesium.Cartesian2(0, -25),
+                font: "13px Helvetica",
+                disableDepthTestDistance: Number.POSITIVE_INFINITY
+            },
         });
 
         // TODO: common pylon
@@ -47,10 +50,20 @@ class Vehicle {
     }
 
     done() {
-//        this.viewer.entities.remove(this.pylon);
+        this.viewer.entities.remove(this.pylon);
         this.viewer.entities.remove(this.vehicle);
         this.track.forEach((value) => { this.viewer.entities.remove(value); } );
         this.track.clear();
+    }
+
+    set(vehicle) {
+        this.vehicle.model.color = vehicle.online ? Cesium.Color.TEAL : Cesium.Color.SLATEGREY;
+        this.vehicle.label.text = vehicle.name;
+    }
+
+    setSelected(selected) {
+        this.vehicle.model.silhouetteColor = selected ? Cesium.Color.AQUA : Cesium.Color.SNOW;
+        this.vehicle.label.show = selected;
     }
 
     setData(data) {
@@ -120,7 +133,20 @@ class Vehicles {
         this.trackLength = trackLength;
     }
 
-    selectVehicle(vehicleId) { this.selectedVehicleId = vehicleId; }
+    selectVehicle(vehicleId) {
+        if (this.selectedVehicleId === vehicleId)
+            return;
+
+        var vehicle = this.vehicles.get(this.selectedVehicleId);
+        if (vehicle)
+            vehicle.setSelected(false);
+
+        this.selectedVehicleId = vehicleId;
+
+        vehicle = this.vehicles.get(this.selectedVehicleId);
+        if (vehicle)
+            vehicle.setSelected(true);
+    }
 
     setTracking(tracking) {
         var selectedVehicle = this.vehicles.has(this.selectedVehicleId) ?
@@ -133,15 +159,23 @@ class Vehicles {
         }
     }
 
-    setVehicleData(vehicleId, data) {
-        var vehicle;
+    setVehicle(vehicleId, vehicle) {
+        var vehicleJs;
         if (this.vehicles.has(vehicleId)) {
-            vehicle = this.vehicles.get(vehicleId);
+            vehicleJs = this.vehicles.get(vehicleId);
         } else {
-            vehicle = new Vehicle(this.viewer, vehicleId, this)
-            this.vehicles.set(vehicleId, vehicle);
+            vehicleJs = new Vehicle(this.viewer, this)
+            this.vehicles.set(vehicleId, vehicleJs);
+
+            if (this.selectedVehicleId === vehicleId)
+                vehicleJs.setSelected(true);
         }
-        vehicle.setData(data);
+        vehicleJs.set(vehicle);
+    }
+
+    setVehicleData(vehicleId, data) {
+        if (this.vehicles.has(vehicleId))
+            this.vehicles.get(vehicleId).setData(data);
     }
 
     clear() {

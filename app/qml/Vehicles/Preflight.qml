@@ -21,7 +21,7 @@ Controls.Popup {
                 visible: modelData.present
                 text: modelData.name
                 failed: !modelData.health
-                active: modelData.enabled && controller.selectedVehicle.online
+                active: modelData.enabled && online
                 onFailedChanged: failed ? fails++ : fails --
                 Layout.fillWidth: true
             }
@@ -34,8 +34,9 @@ Controls.Popup {
 
         Controls.DelayButton {
             flat: true
-            borderColor: Qt.darker(Controls.Theme.colors.negative, 2)
-            fillColor: borderColor
+            enabled: online
+            fillColor: Controls.Theme.colors.negative
+            borderColor: Controls.Theme.colors.border
             text: params.armed ? qsTr("Disarm throttle"): qsTr("Arm throttle")
             onActivated: controller.sendCommand("setArmed", [ !params.armed ])
             Layout.fillWidth: true

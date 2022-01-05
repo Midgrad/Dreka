@@ -26,6 +26,7 @@ public:
     bool isTracking() const;
     int trackLength() const;
 
+    Q_INVOKABLE QJsonObject vehicle(const QVariant& vehicleId) const;
     Q_INVOKABLE QVariantMap vehicleData(const QString& vehicle) const;
 
 public slots:
@@ -35,21 +36,22 @@ public slots:
 
 signals:
     void vehiclesChanged();
-    void selectedVehicleChanged();
+    void vehicleChanged(QVariant vehicleId, QVariantMap vehicle);
+    void selectedVehicleChanged(QVariant vehicleId);
     void trackingChanged();
     void trackLengthChanged(int trackLength);
 
     void vehicleDataChanged(QVariant vehicleId, QVariantMap data);
 
 private slots:
-    void onVehiclesChanged();
+    void onVehicleAdded(domain::Vehicle* vehicle);
+    void onVehicleRemoved(domain::Vehicle* vehicle);
 
 private:
     domain::IPropertyTree* const m_pTree;
     domain::IVehiclesService* const m_vehiclesService;
     domain::ICommandsService* const m_commandsService;
-    QJsonArray m_vehicles;
-    domain::Vehicle* m_selectedVehicle = nullptr;
+    QVariant m_selectedVehicleId;
     bool m_tracking = false;
 };
 } // namespace md::presentation

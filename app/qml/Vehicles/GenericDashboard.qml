@@ -9,13 +9,13 @@ Column {
     id: root
 
     property var params: []
+    property bool online: false
 
     Connections {
         target: controller
-        onSelectedVehicleChanged: if (controller.selectedVehicle !== undefined)
-                                      params = controller.vehicleData(controller.selectedVehicle.id)
-        onVehicleDataChanged: if (controller.selectedVehicle !== undefined &&
-                                      vehicleId === controller.selectedVehicle.id) params = data
+        onSelectedVehicleChanged: params = controller.vehicleData(controller.selectedVehicle)
+        onVehicleDataChanged: if (vehicleId === controller.selectedVehicle) params = data
+        onVehicleChanged: if (vehicleId === controller.selectedVehicle) online = vehicle.online
     }
 
     function guardNaN(value) { return value ? value : NaN; }
@@ -31,7 +31,7 @@ Column {
             flat: true
             rightCropped: true
             iconSource: "qrc:/icons/calibrate.svg"
-            enabled: controller.selectedVehicle !== undefined && controller.selectedVehicle.id
+            enabled: controller.selectedVehicle
             tipText: qsTr("Preparation")
             highlighted: preflight.visible
             onClicked: preflight.visible ? preflight.close() : preflight.open()
@@ -142,7 +142,7 @@ Column {
             markWidth: 2
             markFactor: 0.8
             zigzag: 7
-            online: controller.selectedVehicle !== undefined && controller.selectedVehicle.online
+            online: root.online
             ready: guardBool(params.armed)
             pitch: guardNaN(params.pitch)
             roll: guardNaN(params.roll)
@@ -230,7 +230,7 @@ Column {
             textOffset: fontSize * 1.5
             arrowSize: width * 0.2
             mark: "qrc:/icons/generic_aircraft.svg"
-            online: controller.selectedVehicle !== undefined && controller.selectedVehicle.online
+            online: root.online
             heading: guardNaN(params.heading)
             course: guardNaN(params.course)
         }
@@ -265,13 +265,13 @@ Column {
     MissionRouteView {
         id: mission
         width: parent.width
-        vehicleId: controller.selectedVehicle !== undefined ? controller.selectedVehicle.id : null
+        vehicleId: controller.selectedVehicle
 
         Controls.ComboBox {
             width: mission.availableWidth
             flat: true
             labelText: qsTr("MODE")
-            enabled: controller.selectedVehicle !== undefined && controller.selectedVehicle.online
+            enabled: online
             model: params.modes ? params.modes : []
             displayText: params.mode ? params.mode : "-"
             onActivated: controller.sendCommand("setMode", [ model[index] ])
