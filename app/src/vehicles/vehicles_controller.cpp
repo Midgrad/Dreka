@@ -4,28 +4,34 @@
 
 #include "locator.h"
 
+namespace
+{
+const QString genericDashboard = "GenericDashboard.qml";
+}
+
 using namespace md::domain;
 using namespace md::presentation;
 
 VehiclesController::VehiclesController(QObject* parent) :
     QObject(parent),
     m_pTree(md::app::Locator::get<IPropertyTree>()),
-    m_vehiclesService(md::app::Locator::get<IVehiclesService>()),
-    m_commandsService(md::app::Locator::get<ICommandsService>())
+    m_vehicles(md::app::Locator::get<IVehiclesService>()),
+    m_features(md::app::Locator::get<IVehiclesFeatures>()),
+    m_commands(md::app::Locator::get<ICommandsService>())
 {
     Q_ASSERT(m_pTree);
-    Q_ASSERT(m_vehiclesService);
-    Q_ASSERT(m_commandsService);
+    Q_ASSERT(m_vehicles);
+    Q_ASSERT(m_features);
+    Q_ASSERT(m_commands);
 
     connect(m_pTree, &IPropertyTree::propertiesChanged, this,
             &VehiclesController::vehicleDataChanged);
 
-    connect(m_vehiclesService, &IVehiclesService::vehicleAdded, this,
-            &VehiclesController::onVehicleAdded);
-    connect(m_vehiclesService, &IVehiclesService::vehicleRemoved, this,
+    connect(m_vehicles, &IVehiclesService::vehicleAdded, this, &VehiclesController::onVehicleAdded);
+    connect(m_vehicles, &IVehiclesService::vehicleRemoved, this,
             &VehiclesController::onVehicleRemoved);
 
-    for (Vehicle* vehicle : m_vehiclesService->vehicles())
+    for (Vehicle* vehicle : m_vehicles->vehicles())
     {
         this->onVehicleAdded(vehicle);
     }
@@ -34,7 +40,7 @@ VehiclesController::VehiclesController(QObject* parent) :
 QJsonArray VehiclesController::vehicles() const
 {
     QJsonArray vehicles;
-    for (Vehicle* vehicle : m_vehiclesService->vehicles())
+    for (Vehicle* vehicle : m_vehicles->vehicles())
     {
         vehicles += QJsonObject::fromVariantMap(vehicle->toVariantMap());
     }
@@ -58,16 +64,31 @@ int VehiclesController::trackLength() const
 
 QJsonObject VehiclesController::vehicle(const QVariant& vehicleId) const
 {
-    Vehicle* vehicle = m_vehiclesService->vehicle(vehicleId);
+    Vehicle* vehicle = m_vehicles->vehicle(vehicleId);
     if (vehicle)
         return QJsonObject::fromVariantMap(vehicle->toVariantMap());
 
     return QJsonObject();
 }
 
-QVariantMap VehiclesController::vehicleData(const QString& vehicleId) const
+QVariantMap VehiclesController::vehicleData(const QVariant& vehicleId) const
 {
-    return m_pTree->properties(vehicleId);
+    return m_pTree->properties(vehicleId.toString());
+}
+
+QVariantList VehiclesController::dashboardModel(const QVariant& vehicleId) const
+{
+    Vehicle* vehicle = m_vehicles->vehicle(m_selectedVehicleId);
+    // If no vehicle, return nothing
+    if (!vehicle)
+        return QVariantList();
+
+    QString dashboard = m_features->feature(vehicle->type, features::dashboard).toString();
+    // If no dashborad for vehicle's type, show generic dashboard
+    if (dashboard.isEmpty())
+        dashboard = ::genericDashboard;
+
+    return { dashboard };
 }
 
 void VehiclesController::setTracking(bool tracking)
@@ -84,7 +105,7 @@ void VehiclesController::sendCommand(const QString& commandId, const QVariantLis
     if (m_selectedVehicleId.isNull())
         return;
 
-    emit m_commandsService->requestCommand(commandId)->exec(m_selectedVehicleId, args);
+    emit m_commands->requestCommand(commandId)->exec(m_selectedVehicleId, args);
 }
 
 void VehiclesController::selectVehicle(const QVariant& vehicleId)

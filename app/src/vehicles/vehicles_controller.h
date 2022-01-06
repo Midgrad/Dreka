@@ -3,6 +3,7 @@
 
 #include "i_command_service.h"
 #include "i_property_tree.h"
+#include "i_vehicles_features.h"
 #include "i_vehicles_service.h"
 
 #include <QJsonArray>
@@ -27,7 +28,8 @@ public:
     int trackLength() const;
 
     Q_INVOKABLE QJsonObject vehicle(const QVariant& vehicleId) const;
-    Q_INVOKABLE QVariantMap vehicleData(const QString& vehicle) const;
+    Q_INVOKABLE QVariantMap vehicleData(const QVariant& vehicleId) const;
+    Q_INVOKABLE QVariantList dashboardModel(const QVariant& vehicleId) const;
 
 public slots:
     void selectVehicle(const QVariant& vehicleId);
@@ -49,8 +51,9 @@ private slots:
 
 private:
     domain::IPropertyTree* const m_pTree;
-    domain::IVehiclesService* const m_vehiclesService;
-    domain::ICommandsService* const m_commandsService;
+    domain::IVehiclesService* const m_vehicles;
+    domain::IVehiclesFeatures* const m_features;
+    domain::ICommandsService* const m_commands;
     QVariant m_selectedVehicleId;
     bool m_tracking = false;
 };

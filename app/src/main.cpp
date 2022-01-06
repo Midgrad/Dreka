@@ -34,6 +34,7 @@
 #include "missions_service.h"
 #include "property_tree.h"
 #include "routes_service.h"
+#include "vehicles_features.h"
 #include "vehicles_service.h"
 
 // App
@@ -83,6 +84,9 @@ int main(int argc, char* argv[])
     data_source::VehiclesRepositorySql vehiclesRepository(schema.db());
     domain::VehiclesService vehiclesService(&vehiclesRepository);
     app::Locator::provide<domain::IVehiclesService>(&vehiclesService);
+
+    domain::VehiclesFeatures features;
+    app::Locator::provide<domain::IVehiclesFeatures>(&features);
 
     data_source::RoutesRepositorySql routesRepository(schema.db());
     data_source::RouteItemsRepositorySql routeItemsRepository(schema.db());

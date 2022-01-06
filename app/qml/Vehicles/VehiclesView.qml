@@ -53,8 +53,14 @@ Controls.Pane {
             }
         }
 
-        GenericDashboard {
-            Layout.fillWidth: true
+        Repeater {
+            model: controller.dashboardModel(controller.selectedVehicle)
+
+            Loader {
+                id: dashboard
+                source: modelData
+                Layout.fillWidth: true
+            }
         }
     }
 }

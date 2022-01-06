@@ -9,7 +9,9 @@ Column {
     id: root
 
     property var params: []
-    property bool online: false
+    property bool online: controller.vehicle(controller.selectedVehicle).online
+
+    property Component preflight: Preflight {}
 
     Connections {
         target: controller
@@ -33,13 +35,18 @@ Column {
             iconSource: "qrc:/icons/calibrate.svg"
             enabled: controller.selectedVehicle !== null
             tipText: qsTr("Preparation")
-            highlighted: preflight.visible
-            onClicked: preflight.visible ? preflight.close() : preflight.open()
+            highlighted: preflightPopup.visible
+            onClicked: preflightPopup.visible ? preflightPopup.close() : preflightPopup.open()
 
-            Preflight {
-                id: preflight
-                closePolicy: Controls.Popup.CloseOnPressOutsideParent
+            Controls.Popup {
+                id: preflightPopup
                 x: -width - Controls.Theme.margins - Controls.Theme.spacing
+                closePolicy: Controls.Popup.CloseOnPressOutsideParent
+
+                Loader {
+                    anchors.fill: parent
+                    sourceComponent: preflight
+                }
             }
         }
 
