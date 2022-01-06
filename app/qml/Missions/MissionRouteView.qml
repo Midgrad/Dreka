@@ -37,7 +37,7 @@ Row {
         iconSource: "qrc:/icons/route.svg"
         tipText: qsTr("Mission")
         highlighted: missionPopup.visible
-        enabled: controller.selectedVehicle
+        enabled: controller.selectedVehicle !== null
         onClicked: missionPopup.visible ? missionPopup.close() : missionPopup.open()
 
         MissionOperationView {

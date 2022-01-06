@@ -31,7 +31,7 @@ Column {
             flat: true
             rightCropped: true
             iconSource: "qrc:/icons/calibrate.svg"
-            enabled: controller.selectedVehicle
+            enabled: controller.selectedVehicle !== null
             tipText: qsTr("Preparation")
             highlighted: preflight.visible
             onClicked: preflight.visible ? preflight.close() : preflight.open()
