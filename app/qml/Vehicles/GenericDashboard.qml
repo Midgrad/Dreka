@@ -15,7 +15,10 @@ Column {
 
     Connections {
         target: controller
-        onSelectedVehicleChanged: params = controller.vehicleData(controller.selectedVehicle)
+        onSelectedVehicleChanged: {
+            params = controller.vehicleData(controller.selectedVehicle);
+            online = controller.vehicle(controller.selectedVehicle).online;
+        }
         onVehicleDataChanged: if (vehicleId === controller.selectedVehicle) params = data
         onVehicleChanged: if (vehicleId === controller.selectedVehicle) online = vehicle.online
     }

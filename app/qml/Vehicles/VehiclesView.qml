@@ -26,8 +26,7 @@ Controls.Pane {
                 flat: true
                 rightCropped: true
                 tipText: qsTr("Vehicles")
-                iconSource:"qrc:/icons/configure.svg"
-                Layout.fillHeight: true
+                iconSource:"qrc:/icons/left.svg"
                 highlighted: vehiclesList.visible
                 onClicked: vehiclesList.visible ? vehiclesList.close() : vehiclesList.open()
 
@@ -37,13 +36,10 @@ Controls.Pane {
                 }
             }
 
-            Controls.ComboBox {
+            Controls.Label {
                 id: vehiclesBox
-                flat: true
-                model: controller.vehicles
-                labelText: qsTr("Vehicle")
-                textRole: "name"
-                onActivated: controller.selectVehicle(model[index].id)
+                text: controller.vehicle(controller.selectedVehicle).name
+                horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
             }
 
@@ -53,7 +49,6 @@ Controls.Pane {
                 tipText: maximized ? qsTr("Minimize") : qsTr("Maximize")
                 iconSource: maximized ? "qrc:/icons/up.svg" : "qrc:/icons/down.svg"
                 onClicked: maximized = !maximized
-                Layout.fillHeight: true
             }
         }
 

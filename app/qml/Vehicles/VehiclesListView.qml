@@ -27,7 +27,7 @@ Controls.Popup {
             Controls.MenuButton {
                 flat: true
                 iconSource: "qrc:/icons/plus.svg"
-                //model: controller.routeTypes
+                //model: controller.vehicleTypes
                 delegate: Controls.MenuItem {
                     text: modelData.name
                     onTriggered: controller.addNewVehicle(modelData.id)
@@ -43,7 +43,7 @@ Controls.Popup {
                 height: visible ? implicitHeight : 0
                 visible: vehicle && vehicle.name.indexOf(filterField.text) > -1
                 vehicle: modelData
-                //onExpand: root.expand(vehicle.id)
+                onExpand: controller.selectVehicle(vehicle.id)
             }
             Layout.fillWidth: true
             Layout.fillHeight: true
