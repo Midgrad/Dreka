@@ -23,14 +23,18 @@ Controls.Pane {
             spacing: 0
 
             Controls.Button {
-                id: trackButton
-                enabled: controller.selectedVehicle !== null
                 flat: true
                 rightCropped: true
-                iconSource: controller.tracking ? "qrc:/icons/cancel_track.svg" : "qrc:/icons/center.svg"
-                tipText: controller.tracking ? qsTr("Cancel track") : qsTr("Track")
-                onClicked: controller.setTracking(!controller.tracking)
+                tipText: qsTr("Vehicles")
+                iconSource:"qrc:/icons/configure.svg"
                 Layout.fillHeight: true
+                highlighted: vehiclesList.visible
+                onClicked: vehiclesList.visible ? vehiclesList.close() : vehiclesList.open()
+
+                VehiclesListView {
+                    id: vehiclesList
+                    x: -width - Controls.Theme.margins - Controls.Theme.spacing
+                }
             }
 
             Controls.ComboBox {

@@ -8,7 +8,6 @@ ColumnLayout {
 
     property int fails: 0
 
-    width: Controls.Theme.baseSize * 5
     spacing: 0
 
     Repeater {

@@ -65,51 +65,9 @@ Column {
         }
     }
 
-    Row {
+    Navigation {
+        width: root.width
         visible: maximized
-
-        Controls.ColoredIcon {
-            id: snsIcon
-            color: {
-                if (typeof params.gpsFix === "undefined")
-                    return Indicators.Theme.disabledColor;
-
-                switch (params.gpsFix) {
-                case -1:
-                case 0: return Indicators.Theme.extremeRed;
-                case 1: return Indicators.Theme.severeOrange;
-                case 2: return Indicators.Theme.moderateYellow;
-                case 3:
-                default: return Indicators.Theme.textColor;
-                }
-            }
-            source: "qrc:/icons/gps.svg"
-            height: Controls.Theme.baseSize
-            width: height
-
-            Text {
-                text: guardNaN(params.satellitesVisible)
-                font.pixelSize: parent.height / 4
-                font.bold: true
-                anchors.bottom: parent.bottom
-                anchors.right: parent.right
-                color: parent.color
-            }
-        }
-
-        Coordinates {
-            id: coordinates
-            width: root.width - snsIcon.width - switchButton.width
-        }
-
-        Controls.Button {
-            id: switchButton
-            flat: true
-            leftCropped: true
-            iconSource: "qrc:/icons/swap.svg"
-            tipText: qsTr("Switch coordinates presentation")
-            onClicked: coordinates.dms = !coordinates.dms
-        }
     }
 
     Row {
