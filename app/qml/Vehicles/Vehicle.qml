@@ -62,6 +62,17 @@ Item {
             Layout.rightMargin: Controls.Theme.margins
         }
 
+        Controls.Button {
+            flat: true
+            leftCropped: true
+            rightCropped: true
+            highlightColor: Controls.Theme.colors.negative
+            iconSource: "qrc:/icons/remove.svg"
+            enabled: !vehicle.online
+            tipText: qsTr("Remove")
+            onClicked: controller.removeVehicle(vehicle.id)
+        }
+
         Controls.ColoredIcon {
             implicitWidth: Controls.Theme.iconSize
             implicitHeight: width

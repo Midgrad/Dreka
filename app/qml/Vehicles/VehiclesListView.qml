@@ -27,10 +27,10 @@ Controls.Popup {
             Controls.MenuButton {
                 flat: true
                 iconSource: "qrc:/icons/plus.svg"
-                //model: controller.vehicleTypes
+                model: controller.vehicleTypes
                 delegate: Controls.MenuItem {
-                    text: modelData.name
-                    onTriggered: controller.addNewVehicle(modelData.id)
+                    text: modelData
+                    onTriggered: controller.addNewVehicle(modelData)
                 }
             }
         }

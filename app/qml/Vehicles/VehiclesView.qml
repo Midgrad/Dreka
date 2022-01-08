@@ -9,14 +9,15 @@ Controls.Pane {
 
     property bool maximized: true
     property bool editName: false
-    property var selectedVehicle: controller.vehicle(controller.selectedVehicle)
+    property var selectedVehicle: controller.selectedVehicle ? controller.vehicle(controller.selectedVehicle) : null
 
     padding: Controls.Theme.margins
 
     VehiclesController {
         id: controller
         onVehicleChanged: if (vehicleId === controller.selectedVehicle) root.selectedVehicle = vehicle
-        onSelectedVehicleChanged: root.selectedVehicle = controller.vehicle(controller.selectedVehicle)
+        onSelectedVehicleChanged: root.selectedVehicle = controller.selectedVehicle ?
+                                      controller.vehicle(controller.selectedVehicle) : null
     }
 
     Component.onCompleted: map.registerController("vehiclesController", controller)
@@ -45,7 +46,8 @@ Controls.Pane {
             Controls.Button {
                 flat: true
                 rightCropped: true
-                text: selectedVehicle.name
+                text: selectedVehicle ? selectedVehicle.name : "No vehicle"
+                enabled: selectedVehicle
                 tipText: qsTr("Edit name")
                 visible: !editName
                 onClicked: editName = true
@@ -57,7 +59,7 @@ Controls.Pane {
                 flat: true
                 visible: editName
                 Binding on text {
-                    value: selectedVehicle.name
+                    value: selectedVehicle ? selectedVehicle.name : "No vehicle"
                     when: !nameEdit.activeFocus
                 }
                 onEditingFinished: {

@@ -105,7 +105,7 @@ Column {
             markWidth: 2
             markFactor: 0.8
             zigzag: 7
-            online: selectedVehicle.online
+            online: selectedVehicle && selectedVehicle.online
             ready: guardBool(params.armed)
             pitch: guardNaN(params.pitch)
             roll: guardNaN(params.roll)
@@ -193,7 +193,7 @@ Column {
             textOffset: fontSize * 1.5
             arrowSize: width * 0.2
             mark: "qrc:/icons/generic_aircraft.svg"
-            online: selectedVehicle.online
+            online: selectedVehicle && selectedVehicle.online
             heading: guardNaN(params.heading)
             course: guardNaN(params.course)
         }
@@ -234,7 +234,7 @@ Column {
             width: mission.availableWidth
             flat: true
             labelText: qsTr("MODE")
-            enabled: selectedVehicle.online
+            enabled: selectedVehicle && selectedVehicle.online
             model: params.modes ? params.modes : []
             displayText: params.mode ? params.mode : "-"
             onActivated: controller.sendCommand("setMode", [ model[index] ])

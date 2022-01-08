@@ -14,6 +14,7 @@ class VehiclesController : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QStringList vehicleTypes READ vehicleTypes NOTIFY vehicleTypesChanged)
     Q_PROPERTY(QJsonArray vehicles READ vehicles NOTIFY vehiclesChanged)
     Q_PROPERTY(QVariant selectedVehicle READ selectedVehicle NOTIFY selectedVehicleChanged)
     Q_PROPERTY(bool tracking READ isTracking WRITE setTracking NOTIFY trackingChanged)
@@ -22,6 +23,7 @@ class VehiclesController : public QObject
 public:
     explicit VehiclesController(QObject* parent = nullptr);
 
+    QStringList vehicleTypes() const;
     QJsonArray vehicles() const;
     QVariant selectedVehicle() const;
     bool isTracking() const;
@@ -36,8 +38,11 @@ public slots:
     void rename(const QVariant& vehicleId, const QString& name);
     void setTracking(bool tracking);
     void sendCommand(const QString& commandId, const QVariantList& args);
+    void addNewVehicle(const QString& type);
+    void removeVehicle(const QVariant& vehicleId);
 
 signals:
+    void vehicleTypesChanged();
     void vehiclesChanged();
     void vehicleChanged(QVariant vehicleId, QVariantMap vehicle);
     void selectedVehicleChanged(QVariant vehicleId);
