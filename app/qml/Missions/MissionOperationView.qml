@@ -75,7 +75,7 @@ Controls.Popup {
             id: bar
             flat: true
             visible: operation.id === undefined
-            enabled: mission.id && mission.route && online ? true : false
+            enabled: mission.id && mission.route && selectedVehicle.online ? true : false
             Layout.fillWidth: true
 
             Controls.Button {

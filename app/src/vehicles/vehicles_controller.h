@@ -33,6 +33,7 @@ public:
 
 public slots:
     void selectVehicle(const QVariant& vehicleId);
+    void rename(const QVariant& vehicleId, const QString& name);
     void setTracking(bool tracking);
     void sendCommand(const QString& commandId, const QVariantList& args);
 

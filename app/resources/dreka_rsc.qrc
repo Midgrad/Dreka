@@ -16,5 +16,6 @@
         <file>gps.svg</file>
         <file>pin.svg</file>
         <file>unpin.svg</file>
+        <file>fleet.svg</file>
     </qresource>
 </RCC>

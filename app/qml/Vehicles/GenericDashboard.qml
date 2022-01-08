@@ -9,18 +9,13 @@ Column {
     id: root
 
     property var params: []
-    property bool online: controller.vehicle(controller.selectedVehicle).online
 
     property Component preflight: Preflight {}
 
     Connections {
         target: controller
-        onSelectedVehicleChanged: {
-            params = controller.vehicleData(controller.selectedVehicle);
-            online = controller.vehicle(controller.selectedVehicle).online;
-        }
+        onSelectedVehicleChanged: params = controller.vehicleData(controller.selectedVehicle)
         onVehicleDataChanged: if (vehicleId === controller.selectedVehicle) params = data
-        onVehicleChanged: if (vehicleId === controller.selectedVehicle) online = vehicle.online
     }
 
     function guardNaN(value) { return value ? value : NaN; }
@@ -110,7 +105,7 @@ Column {
             markWidth: 2
             markFactor: 0.8
             zigzag: 7
-            online: root.online
+            online: selectedVehicle.online
             ready: guardBool(params.armed)
             pitch: guardNaN(params.pitch)
             roll: guardNaN(params.roll)
@@ -198,7 +193,7 @@ Column {
             textOffset: fontSize * 1.5
             arrowSize: width * 0.2
             mark: "qrc:/icons/generic_aircraft.svg"
-            online: root.online
+            online: selectedVehicle.online
             heading: guardNaN(params.heading)
             course: guardNaN(params.course)
         }
@@ -239,7 +234,7 @@ Column {
             width: mission.availableWidth
             flat: true
             labelText: qsTr("MODE")
-            enabled: online
+            enabled: selectedVehicle.online
             model: params.modes ? params.modes : []
             displayText: params.mode ? params.mode : "-"
             onActivated: controller.sendCommand("setMode", [ model[index] ])

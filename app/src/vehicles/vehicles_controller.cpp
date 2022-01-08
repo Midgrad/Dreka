@@ -119,6 +119,16 @@ void VehiclesController::selectVehicle(const QVariant& vehicleId)
     emit selectedVehicleChanged(vehicleId);
 }
 
+void VehiclesController::rename(const QVariant& vehicleId, const QString& name)
+{
+    Vehicle* vehicle = m_vehicles->vehicle(vehicleId);
+    if (!vehicle)
+        return;
+
+    vehicle->name.set(name);
+    m_vehicles->saveVehicle(vehicle);
+}
+
 void VehiclesController::onVehicleAdded(Vehicle* vehicle)
 {
     connect(vehicle, &Vehicle::changed, this, [this, vehicle]() {

@@ -17,7 +17,7 @@ ColumnLayout {
             visible: modelData.present
             text: modelData.name
             failed: !modelData.health
-            active: modelData.enabled && online
+            active: modelData.enabled && selectedVehicle.online
             onFailedChanged: failed ? fails++ : fails --
             Layout.fillWidth: true
         }

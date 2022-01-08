@@ -16,7 +16,7 @@ Row {
 
     Controls.MenuItem {
         id: navToItem
-        enabled: online
+        enabled: selectedVehicle.online
         text: qsTr("Nav to")
         onTriggered: {
             controller.sendCommand("setMode", [ "NavTo" ]); // FIXME: to domain, packed commands
@@ -54,7 +54,7 @@ Row {
         width: root.width / 2.5
         flat: true
         labelText: qsTr("WPT")
-        enabled: online
+        enabled: selectedVehicle.online
         model: missionRouteController.routeItems
         displayText: missionRouteController.routeItems[missionRouteController.currentItem]
         Binding on currentIndex {
