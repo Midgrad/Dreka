@@ -29,8 +29,8 @@ Controls.Popup {
                 iconSource: "qrc:/icons/plus.svg"
                 model: controller.vehicleTypes
                 delegate: Controls.MenuItem {
-                    text: modelData
-                    onTriggered: controller.addNewVehicle(modelData)
+                    text: modelData.name
+                    onTriggered: controller.addNewVehicle(modelData.id)
                 }
             }
         }

@@ -39,9 +39,15 @@ VehiclesController::VehiclesController(QObject* parent) :
     }
 }
 
-QStringList VehiclesController::vehicleTypes() const
+QVariantList VehiclesController::vehicleTypes() const
 {
-    return m_vehicles->vehicleTypes();
+    QVariantList list;
+    for (const VehicleType* type : m_vehicles->vehicleTypes())
+    {
+        list.append(type->toVariantMap());
+    }
+
+    return list;
 }
 
 QJsonArray VehiclesController::vehicles() const
@@ -90,7 +96,7 @@ QVariantList VehiclesController::dashboardModel(const QVariant& vehicleId) const
     if (!vehicle)
         return QVariantList({ ::genericDashboard });
 
-    QString dashboard = m_features->feature(vehicle->type, features::dashboard).toString();
+    QString dashboard = m_features->feature(vehicle->type()->id, features::dashboard).toString();
     // If no dashborad for vehicle's type, show generic dashboard
     if (dashboard.isEmpty())
         dashboard = ::genericDashboard;
@@ -115,15 +121,19 @@ void VehiclesController::sendCommand(const QString& commandId, const QVariantLis
     emit m_commands->requestCommand(commandId)->exec(m_selectedVehicleId, args);
 }
 
-void VehiclesController::addNewVehicle(const QString& type)
+void VehiclesController::addNewVehicle(const QString& typeId)
 {
+    const VehicleType* type = m_vehicles->vehicleType(typeId);
+    if (!type)
+        return;
+
     QStringList vehicleNames;
     for (Vehicle* vehicle : m_vehicles->vehicles())
     {
         vehicleNames += vehicle->name;
     }
 
-    auto vehicle = new Vehicle(type, utils::nameFromType(type, vehicleNames));
+    auto vehicle = new Vehicle(type, utils::nameFromType(type->name, vehicleNames));
     m_vehicles->saveVehicle(vehicle);
     this->selectVehicle(vehicle->id);
 }
