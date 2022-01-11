@@ -28,6 +28,21 @@ RowLayout {
         }
     }
 
+    Controls.Menu {
+        id: addPattern
+        title: qsTr("Add pattern")
+        enabled: controller.selectedRoute !== undefined
+
+        Repeater {
+            model: controller.routePatterns(controller.selectedRoute)
+
+            Controls.MenuItem {
+                text: modelData.name
+                onTriggered: console.log(modelData.name)
+            }
+        }
+    }
+
     Connections {
         target: routeItemEdit
         onCenterRouteItem: controller.centerRouteItem(routeId, index)
@@ -48,6 +63,7 @@ RowLayout {
     Component.onCompleted: {
         map.registerController("routesController", controller);
         mapMenu.addSubmenu(addRouteItem);
+        mapMenu.addSubmenu(addPattern);
     }
 
     spacing: 1

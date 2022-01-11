@@ -26,6 +26,7 @@ public:
     Q_INVOKABLE QJsonObject routeData(const QVariant& routeId) const;
     Q_INVOKABLE QJsonObject routeItemData(const QVariant& routeId, int index) const;
     Q_INVOKABLE QJsonArray routeItemTypes(const QVariant& routeId) const;
+    Q_INVOKABLE QJsonArray routePatterns(const QVariant& routeId) const;
 
 public slots:
     void selectRoute(const QVariant& selectedRouteId);
