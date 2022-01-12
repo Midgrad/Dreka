@@ -38,7 +38,7 @@ RowLayout {
 
             Controls.MenuItem {
                 text: modelData.name
-                onTriggered: console.log(modelData.name)
+                onTriggered: routePattern.newPattern(modelData.id, mapMenu.menuX, mapMenu.menuY)
             }
         }
     }
@@ -57,6 +57,8 @@ RowLayout {
             else if (controller.selectedRoute !== undefined &&
                      sidebar.sourceComponent == routeListComponent)
                  sidebar.sourceComponent = routeEditComponent;
+
+            routePattern.selectRoute(controller.selectedRoute)
         }
     }
 

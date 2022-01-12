@@ -10,6 +10,8 @@ Item {
     property real latitude: 0.0
     property real longitude: 0.0
     property real altitude: 0.0
+    property int menuX: 0
+    property int menuY: 0
 
     property alias menuVisible: menu.menuVisible
 
@@ -24,6 +26,8 @@ Item {
             root.latitude = latitude;
             root.longitude = longitude;
             root.altitude = altitude;
+            root.menuX = x;
+            root.menuY = y;
             menu.open(x, y);
         }
         onDropped: menu.close()

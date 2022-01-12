@@ -14,3 +14,67 @@ RoutePatternController::RoutePatternController(QObject* parent) :
 {
     Q_ASSERT(m_routesService);
 }
+
+QVariant RoutePatternController::routeId() const
+{
+    return m_route ? m_route->id() : QVariant();
+}
+
+QVariant RoutePatternController::pattern() const
+{
+    return m_pattern ? m_pattern->toVariantMap() : QVariant();
+}
+
+QJsonArray RoutePatternController::coordinates() const
+{
+    QJsonArray array;
+    for (const Geodetic& coordinate : m_coordinates)
+    {
+        array += QJsonObject::fromVariantMap(coordinate.toVariantMap());
+    }
+
+    return array;
+}
+
+bool RoutePatternController::ready() const
+{
+    return false;
+}
+
+void RoutePatternController::selectRoute(const QVariant& routeId)
+{
+    if (this->routeId() == routeId)
+        return;
+
+    m_route = m_routesService->route(routeId);
+    emit routeChanged();
+
+    if (m_pattern)
+        this->cancel();
+}
+
+void RoutePatternController::createPattern(const QString& patternId)
+{
+    if (!m_route)
+        return;
+
+    if (m_pattern)
+        this->cancel();
+
+    m_pattern = m_route->type()->pattern(patternId);
+    emit patternChanged();
+}
+
+void RoutePatternController::cancel()
+{
+    m_pattern = nullptr;
+    m_coordinates.clear();
+
+    emit patternChanged();
+    emit readyChanged();
+    emit coordinatesChanged();
+}
+
+void RoutePatternController::apply()
+{
+}
