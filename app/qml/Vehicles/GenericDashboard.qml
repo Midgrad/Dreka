@@ -192,7 +192,7 @@ Column {
             tickTextedSize: fontSize * 0.3
             textOffset: fontSize * 1.5
             arrowSize: width * 0.2
-            mark: "qrc:/icons/generic_aircraft.svg"
+            mark: "qrc:/icons/" + (selectedVehicle ? selectedVehicle.icon : "generic_aircraft.svg")
             online: selectedVehicle && selectedVehicle.online
             heading: guardNaN(params.heading)
             course: guardNaN(params.course)

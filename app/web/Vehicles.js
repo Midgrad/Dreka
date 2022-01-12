@@ -17,7 +17,6 @@ class Vehicle {
         // Vehicle 3D model
         this.vehicle = viewer.entities.add({
             model: {
-                uri: "./models/fixed_wing.glb",
                 minimumPixelSize: 128,
                 maximumScale: 40000,
                 colorBlendMode: Cesium.ColorBlendMode.REPLACE,
@@ -57,6 +56,7 @@ class Vehicle {
     }
 
     set(vehicle) {
+        this.vehicle.model.uri = "./models/" + vehicle.model;
         this.vehicle.model.color = vehicle.online ? Cesium.Color.TEAL : Cesium.Color.SLATEGREY;
         this.vehicle.label.text = vehicle.name;
     }

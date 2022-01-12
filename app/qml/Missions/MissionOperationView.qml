@@ -4,6 +4,7 @@ import Industrial.Controls 1.0 as Controls
 import Industrial.Widgets 1.0 as Widgets
 import Dreka 1.0
 
+// TODO: init mission controller from main
 Controls.Popup {
     id: root
 
