@@ -46,7 +46,7 @@ class CesiumWrapper {
             if (menuController) {
                 that.input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
                     if (Cesium.defined(modifier) || !Cesium.defined(cartesian))
-                        return;
+                        return false;
 
                     var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
                     var latitude = Cesium.Math.toDegrees(cartographic.latitude);
@@ -150,6 +150,20 @@ class CesiumWrapper {
                         if (Cesium.defined(position))
                             routeItemController.updatePopupPosition(position.x, position.y);
                     });
+                }
+
+                var routePatternController = channel.objects.routePatternController;
+                if (routePatternController) {
+                    var routePatternArea = new Area(that.viewer, that.input);
+
+//                    that.input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
+//                        if (!Cesium.defined(cartesian))
+//                          return false;
+
+//                        var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+//                        routePatternArea.addPosition(cartographic);
+//                        return true;
+//                    });
                 }
             }
 

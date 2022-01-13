@@ -26,6 +26,8 @@ Controls.Popup {
 
     RoutePatternController { id: controller }
 
+    Component.onCompleted: { map.registerController("routePatternController", controller); }
+
     ColumnLayout {
         anchors.fill: parent
         spacing: Controls.Theme.spacing
