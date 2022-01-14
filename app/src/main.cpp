@@ -1,4 +1,4 @@
-//     Copyright (c) Mikhail Rogachev 2021.
+//     Copyright (c) Mikhail Rogachev 2022.
 //     mishkarogachev@gmail.com
 //
 //     This program is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@
 #include "vehicles_service.h"
 
 // App
+#include "communication_service.h"
 #include "module_loader.h"
 #include "theme.h"
 #include "theme_activator.h"
@@ -107,6 +108,11 @@ int main(int argc, char* argv[])
 
     presentation::GuiLayout layout;
     app::Locator::provide<presentation::IGuiLayout>(&layout);
+
+    // app layer initializaion
+    // TODO: remove json after sql implementation
+    app::CommunicationService communicationService("./link_config.json");
+    app::Locator::provide<app::CommunicationService>(&communicationService);
 
     // Presentation initialization
     QtWebEngine::initialize();
