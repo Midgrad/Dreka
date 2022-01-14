@@ -41,7 +41,7 @@ Item {
     function close() { pointed.close(); }
     function hidePointer() { pointer.visible= false; }
 
-    onPointerVisibleChanged: if (pointerVisible) move(lastX, lastY)
+    onPointerVisibleChanged: pointerVisible ? move(lastX, lastY) : pointer.visible = false
 
     Item {
         id: pointer

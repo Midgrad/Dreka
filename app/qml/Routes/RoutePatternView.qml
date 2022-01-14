@@ -21,6 +21,7 @@ Controls.Popup {
     }
 
     width: Controls.Theme.baseSize * 9
+    height: column.implicitHeight
     visible: pattern !== undefined
     closePolicy: Controls.Popup.CloseOnEscape
 
@@ -28,8 +29,16 @@ Controls.Popup {
 
     Component.onCompleted: { map.registerController("routePatternController", controller); }
 
+    Dragger {
+        target: root
+        anchors.margins: -root.padding
+    }
+
     ColumnLayout {
-        anchors.fill: parent
+        id: column
+        anchors.centerIn: parent
+        width: root.width - root.padding
+        height: root.height - root.padding
         spacing: Controls.Theme.spacing
 
         RowLayout {

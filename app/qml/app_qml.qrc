@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>Common/Dragger.qml</file>
         <file>Common/PositionEdit.qml</file>
         <file>Common/ParametersEdit.qml</file>
         <file>Common/ListElement.qml</file>

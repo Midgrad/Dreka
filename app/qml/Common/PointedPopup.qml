@@ -24,6 +24,15 @@ PointedItem {
             loader.sourceComponent = null;
         }
 
+        width: loader.implicitWidth + padding * 2
+        height: loader.implicitHeight + padding * 2
+
+        Dragger {
+            target: popup
+            anchors.margins: -popup.padding
+            enabled: !root.pointerVisible
+        }
+
         Loader {
             id: loader
             anchors.fill: parent
