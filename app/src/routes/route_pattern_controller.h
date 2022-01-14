@@ -27,8 +27,7 @@ public:
 public slots:
     void selectRoute(const QVariant& routeId);
     void createPattern(const QString& patternId);
-    void addPosition(const QVariant& position);
-    void removePosition(int index);
+    void setPositions(const QVariantList& positions);
     void cancel();
     void apply();
 

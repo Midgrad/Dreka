@@ -16,7 +16,7 @@ Controls.Popup {
 
     function newPattern(patternId, x, y, position) {
         controller.createPattern(patternId);
-        controller.addPosition(position);
+        controller.setPositions([position]);
         root.x = x - width - Controls.Theme.margins;
         root.y = y;
     }
@@ -96,14 +96,6 @@ Controls.Popup {
                     text: modelData.latitude.toFixed(6) + ":" + modelData.longitude.toFixed(6)
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignVCenter
-                }
-
-                Controls.Button {
-                    flat: true
-                    leftCropped: true
-                    iconSource: "qrc:/icons/remove.svg"
-                    tipText: qsTr("Remove")
-                    onClicked: controller.removePosition(index)
                 }
             }
         }

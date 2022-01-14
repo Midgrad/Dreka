@@ -8,22 +8,29 @@ class Area {
         this.input = input;
 
         // Callbacks
-        this.pointChangedCallback = null;
+        this.changedCallback = null;
+        input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
+            return that.onClick(event, cartesian, modifier);
+        });
+
+        // Visual
+        this.lineWidth = 3.0;
 
         // Data
-        this.positions = [];
-        this.editMode = false;
+        this.enabled = false;
 
         // Entities
-        this.points = [];
         var that = this;
+        this.points = [];
         this.polygon = viewer.entities.add({
             polygon: {
-//                hierarchy: new Cesium.CallbackProperty(() => {
-//                    return Cesium.Ellipsoid.WGS84.cartographicArrayToCartesianArray(that.positions);
-//                }, false),
+                hierarchy: new Cesium.CallbackProperty(() => {
+                    var positions = [];
+                    that.points.forEach(point => { positions.push(point.position); });
+                    return new Cesium.PolygonHierarchy(positions);
+                }, false),
                 outline: true,
-                outlineWidth: 4,
+                outlineWidth: this.lineWidth,
                 outlineColor: Cesium.Color.WHITE,
                 material: new Cesium.ColorMaterialProperty(Cesium.Color.WHITE.withAlpha(0.3)),
                 perPositionHeight: true,
@@ -33,45 +40,54 @@ class Area {
     }
 
     clear() {
-        that.viewer.entities.remove(this.polygon);
-        this.polygon = null;
-
-        this.points.forEach(point => this.viewer.entities.remove(point));
+        this.points.forEach(point => point.clear());
         this.points = [];
+    }
 
-        this.positions = [];
+    /**
+     * @param {Cesium.Cartesian} position
+     */
+    addPoint(position) {
+        var that = this;
+        var newPoint = new TerrainPoint(this.viewer, this.input, position, Cesium.Color.WHITE);
+        if (that.changedCallback)
+            newPoint.updateCallback = () => { that.changedCallback(); }
+        newPoint.enabled = this.enabled;
+        this.points.push(newPoint);
+
+        if (this.changedCallback)
+            this.changedCallback();
     }
 
     setPositions(positions) {
-        this.points.forEach(point => this.viewer.entities.remove(point));
-        this.points = [];
-
-        this.positions = [];
-
-        var that = this;
-        var textIndex = 1;
+        this.clear();
         positions.forEach(position => {
             var cartesian = Cesium.Cartesian3.fromDegrees(position.longitude, position.latitude,
                                                           position.altitude);
-            that.positions.push(cartesian);
-
-            var point = this.viewer.entities.add({
-                position: cartesian,
-                point: {
-                    pixelSize: 5,
-                    color: Cesium.Color.WHITE
-                },
-                label: {
-                    text: (textIndex++).toString(),
-                    showBackground: true,
-                    pixelOffset: new Cesium.Cartesian2(0, -25),
-                    font: "13px Helvetica",
-                    disableDepthTestDistance: Number.POSITIVE_INFINITY
-                }
-            });
-            this.points.push(point);
+            this.addPoint(cartesian);
         });
 
-        this.polygon.polygon.hierarchy = this.positions;
+        if (this.changedCallback)
+            this.changedCallback();
+    }
+
+    setEnabled(enabled) {
+        this.enabled = enabled;
+
+        this.clear();
+    }
+
+    onClick(event, cartesian, modifier) {
+        if (Cesium.defined(modifier) || !this.enabled)
+            return false;
+
+        // Don't add point if hover any point
+        for (var i = 0; i < this.points.length; ++i) {
+            if (this.points[i].hovered)
+                return true;
+        }
+
+        this.addPoint(cartesian);
+        return true;
     }
 }

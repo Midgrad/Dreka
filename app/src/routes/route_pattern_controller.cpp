@@ -65,18 +65,13 @@ void RoutePatternController::createPattern(const QString& patternId)
     emit patternChanged();
 }
 
-void RoutePatternController::addPosition(const QVariant& position)
+void RoutePatternController::setPositions(const QVariantList& positions)
 {
-    m_positions.append(Geodetic(position.toMap()));
-    emit positionsChanged();
-}
-
-void RoutePatternController::removePosition(int index)
-{
-    if (index < 0 || index >= m_positions.count())
-        return;
-
-    m_positions.removeAt(index);
+    m_positions.clear();
+    for (const QVariant& position : positions)
+    {
+        m_positions.append(Geodetic(position.toMap()));
+    }
     emit positionsChanged();
 }
 
