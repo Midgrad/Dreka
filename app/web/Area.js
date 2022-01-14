@@ -14,7 +14,7 @@ class Area {
         });
 
         // Visual
-        this.lineWidth = 3.0;
+        this.lineWidth = 2.0;
 
         // Data
         this.enabled = false;
@@ -32,7 +32,7 @@ class Area {
                 outline: true,
                 outlineWidth: this.lineWidth,
                 outlineColor: Cesium.Color.WHITE,
-                material: new Cesium.ColorMaterialProperty(Cesium.Color.WHITE.withAlpha(0.3)),
+                material: new Cesium.ColorMaterialProperty(Cesium.Color.WHITE.withAlpha(0.2)),
                 perPositionHeight: true,
                 arcType: Cesium.ArcType.GEODESIC
             },
@@ -47,7 +47,7 @@ class Area {
     /**
      * @param {Cesium.Cartesian} position
      */
-    addPoint(position) {
+    addPosition(position) {
         var that = this;
         var newPoint = new TerrainPoint(this.viewer, this.input, position, Cesium.Color.WHITE);
         if (that.changedCallback)
@@ -64,11 +64,8 @@ class Area {
         positions.forEach(position => {
             var cartesian = Cesium.Cartesian3.fromDegrees(position.longitude, position.latitude,
                                                           position.altitude);
-            this.addPoint(cartesian);
+            this.addPosition(cartesian);
         });
-
-        if (this.changedCallback)
-            this.changedCallback();
     }
 
     setEnabled(enabled) {
@@ -87,7 +84,7 @@ class Area {
                 return true;
         }
 
-        this.addPoint(cartesian);
+        this.addPosition(cartesian);
         return true;
     }
 }

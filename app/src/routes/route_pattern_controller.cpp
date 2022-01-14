@@ -25,10 +25,21 @@ QVariant RoutePatternController::pattern() const
     return m_pattern ? m_pattern->toVariantMap() : QVariant();
 }
 
-QJsonArray RoutePatternController::positions() const
+QJsonArray RoutePatternController::areaPositions() const
 {
     QJsonArray array;
-    for (const Geodetic& coordinate : m_positions)
+    for (const Geodetic& coordinate : m_areaPositions)
+    {
+        array += QJsonObject::fromVariantMap(coordinate.toVariantMap());
+    }
+
+    return array;
+}
+
+QJsonArray RoutePatternController::pathPositions() const
+{
+    QJsonArray array;
+    for (const Geodetic& coordinate : m_pathPositions)
     {
         array += QJsonObject::fromVariantMap(coordinate.toVariantMap());
     }
@@ -65,24 +76,32 @@ void RoutePatternController::createPattern(const QString& patternId)
     emit patternChanged();
 }
 
-void RoutePatternController::setPositions(const QVariantList& positions)
+void RoutePatternController::setAreaPositions(const QVariantList& positions)
 {
-    m_positions.clear();
+    m_areaPositions.clear();
     for (const QVariant& position : positions)
     {
-        m_positions.append(Geodetic(position.toMap()));
+        m_areaPositions.append(Geodetic(position.toMap()));
     }
-    emit positionsChanged();
+    emit areaPositionsChanged();
+
+    // TODO: ivnoke pattern algoritm here
+    QList<domain::Geodetic> tmp = m_areaPositions;
+    m_pathPositions.clear();
+    while (!tmp.isEmpty())
+        m_pathPositions.append(tmp.takeAt(qrand() % tmp.length()));
+    emit pathPositionsChanged();
 }
 
 void RoutePatternController::cancel()
 {
     m_pattern = nullptr;
-    m_positions.clear();
+    m_areaPositions.clear();
 
     emit patternChanged();
     emit readyChanged();
-    emit positionsChanged();
+    emit areaPositionsChanged();
+    emit pathPositionsChanged();
 }
 
 void RoutePatternController::apply()

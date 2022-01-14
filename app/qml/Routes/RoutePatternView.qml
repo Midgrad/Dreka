@@ -16,7 +16,7 @@ Controls.Popup {
 
     function newPattern(patternId, x, y, position) {
         controller.createPattern(patternId);
-        controller.setPositions([position]);
+        controller.setAreaPositions([position]);
         root.x = x - width - Controls.Theme.margins;
         root.y = y;
     }
@@ -79,7 +79,7 @@ Controls.Popup {
         }
 
         Repeater {
-            model: controller.positions
+            model: controller.areaPositions
 
             RowLayout {
                 spacing: Controls.Theme.spacing

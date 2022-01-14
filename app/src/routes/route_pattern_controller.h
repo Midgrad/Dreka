@@ -13,7 +13,8 @@ class RoutePatternController : public QObject
 
     Q_PROPERTY(QVariant pattern READ pattern NOTIFY patternChanged)
     Q_PROPERTY(QVariant routeId READ routeId WRITE selectRoute NOTIFY routeChanged)
-    Q_PROPERTY(QJsonArray positions READ positions NOTIFY positionsChanged)
+    Q_PROPERTY(QJsonArray areaPositions READ areaPositions NOTIFY areaPositionsChanged)
+    Q_PROPERTY(QJsonArray pathPositions READ pathPositions NOTIFY pathPositionsChanged)
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
 
 public:
@@ -21,27 +22,30 @@ public:
 
     QVariant routeId() const;
     QVariant pattern() const;
-    QJsonArray positions() const;
+    QJsonArray areaPositions() const;
+    QJsonArray pathPositions() const;
     bool ready() const;
 
 public slots:
     void selectRoute(const QVariant& routeId);
     void createPattern(const QString& patternId);
-    void setPositions(const QVariantList& positions);
+    void setAreaPositions(const QVariantList& positions);
     void cancel();
     void apply();
 
 signals:
     void patternChanged();
     void routeChanged();
-    void positionsChanged();
+    void areaPositionsChanged();
+    void pathPositionsChanged();
     void readyChanged();
 
 private:
     domain::IRoutesService* const m_routesService;
     domain::Route* m_route = nullptr;
     const domain::RoutePattern* m_pattern = nullptr;
-    QList<domain::Geodetic> m_positions;
+    QList<domain::Geodetic> m_areaPositions;
+    QList<domain::Geodetic> m_pathPositions;
 };
 } // namespace md::presentation
 

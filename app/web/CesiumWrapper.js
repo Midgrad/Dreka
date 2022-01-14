@@ -165,31 +165,18 @@ class CesiumWrapper {
                             position.altitude = cartographic.height;
                             positions.push(position);
                         });
-                        routePatternController.setPositions(positions);
+                        routePatternController.setAreaPositions(positions);
                     };
 
                     routePatternController.patternChanged.connect(() => {
                         routePatternArea.setEnabled(routePatternController.pattern);
-                        routePatternArea.setPositions(routePatternController.positions);
+                        routePatternArea.setPositions(routePatternController.areaPositions);
                     });
 
-//                    that.input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
-//                        if (!Cesium.defined(cartesian) || !routePatternController.pattern)
-//                          return false;
-
-//                        // TODO: common position class from Cartographic/Cartesian
-//                        var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-//                        var position = {};
-//                        position.latitude = Cesium.Math.toDegrees(cartographic.latitude);
-//                        position.longitude = Cesium.Math.toDegrees(cartographic.longitude);
-//                        position.altitude = cartographic.height;
-//                        routePatternController.addPosition(position);
-//                        return true;
-//                    });
-
-//                    routePatternController.positionsChanged.connect(() => {
-//                        routePatternArea.setPositions(routePatternController.positions);
-//                    });
+                    var routePatternPath = new Path(that.viewer);
+                    routePatternController.pathPositionsChanged.connect(() => {
+                        routePatternPath.setPositions(routePatternController.pathPositions);
+                    });
                 }
             }
 
