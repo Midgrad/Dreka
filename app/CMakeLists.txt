@@ -35,7 +35,7 @@ HEADER_DIRECTORIES(INCLUDES "src")
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDES} PRIVATE "src")
 
 # Sources
-file(GLOB_RECURSE SOURCES "src/*")
+file(GLOB_RECURSE SOURCES "src/*" "web/*")
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
 
 # Create translations QRC file
