@@ -156,14 +156,23 @@ class CesiumWrapper {
                 if (routePatternController) {
                     var routePatternArea = new Area(that.viewer, that.input);
 
-//                    that.input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
-//                        if (!Cesium.defined(cartesian))
-//                          return false;
+                    that.input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
+                        if (!Cesium.defined(cartesian) || !routePatternController.pattern)
+                          return false;
 
-//                        var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-//                        routePatternArea.addPosition(cartographic);
-//                        return true;
-//                    });
+                        // TODO: common position class from Cartographic/Cartesian
+                        var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+                        var position = {};
+                        position.latitude = Cesium.Math.toDegrees(cartographic.latitude);
+                        position.longitude = Cesium.Math.toDegrees(cartographic.longitude);
+                        position.altitude = cartographic.height;
+                        routePatternController.addPosition(position);
+                        return true;
+                    });
+
+                    routePatternController.positionsChanged.connect(() => {
+                        routePatternArea.setPositions(routePatternController.positions);
+                    });
                 }
             }
 

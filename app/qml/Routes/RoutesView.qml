@@ -16,14 +16,8 @@ RowLayout {
 
             Controls.MenuItem {
                 text: modelData.name
-                onTriggered: {
-                    var args = {};
-                    args["latitude"] = mapMenu.latitude;
-                    args["longitude"] = mapMenu.longitude;
-                    args["altitude"] = mapMenu.altitude;
-
-                    controller.addRouteItem(controller.selectedRoute, modelData.id, args);
-                }
+                onTriggered: controller.addRouteItem(controller.selectedRoute, modelData.id,
+                                                     mapMenu.position);
             }
         }
     }
@@ -38,7 +32,8 @@ RowLayout {
 
             Controls.MenuItem {
                 text: modelData.name
-                onTriggered: routePattern.newPattern(modelData.id, mapMenu.menuX, mapMenu.menuY)
+                onTriggered: routePattern.newPattern(modelData.id, mapMenu.menuX, mapMenu.menuY,
+                                                     mapMenu.position);
             }
         }
     }

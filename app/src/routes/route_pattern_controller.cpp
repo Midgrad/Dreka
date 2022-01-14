@@ -25,10 +25,10 @@ QVariant RoutePatternController::pattern() const
     return m_pattern ? m_pattern->toVariantMap() : QVariant();
 }
 
-QJsonArray RoutePatternController::coordinates() const
+QJsonArray RoutePatternController::positions() const
 {
     QJsonArray array;
-    for (const Geodetic& coordinate : m_coordinates)
+    for (const Geodetic& coordinate : m_positions)
     {
         array += QJsonObject::fromVariantMap(coordinate.toVariantMap());
     }
@@ -65,14 +65,29 @@ void RoutePatternController::createPattern(const QString& patternId)
     emit patternChanged();
 }
 
+void RoutePatternController::addPosition(const QVariant& position)
+{
+    m_positions.append(Geodetic(position.toMap()));
+    emit positionsChanged();
+}
+
+void RoutePatternController::removePosition(int index)
+{
+    if (index < 0 || index >= m_positions.count())
+        return;
+
+    m_positions.removeAt(index);
+    emit positionsChanged();
+}
+
 void RoutePatternController::cancel()
 {
     m_pattern = nullptr;
-    m_coordinates.clear();
+    m_positions.clear();
 
     emit patternChanged();
     emit readyChanged();
-    emit coordinatesChanged();
+    emit positionsChanged();
 }
 
 void RoutePatternController::apply()

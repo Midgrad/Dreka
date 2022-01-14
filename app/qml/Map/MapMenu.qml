@@ -7,9 +7,7 @@ import "../Common"
 Item {
     id: root
 
-    property real latitude: 0.0
-    property real longitude: 0.0
-    property real altitude: 0.0
+    property var position: ({})
     property int menuX: 0
     property int menuY: 0
 
@@ -23,9 +21,10 @@ Item {
     MapMenuController {
         id: controller
         onInvoked: {
-            root.latitude = latitude;
-            root.longitude = longitude;
-            root.altitude = altitude;
+            position["latitude"] = latitude;
+            position["longitude"] = longitude;
+            position["altitude"] = altitude;
+
             root.menuX = x;
             root.menuY = y;
             menu.open(x, y);

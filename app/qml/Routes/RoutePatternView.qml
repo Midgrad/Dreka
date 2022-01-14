@@ -14,14 +14,15 @@ Controls.Popup {
         controller.selectRoute(routeId);
     }
 
-    function newPattern(patternId, x, y) {
+    function newPattern(patternId, x, y, position) {
         controller.createPattern(patternId);
-        root.x = x;
+        controller.addPosition(position);
+        root.x = x - width - Controls.Theme.margins;
         root.y = y;
     }
 
     width: Controls.Theme.baseSize * 9
-    height: column.implicitHeight
+    height: column.implicitHeight + padding * 2
     visible: pattern !== undefined
     closePolicy: Controls.Popup.CloseOnEscape
 
@@ -39,7 +40,7 @@ Controls.Popup {
         anchors.centerIn: parent
         width: root.width - root.padding
         height: root.height - root.padding
-        spacing: Controls.Theme.spacing
+        spacing: 1
 
         RowLayout {
             spacing: 1
@@ -78,7 +79,33 @@ Controls.Popup {
         }
 
         Repeater {
-            model: controller.coordinates
+            model: controller.positions
+
+            RowLayout {
+                spacing: Controls.Theme.spacing
+
+                Controls.Label {
+                    font.pixelSize: Controls.Theme.auxFontSize
+                    text: (index + 1).toString() + ")"
+                    Layout.alignment: Qt.AlignVCenter
+                }
+
+                Controls.Label {
+                    font.pixelSize: Controls.Theme.auxFontSize
+                    color: Controls.Theme.colors.description
+                    text: modelData.latitude.toFixed(6) + ":" + modelData.longitude.toFixed(6)
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+                }
+
+                Controls.Button {
+                    flat: true
+                    leftCropped: true
+                    iconSource: "qrc:/icons/remove.svg"
+                    tipText: qsTr("Remove")
+                    onClicked: controller.removePosition(index)
+                }
+            }
         }
     }
 }
