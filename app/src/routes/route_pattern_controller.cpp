@@ -27,8 +27,11 @@ QVariant RoutePatternController::pattern() const
 
 QJsonArray RoutePatternController::areaPositions() const
 {
+    if (!m_pattern)
+        return QJsonArray();
+
     QJsonArray array;
-    for (const Geodetic& coordinate : m_areaPositions)
+    for (const Geodetic& coordinate : m_pattern->areaPositions())
     {
         array += QJsonObject::fromVariantMap(coordinate.toVariantMap());
     }
@@ -38,8 +41,11 @@ QJsonArray RoutePatternController::areaPositions() const
 
 QJsonArray RoutePatternController::pathPositions() const
 {
+    if (!m_pattern)
+        return QJsonArray();
+
     QJsonArray array;
-    for (const Geodetic& coordinate : m_pathPositions)
+    for (const Geodetic& coordinate : m_pattern->pathPositions())
     {
         array += QJsonObject::fromVariantMap(coordinate.toVariantMap());
     }
@@ -64,7 +70,7 @@ void RoutePatternController::selectRoute(const QVariant& routeId)
         this->cancel();
 }
 
-void RoutePatternController::createPattern(const QString& patternId)
+void RoutePatternController::createPattern(const QString& patternTypeId)
 {
     if (!m_route)
         return;
@@ -72,31 +78,38 @@ void RoutePatternController::createPattern(const QString& patternId)
     if (m_pattern)
         this->cancel();
 
-    m_pattern = m_route->type()->pattern(patternId);
+    m_pattern = m_routesService->createRoutePattern(patternTypeId);
+
+    if (m_pattern)
+    {
+        connect(m_pattern, &RoutePattern::pathPositionsChanged, this,
+                &RoutePatternController::pathPositionsChanged);
+        connect(m_pattern, &RoutePattern::areaPositionsChanged, this,
+                &RoutePatternController::areaPositionsChanged);
+    }
     emit patternChanged();
 }
 
 void RoutePatternController::setAreaPositions(const QVariantList& positions)
 {
-    m_areaPositions.clear();
+    if (!m_pattern)
+        return;
+
+    QVector<Geodetic> areaPositions;
     for (const QVariant& position : positions)
     {
-        m_areaPositions.append(Geodetic(position.toMap()));
+        areaPositions.append(Geodetic(position.toMap()));
     }
-    emit areaPositionsChanged();
-
-    // TODO: ivnoke pattern algoritm here
-    QList<domain::Geodetic> tmp = m_areaPositions;
-    m_pathPositions.clear();
-    while (!tmp.isEmpty())
-        m_pathPositions.append(tmp.takeAt(qrand() % tmp.length()));
-    emit pathPositionsChanged();
+    m_pattern->setAreaPositions(areaPositions);
 }
 
 void RoutePatternController::cancel()
 {
-    m_pattern = nullptr;
-    m_areaPositions.clear();
+    if (m_pattern)
+    {
+        m_pattern->deleteLater();
+        m_pattern = nullptr;
+    }
 
     emit patternChanged();
     emit readyChanged();

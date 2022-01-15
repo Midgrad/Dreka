@@ -28,7 +28,7 @@ RowLayout {
         enabled: controller.selectedRoute !== undefined
 
         Repeater {
-            model: controller.routePatterns(controller.selectedRoute)
+            model: controller.routePatternTypes(controller.selectedRoute)
 
             Controls.MenuItem {
                 text: modelData.name

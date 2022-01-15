@@ -173,7 +173,7 @@ class CesiumWrapper {
                         routePatternArea.setPositions(routePatternController.areaPositions);
                     });
 
-                    var routePatternPath = new Path(that.viewer);
+                    var routePatternPath = new Path(that.viewer, Cesium.Color.GOLD);
                     routePatternController.pathPositionsChanged.connect(() => {
                         routePatternPath.setPositions(routePatternController.pathPositions);
                     });

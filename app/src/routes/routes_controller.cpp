@@ -85,14 +85,14 @@ QJsonArray RoutesController::routeItemTypes(const QVariant& routeId) const
     return jsons;
 }
 
-QJsonArray RoutesController::routePatterns(const QVariant& routeId) const
+QJsonArray RoutesController::routePatternTypes(const QVariant& routeId) const
 {
     Route* route = m_routesService->route(routeId);
     if (!route)
         return QJsonArray();
 
     QJsonArray jsons;
-    for (auto pattern : route->type()->patterns)
+    for (auto pattern : route->type()->patternTypes)
     {
         jsons.append(QJsonObject::fromVariantMap(pattern->toVariantMap()));
     }

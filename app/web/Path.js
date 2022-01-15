@@ -6,7 +6,7 @@ class Path {
         this.viewer = viewer;
 
         // Visual
-        this.lineWidth = 4.0;
+        this.lineWidth = 3.0;
 
         // Data
         this.positions = [];

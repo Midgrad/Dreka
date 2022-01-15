@@ -28,7 +28,7 @@ public:
 
 public slots:
     void selectRoute(const QVariant& routeId);
-    void createPattern(const QString& patternId);
+    void createPattern(const QString& patternTypeId);
     void setAreaPositions(const QVariantList& positions);
     void cancel();
     void apply();
@@ -43,9 +43,7 @@ signals:
 private:
     domain::IRoutesService* const m_routesService;
     domain::Route* m_route = nullptr;
-    const domain::RoutePattern* m_pattern = nullptr;
-    QList<domain::Geodetic> m_areaPositions;
-    QList<domain::Geodetic> m_pathPositions;
+    domain::RoutePattern* m_pattern = nullptr;
 };
 } // namespace md::presentation
 
