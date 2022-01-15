@@ -25,6 +25,14 @@ QVariant RoutePatternController::pattern() const
     return m_pattern ? m_pattern->toVariantMap() : QVariant();
 }
 
+QJsonObject RoutePatternController::patternParameters() const
+{
+    if (!m_pattern)
+        return QJsonObject();
+
+    return QJsonObject::fromVariantMap(m_pattern->parameters());
+}
+
 QJsonArray RoutePatternController::areaPositions() const
 {
     if (!m_pattern)
@@ -58,6 +66,20 @@ bool RoutePatternController::ready() const
     return false;
 }
 
+QJsonArray RoutePatternController::typeParameters(const QString& typeId)
+{
+    if (!m_pattern)
+        return QJsonArray();
+
+    QJsonArray jsons;
+    for (auto parameter : m_pattern->type()->parameters.values())
+    {
+        jsons.append(QJsonObject::fromVariantMap(parameter->toVariantMap()));
+    }
+
+    return jsons;
+}
+
 void RoutePatternController::selectRoute(const QVariant& routeId)
 {
     if (this->routeId() == routeId)
@@ -86,8 +108,22 @@ void RoutePatternController::createPattern(const QString& patternTypeId)
                 &RoutePatternController::pathPositionsChanged);
         connect(m_pattern, &RoutePattern::areaPositionsChanged, this,
                 &RoutePatternController::areaPositionsChanged);
+
+        if (m_pattern->hasParameter(route::altitude.id) && m_route->count())
+        {
+            m_pattern->setParameter(route::altitude.id,
+                                    m_route->item(m_route->count() - 1)->position().altitude());
+        }
     }
     emit patternChanged();
+}
+
+void RoutePatternController::setParameter(const QString& parameterId, const QVariant& value)
+{
+    if (!m_pattern)
+        return;
+
+    m_pattern->setParameter(parameterId, value);
 }
 
 void RoutePatternController::setAreaPositions(const QVariantList& positions)

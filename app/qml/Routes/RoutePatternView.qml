@@ -72,9 +72,9 @@ Controls.Popup {
 
         ParametersEdit {
             id: parametersEdit
-//            parameters: controller.typeParameters(routeItem.type)
-//            parameterValues: controller.itemParameters
-//            onParameterChanged: controller.setParameter(id, value)
+            parameters: pattern ? controller.typeParameters(pattern.type) : []
+            parameterValues: controller.patternParameters
+            onParameterChanged: controller.setParameter(id, value)
             Layout.fillWidth: true
         }
 
