@@ -38,13 +38,7 @@ QJsonArray RoutePatternController::areaPositions() const
     if (!m_pattern)
         return QJsonArray();
 
-    QJsonArray array;
-    for (const Geodetic& coordinate : m_pattern->areaPositions())
-    {
-        array += QJsonObject::fromVariantMap(coordinate.toVariantMap());
-    }
-
-    return array;
+    return QJsonArray::fromVariantList(m_pattern->area().toVariantList());
 }
 
 QJsonArray RoutePatternController::pathPositions() const
@@ -52,13 +46,7 @@ QJsonArray RoutePatternController::pathPositions() const
     if (!m_pattern)
         return QJsonArray();
 
-    QJsonArray array;
-    for (const Geodetic& coordinate : m_pattern->pathPositions())
-    {
-        array += QJsonObject::fromVariantMap(coordinate.toVariantMap());
-    }
-
-    return array;
+    return QJsonArray::fromVariantList(m_pattern->path().toVariantList());
 }
 
 bool RoutePatternController::ready() const
@@ -109,10 +97,12 @@ void RoutePatternController::createPattern(const QString& patternTypeId)
         connect(m_pattern, &RoutePattern::areaPositionsChanged, this,
                 &RoutePatternController::areaPositionsChanged);
 
-        if (m_pattern->hasParameter(route::altitude.id) && m_route->count())
+        if (m_route->count())
         {
-            m_pattern->setParameter(route::altitude.id,
-                                    m_route->item(m_route->count() - 1)->position().altitude());
+            // Take initial altitude from entry point
+            Geodetic entryPoint = m_route->item(m_route->count() - 1)->position;
+            if (m_pattern->hasParameter(route::altitude.id))
+                m_pattern->setParameter(route::altitude.id, entryPoint.altitude());
         }
     }
     emit patternChanged();
@@ -136,7 +126,7 @@ void RoutePatternController::setAreaPositions(const QVariantList& positions)
     {
         areaPositions.append(Geodetic(position.toMap()));
     }
-    m_pattern->setAreaPositions(areaPositions);
+    m_pattern->setArea(areaPositions);
 }
 
 void RoutePatternController::cancel()
