@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>Common/Dragger.qml</file>
         <file>Common/PositionEdit.qml</file>
         <file>Common/ParametersEdit.qml</file>
         <file>Common/ListElement.qml</file>
@@ -22,6 +23,7 @@
         <file>Routes/Route.qml</file>
         <file>Routes/RouteEdit.qml</file>
         <file>Routes/RouteItemListItem.qml</file>
+        <file>Routes/RoutePatternView.qml</file>
         <file>Routes/RouteItemView.qml</file>
         <file>Routes/RouteItemEdit.qml</file>
         <file>Missions/MissionRouteView.qml</file>

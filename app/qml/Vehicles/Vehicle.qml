@@ -18,20 +18,22 @@ Item {
     implicitWidth: row.implicitWidth
     implicitHeight: Controls.Theme.baseSize * 1.5
 
-    Rectangle {
-        id: hover
-        anchors.fill: parent
-        opacity: 0.20
-        color: mouseArea.enabled && mouseArea.containsMouse ? Controls.Theme.colors.highlight : "transparent"
-        radius: Controls.Theme.rounding
-    }
-
     MouseArea {
         id: mouseArea
         anchors.fill: parent
-        enabled: !selected
         hoverEnabled: true
-        onClicked: expand()
+        onClicked: if (!selected) expand()
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        opacity: 0.20
+        color: {
+            if (selected)
+                return Controls.Theme.colors.description;
+            return mouseArea.containsMouse ? Controls.Theme.colors.highlight : "transparent"
+        }
+        radius: Controls.Theme.rounding
     }
 
     RowLayout {
@@ -67,6 +69,7 @@ Item {
             leftCropped: true
             rightCropped: true
             highlightColor: Controls.Theme.colors.negative
+            hoverColor: highlightColor
             iconSource: "qrc:/icons/remove.svg"
             enabled: !vehicle.online
             tipText: qsTr("Remove")

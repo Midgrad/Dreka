@@ -33,6 +33,8 @@ Controls.ApplicationWindow {
         anchors.fill: map
     }
 
+    RoutePatternView { id: routePattern }
+
     RowLayout {
         id: menuBar
         anchors.top: parent.top

@@ -46,7 +46,7 @@ class CesiumWrapper {
             if (menuController) {
                 that.input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
                     if (Cesium.defined(modifier) || !Cesium.defined(cartesian))
-                        return;
+                        return false;
 
                     var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
                     var latitude = Cesium.Math.toDegrees(cartographic.latitude);
@@ -149,6 +149,33 @@ class CesiumWrapper {
                         var position = routes.selectedItemPosition();
                         if (Cesium.defined(position))
                             routeItemController.updatePopupPosition(position.x, position.y);
+                    });
+                }
+
+                var routePatternController = channel.objects.routePatternController;
+                if (routePatternController) {
+                    var routePatternArea = new Area(that.viewer, that.input);
+                    routePatternArea.changedCallback = () => {
+                        var positions = [];
+                        routePatternArea.points.forEach(point => {
+                            var cartographic = Cesium.Cartographic.fromCartesian(point.position);
+                            var position = {};
+                            position.latitude = Cesium.Math.toDegrees(cartographic.latitude);
+                            position.longitude = Cesium.Math.toDegrees(cartographic.longitude);
+                            position.altitude = cartographic.height;
+                            positions.push(position);
+                        });
+                        routePatternController.setAreaPositions(positions);
+                    };
+
+                    routePatternController.patternChanged.connect(() => {
+                        routePatternArea.setEnabled(routePatternController.pattern);
+                        routePatternArea.setPositions(routePatternController.areaPositions);
+                    });
+
+                    var routePatternPath = new Path(that.viewer, Cesium.Color.GOLD);
+                    routePatternController.pathPositionsChanged.connect(() => {
+                        routePatternPath.setPositions(routePatternController.pathPositions);
                     });
                 }
             }

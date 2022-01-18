@@ -16,14 +16,24 @@ RowLayout {
 
             Controls.MenuItem {
                 text: modelData.name
-                onTriggered: {
-                    var args = {};
-                    args["latitude"] = mapMenu.latitude;
-                    args["longitude"] = mapMenu.longitude;
-                    args["altitude"] = mapMenu.altitude;
+                onTriggered: controller.addRouteItem(controller.selectedRoute, modelData.id,
+                                                     mapMenu.position);
+            }
+        }
+    }
 
-                    controller.addRouteItem(controller.selectedRoute, modelData.id, args);
-                }
+    Controls.Menu {
+        id: addPattern
+        title: qsTr("Add pattern")
+        enabled: controller.selectedRoute !== undefined
+
+        Repeater {
+            model: controller.routePatternTypes(controller.selectedRoute)
+
+            Controls.MenuItem {
+                text: modelData.name
+                onTriggered: routePattern.newPattern(modelData.id, mapMenu.menuX, mapMenu.menuY,
+                                                     mapMenu.position);
             }
         }
     }
@@ -42,12 +52,15 @@ RowLayout {
             else if (controller.selectedRoute !== undefined &&
                      sidebar.sourceComponent == routeListComponent)
                  sidebar.sourceComponent = routeEditComponent;
+
+            routePattern.selectRoute(controller.selectedRoute)
         }
     }
 
     Component.onCompleted: {
         map.registerController("routesController", controller);
         mapMenu.addSubmenu(addRouteItem);
+        mapMenu.addSubmenu(addPattern);
     }
 
     spacing: 1

@@ -24,8 +24,8 @@ RowLayout {
 
     MapCoordinates {
         id: coordinates
-        latitude: viewport.cursorPosition.latitude
-        longitude: viewport.cursorPosition.longitude
+        latitude: viewport.cursorPosition.latitude ? viewport.cursorPosition.latitude : NaN
+        longitude: viewport.cursorPosition.longitude ? viewport.cursorPosition.longitude : NaN
     }
 
     MapScale {
