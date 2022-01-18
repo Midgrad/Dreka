@@ -114,6 +114,7 @@ void RoutePatternController::setParameter(const QString& parameterId, const QVar
         return;
 
     m_pattern->setParameter(parameterId, value);
+    emit patternChanged();
 }
 
 void RoutePatternController::setAreaPositions(const QVariantList& positions)

@@ -77,27 +77,5 @@ Controls.Popup {
             onParameterChanged: controller.setParameter(id, value)
             Layout.fillWidth: true
         }
-
-        Repeater {
-            model: controller.areaPositions
-
-            RowLayout {
-                spacing: Controls.Theme.spacing
-
-                Controls.Label {
-                    font.pixelSize: Controls.Theme.auxFontSize
-                    text: (index + 1).toString() + ")"
-                    Layout.alignment: Qt.AlignVCenter
-                }
-
-                Controls.Label {
-                    font.pixelSize: Controls.Theme.auxFontSize
-                    color: Controls.Theme.colors.description
-                    text: modelData.latitude.toFixed(6) + ":" + modelData.longitude.toFixed(6)
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignVCenter
-                }
-            }
-        }
     }
 }

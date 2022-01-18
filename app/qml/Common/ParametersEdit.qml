@@ -67,6 +67,18 @@ Item {
         }
     }
 
+    Component {
+        id: comboEdit
+
+        Controls.ComboBox {
+            id: comboBox
+            flat: root.flat
+            model: parameter.variants
+            displayText: parameterValue
+            onActivated: root.parameterChanged(parameter.id, model[index])
+        }
+    }
+
     ColumnLayout {
         id: grid
         anchors.fill: parent
@@ -92,6 +104,7 @@ Item {
                         case "Int": return intEdit;
                         case "Real": return realEdit;
                         case "LatLon": return latLonEdit;
+                        case "Combo": return comboEdit;
                         }
                         return undefined;
                     }
