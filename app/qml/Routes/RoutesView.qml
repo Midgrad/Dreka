@@ -32,6 +32,7 @@ RowLayout {
 
             Controls.MenuItem {
                 text: modelData.name
+                iconSource: modelData.icon
                 onTriggered: routePattern.newPattern(modelData.id, mapMenu.menuX, mapMenu.menuY,
                                                      mapMenu.position);
             }

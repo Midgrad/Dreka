@@ -16,7 +16,7 @@ class RoutePatternController : public QObject
     Q_PROPERTY(QJsonObject patternParameters READ patternParameters NOTIFY patternChanged)
     Q_PROPERTY(QJsonArray areaPositions READ areaPositions NOTIFY areaPositionsChanged)
     Q_PROPERTY(QJsonArray pathPositions READ pathPositions NOTIFY pathPositionsChanged)
-    Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
+    Q_PROPERTY(bool ready READ isReady NOTIFY pathPositionsChanged)
 
 public:
     explicit RoutePatternController(QObject* parent = nullptr);
@@ -26,7 +26,7 @@ public:
     QJsonObject patternParameters() const;
     QJsonArray areaPositions() const;
     QJsonArray pathPositions() const;
-    bool ready() const;
+    bool isReady() const;
 
     Q_INVOKABLE QJsonArray typeParameters(const QString& typeId);
 
@@ -43,7 +43,6 @@ signals:
     void routeChanged();
     void areaPositionsChanged();
     void pathPositionsChanged();
-    void readyChanged();
 
 private:
     domain::IRoutesService* const m_routesService;

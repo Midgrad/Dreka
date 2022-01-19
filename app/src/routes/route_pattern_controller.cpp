@@ -49,9 +49,12 @@ QJsonArray RoutePatternController::pathPositions() const
     return QJsonArray::fromVariantList(m_pattern->path().toVariantList());
 }
 
-bool RoutePatternController::ready() const
+bool RoutePatternController::isReady() const
 {
-    return false;
+    if (!m_pattern)
+        return false;
+
+    return m_pattern->isReady();
 }
 
 QJsonArray RoutePatternController::typeParameters(const QString& typeId)
@@ -139,11 +142,20 @@ void RoutePatternController::cancel()
     }
 
     emit patternChanged();
-    emit readyChanged();
     emit areaPositionsChanged();
     emit pathPositionsChanged();
 }
 
 void RoutePatternController::apply()
 {
+    if (!m_pattern || !m_route)
+        return;
+
+    for (RouteItem* item : m_pattern->items())
+    {
+        m_route->addItem(item);
+    }
+    m_routesService->saveRoute(m_route);
+
+    this->cancel();
 }

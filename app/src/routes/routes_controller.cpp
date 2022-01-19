@@ -181,7 +181,7 @@ void RoutesController::addRouteItem(const QVariant& routeId, const QString& type
     QVariantMap newPosition = position;
     newPosition[geo::altitude] = altitude;
 
-    RouteItem* item = new RouteItem(type, utils::generateId(), type->shortName, parameters,
+    RouteItem* item = new RouteItem(type, type->shortName, utils::generateId(), parameters,
                                     newPosition);
     item->setParameters(parameters);
     route->addItem(item);

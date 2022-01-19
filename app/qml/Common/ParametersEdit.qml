@@ -96,8 +96,10 @@ Item {
                 }
 
                 Loader {
+                    id: loader
                     readonly property var parameter: modelData
                     readonly property var parameterValue: parameterValues[parameter.id]
+
                     sourceComponent: {
                         switch (parameter.type) {
                         case "Bool": return boolEdit;
@@ -117,7 +119,12 @@ Item {
                     iconSource: "qrc:/icons/restore.svg"
                     tipText: qsTr("Restore to default")
                     enabled: modelData.defaultValue !== parameterValues[modelData.id]
-                    onClicked: parameterChanged(modelData.id, modelData.defaultValue)
+                    onClicked: {
+                        var component = loader.sourceComponent;
+                        parameterChanged(modelData.id, modelData.defaultValue)
+                        loader.sourceComponent = undefined;
+                        loader.sourceComponent = component;
+                    }
                 }
             }
         }
