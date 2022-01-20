@@ -6,10 +6,11 @@
 var InputTypes = {
     NONE: 0,
     ON_CLICK: 1,
-    ON_DOWN: 2,
-    ON_UP: 3,
-    ON_MOVE: 4,
-    ON_PICK: 5
+    ON_DOUBLE_CLICK: 2,
+    ON_DOWN: 3,
+    ON_UP: 4,
+    ON_MOVE: 5,
+    ON_PICK: 6
 };
 Object.freeze(InputTypes);
 
@@ -27,6 +28,7 @@ class Input {
         // Callbacks
         this.listeners = new Map();
         this.listeners[InputTypes.ON_CLICK] = [];
+        this.listeners[InputTypes.ON_DOUBLE_CLICK] = [];
         this.listeners[InputTypes.ON_DOWN] = [];
         this.listeners[InputTypes.ON_UP] = [];
         this.listeners[InputTypes.ON_MOVE] = [];
@@ -34,8 +36,10 @@ class Input {
 
         // Data
         this.pickingRadius = 10;
+        this.clickInterval = 200;
         this.hoveredObjects = [];
         this.handlers = [];
+        this.timer = null;
 
         // Remove conflicting default behavior
         this.viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
@@ -58,9 +62,11 @@ class Input {
             }
         };
 
-        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, InputTypes.ON_CLICK, undefined);
-        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, InputTypes.ON_CLICK, Cesium.KeyboardEventModifier.SHIFT);
-        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, InputTypes.ON_CLICK, Cesium.KeyboardEventModifier.CTRL);
+        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, InputTypes.ON_CLICK, undefined, true);
+        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, InputTypes.ON_CLICK, Cesium.KeyboardEventModifier.SHIFT, true);
+        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_CLICK, InputTypes.ON_CLICK, Cesium.KeyboardEventModifier.CTRL, true);
+
+        this._addHandler(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK, InputTypes.ON_DOUBLE_CLICK, undefined, false);
 
         this._addHandler(Cesium.ScreenSpaceEventType.LEFT_DOWN, InputTypes.ON_DOWN, undefined);
         this._addHandler(Cesium.ScreenSpaceEventType.LEFT_DOWN, InputTypes.ON_DOWN, Cesium.KeyboardEventModifier.SHIFT);
@@ -79,10 +85,22 @@ class Input {
         });
     }
 
-    _addHandler(eventType, inputType, modifier) {
+    _addHandler(eventType, inputType, modifier, timed = undefined) {
         var that = this;
         var handler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-        handler.setInputAction(event => { that.lambda(event, inputType, modifier); }, eventType, modifier);
+        handler.setInputAction(event => {
+            if (that.timer && timed !== undefined)
+                clearInterval(that.timer);
+
+            if (timed === true) {
+                that.timer = setInterval(function () {
+                    clearInterval(that.timer);
+                    that.lambda(event, inputType, modifier);
+                }, that.clickInterval);
+            } else {
+                that.lambda(event, inputType, modifier);
+            }
+        }, eventType, modifier);
         this.handlers.push(handler);
     }
 

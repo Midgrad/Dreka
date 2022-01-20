@@ -52,18 +52,18 @@ class Ruler {
     /**
      * @param {Cesium.Cartesian} position
      */
-    addPoint(position) {
+    addPosition(position) {
         var that = this;
         var lastPoint = this.points.slice(-1).pop();
         var newPoint = new TerrainPoint(this.viewer, this.input, position, Cesium.Color.CADETBLUE);
         newPoint.updateCallback = () => { that.updateDistance(); }
+        newPoint.deleteCallback = () => { that.removePosition(that.points.indexOf(newPoint)); }
         newPoint.enabled = this.enabled;
+        newPoint.hovered = this.enabled;
         this.points.push(newPoint);
 
         if (lastPoint)
             this.addLabel(lastPoint, newPoint);
-
-        // this.setHoveredPoint(newPoint);
 
         // Update ruler distance
         if (lastPoint && this.distanceCallback) {
@@ -72,8 +72,30 @@ class Ruler {
         }
     }
 
-    addLabel(first, second) {
-        this.labels.push(this.viewer.entities.add({
+    removePosition(index) {
+        if (index < 0 || index >= this.points.length)
+            return;
+
+        var hasRightBuddy = index + 1 < this.points.length;
+        var hasLeftBuddy = index > 0;
+
+        if (hasRightBuddy)
+            this.removeLabel(index);
+        if (hasLeftBuddy)
+            this.removeLabel(index - 1);
+
+        this.points[index].clear();
+        this.points.splice(index, 1);
+
+        if (hasRightBuddy && hasLeftBuddy)
+            this.addLabel(this.points[index - 1], this.points[index], index - 1);
+
+        if (this.changedCallback)
+            this.changedCallback();
+    }
+
+    addLabel(first, second, index = -1) {
+        var label = this.viewer.entities.add({
             position: new Cesium.CallbackProperty(() => {
                 return intermediate(first.position, second.position);
             }, false),
@@ -87,7 +109,18 @@ class Ruler {
                 pixelOffset: new Cesium.Cartesian2(0, -25),
                 font: "13px Helvetica"
             }
-        }));
+        });
+
+        if (index === -1)
+            this.labels.push(label);
+        else
+            this.labels.splice(index, 0, label);
+    }
+
+    removeLabel(index) {
+        console.log(index)
+        this.viewer.entities.remove(this.labels[index]);
+        this.labels.splice(index, 1);
     }
 
     updateDistance() {
@@ -127,7 +160,7 @@ class Ruler {
         if (length > 1 && this.points[length - 2].hovered)
             return true;
 
-        this.addPoint(cartesian);
+        this.addPosition(cartesian);
         return true;
     }
 }

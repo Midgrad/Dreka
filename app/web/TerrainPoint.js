@@ -11,11 +11,12 @@ class TerrainPoint extends Draggable {
 
         // Callbacks
         this.updateCallback = null;
+        this.deleteCallback = null;
 
         // Data
         this.position = position;
         this.enabled = false;
-        this.hovered = true;
+        this.hovered = false;
 
         // Visual
         this.pointPixelSize = 8.0;
@@ -35,6 +36,11 @@ class TerrainPoint extends Draggable {
 
     clear() {
         this.viewer.entities.remove(this.point);
+    }
+
+    onDoubleClick(event, cartesian, modifier) {
+        if (this.hovered && this.deleteCallback)
+            this.deleteCallback();
     }
 
     onUp(event, cartesian, modifier) {

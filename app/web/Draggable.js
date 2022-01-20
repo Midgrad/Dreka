@@ -11,6 +11,9 @@ class Draggable {
         input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
             return that.onClick(event, cartesian, modifier);
         });
+        input.subscribe(InputTypes.ON_DOUBLE_CLICK, (event, cartesian, modifier) => {
+            return that.onDoubleClick(event, cartesian, modifier);
+        });
         input.subscribe(InputTypes.ON_UP, (event, cartesian, modifier) => {
             return that.onUp(event, cartesian, modifier);
         });
@@ -37,6 +40,7 @@ class Draggable {
     }
 
     onClick(event, cartesian, modifier) { return false; }
+    onDoubleClick(event, cartesian, modifier) { return false; }
     onUp(event, cartesian, modifier) { return false; }
     onDown(event, cartesian, modifier) { return false; }
     onMove(event, cartesian, modifier) { return false; }

@@ -47,13 +47,26 @@ class Area {
     /**
      * @param {Cesium.Cartesian} position
      */
-    addPosition(position) {
+    addPosition(position, hovered) {
         var that = this;
         var newPoint = new TerrainPoint(this.viewer, this.input, position, Cesium.Color.WHITE);
         if (that.changedCallback)
             newPoint.updateCallback = () => { that.changedCallback(); }
+        newPoint.deleteCallback = () => { that.removePosition(that.points.indexOf(newPoint)); }
         newPoint.enabled = this.enabled;
+        newPoint.hovered = hovered;
         this.points.push(newPoint);
+
+        if (this.changedCallback)
+            this.changedCallback();
+    }
+
+    removePosition(index) {
+        if (index < 0 || index >= this.points.length)
+            return;
+
+        this.points[index].clear();
+        this.points.splice(index, 1);
 
         if (this.changedCallback)
             this.changedCallback();
@@ -64,7 +77,7 @@ class Area {
         positions.forEach(position => {
             var cartesian = Cesium.Cartesian3.fromDegrees(position.longitude, position.latitude,
                                                           position.altitude);
-            this.addPosition(cartesian);
+            this.addPosition(cartesian, false);
         });
     }
 
@@ -84,7 +97,7 @@ class Area {
                 return true;
         }
 
-        this.addPosition(cartesian);
+        this.addPosition(cartesian, true);
         return true;
     }
 }
