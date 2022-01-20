@@ -55,7 +55,27 @@ class Area {
         newPoint.deleteCallback = () => { that.removePosition(that.points.indexOf(newPoint)); }
         newPoint.enabled = this.enabled;
         newPoint.hovered = hovered;
-        this.points.push(newPoint);
+
+        var len = this.points.length;
+        if (len < 2)
+            this.points.push(newPoint);
+        else {
+            var minDistance = Number.MAX_SAFE_INTEGER;
+            var minI = -1;
+            for (var i = 0; i < len; ++i) {
+                var distance = Cesium.Cartesian3.distanceSquared(this.points[i].position, position);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    minI = i;
+                }
+            }
+            var left = minI > 1 ? minI - 1 : len - 1;
+            var right = minI + 1 < len ? minI + 1 : 0;
+            if (Cesium.Cartesian3.distanceSquared(this.points[left].position, position) >
+                Cesium.Cartesian3.distanceSquared(this.points[right].position, position))
+                minI = right;
+            this.points.splice(minI, 0, newPoint);
+        }
 
         if (this.changedCallback)
             this.changedCallback();
