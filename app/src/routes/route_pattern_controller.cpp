@@ -33,20 +33,20 @@ QJsonObject RoutePatternController::patternParameters() const
     return QJsonObject::fromVariantMap(m_pattern->parameters());
 }
 
-QJsonArray RoutePatternController::areaPositions() const
-{
-    if (!m_pattern)
-        return QJsonArray();
-
-    return QJsonArray::fromVariantList(m_pattern->area().toVariantList());
-}
-
 QJsonArray RoutePatternController::pathPositions() const
 {
     if (!m_pattern)
         return QJsonArray();
 
     return QJsonArray::fromVariantList(m_pattern->path().toVariantList());
+}
+
+QJsonArray RoutePatternController::areaPositions() const
+{
+    if (!m_pattern)
+        return QJsonArray();
+
+    return QJsonArray::fromVariantList(m_pattern->area().toVariantList());
 }
 
 bool RoutePatternController::isReady() const
@@ -57,7 +57,7 @@ bool RoutePatternController::isReady() const
     return m_pattern->isReady();
 }
 
-QJsonArray RoutePatternController::typeParameters(const QString& typeId)
+QJsonArray RoutePatternController::typeParameters(const QString& typeId) const
 {
     if (!m_pattern)
         return QJsonArray();
@@ -89,7 +89,7 @@ void RoutePatternController::createPattern(const QString& patternTypeId)
         return;
 
     if (m_pattern)
-        this->cancel();
+        m_pattern->deleteLater();
 
     m_pattern = m_routesService->createRoutePattern(patternTypeId);
 
@@ -97,8 +97,6 @@ void RoutePatternController::createPattern(const QString& patternTypeId)
     {
         connect(m_pattern, &RoutePattern::pathPositionsChanged, this,
                 &RoutePatternController::pathPositionsChanged);
-        connect(m_pattern, &RoutePattern::areaPositionsChanged, this,
-                &RoutePatternController::areaPositionsChanged);
 
         if (m_route->count())
         {
@@ -109,6 +107,8 @@ void RoutePatternController::createPattern(const QString& patternTypeId)
         }
     }
     emit patternChanged();
+    emit patternParametersChanged();
+    emit pathPositionsChanged();
 }
 
 void RoutePatternController::setParameter(const QString& parameterId, const QVariant& value)
@@ -117,7 +117,7 @@ void RoutePatternController::setParameter(const QString& parameterId, const QVar
         return;
 
     m_pattern->setParameter(parameterId, value);
-    emit patternChanged();
+    emit patternParametersChanged();
 }
 
 void RoutePatternController::setAreaPositions(const QVariantList& positions)
@@ -142,7 +142,7 @@ void RoutePatternController::cancel()
     }
 
     emit patternChanged();
-    emit areaPositionsChanged();
+    emit patternParametersChanged();
     emit pathPositionsChanged();
 }
 

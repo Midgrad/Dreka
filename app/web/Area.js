@@ -69,11 +69,6 @@ class Area {
                     minI = i;
                 }
             }
-            var left = minI > 1 ? minI - 1 : len - 1;
-            var right = minI + 1 < len ? minI + 1 : 0;
-            if (Cesium.Cartesian3.distanceSquared(this.points[left].position, position) >
-                Cesium.Cartesian3.distanceSquared(this.points[right].position, position))
-                minI = right;
             this.points.splice(minI, 0, newPoint);
         }
 
