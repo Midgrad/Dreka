@@ -21,7 +21,7 @@ Controls.Popup {
         root.y = y;
     }
 
-    width: Controls.Theme.baseSize * 9
+    width: Controls.Theme.baseSize * 10
     height: column.implicitHeight + padding * 2
     visible: pattern !== undefined
     closePolicy: Controls.Popup.CloseOnEscape
@@ -72,8 +72,8 @@ Controls.Popup {
 
         ParametersEdit {
             id: parametersEdit
-            parameters: pattern ? controller.typeParameters(pattern.type) : []
-            parameterValues: controller.patternParameters
+            parameters: controller.parameters
+            parameterValues: controller.parameterValues
             onParameterChanged: controller.setParameter(id, value)
             Layout.fillWidth: true
         }

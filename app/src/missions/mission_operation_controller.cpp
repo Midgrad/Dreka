@@ -160,7 +160,7 @@ void MissionOperationController::cancel()
     if (!m_operation)
         return;
 
-    m_missionsService->endOperation(m_operation);
+    m_missionsService->endOperation(m_operation, MissionOperation::Canceled);
 }
 
 void MissionOperationController::setOperation(domain::MissionOperation* operation)
