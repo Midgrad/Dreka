@@ -15,7 +15,7 @@ Controls.Pane {
 
     VehiclesController {
         id: controller
-        onVehicleChanged: if (vehicleId === controller.selectedVehicle) root.selectedVehicle = vehicle
+        onVehicleChanged: if (vehicleId == controller.selectedVehicle) root.selectedVehicle = vehicle
         onSelectedVehicleChanged: root.selectedVehicle = controller.selectedVehicle ?
                                       controller.vehicle(controller.selectedVehicle) : null
     }
@@ -50,7 +50,10 @@ Controls.Pane {
                 enabled: selectedVehicle
                 tipText: qsTr("Edit name")
                 visible: !editName
-                onClicked: editName = true
+                onClicked: {
+                    nameEdit.text = text;
+                    editName = true;
+                }
                 Layout.fillWidth: true
             }
 
@@ -58,14 +61,11 @@ Controls.Pane {
                 id: nameEdit
                 flat: true
                 visible: editName
-                Binding on text {
-                    value: selectedVehicle ? selectedVehicle.name : "No vehicle"
-                    when: !nameEdit.activeFocus
-                }
                 onEditingFinished: {
                     controller.rename(selectedVehicle.id, text);
                     editName = false;
                 }
+                Keys.onEscapePressed: editName = false;
                 Layout.fillWidth: true
             }
 
