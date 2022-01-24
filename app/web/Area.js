@@ -47,7 +47,7 @@ class Area {
     /**
      * @param {Cesium.Cartesian} position
      */
-    addPosition(position, hovered) {
+    addPosition(position, hovered = false) {
         var that = this;
         var newPoint = new TerrainPoint(this.viewer, this.input, position, Cesium.Color.WHITE);
         if (that.changedCallback)
@@ -55,25 +55,7 @@ class Area {
         newPoint.deleteCallback = () => { that.removePosition(that.points.indexOf(newPoint)); }
         newPoint.enabled = this.enabled;
         newPoint.hovered = hovered;
-
-        var len = this.points.length;
-        if (len < 2)
-            this.points.push(newPoint);
-        else {
-            var minDistance = Number.MAX_SAFE_INTEGER;
-            var minI = -1;
-            for (var i = 0; i < len; ++i) {
-                var distance = Cesium.Cartesian3.distanceSquared(this.points[i].position, position);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    minI = i;
-                }
-            }
-            this.points.splice(minI, 0, newPoint);
-        }
-
-        if (this.changedCallback)
-            this.changedCallback();
+        this.points.push(newPoint);
     }
 
     removePosition(index) {
@@ -94,11 +76,47 @@ class Area {
                                                           position.altitude);
             this.addPosition(cartesian, false);
         });
+
+        this.sort();
+
+        if (this.changedCallback)
+            this.changedCallback();
+    }
+
+    sort() {
+        if (this.points.length < 3)
+            return;
+
+        var points = this.points.filter(() => true);
+        var findClosest = (position) => {
+            var minDistance = Number.MAX_SAFE_INTEGER;
+            var minI = -1;
+            for (var i = 0; i < points.length; ++i) {
+                var distance = Cesium.Cartesian3.distanceSquared(points[i].position, position);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    minI = i;
+                }
+            }
+            return minI;
+        }
+
+        var last = points.splice(0, 1)[0];
+        var sorted = [last];
+        while (points.length) {
+            var i = findClosest(last.position);
+            if (i === -1)
+                break;
+
+            last = points.splice(i, 1)[0];
+            sorted.push(last);
+        }
+
+        this.points = sorted;
     }
 
     setEnabled(enabled) {
         this.enabled = enabled;
-
         this.clear();
     }
 
@@ -113,6 +131,11 @@ class Area {
         }
 
         this.addPosition(cartesian, true);
+        this.sort();
+
+        if (this.changedCallback)
+            this.changedCallback();
+
         return true;
     }
 }
