@@ -20,6 +20,7 @@
 #include <QtWebEngine>
 
 // Data source
+#include "communication_description_repository_sql.h"
 #include "home_items_repository_sql.h"
 #include "missions_repository_sql.h"
 #include "route_items_repository_sql.h"
@@ -112,7 +113,10 @@ int main(int argc, char* argv[])
 
     // app layer initializaion
     // TODO: remove json after sql implementation
-    app::CommunicationService communicationService("./link_config.json");
+    data_source::CommunicationDescriptionRepositorySql communicationDescriptionRepository(
+        schema.db());
+    app::CommunicationService communicationService("./link_config.json",
+                                                   &communicationDescriptionRepository);
     app::Locator::provide<app::CommunicationService>(&communicationService);
 
     // Presentation initialization
