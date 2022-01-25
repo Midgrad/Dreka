@@ -56,7 +56,7 @@ class Vehicle {
     }
 
     set(vehicle) {
-        this.vehicle.model.uri = "./models/" + vehicle.model;
+        this.vehicle.model.uri = "Assets/Models/" + vehicle.model;
         this.vehicle.model.color = vehicle.online ? Cesium.Color.TEAL : Cesium.Color.SLATEGREY;
         this.vehicle.label.text = vehicle.name;
     }

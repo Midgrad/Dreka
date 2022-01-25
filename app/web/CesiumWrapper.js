@@ -184,11 +184,11 @@ class CesiumWrapper {
 
             var missionRouteController = channel.objects.missionRouteController;
             if (missionRouteController) {
-                const home = new Sign(that.viewer, that.input, "./signs/home.svg");
+                const home = new Sign(that.viewer, that.input, "Assets/Images/home.svg");
                 home.update(missionRouteController.home);
                 missionRouteController.homeChanged.connect(homeData => { home.update(homeData); });
 
-                const target = new Sign(that.viewer, that.input, "./signs/target.svg");
+                const target = new Sign(that.viewer, that.input, "Assets/Images/target.svg");
                 target.editMode = true; // TODO: depend on vehicle's mode
                 target.changedCallback = () => {
                     missionRouteController.navTo(target.data.position.latitude,

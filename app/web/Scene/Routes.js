@@ -5,7 +5,7 @@ class RouteItem extends LoiterSign {
      * @param {int} index
      */
     constructor(viewer, input, index) {
-        super(viewer, input, "./signs/wpt.svg");
+        super(viewer, input, "Assets/Images/wpt.svg");
 
         // Data
         this.index = index;
