@@ -50,10 +50,14 @@ class Input {
         var that = this;
         this.lambda = (event, inputType, modifier) => {
             var cartesian = undefined;
-            if (Cesium.defined(event.position))
+            if (Cesium.defined(event.position)) {
+                that._pickEntities(event.position);
                 cartesian = that._pickPosition(event.position);
-            else if (Cesium.defined(event.endPosition))
+            }
+            else if (Cesium.defined(event.endPosition)) {
+                that._pickEntities(event.endPosition);
                 cartesian = that._pickPosition(event.endPosition);
+            }
 
             var listeners = that.listeners[inputType];
             for (var i = listeners.length - 1; i >= 0; i--) {
@@ -79,10 +83,6 @@ class Input {
         this._addHandler(Cesium.ScreenSpaceEventType.MOUSE_MOVE, InputTypes.ON_MOVE, undefined);
         this._addHandler(Cesium.ScreenSpaceEventType.MOUSE_MOVE, InputTypes.ON_MOVE, Cesium.KeyboardEventModifier.SHIFT);
         this._addHandler(Cesium.ScreenSpaceEventType.MOUSE_MOVE, InputTypes.ON_MOVE, Cesium.KeyboardEventModifier.CTRL);
-
-        this.subscribe(InputTypes.ON_MOVE, (event, cartesian, modifier) => {
-            return that._pickEntities(event.endPosition);
-        });
     }
 
     _addHandler(eventType, inputType, modifier, timed = undefined) {
