@@ -73,7 +73,8 @@ int main(int argc, char* argv[])
     QCoreApplication::setApplicationVersion(
         QVersionNumber(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH).toString());
 
-    QGuiApplication::setAttribute(Qt::AA_DisableHighDpiScaling, true);
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
+    QGuiApplication::setAttribute( Qt::AA_UseHighDpiPixmaps, true);
     QGuiApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 
     QGuiApplication app(argc, argv);

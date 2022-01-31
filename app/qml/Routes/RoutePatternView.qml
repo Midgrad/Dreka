@@ -17,8 +17,8 @@ Controls.Popup {
     function newPattern(patternId, x, y, position) {
         controller.createPattern(patternId);
         controller.setAreaPositions([position]);
-        root.x = x - width - Controls.Theme.margins;
-        root.y = y;
+        root.x = Math.max(Controls.Theme.margins, x - width - Controls.Theme.margins);
+        root.y = Math.max(Controls.Theme.margins, y);
     }
 
     width: Controls.Theme.baseSize * 10

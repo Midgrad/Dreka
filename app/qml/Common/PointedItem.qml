@@ -1,6 +1,7 @@
-import QtQuick 2.6
+import QtQuick 2.12
 import Industrial.Controls 1.0 as Controls
 
+// Unify dragging and pointed items on map
 Item {
     id: root
 

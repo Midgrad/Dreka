@@ -31,7 +31,7 @@ QJsonArray RoutePatternController::parameters() const
         return QJsonArray();
 
     QJsonArray jsons;
-    for (const Parameter* parameter : m_pattern->type()->parameters.values())
+    for (const ParameterType* parameter : m_pattern->type()->parameters.values())
     {
         jsons.append(QJsonObject::fromVariantMap(parameter->toVariantMap()));
     }

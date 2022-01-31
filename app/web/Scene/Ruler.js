@@ -118,7 +118,6 @@ class Ruler {
     }
 
     removeLabel(index) {
-        console.log(index)
         this.viewer.entities.remove(this.labels[index]);
         this.labels.splice(index, 1);
     }
