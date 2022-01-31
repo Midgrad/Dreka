@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
         QVersionNumber(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH).toString());
 
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
-    QGuiApplication::setAttribute( Qt::AA_UseHighDpiPixmaps, true);
+    QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
     QGuiApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 
     QGuiApplication app(argc, argv);
@@ -116,8 +116,7 @@ int main(int argc, char* argv[])
     // TODO: remove json after sql implementation
     data_source::CommunicationDescriptionRepositorySql communicationDescriptionRepository(
         schema.db());
-    app::CommunicationService communicationService("./link_config.json",
-                                                   &communicationDescriptionRepository);
+    app::CommunicationService communicationService(&communicationDescriptionRepository);
     app::Locator::provide<app::CommunicationService>(&communicationService);
 
     // Presentation initialization

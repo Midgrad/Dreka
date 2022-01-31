@@ -1,8 +1,0 @@
-[
-  {
-    "name": "SITL",
-    "type": "udp",
-    "local_port": 14550,
-    "protocol": "Mavlink"
-  }
-]
