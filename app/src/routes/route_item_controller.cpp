@@ -74,7 +74,7 @@ QJsonObject RouteItemController::itemParameters() const
     if (!m_routeItem)
         return QJsonObject();
 
-    return QJsonObject::fromVariantMap(m_routeItem->parameters());
+    return QJsonObject::fromVariantMap(m_routeItem->parametersMap());
 }
 
 QJsonArray RouteItemController::typeParameters(const QString& typeId)
@@ -193,7 +193,7 @@ void RouteItemController::setParameter(const QString& parameterId, const QVarian
     if (!m_route || !m_routeItem)
         return;
 
-    m_routeItem->setAndCheckParameter(parameterId, value);
+    m_routeItem->parameter(parameterId)->setValue(value);
     m_routesService->saveItem(m_route, m_routeItem);
 }
 
@@ -211,5 +211,5 @@ void RouteItemController::gotoItem()
     if (!m_routeItem)
         return;
 
-    m_routeItem->goTo();
+    emit m_routeItem->goTo();
 }
