@@ -20,6 +20,7 @@
 #include <QtWebEngine>
 
 // Data source
+#include "communication_description_repository_sql.h"
 #include "home_items_repository_sql.h"
 #include "missions_repository_sql.h"
 #include "route_items_repository_sql.h"
@@ -73,7 +74,7 @@ int main(int argc, char* argv[])
         QVersionNumber(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH).toString());
 
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
-    QGuiApplication::setAttribute( Qt::AA_UseHighDpiPixmaps, true);
+    QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
     QGuiApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 
     QGuiApplication app(argc, argv);
@@ -112,8 +113,9 @@ int main(int argc, char* argv[])
     app::Locator::provide<presentation::IGuiLayout>(&layout);
 
     // app layer initializaion
-    // TODO: remove json after sql implementation
-    app::CommunicationService communicationService("./link_config.json");
+    data_source::CommunicationDescriptionRepositorySql communicationDescriptionRepository(
+        schema.db());
+    app::CommunicationService communicationService(&communicationDescriptionRepository);
     app::Locator::provide<app::CommunicationService>(&communicationService);
 
     // Presentation initialization
