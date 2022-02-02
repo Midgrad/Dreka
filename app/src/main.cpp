@@ -113,7 +113,6 @@ int main(int argc, char* argv[])
     app::Locator::provide<presentation::IGuiLayout>(&layout);
 
     // app layer initializaion
-    // TODO: remove json after sql implementation
     data_source::CommunicationDescriptionRepositorySql communicationDescriptionRepository(
         schema.db());
     app::CommunicationService communicationService(&communicationDescriptionRepository);
