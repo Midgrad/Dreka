@@ -12,9 +12,8 @@ ENV HOME /home/kasm-user
 
 # Create the user
 RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -M -p $PASSWORD $USERNAME
-    # echo $USERNAME:$PASSWORD | chpasswd
-
+    && useradd --uid $USER_UID --gid $USER_GID -M $USERNAME \
+    && echo "$PASSWORD""\n""$PASSWORD" | passwd $USERNAME
 
 # Add sudo support.
 RUN apt-get update \
@@ -48,6 +47,6 @@ EXPOSE 22/udp
 #     && rm -rf /var/lib/apt/lists/*  \
 #     && rm -rf /Dreka
 
-RUN chown $USERNAME -R $HOME
+# RUN chown $USERNAME -R $HOME
 
 USER 1000
