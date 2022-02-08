@@ -1,11 +1,11 @@
-class Sign extends Draggable {
+class Sign extends Interactable {
     /**
      * @param {Cesium.Viewer} viewer
-       @param {Input} input
+       @param {Interaction} interaction
      * @param {URL} sign - url to svg icon
      */
-    constructor(viewer, input, sign) {
-        super(viewer, input);
+    constructor(viewer, interaction, sign) {
+        super(interaction);
 
         // Callbacks
         this.changedCallback = null;
@@ -13,12 +13,15 @@ class Sign extends Draggable {
         this.terrainCallback = null;
 
         // Data
+        this.viewer = viewer;
         this.validPosition = false;
         this.position = Cesium.Cartesian3.ZERO;
         this.terrainPosition = Cesium.Cartesian3.ZERO;
-        this.editMode = false;
-        this.selected = false;
-        this.hoveredPoint = false;
+
+        // Visual
+        this.normalScale = 1.0;
+        this.hoveredScale = 1.25;
+        this.selectedScale = 1.5;
 
         // SVG billboard with label
         var that = this;
@@ -26,17 +29,21 @@ class Sign extends Draggable {
             position: new Cesium.CallbackProperty(() => { return that.position; }, false),
             billboard: {
                 image: sign,
-                scale: new Cesium.CallbackProperty(() => {
-                    return (that.selected || that.hoveredPoint) ? 1.5 : 1.0;
-                }, false),
+                scale: new Cesium.CallbackProperty(() => { return that.selected ? that.selectedScale
+                                                                                : that.hovered || that.dragging
+                                                                                ? that.hoveredScale
+                                                                                : that.normalScale; }, false),
                 disableDepthTestDistance: Number.POSITIVE_INFINITY
             },
             label: {
                 showBackground: true,
                 pixelOffset: new Cesium.Cartesian2(0, -25),
                 font: "13px Helvetica",
-                disableDepthTestDistance: Number.POSITIVE_INFINITY
-            },
+                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                show: new Cesium.CallbackProperty(() => { return that.validPosition &&
+                                                                 that.enabled &&
+                                                                 !that.selected; }, false)
+            }
         });
 
         // Dash line to the terrain
@@ -105,26 +112,18 @@ class Sign extends Draggable {
         this.point.billboard.show = this.validPosition;
         this.point.billboard.color = this.data.current ? Cesium.Color.MAGENTA :
                                         this.data.reached ? Cesium.Color.AQUAMARINE : Cesium.Color.WHITE
-
-        this.point.label.show = this.validPosition && this.editMode && !this.selected;
         this.point.label.text = this.data.name;
     }
 
-    setEditMode(edit) {
-        this.editMode = edit;
-        this.rebuild();
+    setDragging(dragging) {
+        super.setDragging(dragging);
+
+        if (this.changed && this.changedCallback)
+            this.changedCallback();
     }
 
-    setSelected(selected) {
-        this.selected = selected;
-        this.point.label.show = this.validPosition && this.editMode && !this.selected;
-    }
-
-    onClick(event, unusedCartesian, modifier) {
-        if (Cesium.defined(modifier) || !Cesium.defined(this.clickedCallback))
-            return false;
-
-        if (this.hoveredPoint) {
+    selfClick(modifier) {
+        if (this.clickedCallback) {
             var screenPosition = this.itemPosition();
             this.clickedCallback(screenPosition ? screenPosition.x : event.position.x,
                                  screenPosition ? screenPosition.y : event.position.y);
@@ -133,78 +132,35 @@ class Sign extends Draggable {
         return false;
     }
 
-    onUp(event, cartesian, modifier) {
-        if (this.dragging) {
-            this.setDragging(false);
-            if (this.changed && this.changedCallback)
-                this.changedCallback();
-            return true;
-        }
-
-        return false;
-    }
-
-    onDown(event, cartesian, modifier) {
-        if (this.hovered()) {
-            this.setDragging(true);
-            return true;
-        }
-        return false;
-    }
-
-    onMove(event, badCartesian, modifier) {
-        if (!this.dragging)
-            return false;
-
+    drag(position, badCartesian, modifier) {
         var scene = this.viewer.scene;
         var camera = scene.camera;
         var cartesian = this.position;
 
-        // Normal by camera if any modifier else normal by surface
+        // Normal by camera if any modifier, else normal by surface
         var normal = Cesium.defined(modifier) ?
             Cesium.Cartesian3.subtract(scene.camera.position, cartesian, new Cesium.Cartesian3()) :
             scene.globe.ellipsoid.geodeticSurfaceNormal(cartesian);
 
         if (!Cesium.defined(normal))
-            return false;
+        return false;
 
         normal = Cesium.Cartesian3.normalize(normal, normal);
 
-        var ray = this.viewer.scene.camera.getPickRay(event.endPosition);
+        var ray = this.viewer.scene.camera.getPickRay(position);
         var plane = Cesium.Plane.fromPointNormal(cartesian, normal);
         var newCartesian = Cesium.IntersectionTests.rayPlane(ray, plane);
 
-        this.changed = this.onDrag(newCartesian, modifier);
+        this.changed = this._onDrag(newCartesian, modifier);
         if (this.changed)
-            this.rebuild();
+        this.rebuild();
 
         return this.changed;
     }
 
-    onDrag(newCartesian, modifier) {
-        if (this.hoveredPoint) {
-            var newCartographic = Cesium.Cartographic.fromCartesian(newCartesian);
-            // Modify only altitude if SHIFT
-            if (modifier !== Cesium.KeyboardEventModifier.SHIFT) {
-                this.data.position.latitude = Cesium.Math.toDegrees(newCartographic.latitude);
-                this.data.position.longitude = Cesium.Math.toDegrees(newCartographic.longitude);
-            }
-            this.data.position.altitude = newCartographic.height;
-            return true;
-        }
-        return false;
+    matchInteraction(objects) {
+        return objects.find(object => { return object.id === this.point });
     }
-
-    onPick(objects) {
-        if (!this.editMode)
-            return false;
-
-        // Pick waypoints first
-        this.hoveredPoint = objects.find(object => { return object.id === this.point });
-        return this.hoveredPoint;
-    }
-
-    hovered() { return this.hoveredPoint; }
 
     flyTo() { this.viewer.flyTo(this.point); }
 
@@ -215,16 +171,27 @@ class Sign extends Draggable {
                                                       this.data.position.altitude);
         return Cesium.SceneTransforms.wgs84ToWindowCoordinates(scene, cartesian);
     }
+
+    _onDrag(newCartesian, modifier) {
+        var newCartographic = Cesium.Cartographic.fromCartesian(newCartesian);
+        // Modify only altitude if SHIFT
+        if (modifier !== Cesium.KeyboardEventModifier.SHIFT) {
+            this.data.position.latitude = Cesium.Math.toDegrees(newCartographic.latitude);
+            this.data.position.longitude = Cesium.Math.toDegrees(newCartographic.longitude);
+        }
+        this.data.position.altitude = newCartographic.height;
+        return true;
+    }
 }
 
 class LoiterSign extends Sign {
     /**
      * @param {Cesium.Viewer} viewer
-       @param {Input} input
-     * @param {JSON} data
+       @param {Interaction} interaction
+     * @param {URL} sign - url to svg icon
      */
-    constructor(viewer, input, sign) {
-        super(viewer, input, sign);
+    constructor(viewer, interaction, sign) {
+        super(viewer, interaction, sign);
 
         // Data
         this.hoveredLoiter = false;
@@ -263,40 +230,41 @@ class LoiterSign extends Sign {
         // TODO: clockwise
     }
 
-    onClick(event, unusedCartesian, modifier) {
-        // TODO: Click on loiter to change clockwise
-        return super.onClick(event, unusedCartesian, modifier);
-    }
+// TODO: implement Loiter and Accept with ES6 mixins
+//    onClick(event, unusedCartesian, modifier) {
+//        // TODO: Click on loiter to change clockwise
+//        return super.onClick(event, unusedCartesian, modifier);
+//    }
 
-    onDrag(newCartesian, modifier) {
-        if (super.onDrag(newCartesian, modifier))
-            return true;
+//    _onDrag(newCartesian, modifier) {
+//        if (super._onDrag(newCartesian, modifier))
+//            return true;
 
-        if (this.hoveredLoiter) {
-            var distance = Cesium.Cartesian3.distance(newCartesian, this.position);
-            var params = this.data.params;
+//        if (this.hoveredLoiter) {
+//            var distance = Cesium.Cartesian3.distance(newCartesian, this.position);
+//            var params = this.data.params;
 
-            // Modify loiter radius
-            if (!Cesium.defined(params.radius))
-                return false;
+//            // Modify loiter radius
+//            if (!Cesium.defined(params.radius))
+//                return false;
 
-            this.data.params.radius = distance;
-            return true;
-        }
-        return false;
-    }
+//            this.data.params.radius = distance;
+//            return true;
+//        }
+//        return false;
+//    }
 
-    onPick(objects) {
-        if (!this.editMode)
-            return false;
+//    matchInteraction(objects) {
+//        if (!this.editMode)
+//            return false;
 
-        if (super.onPick(objects))
-            return true;
+//        if (super.matchInteraction(objects))
+//            return true;
 
-        // Pick loiter
-        this.hoveredLoiter = objects.find(object => { return object.id === this.loiter });
-        return this.hoveredLoiter;
-    }
+//        // Pick loiter
+//        this.hoveredLoiter = objects.find(object => { return object.id === this.loiter });
+//        return this.hoveredLoiter;
+//    }
 
-    hovered() { return super.hovered() || this.hoveredLoiter; }
+//    hovered() { return super.hovered() || this.hoveredLoiter; }
 }

@@ -1,11 +1,11 @@
 class RouteItem extends LoiterSign {
     /**
      * @param {Cesium.Viewer} viewer
-       @param {Input} input
+       @param {Interaction} interaction
      * @param {int} index
      */
-    constructor(viewer, input, index) {
-        super(viewer, input, "Assets/Images/wpt.svg");
+    constructor(viewer, interaction, index) {
+        super(viewer, interaction, "Assets/Images/wpt.svg");
 
         // Data
         this.index = index;
@@ -47,48 +47,48 @@ class RouteItem extends LoiterSign {
         // TODO: confirmed, reached
     }
 
-    onDrag(newCartesian, modifier) {
-        if (super.onDrag(newCartesian, modifier))
-            return true;
+//    _onDrag(newCartesian, modifier) {
+//        if (super._onDrag(newCartesian, modifier))
+//            return true;
 
 
-        if (this.hoveredAccept) {
-            var distance = Cesium.Cartesian3.distance(newCartesian, this.position);
-            var params = this.data.params;
+//        if (this.hoveredAccept) {
+//            var distance = Cesium.Cartesian3.distance(newCartesian, this.position);
+//            var params = this.data.params;
 
-            // Modify accept radius
-            if (!Cesium.defined(params.accept_radius))
-                return false;
+//            // Modify accept radius
+//            if (!Cesium.defined(params.accept_radius))
+//                return false;
 
-            this.data.params.accept_radius = distance;
-            return true;
-        }
-        return false;
-    }
+//            this.data.params.accept_radius = distance;
+//            return true;
+//        }
+//        return false;
+//    }
 
-    onPick(objects) {
-        if (!this.editMode)
-            return false;
+//    matchPicking(objects) {
+//        if (!this.editMode)
+//            return false;
 
-        if (super.onPick(objects))
-            return true;
+//        if (super.matchPicking(objects))
+//            return true;
 
-        // Pick accept
-        this.hoveredAccept = objects.find(object => { return object.id === this.accept });
-        return this.hoveredAccept;
-    }
+//        // Pick accept
+//        this.hoveredAccept = objects.find(object => { return object.id === this.accept });
+//        return this.hoveredAccept;
+//    }
 
-    hovered() { return super.hovered() || this.hoveredAccept; }
+//    hovered() { return super.hovered() || this.hoveredAccept; }
 }
 
 class Route {
     /**
      * @param {Cesium.Viewr} viewer
-       @param {Input} input
+       @param {Interaction} interaction
      */
-    constructor(viewer, input) {
+    constructor(viewer, interaction) {
         this.viewer = viewer;
-        this.input = input;
+        this.interaction = interaction;
 
         // Callbacks
         this.routeItemChangedCallback = null;
@@ -123,9 +123,9 @@ class Route {
         if (this.items.length > index) {
             this.items[index].update(data);
         } else if (this.items.length === index) {
-            var item = new RouteItem(this.viewer, this.input, index);
+            var item = new RouteItem(this.viewer, this.interaction, index);
             item.update(data);
-            item.setEditMode(this.editMode);
+            item.setEnabled(this.editMode);
             this.items.push(item);
 
             // Callbacks
@@ -151,13 +151,13 @@ class Route {
 
             this._updateDistanceCalcData(item);
         } else {
-            console.warn("Wrong wpt index in setRouteItem")
+            console.warn("`Wrong wpt index in setRouteItem")
         }
     }
 
-    setEditMode(editMode) {
+    setEnabled(editMode) {
         this.editMode = editMode;
-        this.items.forEach(item => item.setEditMode(editMode));
+        this.items.forEach(item => item.setEnabled(editMode));
     }
 
     deselectItem() {
@@ -246,11 +246,11 @@ class Route {
 class Routes {
     /**
      * @param {Cesium.Viewr} viewer
-       @param {Input} input
+       @param {Interaction} interaction
      */
-    constructor(viewer, input) {
+    constructor(viewer, interaction) {
         this.viewer = viewer;
-        this.input = input;
+        this.interaction = interaction;
 
         // Callbacks
         this.routeItemChangedCallback = null;
@@ -275,12 +275,12 @@ class Routes {
             return;
 
         if (this.editingRoute)
-            this.editingRoute.setEditMode(false);
+            this.editingRoute.setEnabled(false);
 
         this.editingRoute = route;
 
         if (this.editingRoute)
-            this.editingRoute.setEditMode(true);
+            this.editingRoute.setEnabled(true);
     }
 
     setRouteData(routeId, data) {
@@ -288,7 +288,7 @@ class Routes {
         if (this.routes.has(routeId)) {
             route = this.routes.get(routeId);
         } else {
-            route = new Route(this.viewer, this.input)
+            route = new Route(this.viewer, this.interaction)
             this.routes.set(routeId, route);
 
             var that = this;

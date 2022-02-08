@@ -1,16 +1,15 @@
 class Ruler {
     /**
      * @param {Cesium.Viewr} viewer
-       @param {Input} input
+       @param {Interaction} interaction
      */
-    constructor(viewer, input) {
+    constructor(viewer, interaction) {
         this.viewer = viewer;
-        this.input = input;
+        this.interaction = interaction;
 
         // Callbacks
-        input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
-            return that.onClick(event, cartesian, modifier);
-        });
+        var that = this;
+        interaction.subscribeEmptyClick(cartesian => { return that.onClick(cartesian); });
 
         // Data
         this.distance = 0;
@@ -20,7 +19,6 @@ class Ruler {
         this.lineWidth = 3.0;
 
         // Entities
-        var that = this;
         this.points = [];
         this.labels = [];
         this.lines = this.viewer.entities.add({
@@ -55,11 +53,10 @@ class Ruler {
     addPosition(position) {
         var that = this;
         var lastPoint = this.points.slice(-1).pop();
-        var newPoint = new TerrainPoint(this.viewer, this.input, position, Cesium.Color.CADETBLUE);
+        var newPoint = new TerrainPoint(this.viewer, this.interaction, position, Cesium.Color.CADETBLUE);
         newPoint.updateCallback = () => { that.updateDistance(); }
         newPoint.deleteCallback = () => { that.removePosition(that.points.indexOf(newPoint)); }
         newPoint.enabled = this.enabled;
-        newPoint.hovered = this.enabled;
         this.points.push(newPoint);
 
         if (lastPoint)
@@ -148,16 +145,9 @@ class Ruler {
             this.points.forEach(point => { point.enabled = enabled; });
     }
 
-    onClick(event, cartesian, modifier) {
-        if (Cesium.defined(modifier) || !this.enabled)
+    onClick(cartesian) {
+        if (!this.enabled)
             return false;
-
-        // Don't add point if hover two last points
-        var length = this.points.length;
-        if (length > 0 && this.points[length - 1].hovered)
-            return true;
-        if (length > 1 && this.points[length - 2].hovered)
-            return true;
 
         this.addPosition(cartesian);
         return true;

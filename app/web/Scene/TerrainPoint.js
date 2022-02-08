@@ -1,11 +1,11 @@
-class TerrainPoint extends Draggable {
+class TerrainPoint extends Interactable {
     /**
-     * @param {Cesium.Viewr} viewer
-       @param {Input} input
+     * @param {Cesium.Viewer} viewer
+       @param {Interaction} interaction
      * @param {Cesium.Cartesian} position
      */
-    constructor(viewer, input, position, pointColor = Cesium.Color.WHITE) {
-        super(viewer, input);
+    constructor(viewer, interaction, position, pointColor = Cesium.Color.WHITE) {
+        super(interaction);
 
         var that = this;
 
@@ -14,19 +14,21 @@ class TerrainPoint extends Draggable {
         this.deleteCallback = null;
 
         // Data
+        this.viewer = viewer;
         this.position = position;
-        this.enabled = false;
-        this.hovered = false;
 
         // Visual
         this.pointPixelSize = 8.0;
-        this.hoveredPointPixelSize = 16.0;
+        this.hoveredPointPixelSize = 12.0;
+        this.selectedPointPixelSize = 16.0;
 
-        // Draggable point
+        // Interactable point
         this.point = this.viewer.entities.add({
             position: new Cesium.CallbackProperty(() => { return that.position }, false),
             point: {
-                pixelSize: new Cesium.CallbackProperty(() => { return that.hovered ?
+                pixelSize: new Cesium.CallbackProperty(() => { return that.selected ?
+                                                               that.selectedPointPixelSize :
+                                                               that.hovered || that.dragging ?
                                                                that.hoveredPointPixelSize :
                                                                that.pointPixelSize; }, false),
                 color: pointColor
@@ -38,48 +40,22 @@ class TerrainPoint extends Draggable {
         this.viewer.entities.remove(this.point);
     }
 
-    onDoubleClick(event, cartesian, modifier) {
-        if (this.hovered && this.deleteCallback)
+    selfClick(modifier) {
+        if (this.deleteCallback) {
             this.deleteCallback();
-    }
-
-    onUp(event, cartesian, modifier) {
-        if (this.dragging) {
-            this.setDragging(false);
             return true;
         }
         return false;
     }
 
-    onDown(event, cartesian, modifier) {
-        if (this.hovered) {
-            this.setDragging(true);
-            return true;
-        }
-        return false;
+    drag(position, cartesian, modifier) {
+        this.position = cartesian;
+        if (this.updateCallback)
+            this.updateCallback();
+        return true;
     }
 
-    onMove(event, cartesian, modifier) {
-        if (this.dragging && Cesium.defined(cartesian)) {
-            this.position = cartesian;
-            if (this.updateCallback)
-                this.updateCallback();
-            return true;
-        }
-        return false;
-    }
-
-    onPick(objects) {
-        if (!this.enabled)
-            return false;
-
-        var result = null;
-        objects.forEach(object => {
-            if (this.point === object.id)
-            result = this.point;
-        });
-
-        this.hovered = result;
-        return result;
+    matchInteraction(objects) {
+        return objects.find(object => { return object.id === this.point });
     }
 }

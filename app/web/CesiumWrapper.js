@@ -36,32 +36,16 @@ class CesiumWrapper {
         var that = this;
 
         this.input = new Input(this.viewer);
+        this.interaction = new Interaction(this.viewer, this.input);
         this.viewport = new Viewport(this.viewer);
         this.input.subscribe(InputTypes.ON_MOVE, (event, cartesian, modifier) => {
             return that.viewport.onMove(cartesian);
         });
 
         this.webChannel = new QWebChannel(qt.webChannelTransport, (channel) => {
-            var menuController = channel.objects.menuController;
-            if (menuController) {
-                that.input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
-                    if (Cesium.defined(modifier) || !Cesium.defined(cartesian))
-                        return false;
-
-                    var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-                    var latitude = Cesium.Math.toDegrees(cartographic.latitude);
-                    var longitude = Cesium.Math.toDegrees(cartographic.longitude);
-                    var altitude = cartographic.height;
-                    menuController.invoke(event.position.x, event.position.y,
-                                          latitude, longitude, altitude);
-                    return true;
-                });
-                that.viewport.subscribeCamera(() => { menuController.drop(); });
-            }
-
             var rulerController = channel.objects.rulerController;
             if (rulerController) {
-                const ruler = new Ruler(that.viewer, that.input);
+                const ruler = new Ruler(that.viewer, that.interaction);
                 rulerController.cleared.connect(() => { ruler.clear(); });
                 rulerController.rulerModeChanged.connect(mode => { ruler.setEnabled(mode) });
                 ruler.subscribeDistance(distance => { rulerController.distance = distance; });
@@ -95,7 +79,7 @@ class CesiumWrapper {
 
             var routesController = channel.objects.routesController;
             if (routesController) {
-                const routes = new Routes(that.viewer, that.input);
+                const routes = new Routes(that.viewer, that.interaction);
 
                 routes.routeItemChangedCallback = (routeId, index, routeItemData) => {
                     routesController.updateRouteItemData(routeId, index, routeItemData);
@@ -154,7 +138,7 @@ class CesiumWrapper {
 
                 var routePatternController = channel.objects.routePatternController;
                 if (routePatternController) {
-                    var routePatternArea = new Area(that.viewer, that.input);
+                    var routePatternArea = new Area(that.viewer, that.interaction);
                     routePatternArea.changedCallback = () => {
                         var positions = [];
                         routePatternArea.points.forEach(point => {
@@ -184,11 +168,11 @@ class CesiumWrapper {
 
             var missionRouteController = channel.objects.missionRouteController;
             if (missionRouteController) {
-                const home = new Sign(that.viewer, that.input, "Assets/Images/home.svg");
+                const home = new Sign(that.viewer, that.interaction, "Assets/Images/home.svg");
                 home.update(missionRouteController.home);
                 missionRouteController.homeChanged.connect(homeData => { home.update(homeData); });
 
-                const target = new Sign(that.viewer, that.input, "Assets/Images/target.svg");
+                const target = new Sign(that.viewer, that.interaction, "Assets/Images/target.svg");
                 target.editMode = true; // TODO: depend on vehicle's mode
                 target.changedCallback = () => {
                     missionRouteController.navTo(target.data.position.latitude,
@@ -225,6 +209,22 @@ class CesiumWrapper {
             if (adsbController) {
                 const adsb = new Adsb(that.viewer);
                 adsbController.adsbChanged.connect((data) => { adsb.setData(data); });
+            }
+            var menuController = channel.objects.menuController;
+            if (menuController) {
+                that.input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
+                    if (Cesium.defined(modifier) || !Cesium.defined(cartesian))
+                        return false;
+
+                    var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+                    var latitude = Cesium.Math.toDegrees(cartographic.latitude);
+                    var longitude = Cesium.Math.toDegrees(cartographic.longitude);
+                    var altitude = cartographic.height;
+                    menuController.invoke(event.position.x, event.position.y,
+                                          latitude, longitude, altitude);
+                    return true;
+                });
+                that.viewport.subscribeCamera(() => { menuController.drop(); });
             }
         });
     }

@@ -1,17 +1,16 @@
 class Area {
     /**
      * @param {Cesium.Viewr} viewer
-       @param {Input} input
+       @param {Interaction} interaction
      */
-    constructor(viewer, input) {
+    constructor(viewer, interaction) {
         this.viewer = viewer;
-        this.input = input;
+        this.interaction = interaction;
 
         // Callbacks
+        var that = this;
+        interaction.subscribeEmptyClick(cartesian => { return that.onClick(cartesian); });
         this.changedCallback = null;
-        input.subscribe(InputTypes.ON_CLICK, (event, cartesian, modifier) => {
-            return that.onClick(event, cartesian, modifier);
-        });
 
         // Visual
         this.lineWidth = 2.0;
@@ -20,7 +19,6 @@ class Area {
         this.enabled = false;
 
         // Entities
-        var that = this;
         this.points = [];
         this.polygon = viewer.entities.add({
             polygon: {
@@ -47,14 +45,13 @@ class Area {
     /**
      * @param {Cesium.Cartesian} position
      */
-    addPosition(position, hovered = false) {
+    addPosition(position) {
         var that = this;
-        var newPoint = new TerrainPoint(this.viewer, this.input, position, Cesium.Color.WHITE);
+        var newPoint = new TerrainPoint(this.viewer, this.interaction, position, Cesium.Color.WHITE);
         if (that.changedCallback)
             newPoint.updateCallback = () => { that.changedCallback(); }
         newPoint.deleteCallback = () => { that.removePosition(that.points.indexOf(newPoint)); }
         newPoint.enabled = this.enabled;
-        newPoint.hovered = hovered;
         this.points.push(newPoint);
     }
 
@@ -74,7 +71,7 @@ class Area {
         positions.forEach(position => {
             var cartesian = Cesium.Cartesian3.fromDegrees(position.longitude, position.latitude,
                                                           position.altitude);
-            this.addPosition(cartesian, false);
+            this.addPosition(cartesian);
         });
 
         this.sort();
@@ -120,17 +117,11 @@ class Area {
         this.clear();
     }
 
-    onClick(event, cartesian, modifier) {
-        if (Cesium.defined(modifier) || !this.enabled)
+    onClick(cartesian) {
+        if (!this.enabled)
             return false;
 
-        // Don't add point if hover any point
-        for (var i = 0; i < this.points.length; ++i) {
-            if (this.points[i].hovered)
-                return true;
-        }
-
-        this.addPosition(cartesian, true);
+        this.addPosition(cartesian);
         this.sort();
 
         if (this.changedCallback)
