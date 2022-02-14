@@ -17,8 +17,6 @@ Item {
     property real maxY: height - Controls.Theme.margins * 2
     property bool pointerVisible: true
 
-    property int highlightWidth: 8
-
     function move(x, y) {
         lastX = x;
         lastY = y;
@@ -61,17 +59,5 @@ Item {
             rotation: 45
             color: pointerColor
         }
-    }
-
-    Rectangle {
-        id: hightlight
-        anchors.bottom: pointer.bottom
-        anchors.bottomMargin: -highlightWidth / 2
-        anchors.horizontalCenter: pointer.horizontalCenter
-        color: Controls.Theme.colors.highlight
-        width: highlightWidth
-        height: highlightWidth
-        rotation: 45
-        visible: pointer.visible
     }
 }

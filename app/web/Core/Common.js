@@ -25,3 +25,14 @@ function intermediate(first, second) {
     return Cesium.Cartesian3.add(first, Cesium.Cartesian3.multiplyByScalar(
                                         direction, distance, scratch), scratch);
 }
+
+// Taken from https://gist.github.com/sebmarkbage/fac0830dbb13ccbff596
+function mixins(...mixinFactories) {
+  var base = class {};
+  // TODO: Add all possible method names that might call super()
+  // to the base class so that they don't throw.
+  for (var i = 0; i < mixinFactories.length; i++) {
+     base = mixinFactories[i](base);
+  }
+  return base;
+}

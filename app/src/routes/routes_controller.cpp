@@ -206,27 +206,6 @@ void RoutesController::updateRouteItemData(const QVariant& routeId, int index,
     // TODO: Promoute to the vehicle
 }
 
-void RoutesController::setRouteItemCalcParam(const QVariant& routeId, int index, const QString& key,
-                                             const QVariant& value)
-{
-    Route* route = m_routesService->route(routeId);
-    if (!route)
-        return;
-
-    RouteItem* routeItem = route->item(index);
-    if (!routeItem)
-        return;
-
-    auto calcData = routeItem->calcData();
-    if (calcData.value(key) == value)
-        return;
-
-    calcData[key] = value;
-    routeItem->calcData.set(calcData);
-
-    m_routesService->saveItem(route, routeItem);
-}
-
 void RoutesController::onRouteAdded(Route* route)
 {
     emit routeAdded(route->id);

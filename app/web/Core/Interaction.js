@@ -48,7 +48,8 @@ class Interaction {
     }
 
     _firstMatchPickingInteractable(position) {
-        var objects = this.viewer.scene.drillPick(position, undefined, this.pickingRadius, this.pickingRadius);
+        var objects = this.viewer.scene.drillPick(position, undefined,
+                                                  this.pickingRadius, this.pickingRadius);
         if (!objects.length)
             return null;
 

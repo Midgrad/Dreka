@@ -1,84 +1,19 @@
-class RouteItem extends LoiterSign {
+class RouteItem extends ComplexSign {
     /**
      * @param {Cesium.Viewer} viewer
        @param {Interaction} interaction
      * @param {int} index
      */
     constructor(viewer, interaction, index) {
-        super(viewer, interaction, "Assets/Images/wpt.svg");
+        super(viewer, interaction, "Assets/Images/wpt.svg", true, true, true);
 
         // Data
         this.index = index;
-        this.hoveredAccept = false;
-
-        // Accept radius
-        var that = this;
-        this.accept = viewer.entities.add({
-            position: new Cesium.CallbackProperty(() => { return that.position; }, false),
-            ellipse: {
-                material: Cesium.Color.CADETBLUE.withAlpha(0.5),
-                outline: true,
-                outlineWidth: new Cesium.CallbackProperty(() => {
-                    return that.hoveredAccept ? 3.0 : 2.0;
-                }, false),
-                outlineColor: Cesium.Color.CADETBLUE.withAlpha(0.5)
-            }
-        });
     }
 
-    clear() {
-        super.clear();
-        this.viewer.entities.remove(this.accept);
+    name() {
+        return this.data.name + " " + (this.index + 1).toString();
     }
-
-    rebuild() {
-        super.rebuild()
-
-        var params = this.data.params;
-        var position = this.data.position;
-        var acceptRadius = params && params.accept_radius ? params.accept_radius : 0;
-        this.accept.ellipse.show = acceptRadius > 0 && this.validPosition;
-        this.accept.ellipse.semiMinorAxis = acceptRadius;
-        this.accept.ellipse.semiMajorAxis = acceptRadius;
-        this.accept.ellipse.height = position && position.altitude ? position.altitude : 0;
-
-        this.point.label.text = this.data.name + " " + (this.index + 1).toString();
-
-        // TODO: confirmed, reached
-    }
-
-//    _onDrag(newCartesian, modifier) {
-//        if (super._onDrag(newCartesian, modifier))
-//            return true;
-
-
-//        if (this.hoveredAccept) {
-//            var distance = Cesium.Cartesian3.distance(newCartesian, this.position);
-//            var params = this.data.params;
-
-//            // Modify accept radius
-//            if (!Cesium.defined(params.accept_radius))
-//                return false;
-
-//            this.data.params.accept_radius = distance;
-//            return true;
-//        }
-//        return false;
-//    }
-
-//    matchPicking(objects) {
-//        if (!this.editMode)
-//            return false;
-
-//        if (super.matchPicking(objects))
-//            return true;
-
-//        // Pick accept
-//        this.hoveredAccept = objects.find(object => { return object.id === this.accept });
-//        return this.hoveredAccept;
-//    }
-
-//    hovered() { return super.hovered() || this.hoveredAccept; }
 }
 
 class Route {
@@ -92,7 +27,6 @@ class Route {
 
         // Callbacks
         this.routeItemChangedCallback = null;
-        this.updateCalcDataCallback = null;
         this.routeItemClickedCallback = null;
 
         // Data
@@ -131,25 +65,15 @@ class Route {
             // Callbacks
             var that = this;
             item.changedCallback = () => {
-                // Update calculated data for changed and next wpt
-                that._updateDistanceCalcData(item);
-                if (that.items.length > item.index + 1)
-                    that._updateDistanceCalcData(this.items[index + 1]);
-
                 that.routeItemChangedCallback(item.index, item.data);
             }
             item.clickedCallback = (x, y) => {
                 that.routeItemClickedCallback(item.index, x, y);
             }
-            item.terrainCallback = (terrainAltitude) => {
-                that.updateCalcDataCallback(item.index, "terrainAltitude", terrainAltitude);
-            }
 
             // Add line
             if (this.items.length > 1)
                 this._addLine(this.items[index - 1], this.items[index]);
-
-            this._updateDistanceCalcData(item);
         } else {
             console.warn("`Wrong wpt index in setRouteItem")
         }
@@ -162,19 +86,19 @@ class Route {
 
     deselectItem() {
         if (this.selectedIndex > -1)
-            this.items[this.selectedIndex].setSelected(false);
+            this.items[this.selectedIndex].setHighlighted(false);
 
         this.selectedIndex = -1;
     }
 
     selectItem(index) {
         this.selectedIndex = index;
-        this.items[this.selectedIndex].setSelected(true);
+        this.items[this.selectedIndex].setHighlighted(true);
     }
 
     selectedItemPosition() {
         if (this.selectedIndex > -1)
-            return this.items[this.selectedIndex].itemPosition();
+            return this.items[this.selectedIndex].selfPosition();
 
         return undefined;
     }
@@ -207,8 +131,9 @@ class Route {
         }
 
         // Update indices
-        for (var i = index; i < this.items.length; ++i)
+        for (var i = index; i < this.items.length; ++i) {
             this.items[i].index = i;
+        }
     }
 
     center() {
@@ -234,13 +159,6 @@ class Route {
         });
         this.lines.push(line);
     }
-
-    _updateDistanceCalcData(item) {
-        var index = item.index;
-        var distance = index > 0 ? Cesium.Cartesian3.distance(
-                                      item.position, this.items[index - 1].position) : 0;
-        this.updateCalcDataCallback(index, "distance", distance);
-    }
 }
 
 class Routes {
@@ -254,7 +172,6 @@ class Routes {
 
         // Callbacks
         this.routeItemChangedCallback = null;
-        this.updateCalcDataCallback = null;
         this.routeItemClickedCallback = null;
 
         // Entities
@@ -294,9 +211,6 @@ class Routes {
             var that = this;
             route.routeItemChangedCallback = (index, data) => {
                 that.routeItemChangedCallback(routeId, index, data);
-            }
-            route.updateCalcDataCallback = (index, key, value) => {
-                that.updateCalcDataCallback(routeId, index, key, value);
             }
             route.routeItemClickedCallback = (index, x, y) => {
                 that.routeItemClickedCallback(routeId, index, x, y);

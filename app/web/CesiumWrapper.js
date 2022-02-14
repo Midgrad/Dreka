@@ -84,9 +84,6 @@ class CesiumWrapper {
                 routes.routeItemChangedCallback = (routeId, index, routeItemData) => {
                     routesController.updateRouteItemData(routeId, index, routeItemData);
                 }
-                routes.updateCalcDataCallback = (routeId, index, key, value) => {
-                    routesController.setRouteItemCalcParam(routeId, index, key, value);
-                }
 
                 var setRouteItem = (routeId, index) => {
                     routesController.routeItemData(routeId, index, routeItemData => {
@@ -168,11 +165,13 @@ class CesiumWrapper {
 
             var missionRouteController = channel.objects.missionRouteController;
             if (missionRouteController) {
-                const home = new Sign(that.viewer, that.interaction, "Assets/Images/home.svg");
+                const home = new ComplexSign(that.viewer, that.interaction,
+                                             "Assets/Images/home.svg", true, true);
                 home.update(missionRouteController.home);
                 missionRouteController.homeChanged.connect(homeData => { home.update(homeData); });
 
-                const target = new Sign(that.viewer, that.interaction, "Assets/Images/target.svg");
+                const target = new ComplexSign(that.viewer, that.interaction,
+                                               "Assets/Images/target.svg", true, true);
                 target.editMode = true; // TODO: depend on vehicle's mode
                 target.changedCallback = () => {
                     missionRouteController.navTo(target.data.position.latitude,
