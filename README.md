@@ -1,10 +1,22 @@
-# Dreka ground control station
+# Dreka ground control software
 
-Lightweight Qt and web based software for UAS ground control.  
+Dreka GCS designed as unified and full-featured application for UAS planning, command & control and surveillance. It use [Cesium](https://github.com/CesiumGS/cesium) rich 3D geospatial visualization with varoius offline and online data sources. Can be specialised with modules and 3rdparty service integrations. This is reboot of [JAGCS](https://github.com/MishkaRogachev/JAGCS) project.
 
-Detailed information: https://github.com/Midgrad/Dreka/wiki/Dreka-overview  
 Build instructions can be found here: https://github.com/Midgrad/Dreka/wiki/Building-from-source
 
-This is early pre-alfa version, use it on your own risk!
+![image](https://user-images.githubusercontent.com/2522130/153391118-63202185-a748-4225-8339-7ae5008513bd.png)
 
-![Screenshot_20211102_131038](https://user-images.githubusercontent.com/2522130/139827484-c360ed83-7d16-45eb-956b-bbb7c02d87b1.png)
+This is alfa version, use it on your own risk!
+
+UAS integration:
+ - [x] Mavlink APM 
+ - [ ] Mavlink PX4 (in development)
+ - [ ] iNAV (planned)
+ - [x] Contact [us](mailto:midgrad@midgrad.com) for proprietary and custom UAS intergrations!
+
+Crossplaform:
+- [x] Linux
+- [ ] Mac (in development)
+- [ ] Windows (in development)
+- [ ] Android  (in development)
+- [ ] Web (planned)
