@@ -73,11 +73,12 @@ int main(int argc, char* argv[])
         QVersionNumber(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH).toString());
 
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
-    QGuiApplication::setAttribute( Qt::AA_UseHighDpiPixmaps, true);
+    QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
     QGuiApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 
     QGuiApplication app(argc, argv);
     app.setProperty(::gitRevision, QString(GIT_REVISION));
+    app.setWindowIcon(QIcon(":/icons/dreka.svg"));
 
     // Data source initialization
     data_source::SqliteSchema schema(::databaseName);

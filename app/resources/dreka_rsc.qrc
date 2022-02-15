@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/icons">
+        <file>dreka.svg</file>
         <file>compas.svg</file>
         <file>dots.svg</file>
         <file>grid.svg</file>
