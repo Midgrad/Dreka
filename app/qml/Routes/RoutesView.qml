@@ -39,11 +39,6 @@ RowLayout {
         }
     }
 
-    Connections {
-        target: routeItemEdit
-        onCenterRouteItem: controller.centerRouteItem(routeId, index)
-    }
-
     RoutesController {
         id: controller
         onSelectedRouteChanged: {
@@ -106,6 +101,6 @@ RowLayout {
     Component {
         id: routeEditComponent
 
-        RouteEdit { routeId: controller.selectedRoute }
+        RouteItemList { routeId: controller.selectedRoute }
     }
 }

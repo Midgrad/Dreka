@@ -20,12 +20,12 @@
         <file>Map/MapMenu.qml</file>
         <file>Routes/RoutesView.qml</file>
         <file>Routes/RouteList.qml</file>
-        <file>Routes/Route.qml</file>
-        <file>Routes/RouteEdit.qml</file>
+        <file>Routes/RouteListItem.qml</file>
+        <file>Routes/RouteItemList.qml</file>
         <file>Routes/RouteItemListItem.qml</file>
+        <file>Routes/RouteItemEditView.qml</file>
+        <file>Routes/RouteMenuView.qml</file>
         <file>Routes/RoutePatternView.qml</file>
-        <file>Routes/RouteItemView.qml</file>
-        <file>Routes/RouteItemEdit.qml</file>
         <file>Missions/MissionRouteView.qml</file>
         <file>Missions/MissionOperationView.qml</file>
         <file>Vehicles/VehiclesView.qml</file>

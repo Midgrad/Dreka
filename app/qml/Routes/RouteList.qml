@@ -39,7 +39,7 @@ Controls.Frame {
         Widgets.ListWrapper {
             emptyText: qsTr("No routes")
             model: controller.routeIds
-            delegate: Route {
+            delegate: RouteListItem {
                 width: parent.width
                 height: visible ? implicitHeight : 0
                 visible: route && route.name.indexOf(filterField.text) > -1

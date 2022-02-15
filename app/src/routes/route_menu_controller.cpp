@@ -1,4 +1,4 @@
-#include "route_item_controller.h"
+#include "route_menu_controller.h"
 
 #include <QDebug>
 
@@ -8,7 +8,7 @@
 using namespace md::domain;
 using namespace md::presentation;
 
-RouteItemController::RouteItemController(QObject* parent) :
+RouteMenuController::RouteMenuController(QObject* parent) :
     QObject(parent),
     m_routesService(md::app::Locator::get<IRoutesService>())
 {
@@ -22,12 +22,12 @@ RouteItemController::RouteItemController(QObject* parent) :
     });
 }
 
-bool RouteItemController::canGoto() const
+bool RouteMenuController::canGoto() const
 {
     return m_route && m_routeItem && m_route->block().length() && !m_routeItem->current();
 }
 
-QJsonObject RouteItemController::routeItem() const
+QJsonObject RouteMenuController::routeItem() const
 {
     if (!m_routeItem)
         return QJsonObject();
@@ -40,7 +40,7 @@ QJsonObject RouteItemController::routeItem() const
     return QJsonObject::fromVariantMap(routeItem);
 }
 
-int RouteItemController::inRouteIndex() const
+int RouteMenuController::inRouteIndex() const
 {
     if (!m_route || !m_routeItem)
         return -1;
@@ -48,7 +48,7 @@ int RouteItemController::inRouteIndex() const
     return m_route->index(m_routeItem);
 }
 
-int RouteItemController::routeItemsCount() const
+int RouteMenuController::routeItemsCount() const
 {
     if (!m_route)
         return -1;
@@ -56,7 +56,7 @@ int RouteItemController::routeItemsCount() const
     return m_route->count();
 }
 
-QJsonArray RouteItemController::itemTypes() const
+QJsonArray RouteMenuController::itemTypes() const
 {
     if (!m_route)
         return QJsonArray();
@@ -69,7 +69,7 @@ QJsonArray RouteItemController::itemTypes() const
     return jsons;
 }
 
-QJsonObject RouteItemController::itemParameters() const
+QJsonObject RouteMenuController::itemParameters() const
 {
     if (!m_routeItem)
         return QJsonObject();
@@ -77,7 +77,7 @@ QJsonObject RouteItemController::itemParameters() const
     return QJsonObject::fromVariantMap(m_routeItem->parametersMap());
 }
 
-QJsonArray RouteItemController::typeParameters(const QString& typeId)
+QJsonArray RouteMenuController::typeParameters(const QString& typeId)
 {
     if (!m_routeItem)
         return QJsonArray();
@@ -91,7 +91,7 @@ QJsonArray RouteItemController::typeParameters(const QString& typeId)
     return jsons;
 }
 
-void RouteItemController::invokeMenu(const QVariant& routeId, int index, double x, double y)
+void RouteMenuController::invokeMenu(const QVariant& routeId, int index, double x, double y)
 {
     this->setRouteItem(routeId, index);
 
@@ -99,7 +99,7 @@ void RouteItemController::invokeMenu(const QVariant& routeId, int index, double 
         emit menuInvoked(x, y);
 }
 
-void RouteItemController::setRouteItem(const QVariant& routeId, int index)
+void RouteMenuController::setRouteItem(const QVariant& routeId, int index)
 {
     Route* route = m_routesService->route(routeId);
     if (m_route != route)
@@ -123,7 +123,7 @@ void RouteItemController::setRouteItem(const QVariant& routeId, int index)
     this->setIndex(index);
 }
 
-void RouteItemController::setIndex(int index)
+void RouteMenuController::setIndex(int index)
 {
     RouteItem* routeItem = m_route ? m_route->item(index) : nullptr;
 
@@ -138,7 +138,7 @@ void RouteItemController::setIndex(int index)
     if (m_routeItem)
     {
         emit itemSelected(m_route->id, index);
-        connect(m_routeItem, &RouteItem::changed, this, &RouteItemController::routeItemChanged);
+        connect(m_routeItem, &RouteItem::changed, this, &RouteMenuController::routeItemChanged);
     }
     else
     {
@@ -149,12 +149,12 @@ void RouteItemController::setIndex(int index)
     emit routeItemChanged();
 }
 
-void RouteItemController::updatePopupPosition(double x, double y)
+void RouteMenuController::updatePopupPosition(double x, double y)
 {
     emit updatePosition(x, y);
 }
 
-void RouteItemController::rename(const QString& name)
+void RouteMenuController::rename(const QString& name)
 {
     if (!m_route || !m_routeItem)
         return;
@@ -163,7 +163,7 @@ void RouteItemController::rename(const QString& name)
     m_routesService->saveItem(m_route, m_routeItem);
 }
 
-void RouteItemController::changeItemType(const QString& typeId)
+void RouteMenuController::changeItemType(const QString& typeId)
 {
     if (!m_route || !m_routeItem)
         return;
@@ -179,7 +179,7 @@ void RouteItemController::changeItemType(const QString& typeId)
     m_routesService->saveItem(m_route, m_routeItem);
 }
 
-void RouteItemController::setPosition(double latitude, double longitude, float altitude)
+void RouteMenuController::setPosition(double latitude, double longitude, float altitude)
 {
     if (!m_route || !m_routeItem)
         return;
@@ -188,7 +188,7 @@ void RouteItemController::setPosition(double latitude, double longitude, float a
     m_routesService->saveItem(m_route, m_routeItem);
 }
 
-void RouteItemController::setParameter(const QString& parameterId, const QVariant& value)
+void RouteMenuController::setParameter(const QString& parameterId, const QVariant& value)
 {
     if (!m_route || !m_routeItem)
         return;
@@ -197,7 +197,7 @@ void RouteItemController::setParameter(const QString& parameterId, const QVarian
     m_routesService->saveItem(m_route, m_routeItem);
 }
 
-void RouteItemController::remove()
+void RouteMenuController::remove()
 {
     if (!m_route || !m_routeItem)
         return;
@@ -206,7 +206,7 @@ void RouteItemController::remove()
     m_routesService->saveRoute(m_route);
 }
 
-void RouteItemController::gotoItem()
+void RouteMenuController::gotoItem()
 {
     if (!m_routeItem)
         return;

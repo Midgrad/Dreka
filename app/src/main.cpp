@@ -53,7 +53,8 @@
 #include "map_viewport_controller.h"
 #include "mission_operation_controller.h"
 #include "mission_route_controller.h"
-#include "route_item_controller.h"
+#include "route_item_edit_controller.h"
+#include "route_menu_controller.h"
 #include "route_pattern_controller.h"
 #include "routes_controller.h"
 #include "vehicles_controller.h"
@@ -128,7 +129,7 @@ int main(int argc, char* argv[])
     qmlRegisterType<presentation::ClipboardController>("Dreka", 1, 0, "ClipboardController");
     qmlRegisterType<presentation::MapLayersController>("Dreka", 1, 0, "MapLayersController");
     qmlRegisterType<presentation::RoutesController>("Dreka", 1, 0, "RoutesController");
-    qmlRegisterType<presentation::RouteItemController>("Dreka", 1, 0, "RouteItemController");
+    qmlRegisterType<presentation::RouteItemEditController>("Dreka", 1, 0, "RouteItemEditController");
     qmlRegisterType<presentation::RoutePatternController>("Dreka", 1, 0, "RoutePatternController");
     qmlRegisterType<presentation::VehiclesController>("Dreka", 1, 0, "VehiclesController");
     qmlRegisterType<presentation::MissionOperationController>("Dreka", 1, 0,

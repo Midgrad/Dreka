@@ -1,5 +1,5 @@
-#ifndef ROUTE_ITEM_CONTROLLER_H
-#define ROUTE_ITEM_CONTROLLER_H
+#ifndef ROUTE_MENU_CONTROLLER_H
+#define ROUTE_MENU_CONTROLLER_H
 
 #include "i_routes_service.h"
 
@@ -7,7 +7,7 @@
 
 namespace md::presentation
 {
-class RouteItemController : public QObject
+class RouteMenuController : public QObject
 {
     Q_OBJECT
 
@@ -19,7 +19,7 @@ class RouteItemController : public QObject
     Q_PROPERTY(QJsonObject itemParameters READ itemParameters NOTIFY routeItemChanged)
 
 public:
-    explicit RouteItemController(QObject* parent = nullptr);
+    explicit RouteMenuController(QObject* parent = nullptr);
 
     bool canGoto() const;
     QJsonObject routeItem() const;
@@ -61,4 +61,4 @@ private:
 };
 } // namespace md::presentation
 
-#endif // ROUTE_ITEM_CONTROLLER_H
+#endif // ROUTE_MENU_CONTROLLER_H

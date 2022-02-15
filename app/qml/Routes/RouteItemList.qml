@@ -70,51 +70,25 @@ Controls.Frame {
             }
         }
 
-        RowLayout {
-            spacing: 0
-            Layout.fillWidth: true
-
-            Controls.Label {
-                type: Controls.Theme.Label
-                text: qsTr("WPT")
-                horizontalAlignment: Text.AlignHCenter
-                Layout.minimumWidth: _wptWidth
-            }
-
-            Controls.Label {
-                type: Controls.Theme.Label
-                text: qsTr("TYPE")
-                horizontalAlignment: Text.AlignHCenter
-                Layout.minimumWidth: _typeWidth
-            }
-
-// TODO: distance
-//            Controls.Label {
-//                type: Controls.Theme.Label
-//                text: qsTr("DIST, m")
-//                horizontalAlignment: Text.AlignHCenter
-//                Layout.minimumWidth: _dstWidth
-//            }
-// TODO: ALT AGL
-//            Controls.Label {
-//                type: Controls.Theme.Label
-//                text: qsTr("ALT AGL, m")
-//                horizontalAlignment: Text.AlignHCenter
-//                Layout.minimumWidth: _altWidth
-//            }
-        }
-
         Widgets.ListWrapper {
             id: list
             model: route ? route.items : []
             emptyText: qsTr("No route items")
             delegate: RouteItemListItem {
                 width: parent.width
+                selected: index === itemEdit.inRouteIndex
                 routeItem: controller.routeItemData(route.id, modelData)
                 inRouteIndex: index
+                onClicked: itemEdit.setRouteItem(route.id, index)
             }
             Layout.fillWidth: true
             Layout.fillHeight: true
+        }
+
+        RouteItemEditView {
+            id: itemEdit
+            visible: !!routeItem.id
+            Layout.fillWidth: true
         }
     }
 }

@@ -1,20 +1,26 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
+import Dreka 1.0
 
 import "../Common"
 
 Item {
     id: root
 
-    property var routeItem
-    property int inRouteIndex: -1
+    readonly property alias routeItem : controller.routeItem
+    readonly property int inRouteIndex: controller.inRouteIndex
 
     property bool editName: false
-    property bool pinned: true
+
+    function setRouteItem(routeId, index) { controller.setRouteItem(routeId, index); }
 
     implicitWidth: Controls.Theme.baseSize * 11
     implicitHeight: column.implicitHeight
+
+    RouteItemEditController {
+        id: controller
+    }
 
     ColumnLayout {
         id: column
@@ -69,17 +75,8 @@ Item {
                 tipText: qsTr("Right")
                 onClicked: {
                     controller.setIndex(inRouteIndex + 1);
-                    if (pinned) controller.centerRouteItem(routeItem.route, inRouteIndex);
+                    controller.centerRouteItem(routeItem.route, inRouteIndex);
                 }
-            }
-
-            Controls.Button { // TODO: pin button
-                flat: true
-                leftCropped: true
-                rightCropped: true
-                iconSource: pinned ? "qrc:/icons/unpin.svg" : "qrc:/icons/pin.svg"
-                tipText: pinned ? qsTr("Unpin from the map") : qsTr("Pin to the map")
-                onClicked: pinned = !pinned
             }
 
             Controls.Button {
@@ -87,7 +84,7 @@ Item {
                 leftCropped: true
                 iconSource: "qrc:/icons/close.svg"
                 tipText: qsTr("Close")
-                onClicked: editor.close()
+                onClicked: controller.closeEditor();
             }
         }
 

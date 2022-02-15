@@ -6,7 +6,10 @@ Item {
     id: root
 
     property var routeItem
+    property bool selected: false
     property int inRouteIndex: 0
+
+    signal clicked()
 
     Connections {
         target: controller
@@ -21,7 +24,8 @@ Item {
         id: hover
         anchors.fill: parent
         opacity: 0.20
-        color: mouseArea.containsMouse ? Controls.Theme.colors.highlight : "transparent"
+        color: selected ? Controls.Theme.colors.text : mouseArea.containsMouse
+                        ? Controls.Theme.colors.highlight : "transparent"
         radius: Controls.Theme.rounding
     }
 
@@ -29,7 +33,7 @@ Item {
         id: mouseArea
         hoverEnabled: true
         anchors.fill: parent
-        onClicked: controller.centerRouteItem(route.id, inRouteIndex)
+        onClicked: root.clicked()
     }
 
     RowLayout {
@@ -47,18 +51,5 @@ Item {
             type: Controls.Theme.Label
             Layout.minimumWidth: _typeWidth
         }
-
-// TODO: ALT AGL
-//        Controls.Label {
-//            text: routeItem && routeItem.calcData && routeItem.calcData.distance ?
-//                      (Math.round(routeItem.calcData.distance) + " " + qsTr("m")) : "-"
-//            Layout.minimumWidth: _dstWidth
-//        }
-// TODO: DISTANCE
-//        Controls.Label {
-//            text: routeItem && routeItem.calcData && routeItem.calcData.terrainAltitude ?
-//                      (Math.round(routeItem.calcData.terrainAltitude) + " " + qsTr("m")) : "-"
-//            Layout.minimumWidth: _altWidth
-//        }
     }
 }

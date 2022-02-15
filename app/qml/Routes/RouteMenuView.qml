@@ -10,7 +10,7 @@ Item {
 
     signal centerRouteItem(var routeId, int index)
 
-    RouteItemController {
+    RouteMenuController {
         id: controller
         onCloseEditor: if (editor.sourceComponent) editor.close();
         onMenuInvoked: menu.open(x, y)
