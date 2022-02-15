@@ -88,19 +88,20 @@ Controls.Frame {
                 Layout.minimumWidth: _typeWidth
             }
 
-            Controls.Label {
-                type: Controls.Theme.Label
-                text: qsTr("DIST, m")
-                horizontalAlignment: Text.AlignHCenter
-                Layout.minimumWidth: _dstWidth
-            }
-
-            Controls.Label {
-                type: Controls.Theme.Label
-                text: qsTr("ALT AGL, m")
-                horizontalAlignment: Text.AlignHCenter
-                Layout.minimumWidth: _altWidth
-            }
+// TODO: distance
+//            Controls.Label {
+//                type: Controls.Theme.Label
+//                text: qsTr("DIST, m")
+//                horizontalAlignment: Text.AlignHCenter
+//                Layout.minimumWidth: _dstWidth
+//            }
+// TODO: ALT AGL
+//            Controls.Label {
+//                type: Controls.Theme.Label
+//                text: qsTr("ALT AGL, m")
+//                horizontalAlignment: Text.AlignHCenter
+//                Layout.minimumWidth: _altWidth
+//            }
         }
 
         Widgets.ListWrapper {

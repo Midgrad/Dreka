@@ -48,16 +48,17 @@ Item {
             Layout.minimumWidth: _typeWidth
         }
 
-        Controls.Label {
-            text: routeItem && routeItem.calcData && routeItem.calcData.distance ?
-                      (Math.round(routeItem.calcData.distance) + " " + qsTr("m")) : "-"
-            Layout.minimumWidth: _dstWidth
-        }
-
-        Controls.Label {
-            text: routeItem && routeItem.calcData && routeItem.calcData.terrainAltitude ?
-                      (Math.round(routeItem.calcData.terrainAltitude) + " " + qsTr("m")) : "-"
-            Layout.minimumWidth: _altWidth
-        }
+// TODO: ALT AGL
+//        Controls.Label {
+//            text: routeItem && routeItem.calcData && routeItem.calcData.distance ?
+//                      (Math.round(routeItem.calcData.distance) + " " + qsTr("m")) : "-"
+//            Layout.minimumWidth: _dstWidth
+//        }
+// TODO: DISTANCE
+//        Controls.Label {
+//            text: routeItem && routeItem.calcData && routeItem.calcData.terrainAltitude ?
+//                      (Math.round(routeItem.calcData.terrainAltitude) + " " + qsTr("m")) : "-"
+//            Layout.minimumWidth: _altWidth
+//        }
     }
 }

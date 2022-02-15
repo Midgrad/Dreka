@@ -143,22 +143,22 @@ Item {
 
                 RowLayout {
                     spacing: 1
+// TODO: Alt. AGL
+//                    Controls.Label {
+//                        text: qsTr("Alt. AGL, m")
+//                        Layout.minimumWidth: parametersEdit.labelWidth
+//                    }
 
-                    Controls.Label {
-                        text: qsTr("Alt. AGL, m")
-                        Layout.minimumWidth: parametersEdit.labelWidth
-                    }
-
-                    Controls.SpinBox {
-                        enabled: false
-                        flat: true
-                        value: routeItem && routeItem.calcData && routeItem.calcData.terrainAltitude ?
-                                   routeItem.calcData.terrainAltitude : 0
-                        from: 0
-                        to: 1000000
-                        isValid: value > 0
-                        Layout.fillWidth: true
-                    }
+//                    Controls.SpinBox {
+//                        enabled: false
+//                        flat: true
+//                        value: routeItem && routeItem.calcData && routeItem.calcData.terrainAltitude ?
+//                                   routeItem.calcData.terrainAltitude : 0
+//                        from: 0
+//                        to: 1000000
+//                        isValid: value > 0
+//                        Layout.fillWidth: true
+//                    }
                 }
 
                 ParametersEdit {
