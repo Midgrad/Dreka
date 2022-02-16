@@ -17,8 +17,8 @@ RouteMenuController::RouteMenuController(QObject* parent) :
             return;
 
         m_route = nullptr;
-        emit routeChanged();
-        this->setIndex(-1);
+        m_routeItem = nullptr;
+        emit routeItemChanged();
     });
 }
 
@@ -27,17 +27,9 @@ bool RouteMenuController::canGoto() const
     return m_route && m_routeItem && m_route->block().length() && !m_routeItem->current();
 }
 
-QJsonObject RouteMenuController::routeItem() const
+QVariant RouteMenuController::route() const
 {
-    if (!m_routeItem)
-        return QJsonObject();
-
-    QVariantMap routeItem = m_routeItem->toVariantMap();
-
-    if (m_route)
-        routeItem.insert(props::route, m_route->id);
-
-    return QJsonObject::fromVariantMap(routeItem);
+    return m_route ? m_route->id() : QVariant();
 }
 
 int RouteMenuController::inRouteIndex() const
@@ -48,153 +40,15 @@ int RouteMenuController::inRouteIndex() const
     return m_route->index(m_routeItem);
 }
 
-int RouteMenuController::routeItemsCount() const
-{
-    if (!m_route)
-        return -1;
-
-    return m_route->count();
-}
-
-QJsonArray RouteMenuController::itemTypes() const
-{
-    if (!m_route)
-        return QJsonArray();
-
-    QJsonArray jsons;
-    for (auto wptType : m_route->type()->itemTypes)
-    {
-        jsons.append(QJsonObject::fromVariantMap(wptType->toVariantMap()));
-    }
-    return jsons;
-}
-
-QJsonObject RouteMenuController::itemParameters() const
-{
-    if (!m_routeItem)
-        return QJsonObject();
-
-    return QJsonObject::fromVariantMap(m_routeItem->parametersMap());
-}
-
-QJsonArray RouteMenuController::typeParameters(const QString& typeId)
-{
-    if (!m_routeItem)
-        return QJsonArray();
-
-    QJsonArray jsons;
-    for (auto parameter : m_routeItem->type()->parameters.values())
-    {
-        jsons.append(QJsonObject::fromVariantMap(parameter->toVariantMap()));
-    }
-
-    return jsons;
-}
-
 void RouteMenuController::invokeMenu(const QVariant& routeId, int index, double x, double y)
 {
-    this->setRouteItem(routeId, index);
+    m_route = m_routesService->route(routeId);
+    m_routeItem = m_route ? m_route->item(index) : nullptr;
+
+    emit routeItemChanged();
 
     if (m_routeItem)
         emit menuInvoked(x, y);
-}
-
-void RouteMenuController::setRouteItem(const QVariant& routeId, int index)
-{
-    Route* route = m_routesService->route(routeId);
-    if (m_route != route)
-    {
-        if (m_route)
-            disconnect(m_route, nullptr, this, nullptr);
-
-        m_route = route;
-
-        if (m_route)
-        {
-            connect(m_route, &Route::itemRemoved, this, [this](int index, RouteItem* routeItem) {
-                if (m_routeItem == routeItem)
-                    this->setIndex(-1);
-            });
-        }
-
-        emit routeChanged();
-    }
-
-    this->setIndex(index);
-}
-
-void RouteMenuController::setIndex(int index)
-{
-    RouteItem* routeItem = m_route ? m_route->item(index) : nullptr;
-
-    if (m_routeItem == routeItem)
-        return;
-
-    if (m_routeItem)
-        disconnect(m_routeItem, nullptr, this, nullptr);
-
-    m_routeItem = routeItem;
-
-    if (m_routeItem)
-    {
-        emit itemSelected(m_route->id, index);
-        connect(m_routeItem, &RouteItem::changed, this, &RouteMenuController::routeItemChanged);
-    }
-    else
-    {
-        emit itemSelected(QVariant(), index);
-        emit closeEditor();
-    }
-
-    emit routeItemChanged();
-}
-
-void RouteMenuController::updatePopupPosition(double x, double y)
-{
-    emit updatePosition(x, y);
-}
-
-void RouteMenuController::rename(const QString& name)
-{
-    if (!m_route || !m_routeItem)
-        return;
-
-    m_routeItem->name = name;
-    m_routesService->saveItem(m_route, m_routeItem);
-}
-
-void RouteMenuController::changeItemType(const QString& typeId)
-{
-    if (!m_route || !m_routeItem)
-        return;
-
-    const RouteItemType* type = m_route->type()->itemType(typeId);
-    if (!type)
-        return;
-
-    if (m_routeItem->type() == type)
-        return;
-
-    m_routeItem->setType(type);
-    m_routesService->saveItem(m_route, m_routeItem);
-}
-
-void RouteMenuController::setPosition(double latitude, double longitude, float altitude)
-{
-    if (!m_route || !m_routeItem)
-        return;
-
-    m_routeItem->position.set(Geodetic(latitude, longitude, altitude));
-    m_routesService->saveItem(m_route, m_routeItem);
-}
-
-void RouteMenuController::setParameter(const QString& parameterId, const QVariant& value)
-{
-    if (!m_route || !m_routeItem)
-        return;
-
-    m_routeItem->parameter(parameterId)->setValue(value);
-    m_routesService->saveItem(m_route, m_routeItem);
 }
 
 void RouteMenuController::remove()

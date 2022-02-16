@@ -28,6 +28,11 @@ Controls.ApplicationWindow {
         anchors.fill: map
     }
 
+    RouteMenuView {
+        id: routeMenu
+        anchors.fill: map
+    }
+
     RoutePatternView { id: routePattern }
 
     RowLayout {

@@ -130,6 +130,7 @@ int main(int argc, char* argv[])
     qmlRegisterType<presentation::MapLayersController>("Dreka", 1, 0, "MapLayersController");
     qmlRegisterType<presentation::RoutesController>("Dreka", 1, 0, "RoutesController");
     qmlRegisterType<presentation::RouteItemEditController>("Dreka", 1, 0, "RouteItemEditController");
+    qmlRegisterType<presentation::RouteMenuController>("Dreka", 1, 0, "RouteMenuController");
     qmlRegisterType<presentation::RoutePatternController>("Dreka", 1, 0, "RoutePatternController");
     qmlRegisterType<presentation::VehiclesController>("Dreka", 1, 0, "VehiclesController");
     qmlRegisterType<presentation::MissionOperationController>("Dreka", 1, 0,
