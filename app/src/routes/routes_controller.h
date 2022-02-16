@@ -13,8 +13,9 @@ class RoutesController : public QObject
 
     Q_PROPERTY(QJsonArray routeTypes READ routeTypes NOTIFY routeTypesChanged)
     Q_PROPERTY(QVariantList routeIds READ routeIds NOTIFY routeIdsChanged)
-    // TODO: selectedRoute to QML only
     Q_PROPERTY(QVariant selectedRoute READ selectedRoute NOTIFY selectedRouteChanged)
+    Q_PROPERTY(QVariant selectedRouteItemIndex READ selectedRouteItemIndex NOTIFY
+                   selectedRouteItemIndexChanged)
 
 public:
     explicit RoutesController(QObject* parent = nullptr);
@@ -22,6 +23,7 @@ public:
     QJsonArray routeTypes() const;
     QVariantList routeIds() const;
     QVariant selectedRoute() const;
+    int selectedRouteItemIndex() const;
 
     Q_INVOKABLE QJsonObject routeData(const QVariant& routeId) const;
     Q_INVOKABLE QJsonObject routeItemData(const QVariant& routeId, int index) const;
@@ -30,6 +32,7 @@ public:
 
 public slots:
     void selectRoute(const QVariant& selectedRouteId);
+    void selectRouteItemIndex(int index);
     void addNewRoute(const QString& routeTypeId);
     void updateRoute(const QVariant& routeId, const QJsonObject& data);
     void renameRoute(const QVariant& routeId, const QString& name);
@@ -41,6 +44,7 @@ signals:
     void routeTypesChanged();
     void routeIdsChanged();
     void selectedRouteChanged(QVariant routeId);
+    void selectedRouteItemIndexChanged(int index);
 
     void routeAdded(QVariant routeId);
     void routeRemoved(QVariant routeId);
@@ -61,6 +65,7 @@ private:
     domain::IRoutesService* const m_routesService;
 
     domain::Route* m_selectedRoute = nullptr;
+    int m_selectedRouteItemIndex = -1;
 };
 } // namespace md::presentation
 

@@ -18,26 +18,13 @@ RouteItemEditController::RouteItemEditController(QObject* parent) :
 
         m_route = nullptr;
         emit routeChanged();
-        this->setIndex(-1);
+        this->setInRouteIndex(-1);
     });
 }
 
-bool RouteItemEditController::canGoto() const
+QVariant RouteItemEditController::route() const
 {
-    return m_route && m_routeItem && m_route->block().length() && !m_routeItem->current();
-}
-
-QJsonObject RouteItemEditController::routeItem() const
-{
-    if (!m_routeItem)
-        return QJsonObject();
-
-    QVariantMap routeItem = m_routeItem->toVariantMap();
-
-    if (m_route)
-        routeItem.insert(props::route, m_route->id);
-
-    return QJsonObject::fromVariantMap(routeItem);
+    return m_route ? m_route->id() : QVariant();
 }
 
 int RouteItemEditController::inRouteIndex() const
@@ -46,6 +33,14 @@ int RouteItemEditController::inRouteIndex() const
         return -1;
 
     return m_route->index(m_routeItem);
+}
+
+QJsonObject RouteItemEditController::routeItem() const
+{
+    if (!m_routeItem)
+        return QJsonObject();
+
+    return QJsonObject::fromVariantMap(m_routeItem->toVariantMap());
 }
 
 int RouteItemEditController::routeItemsCount() const
@@ -91,39 +86,29 @@ QJsonArray RouteItemEditController::typeParameters(const QString& typeId)
     return jsons;
 }
 
-void RouteItemEditController::invokeMenu(const QVariant& routeId, int index, double x, double y)
-{
-    this->setRouteItem(routeId, index);
-
-    if (m_routeItem)
-        emit menuInvoked(x, y);
-}
-
-void RouteItemEditController::setRouteItem(const QVariant& routeId, int index)
+void RouteItemEditController::setRoute(const QVariant& routeId)
 {
     Route* route = m_routesService->route(routeId);
-    if (m_route != route)
+    if (m_route == route)
+        return;
+
+    if (m_route)
+        disconnect(m_route, nullptr, this, nullptr);
+
+    m_route = route;
+
+    if (route)
     {
-        if (m_route)
-            disconnect(m_route, nullptr, this, nullptr);
-
-        m_route = route;
-
-        if (m_route)
-        {
-            connect(m_route, &Route::itemRemoved, this, [this](int index, RouteItem* routeItem) {
-                if (m_routeItem == routeItem)
-                    this->setIndex(-1);
-            });
-        }
-
-        emit routeChanged();
+        connect(route, &Route::itemRemoved, this, [this](int index, RouteItem* routeItem) {
+            if (m_routeItem == routeItem)
+                this->setInRouteIndex(-1);
+        });
     }
 
-    this->setIndex(index);
+    emit routeChanged();
 }
 
-void RouteItemEditController::setIndex(int index)
+void RouteItemEditController::setInRouteIndex(int index)
 {
     RouteItem* routeItem = m_route ? m_route->item(index) : nullptr;
 
@@ -136,22 +121,9 @@ void RouteItemEditController::setIndex(int index)
     m_routeItem = routeItem;
 
     if (m_routeItem)
-    {
-        emit itemSelected(m_route->id, index);
         connect(m_routeItem, &RouteItem::changed, this, &RouteItemEditController::routeItemChanged);
-    }
-    else
-    {
-        emit itemSelected(QVariant(), index);
-        emit closeEditor();
-    }
 
     emit routeItemChanged();
-}
-
-void RouteItemEditController::updatePopupPosition(double x, double y)
-{
-    emit updatePosition(x, y);
 }
 
 void RouteItemEditController::rename(const QString& name)
@@ -204,12 +176,4 @@ void RouteItemEditController::remove()
 
     m_route->removeItem(m_routeItem);
     m_routesService->saveRoute(m_route);
-}
-
-void RouteItemEditController::gotoItem()
-{
-    if (!m_routeItem)
-        return;
-
-    emit m_routeItem->goTo();
 }

@@ -31,7 +31,7 @@ class Route {
 
         // Data
         this.editMode = false;
-        this.selectedIndex = -1;
+        this.highlightIndex = -1;
 
         // Entities
         this.items = [];
@@ -84,29 +84,20 @@ class Route {
         this.items.forEach(item => item.setEnabled(editMode));
     }
 
-    deselectItem() {
-        if (this.selectedIndex > -1)
-            this.items[this.selectedIndex].setHighlighted(false);
+    highlightItem(index) {
+        if (this.highlightIndex === index)
+            return;
 
-        this.selectedIndex = -1;
-    }
+        if (this.highlightIndex >= 0)
+            this.items[this.highlightIndex].setHighlighted(false);
 
-    selectItem(index) {
-        this.selectedIndex = index;
-        this.items[this.selectedIndex].setHighlighted(true);
-    }
+        this.highlightIndex = index;
 
-    selectedItemPosition() {
-        if (this.selectedIndex > -1)
-            return this.items[this.selectedIndex].selfPosition();
-
-        return undefined;
+        if (this.highlightIndex >= 0)
+            this.items[this.highlightIndex].setHighlighted(true);
     }
 
     removeRouteItem(index) {
-        if (this.selectedIndex === index)
-            this.deselectItem();
-
         var removeIndex = index < this.lines.length ? index : index - 1;
         var updateIndex = removeIndex - 1;
 
@@ -176,28 +167,12 @@ class Routes {
 
         // Entities
         this.routes = new Map();
-        this.editingRoute = null;
         this.selectedRoute = null;
     }
 
     clear() {
         this.routes.forEach(route => { route.clear(); } );
         this.routes.clear();
-    }
-
-    setEditingRoute(routeId) {
-        var route = this.routes.has(routeId) ? this.routes.get(routeId) : null;
-
-        if (this.editingRoute === route)
-            return;
-
-        if (this.editingRoute)
-            this.editingRoute.setEnabled(false);
-
-        this.editingRoute = route;
-
-        if (this.editingRoute)
-            this.editingRoute.setEnabled(true);
     }
 
     setRouteData(routeId, data) {
@@ -235,6 +210,24 @@ class Routes {
         this.routes.get(routeId).removeRouteItem(index);
     }
 
+    selectRoute(routeId) {
+        if (this.selectedRoute === routeId)
+            return;
+
+        var route = this.routes.has(this.selectedRoute) ? this.routes.get(this.selectedRoute) : null;
+        if (route) {
+            route.setEnabled(false);
+            route.highlightItem(-1);
+        }
+
+        this.selectedRoute = routeId;
+
+        route = this.routes.has(routeId) ? this.routes.get(routeId) : null;
+        if (route) {
+            route.setEnabled(true);
+        }
+    }
+
     centerRoute(routeId) {
         if (!this.routes.has(routeId))
             return;
@@ -249,20 +242,10 @@ class Routes {
         this.routes.get(routeId).centerRouteItem(index);
     }
 
-    setItemSelected(routeId, index) {
-        if (this.selectedRoute)
-            this.selectedRoute.deselectItem();
+    highlightItem(index) {
+        if (!this.routes.has(this.selectedRoute))
+            return;
 
-        this.selectedRoute = this.routes.has(routeId) ? this.routes.get(routeId) : null;
-
-        if (this.selectedRoute)
-            this.selectedRoute.selectItem(index);
-    }
-
-    selectedItemPosition() {
-        if (!this.selectedRoute)
-            return undefined;
-
-        return this.selectedRoute.selectedItemPosition();
+        this.routes.get(this.selectedRoute).highlightItem(index);
     }
 }

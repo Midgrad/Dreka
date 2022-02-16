@@ -8,12 +8,15 @@ import "../Common"
 Item {
     id: root
 
+    property alias route: controller.route
+    property alias inRouteIndex: controller.inRouteIndex
     readonly property alias routeItem : controller.routeItem
-    readonly property int inRouteIndex: controller.inRouteIndex
 
     property bool editName: false
 
-    function setRouteItem(routeId, index) { controller.setRouteItem(routeId, index); }
+    signal selectRouteItemIndex(int index)
+
+    onInRouteIndexChanged: editName = false
 
     implicitWidth: Controls.Theme.baseSize * 11
     implicitHeight: column.implicitHeight
@@ -36,7 +39,7 @@ Item {
                 enabled: inRouteIndex > 0
                 iconSource: "qrc:/icons/left.svg"
                 tipText: qsTr("Left")
-                onClicked: controller.setIndex(inRouteIndex - 1)
+                onClicked: selectRouteItemIndex(inRouteIndex - 1)
             }
 
             Controls.Button {
@@ -73,18 +76,17 @@ Item {
                 enabled: inRouteIndex < controller.routeItemsCount - 1
                 iconSource: "qrc:/icons/right.svg"
                 tipText: qsTr("Right")
-                onClicked: {
-                    controller.setIndex(inRouteIndex + 1);
-                    controller.centerRouteItem(routeItem.route, inRouteIndex);
-                }
+                onClicked: selectRouteItemIndex(inRouteIndex + 1);
             }
+
+            // TODO: controller.centerRouteItem(routeItem.route, inRouteIndex);
 
             Controls.Button {
                 flat: true
                 leftCropped: true
                 iconSource: "qrc:/icons/close.svg"
                 tipText: qsTr("Close")
-                onClicked: controller.closeEditor();
+                onClicked: selectRouteItemIndex(-1)
             }
         }
 

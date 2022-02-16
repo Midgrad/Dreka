@@ -114,23 +114,16 @@ class CesiumWrapper {
                 routesController.routeItemRemoved.connect((routeId, index) => routes.removeRouteItem(routeId, index));
 
                 routesController.centerRoute.connect(routeId => { routes.centerRoute(routeId); });
-                routesController.selectedRouteChanged.connect(routeId => { routes.setEditingRoute(routeId); });
                 routesController.centerRouteItem.connect((routeId, index) => { routes.centerRouteItem(routeId, index); });
 
-                var routeItemController = channel.objects.routeItemController;
-                if (routeItemController) {
-                    routeItemController.centerRouteItem.connect((routeId, index) => { routes.centerRouteItem(routeId, index); });
+                routesController.selectedRouteChanged.connect(routeId => { routes.selectRoute(routeId); });
+                routesController.selectedRouteItemIndexChanged.connect(index => { routes.highlightItem(index); });
+
+                var routeMenuController = channel.objects.routeMenuController;
+                if (routeMenuController) {
                     routes.routeItemClickedCallback = (routeId, index, x, y) => {
-                        routeItemController.invokeMenu(routeId, index, x, y);
+                        routeMenuController.invokeMenu(routeId, index, x, y);
                     }
-                    routeItemController.itemSelected.connect((routeId, index) => {
-                        routes.setItemSelected(routeId, index);
-                    });
-                    this.viewport.subscribeCamera(() => {
-                        var position = routes.selectedItemPosition();
-                        if (Cesium.defined(position))
-                            routeItemController.updatePopupPosition(position.x, position.y);
-                    });
                 }
 
                 var routePatternController = channel.objects.routePatternController;

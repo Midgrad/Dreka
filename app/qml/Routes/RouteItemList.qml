@@ -76,10 +76,10 @@ Controls.Frame {
             emptyText: qsTr("No route items")
             delegate: RouteItemListItem {
                 width: parent.width
-                selected: index === itemEdit.inRouteIndex
+                selected: index === controller.selectedRouteItemIndex
                 routeItem: controller.routeItemData(route.id, modelData)
                 inRouteIndex: index
-                onClicked: itemEdit.setRouteItem(route.id, index)
+                onClicked: controller.selectRouteItemIndex(index)
             }
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -88,6 +88,9 @@ Controls.Frame {
         RouteItemEditView {
             id: itemEdit
             visible: !!routeItem.id
+            route: controller.selectedRoute
+            inRouteIndex: controller.selectedRouteItemIndex
+            onSelectRouteItemIndex: controller.selectRouteItemIndex(index)
             Layout.fillWidth: true
         }
     }

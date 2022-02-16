@@ -6,6 +6,13 @@ import Dreka 1.0
 RowLayout {
     id: root
 
+    function select(routeId, index, open = true) {
+        controller.selectRoute(routeId);
+        controller.selectRouteItemIndex(index);
+        if (open)
+            sidebar.sourceComponent = routeEditComponent;
+    }
+
     Controls.Menu {
         id: addRouteItem
         title: qsTr("Add route item")

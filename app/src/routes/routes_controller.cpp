@@ -45,6 +45,11 @@ QVariant RoutesController::selectedRoute() const
     return m_selectedRoute ? m_selectedRoute->id() : QVariant();
 }
 
+int RoutesController::selectedRouteItemIndex() const
+{
+    return m_selectedRouteItemIndex;
+}
+
 QJsonObject RoutesController::routeData(const QVariant& routeId) const
 {
     Route* route = m_routesService->route(routeId);
@@ -108,6 +113,17 @@ void RoutesController::selectRoute(const QVariant& selectedRouteId)
 
     m_selectedRoute = selectedRoute;
     emit selectedRouteChanged(selectedRouteId);
+
+    this->selectRouteItemIndex(-1);
+}
+
+void RoutesController::selectRouteItemIndex(int index)
+{
+    if (m_selectedRouteItemIndex == index)
+        return;
+
+    m_selectedRouteItemIndex = index;
+    emit selectedRouteItemIndexChanged(index);
 }
 
 void RoutesController::addNewRoute(const QString& routeTypeId)
@@ -215,6 +231,10 @@ void RoutesController::onRouteAdded(Route* route)
         emit routeItemAdded(route->id, index);
     });
     connect(route, &Route::itemRemoved, this, [this, route](int index, RouteItem*) {
+        if (route == m_selectedRoute)
+        {
+            this->selectRouteItemIndex(-1);
+        }
         emit routeItemRemoved(route->id, index);
     });
     connect(route, &Route::itemChanged, this, [this, route](int index, RouteItem*) {
