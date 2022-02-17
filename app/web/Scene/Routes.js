@@ -125,6 +125,9 @@ class Route {
         for (var i = index; i < this.items.length; ++i) {
             this.items[i].index = i;
         }
+
+        if (index < this.highlightIndex)
+            this.highlightIndex--;
     }
 
     center() {

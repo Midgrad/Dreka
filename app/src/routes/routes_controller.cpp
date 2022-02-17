@@ -231,9 +231,10 @@ void RoutesController::onRouteAdded(Route* route)
         emit routeItemAdded(route->id, index);
     });
     connect(route, &Route::itemRemoved, this, [this, route](int index, RouteItem*) {
-        if (route == m_selectedRoute)
+        if (index < m_selectedRouteItemIndex)
         {
-            this->selectRouteItemIndex(-1);
+            m_selectedRouteItemIndex--;
+            emit selectedRouteItemIndexChanged(m_selectedRouteItemIndex);
         }
         emit routeItemRemoved(route->id, index);
     });

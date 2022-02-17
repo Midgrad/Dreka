@@ -21,8 +21,8 @@ Controls.Frame {
     Connections {
         target: controller
         onRouteItemAdded: if (routeId === root.routeId) route = controller.routeData(route.id)
-        onRouteItemRemoved: if (routeId === root.routeId) route = controller.routeData(route.id)
         onRouteChanged: if (routeId === root.routeId) route = controller.routeData(routeId)
+        onRouteItemRemoved: if (routeId === root.routeId) route = controller.routeData(route.id)
     }
 
     ColumnLayout {

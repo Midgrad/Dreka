@@ -102,6 +102,8 @@ void RouteItemEditController::setRoute(const QVariant& routeId)
         connect(route, &Route::itemRemoved, this, [this](int index, RouteItem* routeItem) {
             if (m_routeItem == routeItem)
                 this->setInRouteIndex(-1);
+            // To update index in route
+            emit routeItemChanged();
         });
     }
 
