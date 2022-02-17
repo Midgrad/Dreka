@@ -13,6 +13,7 @@ RowLayout {
     spacing: 1
 
     MapButton {
+        leftCropped: true
         rightCropped: true
         tipText: qsTr("Copy coordinates")
         text: {

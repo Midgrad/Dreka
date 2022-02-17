@@ -33,14 +33,14 @@
         "positive": "#65c20a"
     },
     "colors_night": {
-        "background": "#99000000",
-        "sunken": "#ac000000",
-        "raised": "#66000000",
+        "background": "#AA000000",
+        "sunken": "#EE000000",
+        "raised": "#88000000",
         "text": "#ffffff",
         "description": "#899ea9",
         "disabled": "#4F5D64",
 
-        "control": "#99000000",
+        "control": "#AA000000",
         "controlBorder": "#6c8693",
         "line": "#805a717c",
         "controlText": "#ffffff",
@@ -74,7 +74,7 @@
         "scrollSize": 0.0625,
         "shadow": 0.1,
         "sliderSize": 0.125,
-        "spacing": 0.4,
+        "spacing": 0.2,
         "switchSize": 0.7143,
         "underline": 0.0625
     },

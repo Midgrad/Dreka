@@ -39,6 +39,8 @@ Item {
     RowLayout {
         id: row
         anchors.fill: parent
+        anchors.leftMargin: Controls.Theme.margins
+        anchors.rightMargin: Controls.Theme.margins
         spacing: 0
 
         Controls.Label {

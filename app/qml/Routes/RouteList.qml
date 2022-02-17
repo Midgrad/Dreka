@@ -4,7 +4,7 @@ import Industrial.Controls 1.0 as Controls
 import Industrial.Widgets 1.0 as Widgets
 import Dreka 1.0
 
-Controls.Frame {
+Controls.Pane {
     id: root
 
     signal expand(var routeId)

@@ -13,19 +13,24 @@ RowLayout {
     Component.onCompleted: map.registerController("viewportController", viewport)
     Component.onDestruction: viewport.save()
 
-    spacing: 10
+    spacing: Controls.Theme.spacing
 
-    MapCompas {
-        id: compas
-        heading: viewport.heading
-        pitch: viewport.pitch
-        onClicked: viewport.lookTo(0, -90, 1);
-    }
+    RowLayout {
+        spacing: 1
 
-    MapCoordinates {
-        id: coordinates
-        latitude: viewport.cursorPosition.latitude ? viewport.cursorPosition.latitude : NaN
-        longitude: viewport.cursorPosition.longitude ? viewport.cursorPosition.longitude : NaN
+        MapCompas {
+            id: compas
+            heading: viewport.heading
+            pitch: viewport.pitch
+            rightCropped: true
+            onClicked: viewport.lookTo(0, -90, 1);
+        }
+
+        MapCoordinates {
+            id: coordinates
+            latitude: viewport.cursorPosition.latitude ? viewport.cursorPosition.latitude : NaN
+            longitude: viewport.cursorPosition.longitude ? viewport.cursorPosition.longitude : NaN
+        }
     }
 
     MapScale {

@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
 import Industrial.Widgets 1.0 as Widgets
 
-Controls.Frame {
+Controls.Pane {
     id: root
 
     property var routeId

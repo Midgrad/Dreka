@@ -7,8 +7,7 @@ MapButton {
     property real heading: 0
     property real pitch: 0
 
-    round: true
-    implicitHeight: Controls.Theme.baseSize * 1.5
+    implicitHeight: Controls.Theme.baseSize
     tipText: qsTr("Reset orientation")
 
     Controls.ColoredIcon {
@@ -16,12 +15,6 @@ MapButton {
         anchors.fill: parent
         anchors.margins: 1
         source: "qrc:/icons/compas.svg"
-        rotation: heading
-        transform: Rotation {
-            origin.x: icon.width / 2;
-            origin.y: icon.height / 2;
-            axis { x: 1; y: 0; z: 0 }
-            angle: 90 - pitch
-        }
+        rotation: -heading
     }
 }

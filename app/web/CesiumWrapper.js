@@ -75,6 +75,7 @@ class CesiumWrapper {
 
                 that.viewport.subscribeCursor((cursorPosition) => { viewportController.cursorPosition = cursorPosition; });
                 viewportController.restore();
+                that.viewport.tick();
             }
 
             var routesController = channel.objects.routesController;
