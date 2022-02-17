@@ -12,7 +12,7 @@ Row {
 
     spacing: 1
 
-    MissionRouteController { id: missionRouteController }
+    VehicleMissionController { id: missionRouteController }
 
     Controls.MenuItem {
         id: navToItem
@@ -36,17 +36,10 @@ Row {
         rightCropped: true
         iconSource: "qrc:/icons/route.svg"
         tipText: qsTr("Mission")
-        highlighted: missionPopup.visible
+        // highlighted: missionPopup.visible
         enabled: controller.selectedVehicle !== null
-        onClicked: missionPopup.visible ? missionPopup.close() : missionPopup.open()
-
-        MissionOperationView {
-            id: missionPopup
-            x: -width - Controls.Theme.margins - Controls.Theme.spacing
-            y: parent.y - height + parent.height
-            closePolicy: Controls.Popup.CloseOnPressOutsideParent
-            missionId: missionRouteController.mission.id
-        }
+        // onClicked: TODO: open missions window
+        // TODO: warning icon
     }
 
     Controls.ComboBox {

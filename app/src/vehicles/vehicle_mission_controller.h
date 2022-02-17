@@ -1,11 +1,11 @@
-#ifndef MISSION_ROUTE_CONTROLLER_H
-#define MISSION_ROUTE_CONTROLLER_H
+#ifndef VEHICLE_MISSION_CONTROLLER_H
+#define VEHICLE_MISSION_CONTROLLER_H
 
 #include "i_missions_service.h"
 
 namespace md::presentation
 {
-class MissionRouteController : public QObject
+class VehicleMissionController : public QObject
 {
     Q_OBJECT
 
@@ -17,7 +17,7 @@ class MissionRouteController : public QObject
     Q_PROPERTY(int currentItem READ currentItem NOTIFY currentItemChanged)
 
 public:
-    explicit MissionRouteController(QObject* parent = nullptr);
+    explicit VehicleMissionController(QObject* parent = nullptr);
 
     QVariant vehicleId() const;
     QJsonObject mission() const;
@@ -48,4 +48,4 @@ private:
 };
 } // namespace md::presentation
 
-#endif // MISSION_ROUTE_CONTROLLER_H
+#endif // VEHICLE_MISSION_CONTROLLER_H

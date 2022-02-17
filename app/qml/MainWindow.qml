@@ -5,6 +5,7 @@ import Dreka 1.0
 
 import "Map"
 import "Routes"
+import "Missions"
 import "Vehicles"
 
 Controls.ApplicationWindow {
@@ -48,9 +49,8 @@ Controls.ApplicationWindow {
             Loader { source: modelData }
         }
 
-        RoutesView {
-            id: routes
-        }
+        RoutesView { id: routes }
+        MissionsView { id: missions }
     }
 
     VehiclesView {

@@ -52,11 +52,12 @@
 #include "map_ruler_controller.h"
 #include "map_viewport_controller.h"
 #include "mission_operation_controller.h"
-#include "mission_route_controller.h"
+#include "missions_controller.h"
 #include "route_item_edit_controller.h"
 #include "route_menu_controller.h"
 #include "route_pattern_controller.h"
 #include "routes_controller.h"
+#include "vehicle_mission_controller.h"
 #include "vehicles_controller.h"
 
 namespace
@@ -133,9 +134,11 @@ int main(int argc, char* argv[])
     qmlRegisterType<presentation::RouteMenuController>("Dreka", 1, 0, "RouteMenuController");
     qmlRegisterType<presentation::RoutePatternController>("Dreka", 1, 0, "RoutePatternController");
     qmlRegisterType<presentation::VehiclesController>("Dreka", 1, 0, "VehiclesController");
+    qmlRegisterType<presentation::MissionsController>("Dreka", 1, 0, "MissionsController");
     qmlRegisterType<presentation::MissionOperationController>("Dreka", 1, 0,
                                                               "MissionOperationController");
-    qmlRegisterType<presentation::MissionRouteController>("Dreka", 1, 0, "MissionRouteController");
+    qmlRegisterType<presentation::VehicleMissionController>("Dreka", 1, 0,
+                                                            "VehicleMissionController");
 
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);

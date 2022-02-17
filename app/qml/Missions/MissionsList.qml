@@ -6,7 +6,7 @@ import Industrial.Widgets 1.0 as Widgets
 Controls.Pane {
     id: root
 
-    signal expand(var routeId)
+    signal expand(var vehicleId)
 
     width: Controls.Theme.baseSize * 13
 
@@ -20,30 +20,19 @@ Controls.Pane {
             Controls.FilterField {
                 id: filterField
                 flat: true
-                placeholderText: qsTr("Filter routes")
+                placeholderText: qsTr("Filter missions")
                 Layout.fillWidth: true
-            }
-
-            Controls.MenuButton {
-                flat: true
-                iconSource: "qrc:/icons/plus.svg"
-                model: controller.routeTypes
-                delegate: Controls.MenuItem {
-                    text: modelData.name
-                    onTriggered: controller.addNewRoute(modelData.id)
-                }
             }
         }
 
         Widgets.ListWrapper {
-            emptyText: qsTr("No routes")
-            model: controller.routeIds
-            delegate: RouteListItem {
+            emptyText: qsTr("No missions")
+            model: controller.missions
+            delegate: MissionsListItem {
                 width: parent.width
                 height: visible ? implicitHeight : 0
-                visible: route && route.name.indexOf(filterField.text) > -1
-                routeId: modelData
-                onExpand: root.expand(routeId)
+                visible: mission.name.indexOf(filterField.text) > -1
+                mission: modelData
             }
             Layout.fillWidth: true
             Layout.fillHeight: true

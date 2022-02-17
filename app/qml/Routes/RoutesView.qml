@@ -16,6 +16,28 @@ RowLayout {
     readonly property alias selectedRoute: controller.selectedRoute
     readonly property alias selectedRouteItemIndex: controller.selectedRouteItemIndex
 
+    Component.onCompleted: {
+        map.registerController("routesController", controller);
+        mapMenu.addSubmenu(addRouteItem);
+        mapMenu.addSubmenu(addPattern);
+    }
+
+    spacing: 1
+
+    RoutesController {
+        id: controller
+        onSelectedRouteChanged: {
+            if (controller.selectedRoute === undefined &&
+                    sidebar.sourceComponent == routeEditComponent)
+                sidebar.sourceComponent = routeListComponent;
+            else if (controller.selectedRoute !== undefined &&
+                     sidebar.sourceComponent == routeListComponent)
+                 sidebar.sourceComponent = routeEditComponent;
+
+            routePattern.selectRoute(controller.selectedRoute)
+        }
+    }
+
     Controls.Menu {
         id: addRouteItem
         title: qsTr("Add route item")
@@ -49,32 +71,10 @@ RowLayout {
         }
     }
 
-    RoutesController {
-        id: controller
-        onSelectedRouteChanged: {
-            if (controller.selectedRoute === undefined &&
-                    sidebar.sourceComponent == routeEditComponent)
-                sidebar.sourceComponent = routeListComponent;
-            else if (controller.selectedRoute !== undefined &&
-                     sidebar.sourceComponent == routeListComponent)
-                 sidebar.sourceComponent = routeEditComponent;
-
-            routePattern.selectRoute(controller.selectedRoute)
-        }
-    }
-
-    Component.onCompleted: {
-        map.registerController("routesController", controller);
-        mapMenu.addSubmenu(addRouteItem);
-        mapMenu.addSubmenu(addPattern);
-    }
-
-    spacing: 1
-
     Controls.Button {
         visible: controller.selectedRoute === undefined
         tipText: highlighted ? qsTr("Close routes list") : qsTr("Open routes list")
-        iconSource: "qrc:/icons/route.svg"
+        iconSource: "qrc:/icons/routes.svg"
         highlighted: sidebar.sourceComponent == routeListComponent
         onClicked: sidebar.sourceComponent = highlighted ? null : routeListComponent
     }
