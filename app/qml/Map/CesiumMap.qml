@@ -23,6 +23,11 @@ Item {
         onJavaScriptConsoleMessage: console.log(message)
     }
 
+    MapCross {
+        anchors.centerIn: parent
+        visible: mapControl.crossMode
+    }
+
     MapControlView {
         id: mapControl
         anchors.bottom: parent.bottom

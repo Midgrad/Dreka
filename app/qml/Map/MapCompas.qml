@@ -8,7 +8,7 @@ MapButton {
     property real pitch: 0
 
     implicitHeight: Controls.Theme.baseSize
-    tipText: qsTr("Reset orientation")
+    tipText: qsTr("North direction,\nclick to reset")
 
     Controls.ColoredIcon {
         id: icon

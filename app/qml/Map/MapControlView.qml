@@ -6,6 +6,7 @@ import Dreka 1.0
 RowLayout {
     id: root
 
+    property bool crossMode: false
     readonly property alias centerPosition: viewport.centerPosition
 
     MapViewportController { id: viewport }
@@ -26,10 +27,19 @@ RowLayout {
             onClicked: viewport.lookTo(0, -90, 1);
         }
 
+        MapButton {
+            id: cross
+            rightCropped: true
+            leftCropped: true
+            iconSource: crossMode ? ":/icons/cross.svg" : ":/icons/cursor.svg"
+            tipText: crossMode ? qsTr("Map center coordinates") : qsTr("Cursor coordinates")
+            onClicked: crossMode = !crossMode
+        }
+
         MapCoordinates {
             id: coordinates
-            latitude: viewport.cursorPosition.latitude ? viewport.cursorPosition.latitude : NaN
-            longitude: viewport.cursorPosition.longitude ? viewport.cursorPosition.longitude : NaN
+            latitude: crossMode ? viewport.centerPosition.latitude : viewport.cursorPosition.latitude
+            longitude: crossMode ? viewport.centerPosition.longitude : viewport.cursorPosition.longitude
         }
     }
 

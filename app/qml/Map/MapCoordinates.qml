@@ -40,7 +40,7 @@ RowLayout {
 
     MapButton {
         leftCropped: true
-        tipText: qsTr("Change format")
+        tipText: qsTr("Coordinates format")
         text: dmsFormat ? "DMS" : "X.X"
         onClicked: dmsFormat = !dmsFormat
     }

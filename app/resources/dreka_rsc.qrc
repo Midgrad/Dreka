@@ -2,6 +2,8 @@
     <qresource prefix="/icons">
         <file>dreka.svg</file>
         <file>compas.svg</file>
+        <file>cross.svg</file>
+        <file>cursor.svg</file>
         <file>dots.svg</file>
         <file>grid.svg</file>
         <file>layers.svg</file>
@@ -12,6 +14,7 @@
         <file>cancel_track.svg</file>
         <file>aim.svg</file>
         <file>route.svg</file>
+        <file>routes.svg</file>
         <file>generic_aircraft.svg</file>
         <file>fixed_wing.svg</file>
         <file>copter.svg</file>

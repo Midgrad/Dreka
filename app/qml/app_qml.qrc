@@ -10,6 +10,7 @@
         <file>Map/CesiumMap.qml</file>
         <file>Map/MapButton.qml</file>
         <file>Map/MapCompas.qml</file>
+        <file>Map/MapCross.qml</file>
         <file>Map/MapControlView.qml</file>
         <file>Map/MapCoordinates.qml</file>
         <file>Map/MapGridView.qml</file>
