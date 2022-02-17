@@ -96,7 +96,7 @@ class CesiumWrapper {
                         routes.setRouteData(routeId, routeData);
 
                         if (routesController.selectedRoute === routeId)
-                            routes.setEditingRoute(routeId);
+                            routes.selectRoute(routeId);
 
                         for (var index = 0; index < routeData.items; ++index)
                             setRouteItem(routeId, index);

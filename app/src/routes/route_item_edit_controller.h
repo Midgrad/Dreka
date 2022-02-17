@@ -39,7 +39,6 @@ public slots:
     void changeItemType(const QString& typeId);
     void setPosition(double latitude, double longitude, float altitude);
     void setParameter(const QString& parameterId, const QVariant& value);
-    void remove();
 
 signals:
     void routeChanged();

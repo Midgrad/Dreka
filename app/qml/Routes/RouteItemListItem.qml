@@ -42,14 +42,18 @@ Item {
         spacing: 0
 
         Controls.Label {
-            text: routeItem ? routeItem.name + " " + (inRouteIndex + 1) : ""
-            Layout.minimumWidth: _wptWidth
+            text: inRouteIndex + 1
+            Layout.minimumWidth: Controls.Theme.baseSize
+        }
+
+        Controls.Label {
+            text: routeItem ? routeItem.name : ""
+            Layout.fillWidth: true
         }
 
         Controls.Label {
             text: routeItem ? routeItem.type : ""
             type: Controls.Theme.Label
-            Layout.minimumWidth: _typeWidth
         }
     }
 }

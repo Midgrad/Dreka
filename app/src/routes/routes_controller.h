@@ -39,6 +39,7 @@ public slots:
     void removeRoute(const QVariant& routeId);
     void addRouteItem(const QVariant& routeId, const QString& typeId, const QVariantMap& position);
     void updateRouteItemData(const QVariant& routeId, int index, const QJsonObject& data);
+    void removeRouteItem(const QVariant& routeId, int index);
 
 signals:
     void routeTypesChanged();

@@ -170,12 +170,3 @@ void RouteItemEditController::setParameter(const QString& parameterId, const QVa
     m_routeItem->parameter(parameterId)->setValue(value);
     m_routesService->saveItem(m_route, m_routeItem);
 }
-
-void RouteItemEditController::remove()
-{
-    if (!m_route || !m_routeItem)
-        return;
-
-    m_route->removeItem(m_routeItem);
-    m_routesService->saveRoute(m_route);
-}

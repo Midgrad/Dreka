@@ -15,6 +15,8 @@ Item {
     property bool editName: false
 
     signal selectRouteItemIndex(int index)
+    signal center()
+    signal remove()
 
     onInRouteIndexChanged: editName = false
 
@@ -79,7 +81,25 @@ Item {
                 onClicked: selectRouteItemIndex(inRouteIndex + 1);
             }
 
-            // TODO: controller.centerRouteItem(routeItem.route, inRouteIndex);
+            Controls.Button {
+                flat: true
+                leftCropped: true
+                rightCropped: true
+                iconSource: "qrc:/icons/center.svg"
+                tipText: qsTr("Center")
+                onClicked: center()
+            }
+
+            Controls.Button {
+                flat: true
+                leftCropped: true
+                rightCropped: true
+                highlightColor: Controls.Theme.colors.negative
+                iconSource: "qrc:/icons/remove.svg"
+                enabled: !routeItem.current
+                tipText: qsTr("Remove")
+                onClicked: remove()
+            }
 
             Controls.Button {
                 flat: true

@@ -11,12 +11,7 @@ Controls.Frame {
 
     property bool editName: false
 
-    property int _wptWidth: column.width * 0.3
-    property int _typeWidth: column.width * 0.3
-    property int _dstWidth: column.width * 0.2
-    property int _altWidth: column.width * 0.2
-
-    width: Controls.Theme.baseSize * 15
+    width: Controls.Theme.baseSize * 13
 
     Connections {
         target: controller
@@ -81,8 +76,16 @@ Controls.Frame {
                 inRouteIndex: index
                 onClicked: controller.selectRouteItemIndex(index)
             }
+            Component.onCompleted: toIndex(controller.selectedRouteItemIndex, ListView.Center)
             Layout.fillWidth: true
             Layout.fillHeight: true
+        }
+
+        Controls.Separator {
+            color: Controls.Theme.colors.text
+            visible: itemEdit.visible
+            opacity: 0.33
+            Layout.fillWidth: true
         }
 
         RouteItemEditView {
@@ -91,6 +94,9 @@ Controls.Frame {
             route: controller.selectedRoute
             inRouteIndex: controller.selectedRouteItemIndex
             onSelectRouteItemIndex: controller.selectRouteItemIndex(index)
+            onCenter: controller.centerRouteItem(route, inRouteIndex)
+            onRemove: controller.removeRouteItem(route, inRouteIndex)
+            onInRouteIndexChanged: list.toIndex(inRouteIndex, ListView.Center);
             Layout.fillWidth: true
         }
     }

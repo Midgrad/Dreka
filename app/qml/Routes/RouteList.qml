@@ -9,7 +9,7 @@ Controls.Frame {
 
     signal expand(var routeId)
 
-    width: Controls.Theme.baseSize * 15
+    width: Controls.Theme.baseSize * 13
 
     ColumnLayout {
         anchors.fill: parent

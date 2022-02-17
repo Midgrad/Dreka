@@ -218,8 +218,20 @@ void RoutesController::updateRouteItemData(const QVariant& routeId, int index,
 
     routeItem->fromVariantMap(data.toVariantMap());
     m_routesService->saveItem(route, routeItem);
+}
 
-    // TODO: Promoute to the vehicle
+void RoutesController::removeRouteItem(const QVariant& routeId, int index)
+{
+    Route* route = m_routesService->route(routeId);
+    if (!route)
+        return;
+
+    RouteItem* routeItem = route->item(index);
+    if (!routeItem)
+        return;
+
+    route->removeItem(routeItem);
+    m_routesService->saveItem(route, routeItem);
 }
 
 void RoutesController::onRouteAdded(Route* route)
@@ -231,10 +243,13 @@ void RoutesController::onRouteAdded(Route* route)
         emit routeItemAdded(route->id, index);
     });
     connect(route, &Route::itemRemoved, this, [this, route](int index, RouteItem*) {
-        if (index < m_selectedRouteItemIndex)
+        if (index == m_selectedRouteItemIndex)
         {
-            m_selectedRouteItemIndex--;
-            emit selectedRouteItemIndexChanged(m_selectedRouteItemIndex);
+            this->selectRouteItemIndex(-1);
+        }
+        else if (index < m_selectedRouteItemIndex)
+        {
+            this->selectRouteItemIndex(m_selectedRouteItemIndex - 1);
         }
         emit routeItemRemoved(route->id, index);
     });

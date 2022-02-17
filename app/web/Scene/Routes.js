@@ -88,12 +88,12 @@ class Route {
         if (this.highlightIndex === index)
             return;
 
-        if (this.highlightIndex >= 0)
+        if (this.highlightIndex >= 0 && this.highlightIndex < this.items.length)
             this.items[this.highlightIndex].setHighlighted(false);
 
         this.highlightIndex = index;
 
-        if (this.highlightIndex >= 0)
+        if (this.highlightIndex >= 0 && this.highlightIndex < this.items.length)
             this.items[this.highlightIndex].setHighlighted(true);
     }
 
