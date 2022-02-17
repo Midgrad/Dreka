@@ -30,11 +30,14 @@ Item {
 
         Controls.MenuItem {
             text: qsTr("Edit")
+            enabled: routes.selectedRoute !== controller.route
+                     || routes.selectedRouteItemIndex != controller.inRouteIndex
             onTriggered: routes.select(controller.route, controller.inRouteIndex)
         }
 
         Controls.MenuItem {
             text: qsTr("Remove")
+            enabled: routes.selectedRoute === controller.route
             onTriggered: controller.remove()
         }
     }

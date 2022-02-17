@@ -14,6 +14,13 @@ class RouteItem extends ComplexSign {
     name() {
         return this.data.name + " " + (this.index + 1).toString();
     }
+
+    setEditMode(editMode) {
+        for (const sign of this.signs) {
+            sign.draggable = editMode;
+        }
+        this.normalColor = editMode ? Cesium.Color.YELLOW : Cesium.Color.WHITE;
+    }
 }
 
 class Route {
@@ -59,7 +66,7 @@ class Route {
         } else if (this.items.length === index) {
             var item = new RouteItem(this.viewer, this.interaction, index);
             item.update(data);
-            item.setEnabled(this.editMode);
+            item.setEditMode(this.editMode);
             this.items.push(item);
 
             // Callbacks
@@ -79,9 +86,9 @@ class Route {
         }
     }
 
-    setEnabled(editMode) {
+    setEditMode(editMode) {
         this.editMode = editMode;
-        this.items.forEach(item => item.setEnabled(editMode));
+        this.items.forEach(item => item.setEditMode(editMode));
     }
 
     highlightItem(index) {
@@ -147,7 +154,9 @@ class Route {
                 positions: new Cesium.CallbackProperty(() => { return [first.position,
                                                                        second.position]; }, false),
                 arcType: Cesium.ArcType.GEODESIC,
-                material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.WHITE),
+                material: new Cesium.PolylineArrowMaterialProperty(new Cesium.CallbackProperty(() => {
+                    return that.editMode ? Cesium.Color.YELLOW : Cesium.Color.WHITE;
+                })),
                 width: 8.0
             }
         });
@@ -219,7 +228,7 @@ class Routes {
 
         var route = this.routes.has(this.selectedRoute) ? this.routes.get(this.selectedRoute) : null;
         if (route) {
-            route.setEnabled(false);
+            route.setEditMode(false);
             route.highlightItem(-1);
         }
 
@@ -227,7 +236,7 @@ class Routes {
 
         route = this.routes.has(routeId) ? this.routes.get(routeId) : null;
         if (route) {
-            route.setEnabled(true);
+            route.setEditMode(true);
         }
     }
 

@@ -80,8 +80,9 @@ class SvgSign extends SignBase {
                                                        ? Cesium.Color.AQUA
                                                        : sign.data.current
                                                        ? Cesium.Color.MAGENTA : sign.data.reached
-                                                       ? Cesium.Color.AQUAMARINE : Cesium.Color.WHITE }),
-                disableDepthTestDistance: Number.POSITIVE_INFINITY
+                                                       ? Cesium.Color.AQUAMARINE : sign.normalColor }),
+                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                show: new Cesium.CallbackProperty(() => { return sign.validPosition; }, false)
             },
             label: {
                 showBackground: true,
@@ -89,10 +90,8 @@ class SvgSign extends SignBase {
                 font: "13px Helvetica",
                 disableDepthTestDistance: Number.POSITIVE_INFINITY,
                 text: new Cesium.CallbackProperty(() => { return sign.name(); }),
-                show: new Cesium.CallbackProperty(() => { return that.enabled && !that.selected; },
-                                                  false)
-            },
-            show: new Cesium.CallbackProperty(() => { return sign.validPosition; }, false)
+                show: new Cesium.CallbackProperty(() => { return that.hovered && !that.selected; }, false)
+            }
         });
     }
 
@@ -146,7 +145,8 @@ class PylonSign extends SignBase {
                      return [sign.position, sign.terrainPosition];
                  }, false),
                  arcType: Cesium.ArcType.NONE,
-                 material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.WHITE),
+                 material: new Cesium.PolylineArrowMaterialProperty(
+                               new Cesium.CallbackProperty(() => { return sign.normalColor; })),
                  width: 4.0,
                  show: new Cesium.CallbackProperty(() => { return sign.validTerrain; }, false)
              },
@@ -179,7 +179,7 @@ class LoiterSign extends SignBase {
                 outlineWidth: new Cesium.CallbackProperty(() => {
                     return that.hovered ? that.hoveredWidth : that.normalWidth;
                 }, false),
-                outlineColor: Cesium.Color.WHITE
+                outlineColor: new Cesium.CallbackProperty(() => { return sign.normalColor; })
             }
         });
         // TODO: show loiter direction
@@ -296,6 +296,7 @@ class ComplexSign {
         this.highlighted = false;
 
         // Visual
+        this.normalColor = Cesium.Color.WHITE;
         this.signs = []
 
         if (svg)

@@ -13,6 +13,9 @@ RowLayout {
             sidebar.sourceComponent = routeEditComponent;
     }
 
+    readonly property alias selectedRoute: controller.selectedRoute
+    readonly property alias selectedRouteItemIndex: controller.selectedRouteItemIndex
+
     Controls.Menu {
         id: addRouteItem
         title: qsTr("Add route item")
