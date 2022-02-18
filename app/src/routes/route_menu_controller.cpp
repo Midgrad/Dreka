@@ -51,6 +51,11 @@ void RouteMenuController::invokeMenu(const QVariant& routeId, int index, double 
         emit menuInvoked(x, y);
 }
 
+void RouteMenuController::drop()
+{
+    emit dropped();
+}
+
 void RouteMenuController::remove()
 {
     if (!m_route || !m_routeItem)

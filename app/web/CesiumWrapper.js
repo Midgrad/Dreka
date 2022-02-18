@@ -65,7 +65,8 @@ class CesiumWrapper {
                     that.viewport.lookTo(heading, pitch, duration);
                 });
 
-                that.viewport.subscribeCamera((heading, pitch, cameraPosition, centerPosition, pixelScale) => {
+                that.viewport.subscribeCamera((heading, pitch, cameraPosition, centerPosition,
+                                               pixelScale, changed) => {
                     viewportController.heading = heading;
                     viewportController.pitch = pitch;
                     viewportController.cameraPosition = cameraPosition;
@@ -73,7 +74,9 @@ class CesiumWrapper {
                     viewportController.pixelScale = pixelScale;
                 });
 
-                that.viewport.subscribeCursor((cursorPosition) => { viewportController.cursorPosition = cursorPosition; });
+                that.viewport.subscribeCursor((cursorPosition) => {
+                    viewportController.cursorPosition = cursorPosition;
+                });
                 viewportController.restore();
                 that.viewport.tick();
             }
@@ -125,6 +128,11 @@ class CesiumWrapper {
                     routes.routeItemClickedCallback = (routeId, index, x, y) => {
                         routeMenuController.invokeMenu(routeId, index, x, y);
                     }
+                    that.viewport.subscribeCamera((heading, pitch, cameraPosition, centerPosition,
+                                                   pixelScale, changed) => {
+                        if (changed)
+                            routeMenuController.drop();
+                    });
                 }
 
                 var routePatternController = channel.objects.routePatternController;
@@ -217,7 +225,11 @@ class CesiumWrapper {
                                           latitude, longitude, altitude);
                     return true;
                 });
-                that.viewport.subscribeCamera(() => { menuController.drop(); });
+                that.viewport.subscribeCamera((heading, pitch, cameraPosition, centerPosition,
+                                               pixelScale, changed) => {
+                    if (changed)
+                        menuController.drop();
+                });
             }
         });
     }

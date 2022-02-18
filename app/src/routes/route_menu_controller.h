@@ -24,12 +24,14 @@ public:
 
 public slots:
     void invokeMenu(const QVariant& routeId, int index, double x, double y);
+    void drop();
 
     void remove();
     void gotoItem();
 
 signals:
     void routeItemChanged();
+    void dropped();
 
     void menuInvoked(double x, double y);
 

@@ -24,6 +24,9 @@ class Viewport {
         var newWidth = this.viewer.scene.canvas.clientWidth;
         var newHeight = this.viewer.scene.canvas.clientHeight
 
+        var changed = !Cesium.Cartographic.equals(this.cameraPosition, newCameraPosition)
+                        || this.width !== newWidth || this.height !== newHeight;
+
         // Get the camera position
         this.cameraPosition = newCameraPosition;
 
@@ -61,7 +64,7 @@ class Viewport {
 
         this.cameraHandlers.forEach(handler => handler(this.heading, this.pitch,
                                                        this.cameraPosition, this.centerPosition,
-                                                       this.pixelScale));
+                                                       this.pixelScale, changed));
     }
 
     onMove(cartesian) {

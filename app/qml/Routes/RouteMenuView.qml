@@ -13,6 +13,7 @@ Item {
     RouteMenuController {
         id: controller
         onMenuInvoked: menu.open(x, y)
+        onDropped: menu.close()
     }
 
     Component.onCompleted: map.registerController("routeMenuController", controller)
