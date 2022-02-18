@@ -82,7 +82,8 @@ class SvgSign extends SignBase {
                                                        ? Cesium.Color.MAGENTA : sign.data.reached
                                                        ? Cesium.Color.AQUAMARINE : sign.normalColor }),
                 disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                show: new Cesium.CallbackProperty(() => { return sign.validPosition; }, false)
+                show: new Cesium.CallbackProperty(() => { return sign.visible && sign.validPosition;
+                                                  }, false)
             },
             label: {
                 showBackground: true,
@@ -90,14 +91,13 @@ class SvgSign extends SignBase {
                 font: "13px Helvetica",
                 disableDepthTestDistance: Number.POSITIVE_INFINITY,
                 text: new Cesium.CallbackProperty(() => { return sign.name(); }),
-                show: new Cesium.CallbackProperty(() => { return that.hovered && !that.selected; }, false)
+                show: new Cesium.CallbackProperty(() => { return sign.visible && that.hovered
+                                                                 && !that.selected; }, false)
             }
         });
     }
 
-    clear() {
-        this.viewer.entities.remove(this.point);
-    }
+    clear() { this.viewer.entities.remove(this.point); }
 
     flyTo() {
         this.viewer.flyTo(this.point);
@@ -148,14 +148,13 @@ class PylonSign extends SignBase {
                  material: new Cesium.PolylineArrowMaterialProperty(
                                new Cesium.CallbackProperty(() => { return sign.normalColor; })),
                  width: 4.0,
-                 show: new Cesium.CallbackProperty(() => { return sign.validTerrain; }, false)
+                 show: new Cesium.CallbackProperty(() => { return sign.visible && sign.validTerrain;
+                                                   }, false)
              },
         });
     }
 
-    clear() {
-        this.viewer.entities.remove(this.pylon);
-    }
+    clear() { this.viewer.entities.remove(this.pylon); }
 }
 
 class LoiterSign extends SignBase {
@@ -179,21 +178,20 @@ class LoiterSign extends SignBase {
                 outlineWidth: new Cesium.CallbackProperty(() => {
                     return that.hovered ? that.hoveredWidth : that.normalWidth;
                 }, false),
-                outlineColor: new Cesium.CallbackProperty(() => { return sign.normalColor; })
+                outlineColor: new Cesium.CallbackProperty(() => { return sign.normalColor; }),
+                show: new Cesium.CallbackProperty(() => { return sign.visible && sign.validTerrain;
+                                                  }, false)
             }
         });
         // TODO: show loiter direction
     }
 
-    clear() {
-        this.viewer.entities.remove(this.loiter);
-    }
+    clear() { this.viewer.entities.remove(this.loiter); }
 
     rebuild() {
         var params = this.sign.data.params;
         var position = this.sign.data.position;
         var loiterRadius = params && params.radius ? params.radius : 0;
-        this.loiter.ellipse.show = loiterRadius > 0 && this.sign.validPosition;
         this.loiter.ellipse.semiMinorAxis = loiterRadius;
         this.loiter.ellipse.semiMajorAxis = loiterRadius;
         this.loiter.ellipse.height = position && position.altitude ? position.altitude : 0;
@@ -233,21 +231,21 @@ class AcceptSign extends SignBase {
             ellipse: {
                 material: Cesium.Color.CADETBLUE.withAlpha(0.5),
                 outline: true,
-                outlineWidth: new Cesium.CallbackProperty(() => { return that.hovered ? 3.0 : 2.0; }, false),
-                outlineColor: Cesium.Color.CADETBLUE.withAlpha(0.5)
+                outlineWidth: new Cesium.CallbackProperty(() => { return that.hovered ? 3.0 : 2.0;
+                                                          }, false),
+                outlineColor: Cesium.Color.CADETBLUE.withAlpha(0.5),
+                show: new Cesium.CallbackProperty(() => { return sign.visible && sign.validTerrain;
+                                                  }, false)
             }
         });
     }
 
-    clear() {
-        this.viewer.entities.remove(this.accept);
-    }
+    clear() { this.viewer.entities.remove(this.accept); }
 
     rebuild() {
         var params = this.sign.data.params;
         var position = this.sign.data.position;
         var acceptRadius = params && params.accept_radius ? params.accept_radius : 0;
-        this.accept.ellipse.show = acceptRadius > 0 && this.sign.validPosition;
         this.accept.ellipse.semiMinorAxis = acceptRadius;
         this.accept.ellipse.semiMajorAxis = acceptRadius;
         this.accept.ellipse.height = position && position.altitude ? position.altitude : 0;
@@ -287,6 +285,7 @@ class ComplexSign {
         this.interaction = interaction;
 
         this.changed = false;
+        this.visible = true;
         this.position = Cesium.Cartesian3.ZERO;
         this.validPosition = false;
         this.terrainPosition = Cesium.Cartesian3.ZERO;
@@ -310,9 +309,7 @@ class ComplexSign {
     }
 
     clear() {
-        for (const sign of this.signs) {
-            sign.clear();
-        }
+        for (const sign of this.signs) { sign.clear(); }
     }
 
     /**
@@ -356,16 +353,14 @@ class ComplexSign {
             this.terrainPosition = Cesium.Cartesian3.ZERO;
         }
 
-        for (const sign of this.signs) {
-            sign.rebuild()
-        }
+        for (const sign of this.signs) { sign.rebuild(); }
     }
 
     setEnabled(enabled) {
-        for (const sign of this.signs) {
-            sign.setEnabled(enabled)
-        }
+        for (const sign of this.signs) { sign.setEnabled(enabled); }
     }
+
+    setVisible(visible) { this.visible = visible; }
 
     flyTo() {
         for (const sign of this.signs) {
@@ -374,15 +369,11 @@ class ComplexSign {
         }
     }
 
-    name() {
-        return this.data.name;
-    }
+    name() { return this.data.name; }
 
     selfPosition() {
         return Cesium.SceneTransforms.wgs84ToWindowCoordinates(this.viewer.scene, this.position);
     }
 
-    setHighlighted(highlighted) {
-        this.highlighted = highlighted;
-    }
+    setHighlighted(highlighted) { this.highlighted = highlighted; }
 }

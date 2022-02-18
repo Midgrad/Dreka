@@ -111,6 +111,9 @@ void RoutesController::selectRoute(const QVariant& selectedRouteId)
     if (m_selectedRoute == selectedRoute)
         return;
 
+    if (selectedRoute)
+        selectedRoute->visible.set(true);
+
     m_selectedRoute = selectedRoute;
     emit selectedRouteChanged(selectedRouteId);
 

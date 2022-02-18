@@ -37,6 +37,8 @@ class Route {
         this.routeItemClickedCallback = null;
 
         // Data
+        this.name = "";
+        this.visible = true;
         this.editMode = false;
         this.highlightIndex = -1;
 
@@ -56,8 +58,9 @@ class Route {
     }
 
     setRouteData(routeData) {
-        //this.visible = routeData.visible;
         this.name = routeData.name;
+        this.visible = routeData.visible;
+        this.items.forEach(item => item.setVisible(this.visible));
     }
 
     setRouteItem(index, data) {
@@ -67,6 +70,7 @@ class Route {
             var item = new RouteItem(this.viewer, this.interaction, index);
             item.update(data);
             item.setEditMode(this.editMode);
+            item.setVisible(this.visible);
             this.items.push(item);
 
             // Callbacks
@@ -149,8 +153,9 @@ class Route {
         var that = this;
         var line = this.viewer.entities.add({
             polyline: {
-                show: new Cesium.CallbackProperty(() => { return first.validPosition &&
-                                                                 second.validPosition; }, false),
+                show: new Cesium.CallbackProperty(() => {
+                    return that.visible && first.validPosition && second.validPosition;
+                }, false),
                 positions: new Cesium.CallbackProperty(() => { return [first.position,
                                                                        second.position]; }, false),
                 arcType: Cesium.ArcType.GEODESIC,

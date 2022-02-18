@@ -45,6 +45,7 @@ Item {
             Controls.Label {
                 text: route ? route.name : ""
                 Layout.alignment: Qt.AlignVCenter
+                Layout.maximumWidth: Controls.Theme.baseSize * 5
             }
 
             Controls.Label {
@@ -61,13 +62,32 @@ Item {
             type: Controls.Theme.Label
         }
 
-        Controls.Button {
-            flat: true
-            radius: 0
-            iconSource: "qrc:/icons/center.svg"
-            tipText: qsTr("Center on route")
-            onClicked: controller.centerRoute(route.id)
-            Layout.alignment: Qt.AlignVCenter
+        RowLayout {
+            spacing: 1
+
+            Controls.Button {
+                flat: true
+                leftCropped: true
+                rightCropped: true
+                iconSource: "qrc:/icons/center.svg"
+                tipText: qsTr("Center on route")
+                onClicked: controller.centerRoute(route.id)
+                Layout.alignment: Qt.AlignVCenter
+            }
+
+            Controls.Button {
+                flat: true
+                leftCropped: true
+                rightCropped: true
+                iconSource: route.visible ? "qrc:/icons/password_show.svg" :
+                                            "qrc:/icons/password_hide.svg"
+                tipText: route.visible ? qsTr("Route visible") : qsTr("Route hidden")
+                onClicked: {
+                    route.visible = !route.visible;
+                    controller.updateRoute(route.id, route);
+                }
+                Layout.alignment: Qt.AlignVCenter
+            }
         }
 
         Controls.ColoredIcon {
