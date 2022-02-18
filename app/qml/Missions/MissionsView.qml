@@ -6,6 +6,16 @@ import Dreka 1.0
 RowLayout {
     id: root
 
+    function openMissions() {
+        controller.selectMission(null);
+        sidebar.sourceComponent = missionListComponent;
+    }
+
+    function selectMission(missionId) {
+        controller.selectMission(missionId);
+        sidebar.sourceComponent = missionEditComponent;
+    }
+
     spacing: 1
 
     MissionsController { id: controller }
@@ -14,12 +24,22 @@ RowLayout {
         tipText: highlighted ? qsTr("Close missions list") : qsTr("Open missions list")
         iconSource: "qrc:/icons/mission.svg"
         highlighted: sidebar.sourceComponent == missionListComponent
+                     || sidebar.sourceComponent == missionEditComponent
         onClicked: sidebar.sourceComponent = highlighted ? null : missionListComponent
     }
 
     Component {
         id: missionListComponent
 
-        MissionsList {}
+        MissionList { onExpand: selectMission(missionId) }
+    }
+
+    Component {
+        id: missionEditComponent
+
+        MissionEditView {
+            mission: controller.selectedMission
+            onBack: openMissions()
+        }
     }
 }

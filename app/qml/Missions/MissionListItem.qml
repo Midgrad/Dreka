@@ -33,9 +33,18 @@ Item { // TODO: base expandable
         anchors.leftMargin: Controls.Theme.margins
         spacing: Controls.Theme.spacing
 
-        Controls.Label {
-            text: mission ? mission.name : ""
-            Layout.alignment: Qt.AlignVCenter
+        ColumnLayout {
+            spacing: 1
+
+            Controls.Label {
+                text: mission ? mission.name : ""
+                Layout.alignment: Qt.AlignVCenter
+            }
+
+            Controls.Label {
+                text: mission.id ? mission.type : ""
+                type: Controls.Theme.Label
+            }
         }
 
         Item { Layout.fillWidth: true }

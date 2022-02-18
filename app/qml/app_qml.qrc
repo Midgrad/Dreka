@@ -27,10 +27,10 @@
         <file>Routes/RouteItemEditView.qml</file>
         <file>Routes/RouteMenuView.qml</file>
         <file>Routes/RoutePatternView.qml</file>
-        <file>Missions/MissionOperationView.qml</file>
         <file>Missions/MissionsView.qml</file>
-        <file>Missions/MissionsList.qml</file>
-        <file>Missions/MissionsListItem.qml</file>
+        <file>Missions/MissionList.qml</file>
+        <file>Missions/MissionListItem.qml</file>
+        <file>Missions/MissionEditView.qml</file>
         <file>Vehicles/VehiclesView.qml</file>
         <file>Vehicles/VehiclesListView.qml</file>
         <file>Vehicles/Vehicle.qml</file>

@@ -32,7 +32,7 @@ Item {
             text: qsTr("Edit")
             enabled: routes.selectedRoute !== controller.route
                      || routes.selectedRouteItemIndex != controller.inRouteIndex
-            onTriggered: routes.select(controller.route, controller.inRouteIndex)
+            onTriggered: routes.selectRouteItem(controller.route, controller.inRouteIndex)
         }
 
         Controls.MenuItem {

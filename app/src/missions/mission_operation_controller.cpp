@@ -9,52 +9,21 @@ using namespace md::presentation;
 
 MissionOperationController::MissionOperationController(QObject* parent) :
     QObject(parent),
-    m_missionsService(md::app::Locator::get<IMissionsService>()),
-    m_routesService(md::app::Locator::get<IRoutesService>())
+    m_missionsService(md::app::Locator::get<IMissionsService>())
 {
     Q_ASSERT(m_missionsService);
-    Q_ASSERT(m_routesService);
 
     connect(m_missionsService, &IMissionsService::operationStarted, this,
             [this](MissionOperation* operation) {
-                if (m_mission && m_mission == operation->mission())
+                if (m_missionId == operation->mission()->id())
                     this->setOperation(operation);
             });
     connect(m_missionsService, &IMissionsService::operationEnded, this,
             [this](MissionOperation* operation) {
                 if (m_operation == operation)
                     this->setOperation(nullptr);
+                m_missionId = QVariant();
             });
-
-    connect(m_routesService, &IRoutesService::routeAdded, this, [this](Route* route) {
-        connect(route, &Route::changed, this, &MissionOperationController::routesChanged);
-        emit routesChanged();
-    });
-    connect(m_routesService, &IRoutesService::routeRemoved, this, [this](Route* route) {
-        disconnect(route, nullptr, this, nullptr);
-        emit routesChanged();
-    });
-
-    for (Route* route : m_routesService->routes())
-    {
-        connect(route, &Route::changed, this, &MissionOperationController::routesChanged);
-    }
-}
-
-QVariant MissionOperationController::missionId() const
-{
-    if (!m_mission)
-        return QVariant();
-
-    return m_mission->id;
-}
-
-QJsonObject MissionOperationController::mission() const
-{
-    if (!m_mission)
-        return QJsonObject();
-
-    return QJsonObject::fromVariantMap(m_mission->toVariantMap());
 }
 
 QJsonObject MissionOperationController::operation() const
@@ -65,102 +34,40 @@ QJsonObject MissionOperationController::operation() const
     return QJsonObject::fromVariantMap(m_operation->toVariantMap());
 }
 
-QJsonArray MissionOperationController::routes() const
+void MissionOperationController::upload(const QVariant& missionId)
 {
-    QJsonArray jsons;
-
-    jsons.append(QJsonObject::fromVariantMap(
-        { { props::id, QVariant() }, { props::name, tr("No route") } }));
-    for (Route* route : m_routesService->routes())
-    {
-        jsons.append(QJsonObject::fromVariantMap(route->toVariantMap()));
-    }
-
-    return jsons;
+    this->startOperation(missionId, MissionOperation::Upload);
 }
 
-void MissionOperationController::setMissionId(const QVariant& missionId)
+void MissionOperationController::download(const QVariant& missionId)
 {
-    this->setMission(m_missionsService->mission(missionId));
+    this->startOperation(missionId, MissionOperation::Download);
 }
 
-void MissionOperationController::setMission(Mission* mission)
+void MissionOperationController::clear(const QVariant& missionId)
 {
-    if (m_mission == mission)
-        return;
-
-    if (m_mission)
-        disconnect(m_mission, nullptr, this, nullptr);
-
-    m_mission = mission;
-    m_operation = m_missionsService->operationForMission(mission);
-
-    if (m_mission)
-        connect(m_mission, &Mission::routeChanged, this,
-                &MissionOperationController::missionChanged);
-
-    emit missionChanged();
-    emit operationChanged();
+    this->startOperation(missionId, MissionOperation::Clear);
 }
 
-void MissionOperationController::assignRoute(const QVariant& routeId)
+void MissionOperationController::cancel(const QVariant& missionId)
 {
-    if (!m_mission)
-        return;
+    Q_UNUSED(missionId) // For future uses
 
-    Route* route = m_routesService->route(routeId);
-
-    m_mission->assignRoute(route);
-    m_missionsService->saveMission(m_mission);
-}
-
-void MissionOperationController::rename(const QString& name)
-{
-    if (!m_mission)
-        return;
-
-    m_mission->name.set(name);
-    m_missionsService->saveMission(m_mission);
-}
-
-void MissionOperationController::remove()
-{
-    if (!m_mission)
-        return;
-
-    m_missionsService->removeMission(m_mission);
-}
-
-void MissionOperationController::upload()
-{
-    if (!m_mission)
-        return;
-
-    m_missionsService->startOperation(m_mission, MissionOperation::Upload);
-}
-
-void MissionOperationController::download()
-{
-    if (!m_mission)
-        return;
-
-    m_missionsService->startOperation(m_mission, MissionOperation::Download);
-}
-
-void MissionOperationController::clear()
-{
-    if (!m_mission)
-        return;
-
-    m_missionsService->startOperation(m_mission, MissionOperation::Clear);
-}
-
-void MissionOperationController::cancel()
-{
     if (!m_operation)
         return;
 
     m_missionsService->endOperation(m_operation, MissionOperation::Canceled);
+}
+
+void MissionOperationController::startOperation(const QVariant& missionId,
+                                                domain::MissionOperation::Type type)
+{
+    domain::Mission* mission = m_missionsService->mission(missionId);
+    if (!mission)
+        return;
+
+    m_missionId = missionId;
+    m_missionsService->startOperation(mission, type);
 }
 
 void MissionOperationController::setOperation(domain::MissionOperation* operation)

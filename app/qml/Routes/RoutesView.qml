@@ -6,15 +6,24 @@ import Dreka 1.0
 RowLayout {
     id: root
 
-    function select(routeId, index, open = true) {
+    readonly property alias selectedRoute: controller.selectedRoute
+    readonly property alias selectedRouteItemIndex: controller.selectedRouteItemIndex
+
+    function openRoutes() {
+        sidebar.sourceComponent = routeListComponent;
+        controller.selectRoute(null);
+    }
+
+    function selectRoute(routeId, open = true) {
         controller.selectRoute(routeId);
-        controller.selectRouteItemIndex(index);
         if (open)
             sidebar.sourceComponent = routeEditComponent;
     }
 
-    readonly property alias selectedRoute: controller.selectedRoute
-    readonly property alias selectedRouteItemIndex: controller.selectedRouteItemIndex
+    function selectRouteItem(routeId, index, open = true) {
+        selectRoute(routeId, open);
+        controller.selectRouteItemIndex(index);
+    }
 
     Component.onCompleted: {
         map.registerController("routesController", controller);
@@ -84,11 +93,7 @@ RowLayout {
         visible: controller.selectedRoute !== undefined
         iconSource: "qrc:/icons/left.svg"
         tipText: qsTr("Back to routes")
-        onClicked: {
-            if (sidebar.sourceComponent == routeEditComponent)
-                sidebar.sourceComponent = routeListComponent;
-            controller.selectRoute(null);
-        }
+        onClicked: openRoutes()
     }
 
     Controls.Button {
@@ -103,9 +108,7 @@ RowLayout {
     Component {
         id: routeListComponent
 
-        RouteList {
-            onExpand: controller.selectRoute(routeId);
-        }
+        RouteList { onExpand: controller.selectRoute(routeId); }
     }
 
     Component {

@@ -6,7 +6,7 @@ import Industrial.Widgets 1.0 as Widgets
 Controls.Pane {
     id: root
 
-    signal expand(var vehicleId)
+    signal expand(var missionId)
 
     width: Controls.Theme.baseSize * 13
 
@@ -28,11 +28,12 @@ Controls.Pane {
         Widgets.ListWrapper {
             emptyText: qsTr("No missions")
             model: controller.missions
-            delegate: MissionsListItem {
+            delegate: MissionListItem {
                 width: parent.width
                 height: visible ? implicitHeight : 0
                 visible: mission.name.indexOf(filterField.text) > -1
                 mission: modelData
+                onExpand: root.expand(mission.id)
             }
             Layout.fillWidth: true
             Layout.fillHeight: true

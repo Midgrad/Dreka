@@ -4,40 +4,79 @@ import Industrial.Controls 1.0 as Controls
 import Industrial.Widgets 1.0 as Widgets
 import Dreka 1.0
 
-// TODO: init mission controller from main
-Controls.Popup {
+Controls.Pane {
     id: root
 
-    property alias missionId: operationController.missionId
-
-    readonly property var mission: operationController.mission
+    property var mission
     readonly property var operation: operationController.operation
+    property bool editName: false
 
-    MissionOperationController { id: operationController }
+    signal back()
+
+    width: Controls.Theme.baseSize * 13
+
+    MissionOperationController {
+        id: operationController
+    }
 
     ColumnLayout {
         id: column
         anchors.fill: parent
-        spacing: Controls.Theme.spacing
 
-        Widgets.PropertyTable {
-            flat: true
-            labelWidth: Controls.Theme.baseSize * 3
-            Layout.fillWidth: true
+        RowLayout {
+            spacing: Controls.Theme.spacing
+
+            Controls.Button {
+                flat: true
+                rightCropped: true
+                iconSource: "qrc:/icons/left.svg"
+                tipText: qsTr("Back to missions")
+                onClicked: back()
+            }
+
+            Controls.Button {
+                flat: true
+                leftCropped: true
+                rightCropped: true
+                text: mission.id ? mission.name : ""
+                tipText: qsTr("Edit name")
+                visible: !editName
+                onClicked: editName = true
+                Layout.fillWidth: true
+            }
 
             Controls.TextField {
                 id: nameEdit
-                labelText: qsTr("Mission")
-                Binding on text { value: mission.name ? mission.name : ""; when: !nameEdit.activeFocus }
-                onEditingFinished: operationController.rename(text);
+                flat: true
+                visible: editName
+                Binding on text { value: mission ? mission.name : ""; when: !nameEdit.activeFocus }
+                onEditingFinished: {
+                    controller.renameMission(mission.id, text);
+                    editName = false;
+                }
+                Layout.fillWidth: true
+            }
+
+            Controls.Label {
+                text: mission.id ? mission.type : ""
+                type: Controls.Theme.Label
+            }
+        }
+
+        RowLayout {
+            spacing: Controls.Theme.spacing
+
+            Controls.Label {
+                text: qsTr("Route")
+                Layout.fillWidth: true
             }
 
             Controls.ComboBox {
                 id: routeBox
-                labelText: qsTr("Route")
-                model: operationController.routes
+                flat: true
+                model: controller.routes
                 textRole: "name"
-                onActivated: operationController.assignRoute(model[index].id);
+                onActivated: controller.assignRoute(model[index].id);
                 displayText: {
                     if (!mission)
                         return "";
@@ -49,6 +88,7 @@ Controls.Popup {
 
                     return ""
                 }
+                Layout.fillWidth: true
             }
         }
 
@@ -68,7 +108,7 @@ Controls.Popup {
                 flat: true
                 tipText: qsTr("Cancel")
                 text: progress.value + "/" + progress.to
-                onClicked: operationController.cancel()
+                onClicked: operationController.cancel(mission.id)
             }
         }
 
@@ -76,19 +116,19 @@ Controls.Popup {
             id: bar
             flat: true
             visible: operation.id === undefined
-            enabled: mission.id && mission.route && selectedVehicle.online ? true : false
+            enabled: mission.id && mission.route /*&& selectedVehicle.online*/ ? true : false
             Layout.fillWidth: true
 
             Controls.Button {
                 text: qsTr("Download")
                 borderColor: Controls.Theme.colors.controlBorder
-                onClicked: operationController.download()
+                onClicked: operationController.download(mission.id)
             }
 
             Controls.Button {
                 text: qsTr("Upload")
                 borderColor: Controls.Theme.colors.controlBorder
-                onClicked: operationController.upload()
+                onClicked: operationController.upload(mission.id)
             }
 
             Controls.Button {
@@ -96,25 +136,8 @@ Controls.Popup {
                 borderColor: Controls.Theme.colors.controlBorder
                 highlightColor: Controls.Theme.colors.negative
                 hoverColor: highlightColor
-                onClicked: operationController.clear()
+                onClicked: operationController.clear(mission.id )
             }
         }
-
-//        // TODO: ListButton
-//        Controls.Button {
-//            flat: true
-//            text: qsTr("Route")
-//            iconSource: routePropertiesVisible ? "qrc:/icons/down.svg" : "qrc:/icons/right.svg"
-//            onClicked: routePropertiesVisible = !routePropertiesVisible
-//            Layout.fillWidth: true
-//        }
-
-//        RouteView {
-//            id: routeList
-//            visible: routePropertiesVisible
-//            route: missionController.route(mission.id)
-//            Layout.fillWidth: true
-//            Layout.fillHeight: true
-//        }
     }
 }

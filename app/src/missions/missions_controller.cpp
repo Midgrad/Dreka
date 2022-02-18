@@ -24,6 +24,11 @@ MissionsController::MissionsController(QObject* parent) :
         emit missionsChanged();
     });
 
+    for (Mission* mission : m_missionsService->missions())
+    {
+        connect(mission, &Mission::changed, this, &MissionsController::routesChanged);
+    }
+
     connect(m_routesService, &IRoutesService::routeAdded, this, [this](Route* route) {
         connect(route, &Route::changed, this, &MissionsController::routesChanged);
         emit routesChanged();
@@ -32,6 +37,11 @@ MissionsController::MissionsController(QObject* parent) :
         disconnect(route, nullptr, this, nullptr);
         emit routesChanged();
     });
+
+    for (Route* route : m_routesService->routes())
+    {
+        connect(route, &Route::changed, this, &MissionsController::routesChanged);
+    }
 }
 
 QJsonArray MissionsController::missions() const
@@ -43,6 +53,14 @@ QJsonArray MissionsController::missions() const
     }
 
     return jsons;
+}
+
+QJsonObject MissionsController::selectedMission() const
+{
+    if (!m_selectedMission)
+        return QJsonObject();
+
+    return QJsonObject::fromVariantMap(m_selectedMission->toVariantMap());
 }
 
 QJsonArray MissionsController::routes() const
@@ -57,4 +75,42 @@ QJsonArray MissionsController::routes() const
     }
 
     return jsons;
+}
+
+void MissionsController::selectMission(const QVariant& missionId)
+{
+    Mission* mission = m_missionsService->mission(missionId);
+    if (m_selectedMission == mission)
+        return;
+
+    m_selectedMission = mission;
+    emit selectedMissionChanged();
+}
+
+void MissionsController::assignRoute(const QVariant& routeId)
+{
+    if (!m_selectedMission)
+        return;
+
+    Route* route = m_routesService->route(routeId);
+
+    m_selectedMission->assignRoute(route);
+    m_missionsService->saveMission(m_selectedMission);
+}
+
+void MissionsController::rename(const QString& name)
+{
+    if (!m_selectedMission)
+        return;
+
+    m_selectedMission->name.set(name);
+    m_missionsService->saveMission(m_selectedMission);
+}
+
+void MissionsController::remove()
+{
+    if (!m_selectedMission)
+        return;
+
+    m_missionsService->removeMission(m_selectedMission);
 }

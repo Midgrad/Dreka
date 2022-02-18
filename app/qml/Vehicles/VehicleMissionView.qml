@@ -8,11 +8,11 @@ Row {
 
     readonly property real availableWidth: width - missionButton.width - wpBox.width - spacing * 2
 
-    property alias vehicleId : missionRouteController.vehicleId
+    property alias vehicleId : vehicleMissionController.vehicleId
 
     spacing: 1
 
-    VehicleMissionController { id: missionRouteController }
+    VehicleMissionController { id: vehicleMissionController }
 
     Controls.MenuItem {
         id: navToItem
@@ -20,12 +20,12 @@ Row {
         text: qsTr("Nav to")
         onTriggered: {
             controller.sendCommand("setMode", [ "NavTo" ]); // FIXME: to domain, packed commands
-            missionRouteController.navTo(mapMenu.latitude, mapMenu.longitude);
+            vehicleMissionController.navTo(mapMenu.latitude, mapMenu.longitude);
         }
     }
 
     Component.onCompleted: {
-        map.registerController("missionRouteController", missionRouteController);
+        map.registerController("missionRouteController", vehicleMissionController);
         mapMenu.addItem(navToItem);
     }
 
@@ -36,10 +36,18 @@ Row {
         rightCropped: true
         iconSource: "qrc:/icons/route.svg"
         tipText: qsTr("Mission")
-        // highlighted: missionPopup.visible
         enabled: controller.selectedVehicle !== null
-        // onClicked: TODO: open missions window
-        // TODO: warning icon
+        onClicked: missions.selectMission(vehicleMissionController.mission.id)
+
+        Controls.ColoredIcon {
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.margins: Controls.Theme.margins * 0.4
+            width: parent.width * 0.4
+            height: width
+            source: ":/icons/ok.svg"
+            color: Controls.Theme.colors.positive // TODO: mission status icon
+        }
     }
 
     Controls.ComboBox {
@@ -48,12 +56,12 @@ Row {
         flat: true
         labelText: qsTr("WPT")
         enabled: selectedVehicle && selectedVehicle.online
-        model: missionRouteController.routeItems
-        displayText: missionRouteController.routeItems[missionRouteController.currentItem]
+        model: vehicleMissionController.routeItems
+        displayText: vehicleMissionController.routeItems[vehicleMissionController.currentItem]
         Binding on currentIndex {
-            value: missionRouteController.currentItem
+            value: vehicleMissionController.currentItem
             when: !wpBox.activeFocus
         }
-        onActivated: missionRouteController.switchItem(index)
+        onActivated: vehicleMissionController.switchItem(index)
     }
 }
