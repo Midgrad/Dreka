@@ -87,17 +87,6 @@ void MissionsController::selectMission(const QVariant& missionId)
     emit selectedMissionChanged();
 }
 
-void MissionsController::assignRoute(const QVariant& routeId)
-{
-    if (!m_selectedMission)
-        return;
-
-    Route* route = m_routesService->route(routeId);
-
-    m_selectedMission->assignRoute(route);
-    m_missionsService->saveMission(m_selectedMission);
-}
-
 void MissionsController::rename(const QString& name)
 {
     if (!m_selectedMission)

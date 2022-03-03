@@ -25,7 +25,6 @@ public:
 
 public slots:
     void selectMission(const QVariant& missionId);
-    void assignRoute(const QVariant& routeId);
     void rename(const QString& name);
     void remove();
 
