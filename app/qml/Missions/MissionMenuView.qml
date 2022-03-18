@@ -10,13 +10,13 @@ Item {
 
     signal centerRouteItem(var routeId, int index)
 
-    RouteMenuController {
+    MissionMenuController {
         id: controller
         onMenuInvoked: menu.open(x, y)
         onDropped: menu.close()
     }
 
-    Component.onCompleted: map.registerController("routeMenuController", controller)
+    Component.onCompleted: map.registerController("missionMenuController", controller)
 
     PointedMenu {
         id: menu
@@ -31,14 +31,14 @@ Item {
 
         Controls.MenuItem {
             text: qsTr("Edit")
-            enabled: routes.selectedRoute !== controller.route
-                     || routes.selectedRouteItemIndex != controller.inRouteIndex
-            onTriggered: routes.selectRouteItem(controller.route, controller.inRouteIndex)
+            enabled: missions.selectedMission != controller.route
+                     || missions.selectedItemIndex != controller.inRouteIndex
+            onTriggered: missions.selectMissionItem(controller.route, controller.inRouteIndex)
         }
 
         Controls.MenuItem {
             text: qsTr("Remove")
-            enabled: routes.selectedRoute === controller.route
+            enabled: missions.selectedMission == controller.route
             onTriggered: controller.remove()
         }
     }

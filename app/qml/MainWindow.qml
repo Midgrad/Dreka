@@ -4,7 +4,6 @@ import Industrial.Controls 1.0 as Controls
 import Dreka 1.0
 
 import "Map"
-import "Routes"
 import "Missions"
 import "Vehicles"
 
@@ -29,12 +28,12 @@ Controls.ApplicationWindow {
         anchors.fill: map
     }
 
-    RouteMenuView {
-        id: routeMenu
+    MissionMenuView {
+        id: missionMenu
         anchors.fill: map
     }
 
-    RoutePatternView { id: routePattern }
+    MissionPatternView { id: missionPattern }
 
     RowLayout {
         id: menuBar
@@ -49,7 +48,6 @@ Controls.ApplicationWindow {
             Loader { source: modelData }
         }
 
-        RoutesView { id: routes }
         MissionsView { id: missions }
     }
 

@@ -81,57 +81,57 @@ class CesiumWrapper {
                 that.viewport.tick();
             }
 
-            var routesController = channel.objects.routesController;
-            if (routesController) {
+            var missionsController = channel.objects.missionsController;
+            if (missionsController) {
                 const routes = new Routes(that.viewer, that.interaction);
 
                 routes.routeItemChangedCallback = (routeId, index, routeItemData) => {
-                    routesController.updateRouteItemData(routeId, index, routeItemData);
+                    missionsController.updateRouteItemData(routeId, index, routeItemData);
                 }
 
                 var setRouteItem = (routeId, index) => {
-                    routesController.routeItemData(routeId, index, routeItemData => {
+                    missionsController.routeItemData(routeId, index, routeItemData => {
                         routes.setRouteItemData(routeId, index, routeItemData);
                     });
                 }
 
                 var setRoute = routeId => {
-                    routesController.routeData(routeId, routeData => {
+                    missionsController.routeData(routeId, routeData => {
                         routes.setRouteData(routeId, routeData);
 
-                        if (routesController.selectedRoute === routeId)
-                            routes.selectRoute(routeId);
+                        if (missionsController.selectedMission === routeId)
+                            routes.selectMission(routeId);
 
                         for (var index = 0; index < routeData.items; ++index)
                             setRouteItem(routeId, index);
                     });
                 };
 
-                routesController.routeIds.forEach(routeId => setRoute(routeId));
+                missionsController.missionIds.forEach(routeId => setRoute(routeId));
 
-                routesController.routeAdded.connect(routeId => setRoute(routeId));
-                routesController.routeChanged.connect(routeId => setRoute(routeId));
-                routesController.routeRemoved.connect(routeId => routes.removeRoute(routeId));
+                missionsController.missionAdded.connect(routeId => setRoute(routeId));
+                missionsController.missionChanged.connect(routeId => setRoute(routeId));
+                missionsController.missionRemoved.connect(routeId => routes.removeMission(routeId));
 
-                routesController.routeItemAdded.connect((routeId, index) => setRouteItem(routeId, index));
-                routesController.routeItemChanged.connect((routeId, index) => setRouteItem(routeId, index));
-                routesController.routeItemRemoved.connect((routeId, index) => routes.removeRouteItem(routeId, index));
+                missionsController.routeItemAdded.connect((routeId, index) => setRouteItem(routeId, index));
+                missionsController.routeItemChanged.connect((routeId, index) => setRouteItem(routeId, index));
+                missionsController.routeItemRemoved.connect((routeId, index) => routes.removeItem(routeId, index));
 
-                routesController.centerRoute.connect(routeId => { routes.centerRoute(routeId); });
-                routesController.centerRouteItem.connect((routeId, index) => { routes.centerRouteItem(routeId, index); });
+                missionsController.centerRoute.connect(routeId => { routes.centerRoute(routeId); });
+                missionsController.centerRouteItem.connect((routeId, index) => { routes.centerRouteItem(routeId, index); });
 
-                routesController.selectedRouteChanged.connect(routeId => { routes.selectRoute(routeId); });
-                routesController.selectedRouteItemIndexChanged.connect(index => { routes.highlightItem(index); });
+                missionsController.selectedMissionChanged.connect(routeId => { routes.selectMission(routeId); });
+                missionsController.selectedItemIndexChanged.connect(index => { routes.highlightItem(index); });
 
-                var routeMenuController = channel.objects.routeMenuController;
-                if (routeMenuController) {
+                var missionMenuController = channel.objects.missionMenuController;
+                if (missionMenuController) {
                     routes.routeItemClickedCallback = (routeId, index, x, y) => {
-                        routeMenuController.invokeMenu(routeId, index, x, y);
+                        missionMenuController.invokeMenu(routeId, index, x, y);
                     }
                     that.viewport.subscribeCamera((heading, pitch, cameraPosition, centerPosition,
                                                    pixelScale, changed) => {
                         if (changed)
-                            routeMenuController.drop();
+                            missionMenuController.drop();
                     });
                 }
 

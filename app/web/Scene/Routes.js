@@ -108,7 +108,7 @@ class Route {
             this.items[this.highlightIndex].setHighlighted(true);
     }
 
-    removeRouteItem(index) {
+    removeItem(index) {
         var removeIndex = index < this.lines.length ? index : index - 1;
         var updateIndex = removeIndex - 1;
 
@@ -184,7 +184,7 @@ class Routes {
 
         // Entities
         this.routes = new Map();
-        this.selectedRoute = null;
+        this.selectedMission = null;
     }
 
     clear() {
@@ -215,29 +215,29 @@ class Routes {
         this.routes.get(routeId).setRouteItem(index, data);
     }
 
-    removeRoute(routeId) {
-        if (this.selectedRoute === routeId)
-            this.selectedRoute = null;
+    removeMission(routeId) {
+        if (this.selectedMission === routeId)
+            this.selectedMission = null;
 
         this.routes.get(routeId).clear();
         this.routes.delete(routeId);
     }
 
-    removeRouteItem(routeId, index) {
-        this.routes.get(routeId).removeRouteItem(index);
+    removeItem(routeId, index) {
+        this.routes.get(routeId).removeItem(index);
     }
 
-    selectRoute(routeId) {
-        if (this.selectedRoute === routeId)
+    selectMission(routeId) {
+        if (this.selectedMission === routeId)
             return;
 
-        var route = this.routes.has(this.selectedRoute) ? this.routes.get(this.selectedRoute) : null;
+        var route = this.routes.has(this.selectedMission) ? this.routes.get(this.selectedMission) : null;
         if (route) {
             route.setEditMode(false);
             route.highlightItem(-1);
         }
 
-        this.selectedRoute = routeId;
+        this.selectedMission = routeId;
 
         route = this.routes.has(routeId) ? this.routes.get(routeId) : null;
         if (route) {
@@ -260,9 +260,9 @@ class Routes {
     }
 
     highlightItem(index) {
-        if (!this.routes.has(this.selectedRoute))
+        if (!this.routes.has(this.selectedMission))
             return;
 
-        this.routes.get(this.selectedRoute).highlightItem(index);
+        this.routes.get(this.selectedMission).highlightItem(index);
     }
 }

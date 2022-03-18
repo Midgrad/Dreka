@@ -16,7 +16,7 @@ Controls.Pane {
     Connections {
         target: controller
         onRouteItemAdded: if (routeId === root.routeId) route = controller.routeData(route.id)
-        onRouteChanged: if (routeId === root.routeId) route = controller.routeData(routeId)
+        onMissionChanged: if (routeId === root.routeId) route = controller.routeData(routeId)
         onRouteItemRemoved: if (routeId === root.routeId) route = controller.routeData(route.id)
     }
 
@@ -43,7 +43,7 @@ Controls.Pane {
                 visible: editName
                 Binding on text { value: route ? route.name : ""; when: !nameEdit.activeFocus }
                 onEditingFinished: {
-                    controller.renameRoute(route.id, text);
+                    controller.renameMission(route.id, text);
                     editName = false;
                 }
                 Layout.fillWidth: true
@@ -59,9 +59,9 @@ Controls.Pane {
                 leftCropped: true
                 highlightColor: Controls.Theme.colors.negative
                 iconSource: "qrc:/icons/remove.svg"
-                enabled: route.id && !route.block
+                enabled: route.id
                 tipText: qsTr("Remove")
-                onClicked: controller.removeRoute(route.id)
+                onClicked: controller.removeMission(route.id)
             }
         }
 
@@ -69,14 +69,14 @@ Controls.Pane {
             id: list
             model: route ? route.items : []
             emptyText: qsTr("No route items")
-            delegate: RouteItemListItem {
+            delegate: MissionItemListItem {
                 width: parent.width
-                selected: index === controller.selectedRouteItemIndex
+                selected: index === controller.selectedItemIndex
                 routeItem: controller.routeItemData(route.id, modelData)
                 inRouteIndex: index
-                onClicked: controller.selectRouteItemIndex(index)
+                onClicked: controller.selectItemIndex(index)
             }
-            Component.onCompleted: toIndex(controller.selectedRouteItemIndex, ListView.Center)
+            Component.onCompleted: toIndex(controller.selectedItemIndex, ListView.Center)
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
@@ -88,14 +88,14 @@ Controls.Pane {
             Layout.fillWidth: true
         }
 
-        RouteItemEditView {
+        MissionItemEditView {
             id: itemEdit
             visible: !!routeItem.id
-            route: controller.selectedRoute
-            inRouteIndex: controller.selectedRouteItemIndex
-            onSelectRouteItemIndex: controller.selectRouteItemIndex(index)
+            mission: controller.selectedMission
+            inRouteIndex: controller.selectedItemIndex
+            onSelectItemIndex: controller.selectItemIndex(index)
             onCenter: controller.centerRouteItem(route, inRouteIndex)
-            onRemove: controller.removeRouteItem(route, inRouteIndex)
+            onRemove: controller.removeItem(route, inRouteIndex)
             onInRouteIndexChanged: list.toIndex(inRouteIndex, ListView.Center);
             Layout.fillWidth: true
         }

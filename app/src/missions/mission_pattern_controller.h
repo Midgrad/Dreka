@@ -1,17 +1,17 @@
-#ifndef ROUTE_PATTERN_CONTROLLER_H
-#define ROUTE_PATTERN_CONTROLLER_H
+#ifndef MISSION_PATTERN_CONTROLLER_H
+#define MISSION_PATTERN_CONTROLLER_H
 
-#include "i_routes_service.h"
+#include "i_missions_service.h"
 
 #include <QJsonArray>
 
 namespace md::presentation
 {
-class RoutePatternController : public QObject
+class MissionPatternController : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QVariant routeId READ routeId WRITE selectRoute NOTIFY routeChanged)
+    Q_PROPERTY(QVariant missionId READ missionId WRITE selectMission NOTIFY missionChanged)
     Q_PROPERTY(QVariant pattern READ pattern NOTIFY patternChanged)
     Q_PROPERTY(QJsonArray parameters READ parameters NOTIFY patternChanged)
     Q_PROPERTY(QJsonObject parameterValues READ parameterValues NOTIFY parameterValuesChanged)
@@ -19,9 +19,9 @@ class RoutePatternController : public QObject
     Q_PROPERTY(bool ready READ isReady NOTIFY pathPositionsChanged)
 
 public:
-    explicit RoutePatternController(QObject* parent = nullptr);
+    explicit MissionPatternController(QObject* parent = nullptr);
 
-    QVariant routeId() const;
+    QVariant missionId() const;
     QVariant pattern() const;
     QJsonArray parameters() const;
     QJsonObject parameterValues() const;
@@ -31,7 +31,7 @@ public:
     Q_INVOKABLE QJsonArray areaPositions() const;
 
 public slots:
-    void selectRoute(const QVariant& routeId);
+    void selectMission(const QVariant& missionId);
     void createPattern(const QString& patternTypeId);
     void setParameter(const QString& parameterId, const QVariant& value);
     void setAreaPositions(const QVariantList& positions);
@@ -40,15 +40,16 @@ public slots:
 
 signals:
     void patternChanged();
-    void routeChanged();
+    void missionChanged();
     void parameterValuesChanged();
     void pathPositionsChanged();
 
 private:
-    domain::IRoutesService* const m_routesService;
-    domain::Route* m_route = nullptr;
+    domain::IMissionsService* const m_missionsService;
+
+    domain::Mission* m_mission = nullptr;
     domain::RoutePattern* m_pattern = nullptr;
 };
 } // namespace md::presentation
 
-#endif // ROUTE_PATTERN_CONTROLLER_H
+#endif // MISSION_PATTERN_CONTROLLER_H

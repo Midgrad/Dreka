@@ -1,27 +1,27 @@
-#ifndef ROUTE_ITEM_EDIT_CONTROLLER_H
-#define ROUTE_ITEM_EDIT_CONTROLLER_H
+#ifndef MISSION_ITEM_EDIT_CONTROLLER_H
+#define MISSION_ITEM_EDIT_CONTROLLER_H
 
-#include "i_routes_service.h"
+#include "i_missions_service.h"
 
 #include <QJsonArray>
 
 namespace md::presentation
 {
-class RouteItemEditController : public QObject
+class MissionItemEditController : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QVariant route READ route WRITE setRoute NOTIFY routeChanged)
+    Q_PROPERTY(QVariant mission READ mission WRITE setMission NOTIFY missionChanged)
     Q_PROPERTY(int inRouteIndex READ inRouteIndex WRITE setInRouteIndex NOTIFY routeItemChanged)
     Q_PROPERTY(QJsonObject routeItem READ routeItem NOTIFY routeItemChanged)
-    Q_PROPERTY(int routeItemsCount READ routeItemsCount NOTIFY routeChanged)
-    Q_PROPERTY(QJsonArray itemTypes READ itemTypes NOTIFY routeChanged)
+    Q_PROPERTY(int routeItemsCount READ routeItemsCount NOTIFY missionChanged)
+    Q_PROPERTY(QJsonArray itemTypes READ itemTypes NOTIFY missionChanged)
     Q_PROPERTY(QJsonObject itemParameters READ itemParameters NOTIFY routeItemChanged)
 
 public:
-    explicit RouteItemEditController(QObject* parent = nullptr);
+    explicit MissionItemEditController(QObject* parent = nullptr);
 
-    QVariant route() const;
+    QVariant mission() const;
     int inRouteIndex() const;
     QJsonObject routeItem() const;
     int routeItemsCount() const;
@@ -32,7 +32,7 @@ public:
     Q_INVOKABLE QJsonArray typeParameters(const QString& typeId);
 
 public slots:
-    void setRoute(const QVariant& routeId);
+    void setMission(const QVariant& missionId);
     void setInRouteIndex(int index);
 
     void rename(const QString& name);
@@ -41,14 +41,14 @@ public slots:
     void setParameter(const QString& parameterId, const QVariant& value);
 
 signals:
-    void routeChanged();
+    void missionChanged();
     void routeItemChanged();
 
 private:
-    domain::IRoutesService* const m_routesService;
-    domain::Route* m_route = nullptr;
-    domain::RouteItem* m_routeItem = nullptr;
+    domain::IMissionsService* const m_missionsService;
+    domain::Mission* m_mission = nullptr;
+    domain::MissionRouteItem* m_routeItem = nullptr;
 };
 } // namespace md::presentation
 
-#endif // ROUTE_ITEM_EDIT_CONTROLLER_H
+#endif // MISSION_ITEM_EDIT_CONTROLLER_H

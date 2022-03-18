@@ -33,7 +33,7 @@ QVariant VehicleMissionController::vehicleId() const
 
 QJsonObject VehicleMissionController::mission() const
 {
-    if (!m_mission)
+    if (!m_mission || m_mission->route()->isEmpty())
         return QJsonObject();
 
     return QJsonObject::fromVariantMap(m_mission->toVariantMap());
@@ -41,18 +41,18 @@ QJsonObject VehicleMissionController::mission() const
 
 QJsonObject VehicleMissionController::home() const
 {
-    if (!m_mission)
+    if (!m_mission || m_mission->route()->isEmpty())
         return QJsonObject();
 
-    return QJsonObject::fromVariantMap(m_mission->home()->toVariantMap());
+    return QJsonObject::fromVariantMap(m_mission->route()->firstItem()->toVariantMap());
 }
 
 QJsonObject VehicleMissionController::target() const
 {
-    if (!m_mission)
-        return QJsonObject();
+    // FIXME: target from vehicle
+    return QJsonObject();
 
-    return QJsonObject::fromVariantMap(m_mission->target()->toVariantMap());
+    //return QJsonObject::fromVariantMap(m_mission->target()->toVariantMap());
 }
 
 QStringList VehicleMissionController::routeItems() const
@@ -61,13 +61,10 @@ QStringList VehicleMissionController::routeItems() const
         return QStringList();
 
     QStringList list;
-
-    list.append(m_mission->home()->name);
-
     if (m_route)
     {
-        int index = 1;
-        for (RouteItem* item : m_route->items())
+        int index = 0;
+        for (MissionRouteItem* item : m_route->items())
         {
             list.append(item->name + " " + QString::number(index));
             index++;
@@ -82,7 +79,7 @@ int VehicleMissionController::currentItem() const
     if (!m_mission)
         return -1;
 
-    return m_mission->currentItem();
+    return m_route->currentIndex();
 }
 
 void VehicleMissionController::setVehicleId(const QVariant& vehicleId)
@@ -104,23 +101,23 @@ void VehicleMissionController::setMission(Mission* mission)
 
     if (m_mission)
     {
-        connect(m_mission->home(), &RouteItem::changed, this, [this]() {
-            emit homeChanged(this->home());
-        });
-        connect(m_mission->target(), &RouteItem::changed, this, [this]() {
-            emit targetChanged(this->target());
-        });
-        connect(m_mission, &Mission::currentItemChanged, this,
-                &VehicleMissionController::currentItemChanged);
-        connect(m_mission, &Mission::routeChanged, this, &VehicleMissionController::setRoute);
+        // FIXME:
+        //        connect(m_mission->route(), &MissionRoute::changed, this, [this]() {
+        //            emit homeChanged(this->home());
+        //        });
+        //        connect(m_mission->target(), &MissionItem::changed, this, [this]() {
+        //            emit targetChanged(this->target());
+        //        });
+        connect(m_mission->route(), &MissionRoute::currentChanged, this,
+                &VehicleMissionController::currentChanged);
     }
-    this->setRoute(mission ? mission->route() : nullptr);
+    this->setRoute(mission->route());
 
     emit missionChanged();
     emit homeChanged(this->home());
 }
 
-void VehicleMissionController::setRoute(domain::Route* route)
+void VehicleMissionController::setRoute(domain::MissionRoute* route)
 {
     if (m_route == route)
         return;
@@ -134,9 +131,12 @@ void VehicleMissionController::setRoute(domain::Route* route)
 
     if (m_route)
     {
-        connect(m_route, &Route::itemAdded, this, &VehicleMissionController::routeItemsChanged);
-        connect(m_route, &Route::itemRemoved, this, &VehicleMissionController::routeItemsChanged);
-        connect(m_route, &Route::itemChanged, this, &VehicleMissionController::routeItemsChanged);
+        connect(m_route, &MissionRoute::itemAdded, this,
+                &VehicleMissionController::routeItemsChanged);
+        connect(m_route, &MissionRoute::itemRemoved, this,
+                &VehicleMissionController::routeItemsChanged);
+        connect(m_route, &MissionRoute::itemChanged, this,
+                &VehicleMissionController::routeItemsChanged);
     }
 
     emit routeItemsChanged();
@@ -147,7 +147,7 @@ void VehicleMissionController::switchItem(int index)
     if (!m_mission)
         return;
 
-    emit m_mission->goTo(index);
+    emit m_mission->route()->goTo(index);
 }
 
 void VehicleMissionController::navTo(double latitude, double longitude)
@@ -155,5 +155,5 @@ void VehicleMissionController::navTo(double latitude, double longitude)
     if (!m_mission)
         return;
 
-    emit m_mission->navTo(latitude, longitude, m_mission->target()->position().altitude);
+    // FIXME: emit m_mission->navTo(latitude, longitude, m_mission->target()->position().altitude);
 }

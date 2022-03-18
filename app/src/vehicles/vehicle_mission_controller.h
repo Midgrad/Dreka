@@ -14,7 +14,7 @@ class VehicleMissionController : public QObject
     Q_PROPERTY(QJsonObject home READ home NOTIFY homeChanged)
     Q_PROPERTY(QJsonObject target READ target NOTIFY targetChanged)
     Q_PROPERTY(QStringList routeItems READ routeItems NOTIFY routeItemsChanged)
-    Q_PROPERTY(int currentItem READ currentItem NOTIFY currentItemChanged)
+    Q_PROPERTY(int currentItem READ currentItem NOTIFY currentChanged)
 
 public:
     explicit VehicleMissionController(QObject* parent = nullptr);
@@ -28,8 +28,8 @@ public:
 
 public slots:
     void setVehicleId(const QVariant& vehicleId);
-    void setMission(domain::Mission* mission);
-    void setRoute(domain::Route* route);
+    void setMission(domain::Mission* mission); // FIXME: unify setMission & setRoute
+    void setRoute(domain::MissionRoute* route);
 
     void switchItem(int index);
     void navTo(double latitude, double longitude);
@@ -37,14 +37,14 @@ public slots:
 signals:
     void missionChanged();
     void routeItemsChanged();
-    void currentItemChanged();
+    void currentChanged();
     void homeChanged(QJsonObject home);
     void targetChanged(QJsonObject home);
 
 private:
     domain::IMissionsService* const m_missionsService;
     domain::Mission* m_mission = nullptr;
-    domain::Route* m_route = nullptr;
+    domain::MissionRoute* m_route = nullptr;
 };
 } // namespace md::presentation
 

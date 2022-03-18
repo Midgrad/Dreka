@@ -19,18 +19,15 @@
         <file>Map/MapRulerView.qml</file>
         <file>Map/MapScale.qml</file>
         <file>Map/MapMenu.qml</file>
-        <file>Routes/RoutesView.qml</file>
-        <file>Routes/RouteList.qml</file>
-        <file>Routes/RouteListItem.qml</file>
-        <file>Routes/RouteItemList.qml</file>
-        <file>Routes/RouteItemListItem.qml</file>
-        <file>Routes/RouteItemEditView.qml</file>
-        <file>Routes/RouteMenuView.qml</file>
-        <file>Routes/RoutePatternView.qml</file>
         <file>Missions/MissionsView.qml</file>
         <file>Missions/MissionList.qml</file>
         <file>Missions/MissionListItem.qml</file>
-        <file>Missions/MissionEditView.qml</file>
+        <file>Missions/MissionItemList.qml</file>
+        <file>Missions/MissionItemListItem.qml</file>
+        <file>Missions/MissionItemEditView.qml</file>
+        <file>Missions/MissionMenuView.qml</file>
+        <file>Missions/MissionPatternView.qml</file>
+        <file>Missions/MissionOperationView.qml</file>
         <file>Vehicles/VehiclesView.qml</file>
         <file>Vehicles/VehiclesListView.qml</file>
         <file>Vehicles/Vehicle.qml</file>

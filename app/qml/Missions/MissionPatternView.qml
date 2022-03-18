@@ -10,8 +10,8 @@ Controls.Popup {
 
     property var pattern: controller.pattern
 
-    function selectRoute(routeId) {
-        controller.selectRoute(routeId);
+    function selectMission(routeId) {
+        controller.selectMission(routeId);
     }
 
     function newPattern(patternId, x, y, position) {
@@ -26,7 +26,7 @@ Controls.Popup {
     visible: pattern !== undefined
     closePolicy: Controls.Popup.CloseOnEscape
 
-    RoutePatternController { id: controller }
+    MissionPatternController { id: controller }
 
     Component.onCompleted: { map.registerController("routePatternController", controller); }
 

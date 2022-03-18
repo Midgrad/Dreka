@@ -12,7 +12,7 @@ var InputTypes = {
 };
 Object.freeze(InputTypes);
 
-class Input { /// FIXME: remove double click
+class Input {
     constructor(viewer) {
         this.viewer = viewer;
 

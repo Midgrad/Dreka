@@ -1,13 +1,13 @@
-#ifndef ROUTE_MENU_CONTROLLER_H
-#define ROUTE_MENU_CONTROLLER_H
+#ifndef MISSION_MENU_CONTROLLER_H
+#define MISSION_MENU_CONTROLLER_H
 
-#include "i_routes_service.h"
+#include "i_missions_service.h"
 
 #include <QJsonArray>
 
 namespace md::presentation
 {
-class RouteMenuController : public QObject
+class MissionMenuController : public QObject
 {
     Q_OBJECT
 
@@ -16,14 +16,14 @@ class RouteMenuController : public QObject
     Q_PROPERTY(int inRouteIndex READ inRouteIndex NOTIFY routeItemChanged)
 
 public:
-    explicit RouteMenuController(QObject* parent = nullptr);
+    explicit MissionMenuController(QObject* parent = nullptr);
 
     bool canGoto() const;
     QVariant route() const;
     int inRouteIndex() const;
 
 public slots:
-    void invokeMenu(const QVariant& routeId, int index, double x, double y);
+    void invokeMenu(const QVariant& missionId, int index, double x, double y);
     void drop();
 
     void remove();
@@ -36,10 +36,10 @@ signals:
     void menuInvoked(double x, double y);
 
 private:
-    domain::IRoutesService* const m_routesService;
-    domain::Route* m_route = nullptr;
-    domain::RouteItem* m_routeItem = nullptr;
+    domain::IMissionsService* const m_missionsService;
+    domain::Mission* m_mission = nullptr;
+    domain::MissionRouteItem* m_missionItem = nullptr;
 };
 } // namespace md::presentation
 
-#endif // ROUTE_MENU_CONTROLLER_H
+#endif // MISSION_MENU_CONTROLLER_H

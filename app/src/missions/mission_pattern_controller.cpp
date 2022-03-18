@@ -1,31 +1,31 @@
-#include "route_pattern_controller.h"
+#include "mission_pattern_controller.h"
 
 #include <QDebug>
 
 #include "locator.h"
-#include "route_traits.h"
+#include "mission_traits.h"
 
 using namespace md::domain;
 using namespace md::presentation;
 
-RoutePatternController::RoutePatternController(QObject* parent) :
+MissionPatternController::MissionPatternController(QObject* parent) :
     QObject(parent),
-    m_routesService(md::app::Locator::get<IRoutesService>())
+    m_missionsService(md::app::Locator::get<IMissionsService>())
 {
-    Q_ASSERT(m_routesService);
+    Q_ASSERT(m_missionsService);
 }
 
-QVariant RoutePatternController::routeId() const
+QVariant MissionPatternController::missionId() const
 {
-    return m_route ? m_route->id() : QVariant();
+    return m_mission ? m_mission->id() : QVariant();
 }
 
-QVariant RoutePatternController::pattern() const
+QVariant MissionPatternController::pattern() const
 {
     return m_pattern ? m_pattern->toVariantMap() : QVariant();
 }
 
-QJsonArray RoutePatternController::parameters() const
+QJsonArray MissionPatternController::parameters() const
 {
     if (!m_pattern)
         return QJsonArray();
@@ -38,7 +38,7 @@ QJsonArray RoutePatternController::parameters() const
     return jsons;
 }
 
-QJsonObject RoutePatternController::parameterValues() const
+QJsonObject MissionPatternController::parameterValues() const
 {
     if (!m_pattern)
         return QJsonObject();
@@ -46,7 +46,7 @@ QJsonObject RoutePatternController::parameterValues() const
     return QJsonObject::fromVariantMap(m_pattern->parameters());
 }
 
-QJsonArray RoutePatternController::pathPositions() const
+QJsonArray MissionPatternController::pathPositions() const
 {
     if (!m_pattern)
         return QJsonArray();
@@ -54,7 +54,7 @@ QJsonArray RoutePatternController::pathPositions() const
     return QJsonArray::fromVariantList(m_pattern->path().toVariantList());
 }
 
-QJsonArray RoutePatternController::areaPositions() const
+QJsonArray MissionPatternController::areaPositions() const
 {
     if (!m_pattern)
         return QJsonArray();
@@ -62,7 +62,7 @@ QJsonArray RoutePatternController::areaPositions() const
     return QJsonArray::fromVariantList(m_pattern->area().toVariantList());
 }
 
-bool RoutePatternController::isReady() const
+bool MissionPatternController::isReady() const
 {
     if (!m_pattern)
         return false;
@@ -70,41 +70,41 @@ bool RoutePatternController::isReady() const
     return m_pattern->isReady();
 }
 
-void RoutePatternController::selectRoute(const QVariant& routeId)
+void MissionPatternController::selectMission(const QVariant& missionId)
 {
-    if (this->routeId() == routeId)
+    if (this->missionId() == missionId)
         return;
 
-    m_route = m_routesService->route(routeId);
-    emit routeChanged();
+    m_mission = m_missionsService->mission(missionId);
+    emit missionChanged();
 
     if (m_pattern)
         this->cancel();
 }
 
-void RoutePatternController::createPattern(const QString& patternTypeId)
+void MissionPatternController::createPattern(const QString& patternTypeId)
 {
-    if (!m_route)
+    if (!m_mission)
         return;
 
     if (m_pattern)
         m_pattern->deleteLater();
 
-    m_pattern = m_routesService->createRoutePattern(patternTypeId);
+    m_pattern = m_missionsService->createRoutePattern(patternTypeId);
 
     if (m_pattern)
     {
         connect(m_pattern, &RoutePattern::pathPositionsChanged, this,
-                &RoutePatternController::pathPositionsChanged);
+                &MissionPatternController::pathPositionsChanged);
         connect(m_pattern, &RoutePattern::changed, this,
-                &RoutePatternController::parameterValuesChanged);
+                &MissionPatternController::parameterValuesChanged);
 
-        if (m_route->count())
+        if (m_mission->route()->count())
         {
             // Take initial altitude from entry point
-            Geodetic entryPoint = m_route->item(m_route->count() - 1)->position;
-            if (m_pattern->hasParameter(route::altitude.id))
-                m_pattern->setParameter(route::altitude.id, entryPoint.altitude());
+            Geodetic entryPoint = m_mission->route()->lastItem()->position;
+            if (m_pattern->hasParameter(mission::altitude.id))
+                m_pattern->setParameter(mission::altitude.id, entryPoint.altitude());
         }
     }
     emit patternChanged();
@@ -112,7 +112,7 @@ void RoutePatternController::createPattern(const QString& patternTypeId)
     emit pathPositionsChanged();
 }
 
-void RoutePatternController::setParameter(const QString& parameterId, const QVariant& value)
+void MissionPatternController::setParameter(const QString& parameterId, const QVariant& value)
 {
     if (!m_pattern)
         return;
@@ -120,7 +120,7 @@ void RoutePatternController::setParameter(const QString& parameterId, const QVar
     m_pattern->setParameter(parameterId, value);
 }
 
-void RoutePatternController::setAreaPositions(const QVariantList& positions)
+void MissionPatternController::setAreaPositions(const QVariantList& positions)
 {
     if (!m_pattern)
         return;
@@ -133,7 +133,7 @@ void RoutePatternController::setAreaPositions(const QVariantList& positions)
     m_pattern->setArea(areaPositions);
 }
 
-void RoutePatternController::cancel()
+void MissionPatternController::cancel()
 {
     if (m_pattern)
     {
@@ -146,16 +146,16 @@ void RoutePatternController::cancel()
     emit pathPositionsChanged();
 }
 
-void RoutePatternController::apply()
+void MissionPatternController::apply()
 {
-    if (!m_pattern || !m_route)
+    if (!m_pattern || !m_mission)
         return;
 
-    for (RouteItem* item : m_pattern->createItems())
+    for (MissionRouteItem* item : m_pattern->createItems())
     {
-        m_route->addItem(item);
+        m_mission->route()->addItem(item);
     }
-    m_routesService->saveRoute(m_route);
+    m_missionsService->saveMission(m_mission);
 
     this->cancel();
 }
