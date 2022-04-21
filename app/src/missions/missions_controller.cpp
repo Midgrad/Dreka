@@ -206,8 +206,8 @@ void MissionsController::addRouteItem(const QVariant& routeId, const QString& ty
     QVariantMap newPosition = position;
     newPosition[geo::altitude] = altitude;
 
-    MissionRouteItem* item = new MissionRouteItem(type, type->shortName, utils::generateId(), parameters,
-                                        newPosition);
+    MissionRouteItem* item = new MissionRouteItem(type, type->shortName, utils::generateId(),
+                                                  parameters, newPosition);
     item->setParameters(parameters);
     route->addItem(item);
 

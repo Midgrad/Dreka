@@ -111,7 +111,7 @@ void VehicleMissionController::setMission(Mission* mission)
         connect(m_mission->route(), &MissionRoute::currentChanged, this,
                 &VehicleMissionController::currentChanged);
     }
-    this->setRoute(mission->route());
+    this->setRoute(m_mission ? m_mission->route() : nullptr);
 
     emit missionChanged();
     emit homeChanged(this->home());

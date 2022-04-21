@@ -15,7 +15,7 @@ Controls.Pane {
 
     VehiclesController {
         id: controller
-        onVehicleChanged: if (vehicleId == controller.selectedVehicle) root.selectedVehicle = vehicle
+        onVehicleChanged: if (vehicleId === controller.selectedVehicle) root.selectedVehicle = vehicle
         onSelectedVehicleChanged: root.selectedVehicle = controller.selectedVehicle ?
                                       controller.vehicle(controller.selectedVehicle) : null
     }
