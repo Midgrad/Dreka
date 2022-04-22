@@ -2,13 +2,21 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
 import Industrial.Widgets 1.0 as Widgets
-import Dreka 1.0
+import Dreka.Vehicles 1.0
 
 Controls.Popup {
     id: root
 
+    property var selectedVehicleId
+
+    function rename(vehicleId, name) { controller.rename(vehicleId, name); }
+
+    signal selectVehicle(var vehicle)
+
     width: Controls.Theme.baseSize * 11
     closePolicy: Controls.Popup.CloseOnPressOutsideParent
+
+    VehicleListController { id: controller }
 
     ColumnLayout {
         anchors.fill: parent
@@ -30,7 +38,7 @@ Controls.Popup {
                 model: controller.vehicleTypes
                 delegate: Controls.MenuItem {
                     text: modelData.name
-                    onTriggered: controller.addNewVehicle(modelData.id)
+                    onTriggered: controller.addVehicle(modelData.id)
                 }
             }
         }
@@ -43,7 +51,14 @@ Controls.Popup {
                 height: visible ? implicitHeight : 0
                 visible: vehicle && vehicle.name.indexOf(filterField.text) > -1
                 vehicle: modelData
-                onExpand: controller.selectVehicle(vehicle.id)
+                selected: vehicle.id === selectedVehicleId
+                onExpand: selectVehicle(modelData)
+                onRemove: {
+                    if (selected)
+                        selectVehicle(null);
+                    controller.remove(vehicle.id);
+                }
+                Component.onCompleted: if (!selectedVehicleId) selectVehicle(modelData)
             }
             Layout.fillWidth: true
             Layout.fillHeight: true

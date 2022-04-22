@@ -1,14 +1,14 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
-import Dreka 1.0
+import Dreka.Vehicles 1.0
 
 Row {
     id: root
 
     readonly property real availableWidth: width - missionButton.width - wpBox.width - spacing * 2
 
-    property alias vehicleId : vehicleMissionController.vehicleId
+    property alias vehicleId: vehicleMissionController.vehicleId
 
     spacing: 1
 

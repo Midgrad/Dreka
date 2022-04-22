@@ -2,31 +2,28 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
 import Industrial.Widgets 1.0 as Widgets
-import Dreka 1.0
 
-Controls.Pane {
+import "List"
+import "Dashboard"
+
+ColumnLayout {
     id: root
 
     property bool maximized: true
     property bool editName: false
-    property var selectedVehicle: controller.selectedVehicle ? controller.vehicle(controller.selectedVehicle) : null
+    property var selectedVehicle: null
 
-    padding: Controls.Theme.margins
+    width: Controls.Theme.baseSize * 9
+    spacing: 1
 
-    VehiclesController {
-        id: controller
-        onVehicleChanged: if (vehicleId === controller.selectedVehicle) root.selectedVehicle = vehicle
-        onSelectedVehicleChanged: root.selectedVehicle = controller.selectedVehicle ?
-                                      controller.vehicle(controller.selectedVehicle) : null
-    }
-
-    Component.onCompleted: map.registerController("vehiclesController", controller)
-
-    ColumnLayout {
-        anchors.fill: parent
-        spacing: Controls.Theme.spacing
+    Controls.Pane {
+        id: pane
+        padding: Controls.Theme.margins
+        bottomCropped: true
+        Layout.preferredWidth: root.width
 
         RowLayout {
+            anchors.fill: parent
             spacing: 0
 
             Controls.Button {
@@ -37,9 +34,12 @@ Controls.Pane {
                 highlighted: vehiclesList.visible
                 onClicked: vehiclesList.visible ? vehiclesList.close() : vehiclesList.open()
 
-                VehiclesListView {
+                VehicleListView {
                     id: vehiclesList
                     x: -width - Controls.Theme.margins - Controls.Theme.spacing
+                    y: -Controls.Theme.margins
+                    selectedVehicleId: selectedVehicle ? selectedVehicle.id : null
+                    onSelectVehicle: selectedVehicle = vehicle
                 }
             }
 
@@ -62,7 +62,7 @@ Controls.Pane {
                 flat: true
                 visible: editName
                 onEditingFinished: {
-                    controller.rename(selectedVehicle.id, text);
+                    vehiclesList.rename(selectedVehicle.id, text);
                     editName = false;
                 }
                 Keys.onEscapePressed: editName = false;
@@ -77,16 +77,13 @@ Controls.Pane {
                 onClicked: maximized = !maximized
             }
         }
+    }
 
-        Repeater {
-            model: controller.dashboardModel(controller.selectedVehicle)
-
-            Loader {
-                id: dashboard
-                source: modelData
-                Layout.fillWidth: true
-            }
-        }
+    VehicleDashboardView {
+        id: dashboard
+        visible: maximized
+        topCropped: true
+        Layout.preferredWidth: root.width
+        selectedVehicleId: selectedVehicle ? selectedVehicle.id : null
     }
 }
-

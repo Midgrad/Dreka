@@ -23,8 +23,6 @@ Column {
     width: Controls.Theme.baseSize * 8
 
     Row {
-        visible: maximized
-
         Controls.Button {
             flat: true
             rightCropped: true
@@ -63,11 +61,9 @@ Column {
 
     Navigation {
         width: root.width
-        visible: maximized
     }
 
     Row {
-        visible: maximized
         spacing: 0
 
         Column {
@@ -153,7 +149,6 @@ Column {
     }
 
     Row {
-        visible: maximized
         spacing: 0
 
         Column {
@@ -223,19 +218,19 @@ Column {
         }
     }
 
-    VehicleMissionView {
-        id: mission
-        width: parent.width
-        vehicleId: controller.selectedVehicle
+//    VehicleMissionView {
+//        id: mission
+//        width: parent.width
+//        vehicleId: controller.selectedVehicle
 
-        Controls.ComboBox {
-            width: mission.availableWidth
-            flat: true
-            labelText: qsTr("MODE")
-            enabled: selectedVehicle && selectedVehicle.online
-            model: params.modes ? params.modes : []
-            displayText: params.mode ? params.mode : "-"
-            onActivated: controller.sendCommand("setMode", [ model[index] ])
-        }
-    }
+//        Controls.ComboBox {
+//            width: mission.availableWidth
+//            flat: true
+//            labelText: qsTr("MODE")
+//            enabled: selectedVehicle && selectedVehicle.online
+//            model: params.modes ? params.modes : []
+//            displayText: params.mode ? params.mode : "-"
+//            onActivated: controller.sendCommand("setMode", [ model[index] ])
+//        }
+//    }
 }

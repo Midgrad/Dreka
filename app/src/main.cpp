@@ -48,13 +48,9 @@
 #include "map_menu_controller.h"
 #include "map_ruler_controller.h"
 #include "map_viewport_controller.h"
-#include "mission_item_edit_controller.h"
-#include "mission_menu_controller.h"
-#include "mission_operation_controller.h"
-#include "missions_controller.h"
-#include "mission_pattern_controller.h"
-#include "vehicle_mission_controller.h"
-#include "vehicles_controller.h"
+
+#include "vehicle_dashboard_controller.h"
+#include "vehicle_list_contoller.h"
 
 namespace
 {
@@ -119,17 +115,11 @@ int main(int argc, char* argv[])
     qmlRegisterType<presentation::MapMenuController>("Dreka", 1, 0, "MapMenuController");
     qmlRegisterType<presentation::ClipboardController>("Dreka", 1, 0, "ClipboardController");
     qmlRegisterType<presentation::MapLayersController>("Dreka", 1, 0, "MapLayersController");
-    qmlRegisterType<presentation::MissionsController>("Dreka", 1, 0, "MissionsController");
-    qmlRegisterType<presentation::MissionItemEditController>("Dreka", 1, 0,
-                                                             "MissionItemEditController");
-    qmlRegisterType<presentation::MissionMenuController>("Dreka", 1, 0, "MissionMenuController");
-    qmlRegisterType<presentation::MissionPatternController>("Dreka", 1, 0, "MissionPatternController");
-    qmlRegisterType<presentation::VehiclesController>("Dreka", 1, 0, "VehiclesController");
-    qmlRegisterType<presentation::MissionsController>("Dreka", 1, 0, "MissionsController");
-    qmlRegisterType<presentation::MissionOperationController>("Dreka", 1, 0,
-                                                              "MissionOperationController");
-    qmlRegisterType<presentation::VehicleMissionController>("Dreka", 1, 0,
-                                                            "VehicleMissionController");
+
+    qmlRegisterType<presentation::VehicleDashboardController>("Dreka.Vehicles", 1, 0,
+                                                              "VehicleDashboardController");
+    qmlRegisterType<presentation::VehicleListController>("Dreka.Vehicles", 1, 0,
+                                                         "VehicleListController");
 
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);

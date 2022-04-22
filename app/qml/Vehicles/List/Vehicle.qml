@@ -6,9 +6,10 @@ Item {
     id: root
 
     property var vehicle
-    readonly property bool selected: controller.selectedVehicle === vehicle.id
+    property bool selected
 
     signal expand()
+    signal remove()
 
     Connections {
         target: controller
@@ -73,7 +74,7 @@ Item {
             iconSource: "qrc:/icons/remove.svg"
             enabled: !vehicle.online
             tipText: qsTr("Remove")
-            onClicked: controller.removeVehicle(vehicle.id)
+            onClicked: remove()
         }
 
         Controls.ColoredIcon {
