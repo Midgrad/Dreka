@@ -38,7 +38,10 @@ Controls.Popup {
                 model: controller.vehicleTypes
                 delegate: Controls.MenuItem {
                     text: modelData.name
-                    onTriggered: controller.addVehicle(modelData.id)
+                    onTriggered: {
+                        root.selectVehicle(null);
+                        controller.addVehicle(modelData.id);
+                    }
                 }
             }
         }
@@ -58,7 +61,8 @@ Controls.Popup {
                         selectVehicle(null);
                     controller.remove(vehicle.id);
                 }
-                Component.onCompleted: if (!selectedVehicleId) selectVehicle(modelData)
+                onVehicleChanged: if (vehicle.id === selectedVehicleId) selectVehicle(vehicle)
+                Component.onCompleted: if (!selectedVehicleId) selectVehicle(vehicle)
             }
             Layout.fillWidth: true
             Layout.fillHeight: true

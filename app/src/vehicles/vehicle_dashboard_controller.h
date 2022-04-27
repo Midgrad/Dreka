@@ -1,5 +1,5 @@
-#ifndef VEHICLES_CONTROLLER_H
-#define VEHICLES_CONTROLLER_H
+#ifndef VEHICLE_DASHBOARD_CONTROLLER_H
+#define VEHICLE_DASHBOARD_CONTROLLER_H
 
 #include "i_command_service.h"
 #include "i_property_tree.h"
@@ -13,40 +13,33 @@ class VehicleDashboardController : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QVariant selectedVehicle READ selectedVehicle WRITE selectVehicle NOTIFY
+    Q_PROPERTY(QString selectedVehicleId READ selectedVehicleId WRITE selectVehicle NOTIFY
                    selectedVehicleChanged)
-    Q_PROPERTY(bool tracking READ isTracking WRITE setTracking NOTIFY trackingChanged)
-    Q_PROPERTY(int trackLength READ trackLength NOTIFY trackLengthChanged)
+    Q_PROPERTY(QVariantMap telemetry READ telemetry NOTIFY telemetryChanged)
 
 public:
     explicit VehicleDashboardController(QObject* parent = nullptr);
 
-    QVariant selectedVehicle() const;
-    bool isTracking() const;
-    int trackLength() const;
+    QString selectedVehicleId() const;
+    QVariantMap telemetry() const;
 
-    Q_INVOKABLE QVariantMap vehicleData(const QVariant& vehicleId) const;
     Q_INVOKABLE QVariantList instruments(const QString& typeId) const;
 
 public slots:
-    void selectVehicle(const QVariant& vehicleId);
-    void setTracking(bool tracking);
+    void selectVehicle(const QString& vehicleId);
     void sendCommand(const QString& commandId, const QVariantList& args);
 
 signals:
-    void selectedVehicleChanged(QVariant vehicleId);
-    void trackingChanged();
-    void trackLengthChanged(int trackLength);
-
-    void vehicleDataChanged(QVariant vehicleId, QVariantMap data);
+    void selectedVehicleChanged();
+    void telemetryChanged();
 
 private:
     domain::IPropertyTree* const m_pTree;
     domain::IVehiclesFeatures* const m_features;
     domain::ICommandsService* const m_commands;
-    QVariant m_selectedVehicleId;
-    bool m_tracking = false;
+
+    QString m_selectedVehicleId;
 };
 } // namespace md::presentation
 
-#endif // VEHICLES_CONTROLLER_H
+#endif // VEHICLE_DASHBOARD_CONTROLLER_H

@@ -23,27 +23,17 @@ VehicleDashboardController::VehicleDashboardController(QObject* parent) :
     Q_ASSERT(m_commands);
 
     connect(m_pTree, &IPropertyTree::propertiesChanged, this,
-            &VehicleDashboardController::vehicleDataChanged);
+            &VehicleDashboardController::telemetryChanged);
 }
 
-QVariant VehicleDashboardController::selectedVehicle() const
+QString VehicleDashboardController::selectedVehicleId() const
 {
     return m_selectedVehicleId;
 }
 
-bool VehicleDashboardController::isTracking() const
+QVariantMap VehicleDashboardController::telemetry() const
 {
-    return m_tracking;
-}
-
-int VehicleDashboardController::trackLength() const
-{
-    return 1000; // TODO: settings
-}
-
-QVariantMap VehicleDashboardController::vehicleData(const QVariant& vehicleId) const
-{
-    return m_pTree->properties(vehicleId.toString());
+    return m_pTree->properties(m_selectedVehicleId);
 }
 
 QVariantList VehicleDashboardController::instruments(const QString& typeId) const
@@ -60,15 +50,6 @@ QVariantList VehicleDashboardController::instruments(const QString& typeId) cons
     return { dashboard };
 }
 
-void VehicleDashboardController::setTracking(bool tracking)
-{
-    if (m_tracking == tracking)
-        return;
-
-    m_tracking = tracking;
-    emit trackingChanged();
-}
-
 void VehicleDashboardController::sendCommand(const QString& commandId, const QVariantList& args)
 {
     if (m_selectedVehicleId.isNull())
@@ -77,13 +58,12 @@ void VehicleDashboardController::sendCommand(const QString& commandId, const QVa
     emit m_commands->requestCommand(commandId)->exec(m_selectedVehicleId, args);
 }
 
-void VehicleDashboardController::selectVehicle(const QVariant& vehicleId)
+void VehicleDashboardController::selectVehicle(const QString& vehicleId)
 {
     if (m_selectedVehicleId == vehicleId)
         return;
 
-    this->setTracking(false);
-
     m_selectedVehicleId = vehicleId;
-    emit selectedVehicleChanged(vehicleId);
+    emit selectedVehicleChanged();
+    emit telemetryChanged();
 }

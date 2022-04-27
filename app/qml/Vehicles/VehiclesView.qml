@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
 import Industrial.Widgets 1.0 as Widgets
+import Dreka.Vehicles 1.0
 
 import "List"
 import "Dashboard"
@@ -15,6 +16,13 @@ ColumnLayout {
 
     width: Controls.Theme.baseSize * 9
     spacing: 1
+
+    VehiclesMapController {
+        id: vehiclesMapController
+        selectedVehicleId: selectedVehicle ? selectedVehicle.id : null
+    }
+
+    Component.onCompleted: map.registerController("vehiclesController", vehiclesMapController)
 
     Controls.Pane {
         id: pane
@@ -84,6 +92,6 @@ ColumnLayout {
         visible: maximized
         topCropped: true
         Layout.preferredWidth: root.width
-        selectedVehicleId: selectedVehicle ? selectedVehicle.id : null
+        selectedVehicle: root.selectedVehicle
     }
 }

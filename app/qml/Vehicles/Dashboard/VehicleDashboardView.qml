@@ -7,12 +7,13 @@ import Dreka.Vehicles 1.0
 Controls.Pane {
     id: root
 
-    property alias selectedVehicleId: controller.selectedVehicle
+    property var selectedVehicle
 
     padding: Controls.Theme.margins
 
     VehicleDashboardController {
-        id: controller
+        id: dashboardController
+        selectedVehicleId: selectedVehicle ? selectedVehicle.id : null
     }
 
     ColumnLayout {
@@ -21,7 +22,7 @@ Controls.Pane {
 
         Repeater {
             id: repeater
-            model: controller.instruments(controller.selectedVehicle)
+            model: selectedVehicle ? dashboardController.instruments(selectedVehicle.type) : []
 
             Loader {
                 source: modelData

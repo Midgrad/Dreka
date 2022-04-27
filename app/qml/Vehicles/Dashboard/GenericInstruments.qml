@@ -6,15 +6,9 @@ import Dreka 1.0
 Column {
     id: root
 
-    property var params: []
+    property var params: dashboardController.telemetry
 
     property Component preflight: Preflight {}
-
-    Connections {
-        target: controller
-        onSelectedVehicleChanged: params = controller.vehicleData(controller.selectedVehicle)
-        onVehicleDataChanged: if (vehicleId === controller.selectedVehicle) params = data
-    }
 
     function guardNaN(value) { return value ? value : NaN; }
     function guardBool(value) { return typeof value !== "undefined" && value; }
@@ -27,7 +21,7 @@ Column {
             flat: true
             rightCropped: true
             iconSource: "qrc:/icons/calibrate.svg"
-            enabled: controller.selectedVehicle !== null
+            enabled: selectedVehicle
             tipText: qsTr("Preparation")
             highlighted: preflightPopup.visible
             onClicked: preflightPopup.visible ? preflightPopup.close() : preflightPopup.open()
@@ -221,7 +215,7 @@ Column {
 //    VehicleMissionView {
 //        id: mission
 //        width: parent.width
-//        vehicleId: controller.selectedVehicle
+//        vehicleId: selectedVehicle ? selectedVehicle.id : null
 
 //        Controls.ComboBox {
 //            width: mission.availableWidth
@@ -230,7 +224,7 @@ Column {
 //            enabled: selectedVehicle && selectedVehicle.online
 //            model: params.modes ? params.modes : []
 //            displayText: params.mode ? params.mode : "-"
-//            onActivated: controller.sendCommand("setMode", [ model[index] ])
+//            onActivated: dashboardController.sendCommand("setMode", [ model[index] ])
 //        }
 //    }
 }

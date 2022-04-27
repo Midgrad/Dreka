@@ -19,7 +19,7 @@
         <file>Map/MapRulerView.qml</file>
         <file>Map/MapScale.qml</file>
         <file>Map/MapMenu.qml</file>
-        <file>Vehicles/Vehicles.qml</file>
+        <file>Vehicles/VehiclesView.qml</file>
         <file>Vehicles/List/VehicleListView.qml</file>
         <file>Vehicles/List/Vehicle.qml</file>
         <file>Vehicles/Dashboard/VehicleDashboardView.qml</file>

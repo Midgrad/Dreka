@@ -42,7 +42,7 @@ Controls.ApplicationWindow {
         }
     }
 
-    Vehicles {
+    VehiclesView {
         id: vehicles
         anchors.top: parent.top
         anchors.right: parent.right
