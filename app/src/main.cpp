@@ -51,6 +51,7 @@
 
 #include "vehicle_dashboard_controller.h"
 #include "vehicle_list_contoller.h"
+#include "vehicle_mission_controller.h"
 #include "vehicles_map_controller.h"
 
 namespace
@@ -123,6 +124,8 @@ int main(int argc, char* argv[])
                                                          "VehicleListController");
     qmlRegisterType<presentation::VehiclesMapController>("Dreka.Vehicles", 1, 0,
                                                          "VehiclesMapController");
+    qmlRegisterType<presentation::VehicleMissionController>("Dreka.Vehicles", 1, 0,
+                                                            "VehicleMissionController");
 
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);

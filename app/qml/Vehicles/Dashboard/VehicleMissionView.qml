@@ -19,15 +19,12 @@ Row {
         enabled: selectedVehicle && selectedVehicle.online
         text: qsTr("Nav to")
         onTriggered: {
-            controller.sendCommand("setMode", [ "NavTo" ]); // FIXME: to domain, packed commands
+            dashboardController.sendCommand("setMode", [ "NavTo" ]); // FIXME: to domain, packed commands
             vehicleMissionController.navTo(mapMenu.latitude, mapMenu.longitude);
         }
     }
 
-    Component.onCompleted: {
-        map.registerController("missionRouteController", vehicleMissionController);
-        mapMenu.addItem(navToItem);
-    }
+    Component.onCompleted: mapMenu.addItem(navToItem)
 
     Controls.Button {
         id: missionButton
@@ -36,8 +33,8 @@ Row {
         rightCropped: true
         iconSource: "qrc:/icons/route.svg"
         tipText: qsTr("Mission")
-        enabled: controller.selectedVehicle !== null
-        onClicked: missions.selectMission(vehicleMissionController.mission.id)
+        enabled: vehicleId !== null
+// FIXME:        onClicked: missions.selectMission(vehicleMissionController.mission.id)
 
         Controls.ColoredIcon {
             anchors.right: parent.right
@@ -62,6 +59,6 @@ Row {
             value: vehicleMissionController.currentItem
             when: !wpBox.activeFocus
         }
-        onActivated: vehicleMissionController.switchItem(index)
+        onActivated: vehicleMissionController.switchCurrentItem(index)
     }
 }

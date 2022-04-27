@@ -24,7 +24,7 @@ public:
     bool isTracking() const;
     int trackLength() const;
 
-    Q_INVOKABLE QVariantMap vehicleData(const QVariant& vehicleId) const;
+    Q_INVOKABLE QVariantMap telemetry(const QVariant& vehicleId) const;
 
 public slots:
     void selectVehicle(const QVariant& vehicleId);

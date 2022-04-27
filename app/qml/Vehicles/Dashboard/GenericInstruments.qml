@@ -212,19 +212,19 @@ Column {
         }
     }
 
-//    VehicleMissionView {
-//        id: mission
-//        width: parent.width
-//        vehicleId: selectedVehicle ? selectedVehicle.id : null
+    VehicleMissionView {
+        id: mission
+        width: parent.width
+        vehicleId: selectedVehicle ? selectedVehicle.id : null
 
-//        Controls.ComboBox {
-//            width: mission.availableWidth
-//            flat: true
-//            labelText: qsTr("MODE")
-//            enabled: selectedVehicle && selectedVehicle.online
-//            model: params.modes ? params.modes : []
-//            displayText: params.mode ? params.mode : "-"
-//            onActivated: dashboardController.sendCommand("setMode", [ model[index] ])
-//        }
-//    }
+        Controls.ComboBox {
+            width: mission.availableWidth
+            flat: true
+            labelText: qsTr("MODE")
+            enabled: selectedVehicle && selectedVehicle.online
+            model: params.modes ? params.modes : []
+            displayText: params.mode ? params.mode : "-"
+            onActivated: dashboardController.sendCommand("setMode", [ model[index] ])
+        }
+    }
 }

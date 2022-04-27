@@ -1,51 +1,47 @@
-//#ifndef VEHICLE_MISSION_CONTROLLER_H
-//#define VEHICLE_MISSION_CONTROLLER_H
+#ifndef VEHICLE_MISSION_CONTROLLER_H
+#define VEHICLE_MISSION_CONTROLLER_H
 
-//#include "i_missions_service.h"
+#include "i_missions_service.h"
 
-//namespace md::presentation
-//{
-//class VehicleMissionController : public QObject
-//{
-//    Q_OBJECT
+namespace md::presentation
+{
+class VehicleMissionController : public QObject
+{
+    Q_OBJECT
 
-//    Q_PROPERTY(QVariant vehicleId READ vehicleId WRITE setVehicleId NOTIFY missionChanged)
-//    Q_PROPERTY(QJsonObject mission READ mission NOTIFY missionChanged)
-//    Q_PROPERTY(QJsonObject home READ home NOTIFY homeChanged)
-//    Q_PROPERTY(QJsonObject target READ target NOTIFY targetChanged)
-//    Q_PROPERTY(QStringList routeItems READ routeItems NOTIFY routeItemsChanged)
-//    Q_PROPERTY(int currentItem READ currentItem NOTIFY currentChanged)
+    Q_PROPERTY(QVariant vehicleId READ vehicleId WRITE setVehicleId NOTIFY vehicleIdChanged)
+    Q_PROPERTY(QJsonObject mission READ mission NOTIFY missionChanged)
 
-//public:
-//    explicit VehicleMissionController(QObject* parent = nullptr);
+    Q_PROPERTY(QStringList routeItems READ routeItems NOTIFY routeItemsChanged)
+    Q_PROPERTY(int currentItem READ currentItem NOTIFY currentItemChanged)
 
-//    QVariant vehicleId() const;
-//    QJsonObject mission() const;
-//    QJsonObject home() const;
-//    QJsonObject target() const;
-//    QStringList routeItems() const;
-//    int currentItem() const;
+public:
+    explicit VehicleMissionController(QObject* parent = nullptr);
 
-//public slots:
-//    void setVehicleId(const QVariant& vehicleId);
-//    void setMission(domain::Mission* mission); // FIXME: unify setMission & setRoute
-//    void setRoute(domain::MissionRoute* route);
+    QVariant vehicleId() const;
+    QJsonObject mission() const;
+    QStringList routeItems() const;
+    int currentItem() const;
 
-//    void switchItem(int index);
-//    void navTo(double latitude, double longitude);
+public slots:
+    void setVehicleId(const QVariant& vehicleId);
+    void setMission(domain::Mission* mission);
+    void setRoute(domain::MissionRoute* route);
+    void switchCurrentItem(int index);
 
-//signals:
-//    void missionChanged();
-//    void routeItemsChanged();
-//    void currentChanged();
-//    void homeChanged(QJsonObject home);
-//    void targetChanged(QJsonObject home);
+signals:
+    void vehicleIdChanged();
+    void missionChanged();
+    void routeItemsChanged();
+    void currentItemChanged();
 
-//private:
-//    domain::IMissionsService* const m_missionsService;
-//    domain::Mission* m_mission = nullptr;
-//    domain::MissionRoute* m_route = nullptr;
-//};
-//} // namespace md::presentation
+private:
+    domain::IMissionsService* const m_missionsService;
 
-//#endif // VEHICLE_MISSION_CONTROLLER_H
+    QVariant m_vehicleId;
+    domain::Mission* m_mission = nullptr;
+    domain::MissionRoute* m_route = nullptr;
+};
+} // namespace md::presentation
+
+#endif // VEHICLE_MISSION_CONTROLLER_H

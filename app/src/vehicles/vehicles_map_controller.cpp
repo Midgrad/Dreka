@@ -34,7 +34,7 @@ int VehiclesMapController::trackLength() const
     return 1000; // TODO: settings
 }
 
-QVariantMap VehiclesMapController::vehicleData(const QVariant& vehicleId) const
+QVariantMap VehiclesMapController::telemetry(const QVariant& vehicleId) const
 {
     return m_pTree->properties(vehicleId.toString());
 }
