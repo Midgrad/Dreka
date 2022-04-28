@@ -173,13 +173,24 @@ class Vehicles {
         vehicleJs.set(vehicle);
     }
 
+    removeVehicle(vehicleId) {
+        if (this.selectedVehicleId === vehicleId)
+            this.selectedVehicleId = null;
+
+        if (!this.vehicles.has(vehicleId))
+            return;
+
+        this.vehicles.get(vehicleId).done();
+        this.vehicles.delete(vehicleId);
+    }
+
     setTelemetry(vehicleId, data) {
         if (this.vehicles.has(vehicleId))
             this.vehicles.get(vehicleId).setData(data);
     }
 
     clear() {
-        this.vehicles.forEach((value) => { value.done() } );
+        this.vehicles.forEach((vehicle) => { vehicle.done() } );
         this.vehicles.clear();
     }
 }

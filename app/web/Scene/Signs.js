@@ -308,7 +308,7 @@ class ComplexSign {
             this.signs.push(new AcceptSign(this));
     }
 
-    clear() {
+    clear() { // TODO: done
         for (const sign of this.signs) { sign.clear(); }
     }
 

@@ -15,14 +15,15 @@ class VehiclesMapController : public QObject
 
     Q_PROPERTY(QVariant selectedVehicleId READ selectedVehicleId WRITE selectVehicle NOTIFY
                    selectedVehicleChanged)
+
     Q_PROPERTY(bool tracking READ isTracking WRITE setTracking NOTIFY trackingChanged)
     Q_PROPERTY(int trackLength READ trackLength NOTIFY trackLengthChanged)
-    Q_PROPERTY(QJsonArray vehicles READ vehicles NOTIFY vehiclesChanged)
 
 public:
     explicit VehiclesMapController(QObject* parent = nullptr);
 
     QVariant selectedVehicleId() const;
+
     bool isTracking() const;
     int trackLength() const;
 
@@ -32,16 +33,19 @@ public:
 
 public slots:
     void selectVehicle(const QVariant& vehicleId);
-    void setTracking(bool tracking);
     void sendCommand(const QVariant& vehicleId, const QString& commandId, const QVariantList& args);
 
+    void setTracking(bool tracking);
+
 signals:
-    void selectedVehicleChanged();
+    void selectedVehicleChanged(QVariant vehicleId);
+
     void trackingChanged();
     void trackLengthChanged(int trackLength);
 
-    void vehiclesChanged();
+    void vehicleAdded(QVariant vehicleId, QVariantMap vehicle);
     void vehicleChanged(QVariant vehicleId, QVariantMap vehicle);
+    void vehicleRemoved(QVariant vehicleId);
     void telemetryChanged(QVariant vehicleId, QVariantMap data);
 
 private:

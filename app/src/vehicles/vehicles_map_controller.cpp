@@ -17,12 +17,15 @@ VehiclesMapController::VehiclesMapController(QObject* parent) :
     Q_ASSERT(m_pTree);
     Q_ASSERT(m_commands);
 
-    connect(m_vehicles, &IVehiclesService::vehicleAdded, this,
-            &VehiclesMapController::vehiclesChanged);
-    connect(m_vehicles, &IVehiclesService::vehicleRemoved, this,
-            &VehiclesMapController::vehiclesChanged);
-    connect(m_vehicles, &IVehiclesService::vehicleChanged, this,
-            &VehiclesMapController::vehiclesChanged);
+    connect(m_vehicles, &IVehiclesService::vehicleAdded, this, [this](Vehicle* vehicle) {
+        emit vehicleAdded(vehicle->id, vehicle->toVariantMap());
+    });
+    connect(m_vehicles, &IVehiclesService::vehicleRemoved, this, [this](Vehicle* vehicle) {
+        emit vehicleRemoved(vehicle->id);
+    });
+    connect(m_vehicles, &IVehiclesService::vehicleChanged, this, [this](Vehicle* vehicle) {
+        emit vehicleChanged(vehicle->id, vehicle->toVariantMap());
+    });
 
     connect(m_pTree, &IPropertyTree::propertiesChanged, this,
             &VehiclesMapController::telemetryChanged);
@@ -67,6 +70,12 @@ QVariantMap VehiclesMapController::telemetry(const QVariant& vehicleId) const
     return m_pTree->properties(vehicleId.toString());
 }
 
+void VehiclesMapController::sendCommand(const QVariant& vehicleId, const QString& commandId,
+                                        const QVariantList& args)
+{
+    emit m_commands->requestCommand(commandId)->exec(vehicleId, args);
+}
+
 void VehiclesMapController::setTracking(bool tracking)
 {
     if (m_tracking == tracking)
@@ -74,12 +83,6 @@ void VehiclesMapController::setTracking(bool tracking)
 
     m_tracking = tracking;
     emit trackingChanged();
-}
-
-void VehiclesMapController::sendCommand(const QVariant& vehicleId, const QString& commandId,
-                                        const QVariantList& args)
-{
-    emit m_commands->requestCommand(commandId)->exec(vehicleId, args);
 }
 
 void VehiclesMapController::selectVehicle(const QVariant& vehicleId)
@@ -90,5 +93,5 @@ void VehiclesMapController::selectVehicle(const QVariant& vehicleId)
     this->setTracking(false);
 
     m_selectedVehicleId = vehicleId;
-    emit selectedVehicleChanged();
+    emit selectedVehicleChanged(vehicleId);
 }
