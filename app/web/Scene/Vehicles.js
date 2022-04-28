@@ -173,7 +173,7 @@ class Vehicles {
         vehicleJs.set(vehicle);
     }
 
-    setVehicleData(vehicleId, data) {
+    setTelemetry(vehicleId, data) {
         if (this.vehicles.has(vehicleId))
             this.vehicles.get(vehicleId).setData(data);
     }

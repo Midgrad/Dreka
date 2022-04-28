@@ -22,7 +22,7 @@ ColumnLayout {
         selectedVehicleId: selectedVehicle ? selectedVehicle.id : null
     }
 
-    Component.onCompleted: map.registerController("vehiclesController", vehiclesMapController)
+    Component.onCompleted: map.registerController("vehiclesMapController", vehiclesMapController)
 
     Controls.Pane {
         id: pane

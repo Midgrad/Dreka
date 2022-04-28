@@ -3,6 +3,7 @@
 
 #include "i_command_service.h"
 #include "i_property_tree.h"
+#include "i_vehicles_service.h"
 
 #include <QJsonArray>
 
@@ -16,6 +17,7 @@ class VehiclesMapController : public QObject
                    selectedVehicleChanged)
     Q_PROPERTY(bool tracking READ isTracking WRITE setTracking NOTIFY trackingChanged)
     Q_PROPERTY(int trackLength READ trackLength NOTIFY trackLengthChanged)
+    Q_PROPERTY(QJsonArray vehicles READ vehicles NOTIFY vehiclesChanged)
 
 public:
     explicit VehiclesMapController(QObject* parent = nullptr);
@@ -24,6 +26,8 @@ public:
     bool isTracking() const;
     int trackLength() const;
 
+    Q_INVOKABLE QJsonArray vehicles() const;
+    Q_INVOKABLE QJsonObject vehicle(const QVariant& vehicleId) const;
     Q_INVOKABLE QVariantMap telemetry(const QVariant& vehicleId) const;
 
 public slots:
@@ -36,11 +40,15 @@ signals:
     void trackingChanged();
     void trackLengthChanged(int trackLength);
 
-    void vehicleDataChanged(QVariant vehicleId, QVariantMap data);
+    void vehiclesChanged();
+    void vehicleChanged(QVariant vehicleId, QVariantMap vehicle);
+    void telemetryChanged(QVariant vehicleId, QVariantMap data);
 
 private:
+    domain::IVehiclesService* const m_vehicles;
     domain::IPropertyTree* const m_pTree;
     domain::ICommandsService* const m_commands;
+
     QVariant m_selectedVehicleId;
     bool m_tracking = false;
 };

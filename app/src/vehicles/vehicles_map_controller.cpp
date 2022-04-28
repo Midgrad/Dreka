@@ -9,14 +9,23 @@ using namespace md::presentation;
 
 VehiclesMapController::VehiclesMapController(QObject* parent) :
     QObject(parent),
+    m_vehicles(md::app::Locator::get<IVehiclesService>()),
     m_pTree(md::app::Locator::get<IPropertyTree>()),
     m_commands(md::app::Locator::get<ICommandsService>())
 {
+    Q_ASSERT(m_vehicles);
     Q_ASSERT(m_pTree);
     Q_ASSERT(m_commands);
 
+    connect(m_vehicles, &IVehiclesService::vehicleAdded, this,
+            &VehiclesMapController::vehiclesChanged);
+    connect(m_vehicles, &IVehiclesService::vehicleRemoved, this,
+            &VehiclesMapController::vehiclesChanged);
+    connect(m_vehicles, &IVehiclesService::vehicleChanged, this,
+            &VehiclesMapController::vehiclesChanged);
+
     connect(m_pTree, &IPropertyTree::propertiesChanged, this,
-            &VehiclesMapController::vehicleDataChanged);
+            &VehiclesMapController::telemetryChanged);
 }
 
 QVariant VehiclesMapController::selectedVehicleId() const
@@ -32,6 +41,25 @@ bool VehiclesMapController::isTracking() const
 int VehiclesMapController::trackLength() const
 {
     return 1000; // TODO: settings
+}
+
+QJsonArray VehiclesMapController::vehicles() const
+{
+    QJsonArray vehicles;
+    for (Vehicle* vehicle : m_vehicles->vehicles())
+    {
+        vehicles += QJsonObject::fromVariantMap(vehicle->toVariantMap());
+    }
+    return vehicles;
+}
+
+QJsonObject VehiclesMapController::vehicle(const QVariant& vehicleId) const
+{
+    domain::Vehicle* vehicle = m_vehicles->vehicle(vehicleId);
+    if (!vehicle)
+        return QJsonObject();
+
+    return QJsonObject::fromVariantMap(vehicle->toVariantMap());
 }
 
 QVariantMap VehiclesMapController::telemetry(const QVariant& vehicleId) const
