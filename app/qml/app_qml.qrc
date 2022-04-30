@@ -29,6 +29,8 @@
         <file>Vehicles/Dashboard/Navigation.qml</file>
         <file>Vehicles/Dashboard/VehicleMissionView.qml</file>
         <file>Missions/MissionsView.qml</file>
+        <file>Missions/List/MissionListView.qml</file>
+        <file>Missions/List/Mission.qml</file>
         <file>MainWindow.qml</file>
     </qresource>
 </RCC>

@@ -1,13 +1,16 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
-import Industrial.Widgets 1.0 as Widgets
 import Dreka.Missions 1.0
+
+import "List"
 
 RowLayout {
     id: root
 
     property var selectedMission: null
+
+    function openMissions() { sidebar.sourceComponent = missionListComponent; }
 
     Component.onCompleted: map.registerController("missionsMapController", missionsMapController)
 
@@ -53,38 +56,37 @@ RowLayout {
 
     Controls.Button {
         visible: !selectedMission
-        tipText: highlighted ? qsTr("Close routes list") : qsTr("Open routes list")
+        tipText: highlighted ? qsTr("Close missions list") : qsTr("Open missions list")
         iconSource: "qrc:/icons/routes.svg"
-        highlighted: sidebar.sourceComponent == routeListComponent
-        onClicked: sidebar.sourceComponent = highlighted ? null : routeListComponent
+        highlighted: sidebar.sourceComponent == missionListComponent
+        onClicked: sidebar.sourceComponent = highlighted ? null : missionListComponent
     }
 
     Controls.Button {
         rightCropped: true
         visible: selectedMission
         iconSource: "qrc:/icons/left.svg"
-        tipText: qsTr("Back to routes")
-        onClicked: openRoutes()
+        tipText: qsTr("Back to missions")
+        onClicked: openMissions()
     }
 
     Controls.Button {
         leftCropped: true
         visible: selectedMission
         text: selectedMission ? selectedMission.name : ""
-        tipText: highlighted ? qsTr("Close route viewer") : qsTr("Open route viewer")
-        highlighted: sidebar.sourceComponent == routeEditComponent
-        onClicked: sidebar.sourceComponent = highlighted ? null : routeEditComponent
+        tipText: highlighted ? qsTr("Close mission viewer") : qsTr("Open mission viewer")
+        highlighted: sidebar.sourceComponent == missionEditComponent
+        onClicked: sidebar.sourceComponent = highlighted ? null : missionEditComponent
     }
 
     Component {
-        id: routeListComponent
+        id: missionListComponent
 
-        Controls.Pane {}
-        //MissionList { onExpand: controller.selectMission(routeId); }
+        MissionListView { onSelectMission: selectedMission = mission }
     }
 
     Component {
-        id: routeEditComponent
+        id: missionEditComponent
 
         Controls.Pane {}
         //MissionItemList { routeId: controller.selectedMission }

@@ -54,6 +54,7 @@
 #include "vehicle_mission_controller.h"
 #include "vehicles_map_controller.h"
 
+#include "mission_list_controller.h"
 #include "missions_map_controller.h"
 
 namespace
@@ -131,6 +132,8 @@ int main(int argc, char* argv[])
 
     qmlRegisterType<presentation::MissionsMapController>("Dreka.Missions", 1, 0,
                                                          "MissionsMapController");
+    qmlRegisterType<presentation::MissionListController>("Dreka.Missions", 1, 0,
+                                                         "MissionListController");
 
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);

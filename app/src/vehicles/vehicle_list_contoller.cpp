@@ -4,11 +4,6 @@
 
 #include "locator.h"
 
-namespace
-{
-const QString GenericInstruments = "GenericInstruments.qml";
-}
-
 using namespace md::domain;
 using namespace md::presentation;
 
