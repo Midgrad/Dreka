@@ -54,6 +54,8 @@
 #include "vehicle_mission_controller.h"
 #include "vehicles_map_controller.h"
 
+#include "missions_map_controller.h"
+
 namespace
 {
 constexpr char gitRevision[] = "git_revision";
@@ -126,6 +128,9 @@ int main(int argc, char* argv[])
                                                          "VehiclesMapController");
     qmlRegisterType<presentation::VehicleMissionController>("Dreka.Vehicles", 1, 0,
                                                             "VehicleMissionController");
+
+    qmlRegisterType<presentation::MissionsMapController>("Dreka.Missions", 1, 0,
+                                                         "MissionsMapController");
 
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);

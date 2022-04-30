@@ -44,7 +44,6 @@ class Route {
 
         // Entities
         this.items = [];
-        // Nominal track
         this.lines = [];
     }
 
@@ -57,7 +56,7 @@ class Route {
         this.items = [];
     }
 
-    setRouteData(routeData) {
+    setRoute(routeData) {
         this.name = routeData.name;
         this.visible = routeData.visible;
         this.items.forEach(item => item.setVisible(this.visible));
@@ -75,18 +74,20 @@ class Route {
 
             // Callbacks
             var that = this;
-            item.changedCallback = () => {
-                that.routeItemChangedCallback(item.index, item.data);
-            }
-            item.clickedCallback = (x, y) => {
-                that.routeItemClickedCallback(item.index, x, y);
-            }
+            item.changedCallback = () => { that.routeItemChangedCallback(item.index, item.data); }
+            item.clickedCallback = (x, y) => { that.routeItemClickedCallback(item.index, x, y); }
 
             // Add line
-            if (this.items.length > 1)
-                this._addLine(this.items[index - 1], this.items[index]);
+            for (var prevIndex = index - 1; prevIndex > 0; --prevIndex)
+            {
+                if (this.items[prevIndex].hasPosition() &&
+                    this.items[index].hasPosition()) {
+                    this._addLine(this.items[prevIndex], this.items[index]);
+                    break;
+                }
+            }
         } else {
-            console.warn("`Wrong wpt index in setRouteItem")
+            console.warn("Wrong wpt index in setRouteItem")
         }
     }
 
@@ -120,17 +121,17 @@ class Route {
         this.viewer.entities.remove(this.lines[removeIndex]);
         this.lines.splice(removeIndex, 1);
 
-        // Update another line
-        if (updateIndex > -1) {
-            var left = this.items[updateIndex];
-            var right = this.items[updateIndex + 1];
-            this.lines[updateIndex].polyline.positions = new Cesium.CallbackProperty(() => {
-                return [left.position, right.position];
-            }, false);
-            this.lines[updateIndex].polyline.show =  new Cesium.CallbackProperty(() => {
-                return left.validPosition && right.validPosition;
-            }, false);
-        }
+        // FIXME: Update 2 other lines
+//        if (updateIndex > -1) {
+//            var left = this.items[updateIndex];
+//            var right = this.items[updateIndex + 1];
+//            this.lines[updateIndex].polyline.positions = new Cesium.CallbackProperty(() => {
+//                return [left.position, right.position];
+//            }, false);
+//            this.lines[updateIndex].polyline.show =  new Cesium.CallbackProperty(() => {
+//                return left.validPosition && right.validPosition;
+//            }, false);
+//        }
 
         // Update indices
         for (var i = index; i < this.items.length; ++i) {
@@ -153,9 +154,7 @@ class Route {
         var that = this;
         var line = this.viewer.entities.add({
             polyline: {
-                show: new Cesium.CallbackProperty(() => {
-                    return that.visible && first.validPosition && second.validPosition;
-                }, false),
+                show: new Cesium.CallbackProperty(() => { return that.visible; }, false),
                 positions: new Cesium.CallbackProperty(() => { return [first.position,
                                                                        second.position]; }, false),
                 arcType: Cesium.ArcType.GEODESIC,
@@ -192,7 +191,7 @@ class Routes {
         this.routes.clear();
     }
 
-    setRouteData(routeId, data) {
+    setRoute(routeId, data) {
         var route;
         if (this.routes.has(routeId)) {
             route = this.routes.get(routeId);
@@ -208,14 +207,14 @@ class Routes {
                 that.routeItemClickedCallback(routeId, index, x, y);
             }
         }
-        route.setRouteData(data);
+        route.setRoute(data);
     }
 
-    setRouteItemData(routeId, index, data) {
+    setRouteItem(routeId, index, data) {
         this.routes.get(routeId).setRouteItem(index, data);
     }
 
-    removeMission(routeId) {
+    removeRoute(routeId) {
         if (this.selectedMission === routeId)
             this.selectedMission = null;
 
@@ -223,11 +222,11 @@ class Routes {
         this.routes.delete(routeId);
     }
 
-    removeItem(routeId, index) {
+    removeRouteItem(routeId, index) {
         this.routes.get(routeId).removeItem(index);
     }
 
-    selectMission(routeId) {
+    selectRoute(routeId) {
         if (this.selectedMission === routeId)
             return;
 

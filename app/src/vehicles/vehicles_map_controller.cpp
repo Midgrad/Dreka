@@ -18,13 +18,13 @@ VehiclesMapController::VehiclesMapController(QObject* parent) :
     Q_ASSERT(m_commands);
 
     connect(m_vehicles, &IVehiclesService::vehicleAdded, this, [this](Vehicle* vehicle) {
-        emit vehicleAdded(vehicle->id, vehicle->toVariantMap());
+        emit vehicleAdded(vehicle->toVariantMap());
+    });
+    connect(m_vehicles, &IVehiclesService::vehicleChanged, this, [this](Vehicle* vehicle) {
+        emit vehicleChanged(vehicle->toVariantMap());
     });
     connect(m_vehicles, &IVehiclesService::vehicleRemoved, this, [this](Vehicle* vehicle) {
         emit vehicleRemoved(vehicle->id);
-    });
-    connect(m_vehicles, &IVehiclesService::vehicleChanged, this, [this](Vehicle* vehicle) {
-        emit vehicleChanged(vehicle->id, vehicle->toVariantMap());
     });
 
     connect(m_pTree, &IPropertyTree::propertiesChanged, this,

@@ -52,8 +52,8 @@ class CesiumWrapper {
             }
 
             // TODO: grid and layers optional
-            const grid = new Grid(that.viewer, channel.objects.gridController);
-            const layers = new Layers(that.viewer, channel.objects.layersController);
+            const gridView = new Grid(that.viewer, channel.objects.gridController);
+            const layersView = new Layers(that.viewer, channel.objects.layersController);
 
             var viewportController = channel.objects.viewportController;
             if (viewportController) {
@@ -91,13 +91,13 @@ class CesiumWrapper {
 
 //                var setRouteItem = (routeId, index) => {
 //                    missionsController.routeItemData(routeId, index, routeItemData => {
-//                        routes.setRouteItemData(routeId, index, routeItemData);
+//                        routes.setRouteItem(routeId, index, routeItemData);
 //                    });
 //                }
 
 //                var setRoute = routeId => {
 //                    missionsController.routeData(routeId, routeData => {
-//                        routes.setRouteData(routeId, routeData);
+//                        routes.setRoute(routeId, routeData);
 
 //                        if (missionsController.selectedMission === routeId)
 //                            routes.selectMission(routeId);
@@ -111,11 +111,11 @@ class CesiumWrapper {
 
 //                missionsController.missionAdded.connect(routeId => setRoute(routeId));
 //                missionsController.missionChanged.connect(routeId => setRoute(routeId));
-//                missionsController.missionRemoved.connect(routeId => routes.removeMission(routeId));
+//                missionsController.missionRemoved.connect(routeId => routes.removeRoute(routeId));
 
 //                missionsController.routeItemAdded.connect((routeId, index) => setRouteItem(routeId, index));
 //                missionsController.routeItemChanged.connect((routeId, index) => setRouteItem(routeId, index));
-//                missionsController.routeItemRemoved.connect((routeId, index) => routes.removeItem(routeId, index));
+//                missionsController.routeItemRemoved.connect((routeId, index) => routes.removeRouteItem(routeId, index));
 
 //                missionsController.centerRoute.connect(routeId => { routes.centerRoute(routeId); });
 //                missionsController.centerRouteItem.connect((routeId, index) => { routes.centerRouteItem(routeId, index); });
@@ -182,28 +182,50 @@ class CesiumWrapper {
 //                target.update(missionRouteController.target);
 //                missionRouteController.targetChanged.connect(targetData => { target.update(targetData); });
 //            }
+            var missionsMapController = channel.objects.missionsMapController;
+            if (missionsMapController) {
+                const routesView = new Routes(that.viewer, that.interaction);
+
+                missionsMapController.missions(missions => {
+                    for (const mission of missions) {
+                        missionsMapController.route(route => { routesView.setRoute(mission.id, route); });
+
+                        missionsMapController.routeItems(mission.id, routeItems => {
+                            for (var index = 0; index < routeItems.length; ++index) {
+                                routesView.setRouteItem(mission.id, index, routeItems[index]);
+                            }
+                        });
+                    }
+                });
+
+                missionsMapController.selectedMissionChanged.connect(missionId => { routesView.selectRoute(missionId); });
+                routesView.selectRoute(missionsMapController.selectedMissionId);
+            }
 
             var vehiclesMapController = channel.objects.vehiclesMapController;
             if (vehiclesMapController) {
-                const vehicles = new Vehicles(that.viewer);
+                const vehiclesView = new Vehicles(that.viewer);
 
-                var selectVehicle = () => { vehicles.selectVehicle(vehiclesMapController.selectedVehicleId); }
-                vehiclesMapController.selectedVehicleChanged.connect(selectVehicle);
-                selectVehicle();
-
-                vehiclesMapController.vehicleChanged.connect((vehicleId, vehicle) => { vehicles.setVehicle(vehicleId, vehicle); });
-                vehiclesMapController.telemetryChanged.connect((vehicleId, data) => { vehicles.setTelemetry(vehicleId, data); });
-                vehiclesMapController.trackingChanged.connect(() => { vehicles.setTracking(vehiclesMapController.tracking); });
-
-                vehiclesMapController.vehicles.forEach(vehicle => {
-                    vehiclesMapController.vehicle(vehicle.id, (vehicle) => { vehicles.setVehicle(vehicle.id, vehicle); });
-                    vehiclesMapController.telemetry(vehicle.id, (telemetry) => { vehicles.setTelemetry(vehicle.id, telemetry); });
+                vehiclesMapController.vehicles(vehicles => {
+                    for (const vehicle of vehicles) {
+                        vehiclesView.setVehicle(vehicle.id, vehicle);
+                        vehiclesMapController.telemetry(vehicle.id, (telemetry) => {
+                            vehiclesView.setTelemetry(vehicle.id, telemetry);
+                        });
+                    }
                 });
 
-                vehiclesMapController.trackLengthChanged.connect(trackLength => {
-                    vehicles.setTrackLength(trackLength);
-                });
-                vehicles.setTrackLength(vehiclesMapController.trackLength);
+                vehiclesMapController.vehicleAdded.connect(vehicle => { vehiclesView.setVehicle(vehicle.id, vehicle); });
+                vehiclesMapController.vehicleChanged.connect(vehicle => { vehiclesView.setVehicle(vehicle.id, vehicle); });
+                vehiclesMapController.vehicleRemoved.connect(vehicleId => { vehiclesView.removeVehicle(vehicleId); });
+                vehiclesMapController.telemetryChanged.connect((vehicleId, data) => { vehiclesView.setTelemetry(vehicleId, data); });
+                vehiclesMapController.trackingChanged.connect(() => { vehiclesView.setTracking(vehiclesMapController.tracking); });
+
+                vehiclesMapController.selectedVehicleChanged.connect(vehicleId => { vehiclesView.selectVehicle(vehicleId); });
+                vehiclesView.selectVehicle(vehiclesMapController.selectedVehicleId);
+
+                vehiclesMapController.trackLengthChanged.connect(trackLength => { vehiclesView.setTrackLength(trackLength); });
+                vehiclesView.setTrackLength(vehiclesMapController.trackLength);
             }
 
             var adsbController = channel.objects.adsbController;

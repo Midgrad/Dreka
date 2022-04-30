@@ -328,9 +328,7 @@ class ComplexSign {
         var longitude = position ? position.longitude : undefined;
         var altitude = position ? position.altitude : undefined;
 
-        if (Cesium.defined(latitude) &&
-            Cesium.defined(longitude) &&
-            Cesium.defined(altitude)) {
+        if (!!latitude && !!longitude && !!altitude) {
             this.validPosition = true;
             this.position = Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude);
             this.terrainPosition = Cesium.Cartesian3.fromDegrees(longitude, latitude, this.terrainAltitude);
@@ -373,6 +371,10 @@ class ComplexSign {
 
     selfPosition() {
         return Cesium.SceneTransforms.wgs84ToWindowCoordinates(this.viewer.scene, this.position);
+    }
+
+    hasPosition() {
+        return this.validPosition;
     }
 
     setHighlighted(highlighted) { this.highlighted = highlighted; }

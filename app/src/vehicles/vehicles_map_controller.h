@@ -43,8 +43,8 @@ signals:
     void trackingChanged();
     void trackLengthChanged(int trackLength);
 
-    void vehicleAdded(QVariant vehicleId, QVariantMap vehicle);
-    void vehicleChanged(QVariant vehicleId, QVariantMap vehicle);
+    void vehicleAdded(QVariantMap vehicle);
+    void vehicleChanged(QVariantMap vehicle);
     void vehicleRemoved(QVariant vehicleId);
     void telemetryChanged(QVariant vehicleId, QVariantMap data);
 
