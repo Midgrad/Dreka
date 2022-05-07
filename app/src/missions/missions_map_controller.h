@@ -25,6 +25,7 @@ public:
 
 public slots:
     void selectMission(const QVariant& missionId);
+    void updateVisibility(const QVariant& missionId, bool visible);
 
 signals:
     void selectedMissionChanged(QVariant missionId);
@@ -32,6 +33,11 @@ signals:
     void missionAdded(QVariantMap mission);
     void missionChanged(QVariantMap mission);
     void missionRemoved(QVariant missionId);
+    void centerMission(QVariant missionId);
+
+    void routeItemAdded(QVariant routeId, int index, QVariantMap data);
+    void routeItemChanged(QVariant routeId, int index, QVariantMap data);
+    void routeItemRemoved(QVariant routeId, int index);
 
 private:
     domain::IMissionsService* const m_missions;

@@ -70,3 +70,13 @@ void MissionsMapController::selectMission(const QVariant& missionId)
     m_selectedMissionId = missionId;
     emit selectedMissionChanged(missionId);
 }
+
+void MissionsMapController::updateVisibility(const QVariant& missionId, bool visible)
+{
+    Mission* mission = m_missions->mission(missionId);
+    if (!mission)
+        return;
+
+    mission->visible.set(visible);
+    m_missions->saveMission(mission);
+}

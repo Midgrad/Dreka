@@ -54,6 +54,7 @@
 #include "vehicle_mission_controller.h"
 #include "vehicles_map_controller.h"
 
+#include "mission_edit_controller.h"
 #include "mission_list_controller.h"
 #include "missions_map_controller.h"
 
@@ -134,6 +135,8 @@ int main(int argc, char* argv[])
                                                          "MissionsMapController");
     qmlRegisterType<presentation::MissionListController>("Dreka.Missions", 1, 0,
                                                          "MissionListController");
+    qmlRegisterType<presentation::MissionEditController>("Dreka.Missions", 1, 0,
+                                                         "MissionEditController");
 
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);

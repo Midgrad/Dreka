@@ -73,7 +73,7 @@ Item {
             rightCropped: true
             iconSource: "qrc:/icons/center.svg"
             tipText: qsTr("Center mission")
-            onClicked: missionsMapController.centerMission( mission.id)
+            onClicked: missionsMapController.centerMission(mission.id)
             Layout.alignment: Qt.AlignVCenter
         }
 
@@ -84,7 +84,7 @@ Item {
             iconSource: mission.visible ? "qrc:/icons/password_show.svg" :
                                           "qrc:/icons/password_hide.svg"
             tipText: mission.visible ? qsTr(" mission visible") : qsTr(" mission hidden")
-            onClicked: missionsMapController.updateVisibility(mission.id, ! mission.visible);
+            onClicked: missionsMapController.updateVisibility(mission.id, !mission.visible);
             Layout.alignment: Qt.AlignVCenter
         }
 

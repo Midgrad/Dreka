@@ -4,14 +4,21 @@ import Industrial.Controls 1.0 as Controls
 import Dreka.Missions 1.0
 
 import "List"
+import "Edit"
 
 RowLayout {
     id: root
 
     property var selectedMission: null
 
-    function openMissions() { sidebar.sourceComponent = missionListComponent; }
-
+    onSelectedMissionChanged: {
+        if (selectedMission && sidebar.sourceComponent == missionListComponent) {
+            sidebar.sourceComponent = missionEditComponent;
+        }
+        else if (!selectedMission && sidebar.sourceComponent == missionEditComponent) {
+            sidebar.sourceComponent = missionListComponent;
+        }
+    }
     Component.onCompleted: map.registerController("missionsMapController", missionsMapController)
 
     spacing: 1
@@ -66,8 +73,8 @@ RowLayout {
         rightCropped: true
         visible: selectedMission
         iconSource: "qrc:/icons/left.svg"
-        tipText: qsTr("Back to missions")
-        onClicked: openMissions()
+        tipText: qsTr("Deselect mission")
+        onClicked: selectedMission = null
     }
 
     Controls.Button {
@@ -88,7 +95,6 @@ RowLayout {
     Component {
         id: missionEditComponent
 
-        Controls.Pane {}
-        //MissionItemList { routeId: controller.selectedMission }
+        MissionEditView { selectedMissionId: selectedMission.id }
     }
 }

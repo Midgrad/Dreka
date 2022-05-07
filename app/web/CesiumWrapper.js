@@ -200,6 +200,15 @@ class CesiumWrapper {
 
                 missionsMapController.selectedMissionChanged.connect(missionId => { routesView.selectRoute(missionId); });
                 routesView.selectRoute(missionsMapController.selectedMissionId);
+
+                missionsMapController.missionAdded.connect(mission => { routesView.setRoute(mission.id, mission); });
+                missionsMapController.missionChanged.connect(mission => { routesView.setRoute(mission.id, mission); });
+                missionsMapController.missionRemoved.connect(missionId => { routesView.removeRoute(missionId); });
+                missionsMapController.centerMission.connect(missionId => { routesView.centerRoute(missionId); });
+
+                missionsMapController.routeItemAdded.connect((routeId, index, data) => { routesView.setRouteItem(routeId, index, data); });
+                missionsMapController.routeItemChanged.connect((routeId, index, data) => { routesView.setRouteItem(routeId, index, data); });
+                missionsMapController.routeItemRemoved.connect((routeId, index) => { routesView.removeRouteItem(routeId, index); });
             }
 
             var vehiclesMapController = channel.objects.vehiclesMapController;
