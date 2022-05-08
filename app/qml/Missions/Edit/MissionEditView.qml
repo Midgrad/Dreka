@@ -8,7 +8,8 @@ Controls.Pane {
     id: root
 
     property alias selectedMissionId : editController.missionId
-    property alias operation : editController.operation
+
+    property alias _vehicle : editController.vehicle
 
     width: Controls.Theme.baseSize * 13
 
@@ -19,65 +20,79 @@ Controls.Pane {
         spacing: Controls.Theme.spacing
 
         RowLayout {
-            spacing: Controls.Theme.spacing
+            spacing: 0
 
-            Controls.Label {
-                text: qsTr("Vehicle")
-            }
+            Controls.Label { text: qsTr("Vehicle") }
 
             Controls.ComboBox {
+                id: vehicleBox
                 model: editController.vehicles
+                displayText: _vehicle ? _vehicle.name : qsTr("No vehicle")
                 flat: true
+                onActivated: editController.assignVehicle(model[index].id)
                 Layout.fillWidth: true
             }
-        }
 
-        Controls.ProgressBar {
-            id: progress
-            enabled: bar.enabled
-            visible: !!operation
-            flat: true
-            radius: Controls.Theme.rounding
-            from: 0
-            to: operation && operation.total ? operation.total : 0
-            value: operation && operation.progress ? operation.progress : 0
-            Layout.fillWidth: true
-
-            Controls.Button {
-                anchors.fill: parent
+            Controls.MenuButton {
+                iconSource: "qrc:/icons/dots.svg"
+                tipText: qsTr("Mission actions")
                 flat: true
-                tipText: qsTr("Cancel")
-                text: progress.value + "/" + progress.to
-                onClicked: editController.cancel()
+                leftCropped: true
+                model: ListModel {
+                    ListElement { text: qsTr("Upload"); property var action: () =>  { editController.upload() } }
+                    ListElement { text: qsTr("Download"); property var action: () =>  { editController.download() } }
+                    ListElement { text: qsTr("Clear"); property var action: () =>  { editController.clear() } }
+                }
+                onTriggered: modelData.action()
             }
         }
 
-        Controls.ButtonBar {
-            id: bar
-            flat: true
-            visible: !operation
-            enabled: editController.online
-            Layout.fillWidth: true
+//        Controls.ProgressBar {
+//            id: progress
+//            enabled: bar.enabled
+//            visible: !!operation
+//            flat: true
+//            radius: Controls.Theme.rounding
+//            from: 0
+//            to: operation && operation.total ? operation.total : 0
+//            value: operation && operation.progress ? operation.progress : 0
+//            Layout.fillWidth: true
 
-            Controls.Button {
-                text: qsTr("Download")
-                borderColor: Controls.Theme.colors.controlBorder
-                onClicked: editController.download()
-            }
+//            Controls.Button {
+//                anchors.fill: parent
+//                flat: true
+//                tipText: qsTr("Cancel")
+//                text: progress.value + "/" + progress.to
+//                onClicked: editController.cancel()
+//            }
+//        }
 
-            Controls.Button {
-                text: qsTr("Upload")
-                borderColor: Controls.Theme.colors.controlBorder
-                onClicked: editController.upload()
-            }
+//        Controls.ButtonBar {
+//            id: bar
+//            flat: true
+//            visible: !operation
+//            enabled: editController.online
+//            Layout.fillWidth: true
 
-            Controls.Button {
-                text: qsTr("Clear")
-                borderColor: Controls.Theme.colors.controlBorder
-                highlightColor: Controls.Theme.colors.negative
-                hoverColor: highlightColor
-                onClicked: editController.clear()
-            }
-        }
+//            Controls.Button {
+//                text: qsTr("Download")
+//                borderColor: Controls.Theme.colors.controlBorder
+//                onClicked: editController.download()
+//            }
+
+//            Controls.Button {
+//                text: qsTr("Upload")
+//                borderColor: Controls.Theme.colors.controlBorder
+//                onClicked: editController.upload()
+//            }
+
+//            Controls.Button {
+//                text: qsTr("Clear")
+//                borderColor: Controls.Theme.colors.controlBorder
+//                highlightColor: Controls.Theme.colors.negative
+//                hoverColor: highlightColor
+//                onClicked: editController.clear()
+//            }
+//        }
     }
 }

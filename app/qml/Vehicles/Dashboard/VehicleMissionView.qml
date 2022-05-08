@@ -34,7 +34,7 @@ Row {
         iconSource: "qrc:/icons/route.svg"
         tipText: qsTr("Mission")
         enabled: vehicleId !== null
-// FIXME:        onClicked: missions.selectMission(vehicleMissionController.mission.id)
+        onClicked: missions.selectMission(vehicleMissionController.mission.id)
 
         Controls.ColoredIcon {
             anchors.right: parent.right
