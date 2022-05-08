@@ -38,61 +38,41 @@ Controls.Pane {
                 tipText: qsTr("Mission actions")
                 flat: true
                 leftCropped: true
+                enabled: _vehicle && _vehicle.online
                 model: ListModel {
-                    ListElement { text: qsTr("Upload"); property var action: () =>  { editController.upload() } }
-                    ListElement { text: qsTr("Download"); property var action: () =>  { editController.download() } }
-                    ListElement { text: qsTr("Clear"); property var action: () =>  { editController.clear() } }
+                    ListElement { text: qsTr("Upload"); property var action: () => { editController.upload() } }
+                    ListElement { text: qsTr("Download"); property var action: () => { editController.download() } }
+                    ListElement { text: qsTr("Clear"); property var action: () => { editController.clear() } }
                 }
                 onTriggered: modelData.action()
             }
         }
 
-//        Controls.ProgressBar {
-//            id: progress
-//            enabled: bar.enabled
-//            visible: !!operation
-//            flat: true
-//            radius: Controls.Theme.rounding
-//            from: 0
-//            to: operation && operation.total ? operation.total : 0
-//            value: operation && operation.progress ? operation.progress : 0
-//            Layout.fillWidth: true
+        Controls.TabBar {
+            flat: true
+            Controls.TabButton { text: qsTr("Route"); flat: true }
+            Controls.TabButton { text: qsTr("Fence"); flat: true; enabled: false }
+            Controls.TabButton { text: qsTr("Rally"); flat: true; enabled: false }
+            Layout.fillWidth: true
+        }
 
-//            Controls.Button {
-//                anchors.fill: parent
-//                flat: true
-//                tipText: qsTr("Cancel")
-//                text: progress.value + "/" + progress.to
-//                onClicked: editController.cancel()
-//            }
-//        }
+        Controls.ProgressBar {
+            id: progress
+            visible: editController.operationProgress != -1
+            flat: true
+            radius: Controls.Theme.rounding
+            from: 0
+            to: 100
+            value: editController.operationProgress
+            implicitHeight: Controls.Theme.baseSize / 3
+            Layout.fillWidth: true
 
-//        Controls.ButtonBar {
-//            id: bar
-//            flat: true
-//            visible: !operation
-//            enabled: editController.online
-//            Layout.fillWidth: true
-
-//            Controls.Button {
-//                text: qsTr("Download")
-//                borderColor: Controls.Theme.colors.controlBorder
-//                onClicked: editController.download()
-//            }
-
-//            Controls.Button {
-//                text: qsTr("Upload")
-//                borderColor: Controls.Theme.colors.controlBorder
-//                onClicked: editController.upload()
-//            }
-
-//            Controls.Button {
-//                text: qsTr("Clear")
-//                borderColor: Controls.Theme.colors.controlBorder
-//                highlightColor: Controls.Theme.colors.negative
-//                hoverColor: highlightColor
-//                onClicked: editController.clear()
-//            }
-//        }
+            Controls.Button {
+                anchors.fill: parent
+                flat: true
+                tipText: qsTr("Cancel")
+                onClicked: editController.cancel()
+            }
+        }
     }
 }

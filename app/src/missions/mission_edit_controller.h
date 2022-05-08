@@ -13,6 +13,7 @@ class MissionEditController : public QObject
     Q_PROPERTY(QVariant missionId READ missionId WRITE selectMission NOTIFY missionChanged)
     Q_PROPERTY(QVariant vehicle READ vehicle NOTIFY vehicleChanged)
     Q_PROPERTY(QStringList vehicles READ vehicles NOTIFY vehiclesChanged)
+    Q_PROPERTY(int operationProgress READ operationProgress NOTIFY operationProgressChanged)
 
 public:
     explicit MissionEditController(QObject* parent = nullptr);
@@ -20,6 +21,7 @@ public:
     QVariant missionId() const;
     QVariant vehicle() const;
     QStringList vehicles() const;
+    int operationProgress() const;
 
 public slots:
     void selectMission(const QVariant& missionId);
@@ -33,6 +35,7 @@ signals:
     void missionChanged();
     void vehicleChanged();
     void vehiclesChanged();
+    void operationProgressChanged();
 
 private:
     domain::IMissionsService* const m_missions;

@@ -33,7 +33,7 @@ Row {
         rightCropped: true
         iconSource: "qrc:/icons/route.svg"
         tipText: qsTr("Mission")
-        enabled: vehicleId !== null
+        enabled: vehicleMissionController.mission
         onClicked: missions.selectMission(vehicleMissionController.mission.id)
 
         Controls.ColoredIcon {
