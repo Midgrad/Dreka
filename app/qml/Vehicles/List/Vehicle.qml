@@ -11,11 +11,6 @@ Item {
     signal expand()
     signal remove()
 
-    Connections {
-        target: controller
-        onVehicleChanged: if (vehicleId === root.vehicle.id) root.vehicle = vehicle
-    }
-
     implicitWidth: row.implicitWidth
     implicitHeight: Controls.Theme.baseSize * 1.5
 

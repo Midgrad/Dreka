@@ -30,7 +30,6 @@ public slots:
 signals:
     void vehicleTypesChanged();
     void vehiclesChanged();
-    void vehicleChanged(QVariant vehicleId, QVariantMap vehicle);
 
 private slots:
     void onVehicleAdded(domain::Vehicle* vehicle);

@@ -56,12 +56,12 @@ Controls.Popup {
                 vehicle: modelData
                 selected: vehicle.id === selectedVehicleId
                 onExpand: selectVehicle(modelData)
+                onVehicleChanged: if (vehicle.id === selectedVehicleId) selectVehicle(vehicle)
                 onRemove: {
                     if (selected)
                         selectVehicle(null);
                     controller.remove(vehicle.id);
                 }
-                onVehicleChanged: if (vehicle.id === selectedVehicleId) selectVehicle(vehicle)
                 Component.onCompleted: if (!selectedVehicleId) selectVehicle(vehicle)
             }
             Layout.fillWidth: true

@@ -94,7 +94,7 @@ void VehicleListController::rename(const QVariant& vehicleId, const QString& nam
 void VehicleListController::onVehicleAdded(Vehicle* vehicle)
 {
     connect(vehicle, &Vehicle::changed, this, [this, vehicle]() {
-        emit vehicleChanged(vehicle->id, vehicle->toVariantMap());
+        emit vehiclesChanged();
     });
     emit vehiclesChanged();
 }
