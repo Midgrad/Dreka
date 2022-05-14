@@ -62,7 +62,19 @@ Item {
         Item { Layout.fillWidth: true }
 
         Controls.Label {
-            text: mission ? controller.vehicleName(mission.vehicle) : ""
+            id: vehicleNameLabel
+
+            function updateVehicleName() {
+                let vehicle = vehiclesController.vehicle(mission.vehicle);
+                text = vehicle ? vehicle.name : "";
+            }
+
+            Connections {
+                target: vehiclesController
+                onVehiclesChanged: vehicleNameLabel.updateVehicleName()
+            }
+
+            Component.onCompleted: updateVehicleName()
             Layout.alignment: Qt.AlignVCenter
             Layout.maximumWidth: Controls.Theme.baseSize * 5
         }

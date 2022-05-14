@@ -37,23 +37,32 @@ QVariantList VehicleListController::vehicleTypes() const
     return list;
 }
 
-QJsonArray VehicleListController::vehicles() const
+QVariantList VehicleListController::vehicles() const
 {
-    QJsonArray vehicles;
+    QVariantList vehicles;
     for (Vehicle* vehicle : m_vehicles->vehicles())
     {
-        vehicles += QJsonObject::fromVariantMap(vehicle->toVariantMap());
+        vehicles.append(vehicle->toVariantMap());
     }
     return vehicles;
 }
 
-QJsonObject VehicleListController::vehicle(const QVariant& vehicleId) const
+QVariant VehicleListController::vehicle(const QVariant& vehicleId) const
 {
     Vehicle* vehicle = m_vehicles->vehicle(vehicleId);
     if (vehicle)
-        return QJsonObject::fromVariantMap(vehicle->toVariantMap());
+        return vehicle->toVariantMap();
 
-    return QJsonObject();
+    return QVariant();
+}
+
+QVariant VehicleListController::vehicleType(const QString& typeId) const
+{
+    const VehicleType* type = m_vehicles->vehicleType(typeId);
+    if (!type)
+        return QVariant();
+
+    return type->toVariantMap();
 }
 
 void VehicleListController::addVehicle(const QString& typeId)

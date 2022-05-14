@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
 import Dreka 1.0
+import Dreka.Vehicles 1.0
 
 import "Map"
 import "Vehicles"
@@ -10,13 +11,14 @@ import "Missions"
 Controls.ApplicationWindow {
     id: main
 
+
     visible: true
     width: 1280
     height: 768
 
-    ClipboardController {
-        id: clipboard
-    }
+    // Common controllers
+    ClipboardController { id: clipboardController }
+    VehicleListController { id: vehiclesController }
 
     CesiumMap {
         id: map

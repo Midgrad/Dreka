@@ -2,7 +2,6 @@
 #define MISSION_LIST_CONTROLLER_H
 
 #include "i_missions_service.h"
-#include "i_vehicles_service.h"
 
 #include <QJsonArray>
 
@@ -22,7 +21,6 @@ public:
     QJsonArray missions() const;
 
     Q_INVOKABLE QJsonObject mission(const QVariant& missionId) const;
-    Q_INVOKABLE QString vehicleName(const QVariant& vehicleId) const;
 
 public slots:
     void addMission(const QString& typeId);
@@ -40,7 +38,6 @@ private slots:
 
 private:
     domain::IMissionsService* const m_missions;
-    domain::IVehiclesService* const m_vehicles;
 };
 } // namespace md::presentation
 

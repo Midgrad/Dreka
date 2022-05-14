@@ -8,8 +8,18 @@ Controls.Pane {
     id: root
 
     property alias selectedMissionId : editController.missionId
+    property var _vehicle: nullptr
 
-    property alias _vehicle : editController.vehicle
+    function updateVehicle() {
+        _vehicle = selectedMissionId ? vehiclesController.vehicle(editController.mission.vehicle)
+                                     : nullptr
+    }
+
+    Connections {
+        target: vehiclesController
+        onVehiclesChanged: updateVehicle()
+    }
+    Component.onCompleted: updateVehicle()
 
     width: Controls.Theme.baseSize * 13
 
@@ -26,11 +36,25 @@ Controls.Pane {
 
             Controls.ComboBox {
                 id: vehicleBox
-                model: editController.vehicles
-                displayText: _vehicle ? _vehicle.name : qsTr("No vehicle")
+                model: vehiclesController.vehicles
                 flat: true
+                displayText: _vehicle ? _vehicle.name : qsTr("No vehicle")
+                textRole: "name"
+                iconRole: "icon"
+                delegateContent: Controls.Led {
+                    color: delegateModel.online ? Controls.Theme.colors.positive
+                                                : Controls.Theme.colors.disabled
+                }
                 onActivated: editController.assignVehicle(model[index].id)
                 Layout.fillWidth: true
+
+                Controls.Led {
+                    anchors.right: parent.right
+                    anchors.rightMargin: Controls.Theme.baseSize
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: _vehicle && _vehicle.online ? Controls.Theme.colors.positive
+                                                       : Controls.Theme.colors.disabled
+                }
             }
 
             Controls.MenuButton {

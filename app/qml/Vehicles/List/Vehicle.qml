@@ -38,6 +38,12 @@ Item {
         anchors.leftMargin: Controls.Theme.margins
         spacing: Controls.Theme.spacing
 
+        Controls.ColoredIcon {
+            source: vehicle ? "qrc:/icons/" + vehicle.icon : ""
+            Layout.preferredWidth: Controls.Theme.baseSize
+            Layout.preferredHeight: Controls.Theme.baseSize
+        }
+
         ColumnLayout {
             spacing: 1
 

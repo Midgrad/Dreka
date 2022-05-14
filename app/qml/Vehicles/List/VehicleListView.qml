@@ -2,21 +2,18 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
 import Industrial.Widgets 1.0 as Widgets
-import Dreka.Vehicles 1.0
 
 Controls.Popup {
     id: root
 
     property var selectedVehicleId
 
-    function rename(vehicleId, name) { controller.rename(vehicleId, name); }
+    function rename(vehicleId, name) { vehiclesController.rename(vehicleId, name); }
 
     signal selectVehicle(var vehicle)
 
     width: Controls.Theme.baseSize * 11
     closePolicy: Controls.Popup.CloseOnPressOutsideParent
-
-    VehicleListController { id: controller }
 
     ColumnLayout {
         anchors.fill: parent
@@ -35,12 +32,13 @@ Controls.Popup {
             Controls.MenuButton {
                 flat: true
                 iconSource: "qrc:/icons/plus.svg"
-                model: controller.vehicleTypes
+                model: vehiclesController.vehicleTypes
                 delegate: Controls.MenuItem {
                     text: modelData.name
+                    iconSource: "qrc:/icons/" + modelData.icon
                     onTriggered: {
                         root.selectVehicle(null);
-                        controller.addVehicle(modelData.id);
+                        vehiclesController.addVehicle(modelData.id);
                     }
                 }
             }
@@ -48,7 +46,7 @@ Controls.Popup {
 
         Widgets.ListWrapper {
             emptyText: qsTr("No vehicles")
-            model: controller.vehicles
+            model: vehiclesController.vehicles
             delegate: Vehicle {
                 width: parent.width
                 height: visible ? implicitHeight : 0
@@ -60,7 +58,7 @@ Controls.Popup {
                 onRemove: {
                     if (selected)
                         selectVehicle(null);
-                    controller.remove(vehicle.id);
+                    vehiclesController.remove(vehicle.id);
                 }
                 Component.onCompleted: if (!selectedVehicleId) selectVehicle(vehicle)
             }

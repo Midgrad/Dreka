@@ -9,11 +9,9 @@ using namespace md::presentation;
 
 MissionListController::MissionListController(QObject* parent) :
     QObject(parent),
-    m_missions(md::app::Locator::get<IMissionsService>()),
-    m_vehicles(md::app::Locator::get<IVehiclesService>())
+    m_missions(md::app::Locator::get<IMissionsService>())
 {
     Q_ASSERT(m_missions);
-    Q_ASSERT(m_vehicles);
 
     connect(m_missions, &IMissionsService::missionTypesChanged, this,
             &MissionListController::missionTypesChanged);
@@ -35,7 +33,6 @@ QVariantList MissionListController::missionTypes() const
     {
         list.append(type->toVariantMap());
     }
-
     return list;
 }
 
@@ -56,15 +53,6 @@ QJsonObject MissionListController::mission(const QVariant& missionId) const
         return QJsonObject::fromVariantMap(mission->toVariantMap());
 
     return QJsonObject();
-}
-
-QString MissionListController::vehicleName(const QVariant& vehicleId) const
-{
-    Vehicle* vehicle = m_vehicles->vehicle(vehicleId);
-    if (vehicle)
-        return vehicle->name;
-
-    return QString();
 }
 
 void MissionListController::addMission(const QString& typeId)

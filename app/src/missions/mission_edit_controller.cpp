@@ -9,11 +9,9 @@ using namespace md::presentation;
 
 MissionEditController::MissionEditController(QObject* parent) :
     QObject(parent),
-    m_missions(md::app::Locator::get<IMissionsService>()),
-    m_vehicles(md::app::Locator::get<IVehiclesService>())
+    m_missions(md::app::Locator::get<IMissionsService>())
 {
     Q_ASSERT(m_missions);
-    Q_ASSERT(m_vehicles);
 
     connect(m_missions, &IMissionsService::operationStarted, this,
             [this](MissionOperation* operation) {
@@ -41,19 +39,6 @@ MissionEditController::MissionEditController(QObject* parent) :
                     emit operationProgressChanged();
                 }
             });
-
-    connect(m_vehicles, &IVehiclesService::vehicleAdded, this,
-            &MissionEditController::vehiclesChanged);
-    connect(m_vehicles, &IVehiclesService::vehicleRemoved, this,
-            &MissionEditController::vehiclesChanged);
-    // TODO: handle online
-    //    connect(m_vehicles, &IVehiclesService::vehicleChanged, this, [this](Vehicle* vehicle) {
-    //        if (m_mission && m_mission->vehicleId() == vehicle->id())
-    //        {
-    //            emit vehicleChanged();
-    //        }
-    //        emit vehiclesChanged();
-    //    });
 }
 
 QVariant MissionEditController::missionId() const
@@ -61,26 +46,9 @@ QVariant MissionEditController::missionId() const
     return m_mission ? m_mission->id() : QVariant();
 }
 
-QVariant MissionEditController::vehicle() const
+QVariant MissionEditController::mission() const
 {
-    if (!m_mission)
-        return QVariant();
-
-    if (Vehicle* vehicle = m_vehicles->vehicle(m_mission->vehicleId))
-    {
-        return vehicle->toVariantMap();
-    }
-    return QVariant();
-}
-
-QStringList MissionEditController::vehicles() const
-{
-    QStringList vehicles;
-    for (Vehicle* vehicle : m_vehicles->vehicles())
-    {
-        vehicles.append(vehicle->name);
-    }
-    return vehicles;
+    return m_mission ? m_mission->toVariantMap() : QVariant();
 }
 
 int MissionEditController::operationProgress() const
@@ -107,11 +75,9 @@ void MissionEditController::selectMission(const QVariant& missionId)
     if (m_mission)
     {
         connect(m_mission, &Mission::changed, this, &MissionEditController::missionChanged);
-        connect(m_mission, &Mission::changed, this, &MissionEditController::vehicleChanged);
     }
 
     emit missionChanged();
-    emit vehicleChanged();
 }
 
 void MissionEditController::assignVehicle(const QVariant& vehicleId)

@@ -3,8 +3,6 @@
 
 #include "i_vehicles_service.h"
 
-#include <QJsonArray>
-
 namespace md::presentation
 {
 class VehicleListController : public QObject
@@ -12,15 +10,16 @@ class VehicleListController : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QVariantList vehicleTypes READ vehicleTypes NOTIFY vehicleTypesChanged)
-    Q_PROPERTY(QJsonArray vehicles READ vehicles NOTIFY vehiclesChanged)
+    Q_PROPERTY(QVariantList vehicles READ vehicles NOTIFY vehiclesChanged)
 
 public:
     explicit VehicleListController(QObject* parent = nullptr);
 
     QVariantList vehicleTypes() const;
-    QJsonArray vehicles() const;
+    QVariantList vehicles() const;
 
-    Q_INVOKABLE QJsonObject vehicle(const QVariant& vehicleId) const;
+    Q_INVOKABLE QVariant vehicle(const QVariant& vehicleId) const;
+    Q_INVOKABLE QVariant vehicleType(const QString& typeId) const;
 
 public slots:
     void addVehicle(const QString& typeId);
