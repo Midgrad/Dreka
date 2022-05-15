@@ -9,9 +9,11 @@ using namespace md::presentation;
 
 MissionEditController::MissionEditController(QObject* parent) :
     QObject(parent),
-    m_missions(md::app::Locator::get<IMissionsService>())
+    m_missions(md::app::Locator::get<IMissionsService>()),
+    m_vehicles(md::app::Locator::get<IVehiclesService>())
 {
     Q_ASSERT(m_missions);
+    Q_ASSERT(m_vehicles);
 
     connect(m_missions, &IMissionsService::operationStarted, this,
             [this](MissionOperation* operation) {
@@ -51,6 +53,16 @@ QVariant MissionEditController::mission() const
     return m_mission ? m_mission->toVariantMap() : QVariant();
 }
 
+QString MissionEditController::vehicleName() const
+{
+    return m_vehicle ? m_vehicle->name() : QString();
+}
+
+bool MissionEditController::isOnline() const
+{
+    return m_vehicle && m_vehicle->online();
+}
+
 int MissionEditController::operationProgress() const
 {
     if (!m_operation)
@@ -70,18 +82,26 @@ void MissionEditController::selectMission(const QVariant& missionId)
         disconnect(m_mission, nullptr, this, nullptr);
     }
 
+    if (m_vehicle)
+    {
+        disconnect(m_vehicle, nullptr, this, nullptr);
+    }
+
     m_mission = mission;
+    m_vehicle = mission ? m_vehicles->vehicle(mission->vehicleId) : nullptr;
 
     if (m_mission)
     {
         connect(m_mission, &Mission::changed, this, &MissionEditController::missionChanged);
     }
 
-    emit missionChanged();
-}
+    if (m_vehicle)
+    {
+        connect(m_vehicle, &Vehicle::changed, this, &MissionEditController::vehicleChanged);
+    }
 
-void MissionEditController::assignVehicle(const QVariant& vehicleId)
-{
+    emit missionChanged();
+    emit vehicleChanged();
 }
 
 void MissionEditController::upload()

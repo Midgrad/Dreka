@@ -23,8 +23,6 @@ public:
     Q_INVOKABLE QJsonObject mission(const QVariant& missionId) const;
 
 public slots:
-    void addMission(const QString& typeId);
-    void remove(const QVariant& missionId);
     void rename(const QVariant& missionId, const QString& name);
 
 signals:

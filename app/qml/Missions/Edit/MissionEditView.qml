@@ -8,18 +8,6 @@ Controls.Pane {
     id: root
 
     property alias selectedMissionId : editController.missionId
-    property var _vehicle: nullptr
-
-    function updateVehicle() {
-        _vehicle = selectedMissionId ? vehiclesController.vehicle(editController.mission.vehicle)
-                                     : nullptr
-    }
-
-    Connections {
-        target: vehiclesController
-        onVehiclesChanged: updateVehicle()
-    }
-    Component.onCompleted: updateVehicle()
 
     width: Controls.Theme.baseSize * 13
 
@@ -30,30 +18,38 @@ Controls.Pane {
         spacing: Controls.Theme.spacing
 
         RowLayout {
-            spacing: 0
+            spacing: Controls.Theme.spacing
 
-            Controls.Label { text: qsTr("Vehicle") }
+            Controls.Label {
+                text: qsTr("Vehicle") + ":\t" + editController.vehicleName
+            }
 
-            Controls.ComboBox {
-                id: vehicleBox
-                model: vehiclesController.vehicles
+            Controls.Led {
+                color: editController.online ? Controls.Theme.colors.positive :
+                                               Controls.Theme.colors.disabled
+                Layout.alignment: Qt.AlignVCenter
+            }
+
+            Item {
+                visible: editController.operationProgress == -1
+                Layout.fillWidth: true
+            }
+
+            Controls.ProgressBar {
+                id: progress
+                visible: editController.operationProgress != -1
                 flat: true
-                displayText: _vehicle ? _vehicle.name : qsTr("No vehicle")
-                textRole: "name"
-                iconRole: "icon"
-                delegateContent: Controls.Led {
-                    color: delegateModel.online ? Controls.Theme.colors.positive
-                                                : Controls.Theme.colors.disabled
-                }
-                onActivated: editController.assignVehicle(model[index].id)
+                from: 0
+                to: 100
+                value: editController.operationProgress
+                implicitHeight: Controls.Theme.baseSize / 2
                 Layout.fillWidth: true
 
-                Controls.Led {
-                    anchors.right: parent.right
-                    anchors.rightMargin: Controls.Theme.baseSize
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: _vehicle && _vehicle.online ? Controls.Theme.colors.positive
-                                                       : Controls.Theme.colors.disabled
+                Controls.Button {
+                    anchors.fill: parent
+                    flat: true
+                    tipText: qsTr("Cancel")
+                    onClicked: editController.cancel()
                 }
             }
 
@@ -62,7 +58,7 @@ Controls.Pane {
                 tipText: qsTr("Mission actions")
                 flat: true
                 leftCropped: true
-                enabled: _vehicle && _vehicle.online
+                enabled: editController.online
                 model: ListModel {
                     ListElement { text: qsTr("Upload"); property var action: () => { editController.upload() } }
                     ListElement { text: qsTr("Download"); property var action: () => { editController.download() } }
@@ -78,25 +74,6 @@ Controls.Pane {
             Controls.TabButton { text: qsTr("Fence"); flat: true; enabled: false }
             Controls.TabButton { text: qsTr("Rally"); flat: true; enabled: false }
             Layout.fillWidth: true
-        }
-
-        Controls.ProgressBar {
-            id: progress
-            visible: editController.operationProgress != -1
-            flat: true
-            radius: Controls.Theme.rounding
-            from: 0
-            to: 100
-            value: editController.operationProgress
-            implicitHeight: Controls.Theme.baseSize / 3
-            Layout.fillWidth: true
-
-            Controls.Button {
-                anchors.fill: parent
-                flat: true
-                tipText: qsTr("Cancel")
-                onClicked: editController.cancel()
-            }
         }
     }
 }

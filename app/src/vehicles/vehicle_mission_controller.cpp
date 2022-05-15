@@ -9,28 +9,9 @@ using namespace md::presentation;
 
 VehicleMissionController::VehicleMissionController(QObject* parent) :
     QObject(parent),
-    m_missionsService(md::app::Locator::get<IMissionsService>())
+    m_vehicleMissions(md::app::Locator::get<IVehicleMissions>())
 {
-    Q_ASSERT(m_missionsService);
-
-    connect(m_missionsService, &IMissionsService::missionChanged, this, [this](Mission* mission) {
-        if (m_mission == mission)
-        {
-            emit missionChanged();
-        }
-        else if (m_vehicleId == mission->vehicleId)
-        {
-            this->setMission(mission);
-        }
-    });
-    connect(m_missionsService, &IMissionsService::missionRemoved, this, [this](Mission* mission) {
-        if (m_mission == mission)
-            this->setMission(nullptr);
-    });
-    connect(m_missionsService, &IMissionsService::missionAdded, this, [this](Mission* mission) {
-        if (m_vehicleId == mission->vehicleId)
-            this->setMission(mission);
-    });
+    Q_ASSERT(m_vehicleMissions);
 }
 
 QVariant VehicleMissionController::vehicleId() const
@@ -78,7 +59,7 @@ void VehicleMissionController::setVehicleId(const QVariant& vehicleId)
     m_vehicleId = vehicleId;
     emit vehicleIdChanged();
 
-    this->setMission(m_missionsService->missionForVehicle(vehicleId));
+    this->setMission(m_vehicleMissions->missionForVehicle(vehicleId));
 }
 
 void VehicleMissionController::setMission(domain::Mission* mission)

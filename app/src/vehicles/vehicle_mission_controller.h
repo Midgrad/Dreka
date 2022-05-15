@@ -1,7 +1,7 @@
 #ifndef VEHICLE_MISSION_CONTROLLER_H
 #define VEHICLE_MISSION_CONTROLLER_H
 
-#include "i_missions_service.h"
+#include "i_vehicle_missions.h"
 
 namespace md::presentation
 {
@@ -36,7 +36,7 @@ signals:
     void currentItemChanged();
 
 private:
-    domain::IMissionsService* const m_missionsService;
+    domain::IVehicleMissions* const m_vehicleMissions;
 
     QVariant m_vehicleId;
     domain::Mission* m_mission = nullptr;

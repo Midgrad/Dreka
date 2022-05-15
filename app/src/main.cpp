@@ -31,6 +31,7 @@
 #include "locator.h"
 #include "missions_service.h"
 #include "property_tree.h"
+#include "vehicle_missions.h"
 #include "vehicles_features.h"
 #include "vehicles_service.h"
 
@@ -97,6 +98,9 @@ int main(int argc, char* argv[])
     domain::MissionsService missionsService(&missionsRepository, &missionItemsRepository);
     app::Locator::provide<domain::IMissionsService>(&missionsService);
 
+    domain::VehicleMissions vehicleMissions(&missionsService, &vehiclesService);
+    app::Locator::provide<domain::IVehicleMissions>(&vehicleMissions);
+
     domain::PropertyTree pTree;
     app::Locator::provide<domain::IPropertyTree>(&pTree);
 
@@ -156,8 +160,8 @@ int main(int argc, char* argv[])
     moduleLoader.loadModules();
 
     // TODO: soft caching, read only on demand
-    vehiclesService.readAll();
     missionsService.readAll();
+    vehiclesService.readAll();
 
     engine.rootContext()->setContextProperty("layout", layout.items());
     engine.rootContext()->setContextProperty("applicationDirPath",

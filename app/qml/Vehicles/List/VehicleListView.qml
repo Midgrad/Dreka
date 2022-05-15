@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
 import Industrial.Widgets 1.0 as Widgets
+import Dreka.Vehicles 1.0
 
 Controls.Popup {
     id: root
@@ -14,6 +15,8 @@ Controls.Popup {
 
     width: Controls.Theme.baseSize * 11
     closePolicy: Controls.Popup.CloseOnPressOutsideParent
+
+    VehicleListController { id: vehiclesController }
 
     ColumnLayout {
         anchors.fill: parent

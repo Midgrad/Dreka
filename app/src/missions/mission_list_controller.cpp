@@ -55,31 +55,6 @@ QJsonObject MissionListController::mission(const QVariant& missionId) const
     return QJsonObject();
 }
 
-void MissionListController::addMission(const QString& typeId)
-{
-    const MissionType* type = m_missions->missionType(typeId);
-    if (!type)
-        return;
-
-    QStringList missionNames;
-    for (Mission* mission : m_missions->missions())
-    {
-        missionNames += mission->name;
-    }
-
-    auto mission = new Mission(type, utils::nameFromType(type->name, missionNames));
-    m_missions->saveMission(mission);
-}
-
-void MissionListController::remove(const QVariant& missionId)
-{
-    Mission* mission = m_missions->mission(missionId);
-    if (!mission)
-        return;
-
-    m_missions->removeMission(mission);
-}
-
 void MissionListController::rename(const QVariant& missionId, const QString& name)
 {
     Mission* mission = m_missions->mission(missionId);

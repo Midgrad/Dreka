@@ -28,16 +28,6 @@ Controls.Pane {
                 placeholderText: qsTr("Filter missions")
                 Layout.fillWidth: true
             }
-
-            Controls.MenuButton {
-                flat: true
-                iconSource: "qrc:/icons/plus.svg"
-                model: controller.missionTypes
-                delegate: Controls.MenuItem {
-                    text: modelData.name
-                    onTriggered: controller.addMission(modelData.id)
-                }
-            }
         }
 
         Widgets.ListWrapper {
