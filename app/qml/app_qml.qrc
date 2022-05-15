@@ -32,6 +32,9 @@
         <file>Missions/List/MissionListView.qml</file>
         <file>Missions/List/Mission.qml</file>
         <file>Missions/Edit/MissionEditView.qml</file>
+        <file>Missions/Edit/MissionRouteView.qml</file>
+        <file>Missions/Edit/MissionRouteItem.qml</file>
+        <file>Missions/Edit/MissionRouteItemEdit.qml</file>
         <file>MainWindow.qml</file>
     </qresource>
 </RCC>

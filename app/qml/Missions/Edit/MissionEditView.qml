@@ -1,7 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
-import Industrial.Widgets 1.0 as Widgets
 import Dreka.Missions 1.0
 
 Controls.Pane {
@@ -69,11 +68,23 @@ Controls.Pane {
         }
 
         Controls.TabBar {
+            id: tab
             flat: true
             Controls.TabButton { text: qsTr("Route"); flat: true }
             Controls.TabButton { text: qsTr("Fence"); flat: true; enabled: false }
             Controls.TabButton { text: qsTr("Rally"); flat: true; enabled: false }
             Layout.fillWidth: true
+        }
+
+        StackLayout {
+            currentIndex: tab.currentIndex
+
+            MissionRouteView {
+                id: routeView
+                selectedMissionId : editController.missionId
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+            }
         }
     }
 }
