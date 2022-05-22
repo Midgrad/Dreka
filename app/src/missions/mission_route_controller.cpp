@@ -46,14 +46,15 @@ void MissionRouteController::selectMission(const QVariant& missionId)
     if (m_mission)
     {
         disconnect(m_mission->route, nullptr, this, nullptr);
-        disconnect(m_mission, nullptr, this, nullptr);
     }
 
     m_mission = mission;
+
     if (m_mission)
     {
-        connect(m_mission, &Mission::changed, this, &MissionRouteController::missionChanged);
-        connect(m_mission->route, &MissionRoute::changed, this,
+        connect(m_mission->route, &MissionRoute::itemAdded, this,
+                &MissionRouteController::routeItemsChanged);
+        connect(m_mission->route, &MissionRoute::itemRemoved, this,
                 &MissionRouteController::routeItemsChanged);
     }
 

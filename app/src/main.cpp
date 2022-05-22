@@ -58,6 +58,7 @@
 #include "mission_edit_controller.h"
 #include "mission_list_controller.h"
 #include "mission_route_controller.h"
+#include "mission_route_item_controller.h"
 #include "missions_map_controller.h"
 
 namespace
@@ -144,6 +145,8 @@ int main(int argc, char* argv[])
                                                          "MissionEditController");
     qmlRegisterType<presentation::MissionRouteController>("Dreka.Missions", 1, 0,
                                                           "MissionRouteController");
+    qmlRegisterType<presentation::MissionRouteItemController>("Dreka.Missions", 1, 0,
+                                                              "MissionRouteItemController");
 
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);

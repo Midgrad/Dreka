@@ -6,12 +6,15 @@ import Dreka.Missions 1.0
 ColumnLayout {
     id: root
 
-    property alias selectedMissionId : routeController.missionId
+    property alias selectedMissionId: routeController.missionId
     readonly property alias count: routeController.count
 
     property int selectedIndex: -1
 
-    MissionRouteController { id: routeController }
+    MissionRouteController {
+        id: routeController
+        onMissionChanged: selectedIndex = missionId ? 0 : -1
+    }
 
     RowLayout {
         spacing: 0
@@ -62,7 +65,6 @@ ColumnLayout {
                 Behavior on x { NumberAnimation { duration: Controls.Theme.animationTime } }
                 Behavior on width { NumberAnimation { duration: Controls.Theme.animationTime } }
             }
-
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
@@ -76,11 +78,13 @@ ColumnLayout {
             onClicked: selectedIndex++
             onPressAndHold: selectedIndex = count - 1
         }
+    }
 
-//        Controls.MenuButton {
-//            tipText: qsTr("Add mission item")
-//            iconSource: "qrc:/ui/plus.svg"
-//            flat: true
-//        }
+    MissionRouteItemEdit {
+        id: itemEditView
+        missionId: routeController.missionId
+        inRouteIndex: root.selectedIndex
+        Layout.fillWidth: true
+        Layout.fillHeight: true
     }
 }
