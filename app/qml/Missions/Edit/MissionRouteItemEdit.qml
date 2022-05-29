@@ -51,7 +51,7 @@ Flickable {
                 rightCropped: true
                 iconSource: "qrc:/icons/center.svg"
                 tipText: qsTr("Center")
-                onClicked: missionsMapController.centerMissionItem(missionId, inRouteIndex)
+                onClicked: missionsMapController.centerRouteItem(missionId, inRouteIndex)
             }
 
             Controls.Button {

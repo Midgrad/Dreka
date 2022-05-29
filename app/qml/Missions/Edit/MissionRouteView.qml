@@ -16,6 +16,8 @@ ColumnLayout {
         onMissionChanged: selectedIndex = missionId ? 0 : -1
     }
 
+    onSelectedIndexChanged: missionsMapController.highlightItem(selectedIndex)
+
     RowLayout {
         spacing: 0
 

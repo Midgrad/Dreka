@@ -27,17 +27,25 @@ public slots:
     void selectMission(const QVariant& missionId);
     void updateVisibility(const QVariant& missionId, bool visible);
 
+    void updateRouteItem(const QVariant& missionId, int index, const QJsonObject& routeItemData);
+
 signals:
     void selectedMissionChanged(QVariant missionId);
+    void highlightItem(int index);
 
     void missionAdded(QVariantMap mission);
-    void missionChanged(QVariantMap mission);
     void missionRemoved(QVariant missionId);
-    void centerMission(QVariant missionId);
 
     void routeItemAdded(QVariant routeId, int index, QVariantMap data);
     void routeItemChanged(QVariant routeId, int index, QVariantMap data);
     void routeItemRemoved(QVariant routeId, int index);
+
+    void centerMission(QVariant missionId);
+    void centerRouteItem(QVariant routeId, int index);
+
+private slots:
+    void onMissionAdded(domain::Mission* mission);
+    void onMissionRemoved(domain::Mission* mission);
 
 private:
     domain::IMissionsService* const m_missions;

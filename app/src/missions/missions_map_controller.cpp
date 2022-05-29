@@ -13,15 +13,15 @@ MissionsMapController::MissionsMapController(QObject* parent) :
 {
     Q_ASSERT(m_missions);
 
-    connect(m_missions, &IMissionsService::missionAdded, this, [this](Mission* mission) {
-        emit missionAdded(mission->toVariantMap());
-    });
-    connect(m_missions, &IMissionsService::missionChanged, this, [this](Mission* mission) {
-        emit missionChanged(mission->toVariantMap());
-    });
-    connect(m_missions, &IMissionsService::missionRemoved, this, [this](Mission* mission) {
-        emit missionRemoved(mission->id);
-    });
+    connect(m_missions, &IMissionsService::missionAdded, this,
+            &MissionsMapController::onMissionAdded);
+    connect(m_missions, &IMissionsService::missionRemoved, this,
+            &MissionsMapController::onMissionRemoved);
+
+    for (Mission* mission : m_missions->missions())
+    {
+        this->onMissionAdded(mission);
+    }
 }
 
 QVariant MissionsMapController::selectedMissionId() const
@@ -79,4 +79,42 @@ void MissionsMapController::updateVisibility(const QVariant& missionId, bool vis
 
     mission->visible.set(visible);
     m_missions->saveMission(mission);
+}
+
+void MissionsMapController::updateRouteItem(const QVariant& missionId, int index,
+                                            const QJsonObject& routeItemData)
+{
+    Mission* mission = m_missions->mission(missionId);
+    if (!mission)
+        return;
+
+    MissionRouteItem* item = mission->route()->item(index);
+    if (!item)
+        return;
+
+    item->fromVariantMap(routeItemData.toVariantMap());
+}
+
+void MissionsMapController::onMissionAdded(domain::Mission* mission)
+{
+    connect(mission->route, &MissionRoute::itemAdded, this,
+            [this, mission](int index, MissionRouteItem* item) {
+                emit routeItemAdded(mission->route()->id(), index, item->toVariantMap());
+            });
+    connect(mission->route, &MissionRoute::itemChanged, this,
+            [this, mission](int index, MissionRouteItem* item) {
+                emit routeItemChanged(mission->route()->id(), index, item->toVariantMap());
+            });
+    connect(mission->route, &MissionRoute::itemRemoved, this, [this, mission](int index) {
+        emit routeItemRemoved(mission->route()->id(), index);
+    });
+
+    emit missionAdded(mission->toVariantMap());
+}
+
+void MissionsMapController::onMissionRemoved(domain::Mission* mission)
+{
+    disconnect(mission->route, nullptr, this, nullptr);
+
+    emit missionRemoved(mission->id());
 }

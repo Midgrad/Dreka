@@ -49,7 +49,6 @@ Item {
             Controls.Label {
                 text: mission ? mission.name : ""
                 Layout.alignment: Qt.AlignVCenter
-                Layout.maximumWidth: Controls.Theme.baseSize * 5
             }
 
             Controls.Label {
