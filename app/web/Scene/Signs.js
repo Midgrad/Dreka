@@ -337,11 +337,11 @@ class ComplexSign {
             var cartographic = Cesium.Cartographic.fromCartesian(this.terrainPosition);
             var that = this;
             var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [cartographic]);
-            Cesium.when(promise, updatedPositions => {
-                            that.terrainPosition = Cesium.Cartographic.toCartesian(cartographic);
-                            that.terrainAltitude = cartographic.height;
-                            that.validTerrain = true;
-                        });
+            promise.then(updatedPositions => {
+                that.terrainPosition = Cesium.Cartographic.toCartesian(cartographic);
+                that.terrainAltitude = cartographic.height;
+                that.validTerrain = true;
+            });
         } else {
             this.validPosition = false;
             this.position = Cesium.Cartesian3.ZERO;

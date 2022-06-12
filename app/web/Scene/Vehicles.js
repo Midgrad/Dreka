@@ -110,13 +110,13 @@ class Vehicle {
         var cartographic = Cesium.Cartographic.fromCartesian(this.terrainPosition);
         var that = this;
         var promise = Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [cartographic]);
-        Cesium.when(promise, updatedPositions => {
-                        that.terrainPosition = Cesium.Cartographic.toCartesian(cartographic);
-                        that.terrainAltitude = cartographic.height;
-                        that.pylon.polyline.show = true;
-                        if (that.terrainCallback && !this.dragging)
-                            that.terrainCallback(that.data.position.altitude - that.terrainAltitude);
-                    });
+        promise.then(updatedPositions => {
+            that.terrainPosition = Cesium.Cartographic.toCartesian(cartographic);
+            that.terrainAltitude = cartographic.height;
+            that.pylon.polyline.show = true;
+            if (that.terrainCallback && !this.dragging)
+                that.terrainCallback(that.data.position.altitude - that.terrainAltitude);
+        });
     }
 }
 
