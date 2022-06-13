@@ -6,6 +6,14 @@ set(PROJECT_NAME "Dreka")
 set(PROJECT_ORGANIZATION "Midgrad")
 project(${PROJECT_NAME})
 
+# Cpp version
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Mac
+set(MACOS_VERSION_MIN_FLAGS -mmacosx-version-min=10.14)
+set(CMAKE_OSX_ARCHITECTURES "x86_64")
+
 # Tests
 option(TESTS_ENABLED "Enable tests" ON)
 if(TESTS_ENABLED)
