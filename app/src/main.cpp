@@ -72,6 +72,8 @@ using namespace md;
 
 int main(int argc, char* argv[])
 {
+    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--ignore-gpu-blacklist");
+
     QCoreApplication::setOrganizationName("Midgrad");
     QCoreApplication::setApplicationVersion(
         QVersionNumber(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH).toString());
