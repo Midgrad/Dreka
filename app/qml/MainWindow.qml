@@ -6,6 +6,7 @@ import Dreka 1.0
 import "Map"
 import "Vehicles"
 import "Missions"
+import "Missions/Menus"
 
 Controls.ApplicationWindow {
     id: main
@@ -25,6 +26,11 @@ Controls.ApplicationWindow {
 
     MapMenu {
         id: mapMenu
+        anchors.fill: map
+    }
+
+    MissionsMenuView {
+        id: missionsMenu
         anchors.fill: map
     }
 

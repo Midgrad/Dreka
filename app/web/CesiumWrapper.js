@@ -174,6 +174,16 @@ class CesiumWrapper {
 
                 missionsMapController.centerMission.connect(missionId => { routesView.centerRoute(missionId); });
                 missionsMapController.centerRouteItem.connect((routeId, index) => { routesView.centerRouteItem(routeId, index); });
+
+                var missionsMenuController = channel.objects.missionsMenuController;
+                if (missionsMenuController) {
+                    routesView.routeItemClickedCallback = (routeId, index, x, y) => {
+                        missionsMenuController.invokeMenu(routeId, index, x, y);
+                    }
+                    that.viewport.subscribeCamera((heading, pitch, cameraPosition, centerPosition,
+                        pixelScale, changed) => { if (changed) missionsMenuController.drop(); }
+                    );
+                }
             }
 
             var vehiclesMapController = channel.objects.vehiclesMapController;

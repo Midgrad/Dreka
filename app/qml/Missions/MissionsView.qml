@@ -11,10 +11,6 @@ RowLayout {
 
     property var selectedMission: null
 
-    function selectMission(missionId) {
-
-    }
-
     onSelectedMissionChanged: {
         if (selectedMission && sidebar.sourceComponent == missionListComponent) {
             sidebar.sourceComponent = missionEditComponent;

@@ -30,8 +30,9 @@ public slots:
     void updateRouteItem(const QVariant& missionId, int index, const QJsonObject& routeItemData);
 
 signals:
+    Q_INVOKABLE void highlightItem(int index);
+
     void selectedMissionChanged(QVariant missionId);
-    void highlightItem(int index);
 
     void missionAdded(QVariantMap mission);
     void missionRemoved(QVariant missionId);
