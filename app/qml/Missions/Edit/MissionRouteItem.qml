@@ -26,7 +26,7 @@ Item {
         id: label
         anchors.centerIn: parent
         font.pixelSize: Controls.Theme.auxFontSize
-        text: routeItem.name + " " + inRouteIndex
+        text: routeItem.name + " " + (inRouteIndex != 0 ? inRouteIndex : "")
     }
 
     MouseArea {

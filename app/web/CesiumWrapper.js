@@ -150,7 +150,7 @@ class CesiumWrapper {
 
                 missionsMapController.missions(missions => {
                     for (const mission of missions) {
-                        missionsMapController.route(route => { routesView.setRoute(mission.id, route); });
+                        missionsMapController.route(mission.id, route => { routesView.setRoute(mission.id, route); });
 
                         missionsMapController.routeItems(mission.id, routeItems => {
                             for (var index = 0; index < routeItems.length; ++index) {

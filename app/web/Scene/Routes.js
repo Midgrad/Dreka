@@ -12,7 +12,11 @@ class RouteItem extends ComplexSign {
     }
 
     name() {
-        return this.data.name + " " + (this.index + 1).toString();
+        var baseName = this.data.name;
+        if (this.index === 0)
+            return baseName;
+
+        return baseName + " " + (this.index).toString();
     }
 
     setEditMode(editMode) {
@@ -78,7 +82,7 @@ class Route {
             item.clickedCallback = (x, y) => { that.routeItemClickedCallback(item.index, x, y); }
 
             // Add line
-            for (var prevIndex = index - 1; prevIndex > 0; --prevIndex)
+            for (var prevIndex = index - 1; prevIndex > -1; --prevIndex)
             {
                 if (this.items[prevIndex].hasPosition() &&
                     this.items[index].hasPosition()) {
