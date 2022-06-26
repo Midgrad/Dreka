@@ -13,7 +13,11 @@ ColumnLayout {
 
     MissionRouteController {
         id: routeController
-        onMissionChanged: selectedIndex = missionId ? 0 : -1
+        onSelectItem: {
+            if (selectedIndex == index)
+                selectedIndex = -1;
+            selectedIndex = index;
+        }
     }
 
     onSelectedIndexChanged: missionsMapController.highlightItem(selectedIndex)
@@ -63,9 +67,6 @@ ColumnLayout {
                     height: Controls.Theme.underline
                     color: Controls.Theme.colors.highlight
                 }
-
-                Behavior on x { NumberAnimation { duration: Controls.Theme.animationTime } }
-                Behavior on width { NumberAnimation { duration: Controls.Theme.animationTime } }
             }
             Layout.fillWidth: true
             Layout.fillHeight: true

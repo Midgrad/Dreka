@@ -193,5 +193,4 @@ void MissionRouteItemController::addNewItem(const QString& typeId, const QVarian
     route->addItem(item);
 
     m_missions->saveItem(route, item);
-    this->setRouteIndex(count);
 }

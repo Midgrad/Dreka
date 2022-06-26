@@ -28,6 +28,7 @@ public slots:
 signals:
     void missionChanged();
     void routeItemsChanged();
+    void selectItem(int index);
 
 private:
     domain::IMissionsService* const m_missions;

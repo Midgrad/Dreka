@@ -12,6 +12,7 @@ Flickable {
     property alias inRouteIndex: itemController.inRouteIndex
 
     readonly property alias routeItem: itemController.routeItem
+    readonly property bool exist: inRouteIndex != -1
 
     implicitHeight: properties.height
     contentHeight: properties.implicitHeight
@@ -30,15 +31,17 @@ Flickable {
             spacing: 1
 
             Controls.Label {
-                text: qsTr("Name")
+                text: root.exist ? qsTr("Name") : qsTr("New Item")
                 Layout.minimumWidth: parametersEdit.labelWidth
+                Layout.fillWidth: !root.exist
             }
 
             Controls.TextField {
                 id: nameEdit
+                visible: root.exist
                 flat: true
                 Binding on text {
-                    value: routeItem ? routeItem.name : qsTr("New Item")
+                    value: routeItem ? routeItem.name : ""
                     when: !nameEdit.activeFocus
                 }
                 onEditingFinished: itemController.rename(text)
@@ -46,6 +49,7 @@ Flickable {
             }
 
             Controls.Button {
+                enabled: root.exist
                 flat: true
                 leftCropped: true
                 rightCropped: true
@@ -55,11 +59,11 @@ Flickable {
             }
 
             Controls.Button {
+                enabled: root.exist && !routeItem.current
                 flat: true
                 leftCropped: true
                 rightCropped: true
                 highlightColor: Controls.Theme.colors.negative
-                enabled: !routeItem.current
                 iconSource: "qrc:/icons/remove.svg"
                 tipText: qsTr("Remove")
                 onClicked: itemController.remove()
@@ -81,7 +85,7 @@ Flickable {
 
         RowLayout {
             spacing: 1
-            visible: inRouteIndex != -1
+            visible: root.exist
 
             Controls.Label {
                 text: qsTr("Type")
@@ -111,14 +115,14 @@ Flickable {
 
         PositionEdit {
             id: positionEdit
-            visible: inRouteIndex != -1
+            visible: root.exist
             position: routeItem ? routeItem.position : null
             onModified: itemController.setPosition(position)
         }
 
         ParametersEdit {
             id: parametersEdit
-            visible: inRouteIndex != -1
+            visible: root.exist
             parameters: itemController.typeParameters
             parameterValues: itemController.itemParameters
             onParameterChanged: itemController.setParameter(id, value)

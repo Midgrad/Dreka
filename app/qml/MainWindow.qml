@@ -11,7 +11,6 @@ import "Missions/Menus"
 Controls.ApplicationWindow {
     id: main
 
-
     visible: true
     width: 1280
     height: 768
