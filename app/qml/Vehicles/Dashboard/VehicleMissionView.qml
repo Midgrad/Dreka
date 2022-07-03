@@ -1,14 +1,14 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
-import Dreka 1.0
+import Dreka.Vehicles 1.0
 
 Row {
     id: root
 
     readonly property real availableWidth: width - missionButton.width - wpBox.width - spacing * 2
 
-    property alias vehicleId : vehicleMissionController.vehicleId
+    property alias vehicleId: vehicleMissionController.vehicleId
 
     spacing: 1
 
@@ -19,15 +19,12 @@ Row {
         enabled: selectedVehicle && selectedVehicle.online
         text: qsTr("Nav to")
         onTriggered: {
-            controller.sendCommand("setMode", [ "NavTo" ]); // FIXME: to domain, packed commands
+            dashboardController.sendCommand("setMode", [ "NavTo" ]); // FIXME: to domain, packed commands
             vehicleMissionController.navTo(mapMenu.latitude, mapMenu.longitude);
         }
     }
 
-    Component.onCompleted: {
-        map.registerController("missionRouteController", vehicleMissionController);
-        mapMenu.addItem(navToItem);
-    }
+    Component.onCompleted: mapMenu.addItem(navToItem)
 
     Controls.Button {
         id: missionButton
@@ -36,7 +33,7 @@ Row {
         rightCropped: true
         iconSource: "qrc:/icons/route.svg"
         tipText: qsTr("Mission")
-        enabled: controller.selectedVehicle !== null
+        enabled: vehicleMissionController.mission
         onClicked: missions.selectMission(vehicleMissionController.mission.id)
 
         Controls.ColoredIcon {
@@ -62,6 +59,6 @@ Row {
             value: vehicleMissionController.currentItem
             when: !wpBox.activeFocus
         }
-        onActivated: vehicleMissionController.switchItem(index)
+        onActivated: vehicleMissionController.switchCurrentItem(index)
     }
 }

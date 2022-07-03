@@ -29,7 +29,7 @@ RowLayout {
         visible: !controller.empty
         text: distance > 1000 ? ((Math.round(distance / 100) * 0.1).toFixed(1) + " " + qsTr("km")):
                                 (Math.round(distance) + " " + qsTr("m"))
-        onClicked: clipboard.setText(text)
+        onClicked: clipboardController.setText(text)
         Layout.fillWidth: true
     }
 

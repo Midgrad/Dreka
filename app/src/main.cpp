@@ -31,6 +31,7 @@
 #include "locator.h"
 #include "missions_service.h"
 #include "property_tree.h"
+#include "vehicle_missions.h"
 #include "vehicles_features.h"
 #include "vehicles_service.h"
 
@@ -48,13 +49,18 @@
 #include "map_menu_controller.h"
 #include "map_ruler_controller.h"
 #include "map_viewport_controller.h"
-#include "mission_item_edit_controller.h"
-#include "mission_menu_controller.h"
-#include "mission_operation_controller.h"
-#include "missions_controller.h"
-#include "mission_pattern_controller.h"
+
+#include "vehicle_dashboard_controller.h"
+#include "vehicle_list_contoller.h"
 #include "vehicle_mission_controller.h"
-#include "vehicles_controller.h"
+#include "vehicles_map_controller.h"
+
+#include "mission_edit_controller.h"
+#include "mission_list_controller.h"
+#include "mission_route_controller.h"
+#include "mission_route_item_controller.h"
+#include "missions_map_controller.h"
+#include "missions_menu_controller.h"
 
 namespace
 {
@@ -97,6 +103,9 @@ int main(int argc, char* argv[])
     domain::MissionsService missionsService(&missionsRepository, &missionItemsRepository);
     app::Locator::provide<domain::IMissionsService>(&missionsService);
 
+    domain::VehicleMissions vehicleMissions(&missionsService, &vehiclesService);
+    app::Locator::provide<domain::IVehicleMissions>(&vehicleMissions);
+
     domain::PropertyTree pTree;
     app::Locator::provide<domain::IPropertyTree>(&pTree);
 
@@ -121,17 +130,28 @@ int main(int argc, char* argv[])
     qmlRegisterType<presentation::MapMenuController>("Dreka", 1, 0, "MapMenuController");
     qmlRegisterType<presentation::ClipboardController>("Dreka", 1, 0, "ClipboardController");
     qmlRegisterType<presentation::MapLayersController>("Dreka", 1, 0, "MapLayersController");
-    qmlRegisterType<presentation::MissionsController>("Dreka", 1, 0, "MissionsController");
-    qmlRegisterType<presentation::MissionItemEditController>("Dreka", 1, 0,
-                                                             "MissionItemEditController");
-    qmlRegisterType<presentation::MissionMenuController>("Dreka", 1, 0, "MissionMenuController");
-    qmlRegisterType<presentation::MissionPatternController>("Dreka", 1, 0, "MissionPatternController");
-    qmlRegisterType<presentation::VehiclesController>("Dreka", 1, 0, "VehiclesController");
-    qmlRegisterType<presentation::MissionsController>("Dreka", 1, 0, "MissionsController");
-    qmlRegisterType<presentation::MissionOperationController>("Dreka", 1, 0,
-                                                              "MissionOperationController");
-    qmlRegisterType<presentation::VehicleMissionController>("Dreka", 1, 0,
+
+    qmlRegisterType<presentation::VehicleDashboardController>("Dreka.Vehicles", 1, 0,
+                                                              "VehicleDashboardController");
+    qmlRegisterType<presentation::VehicleListController>("Dreka.Vehicles", 1, 0,
+                                                         "VehicleListController");
+    qmlRegisterType<presentation::VehiclesMapController>("Dreka.Vehicles", 1, 0,
+                                                         "VehiclesMapController");
+    qmlRegisterType<presentation::VehicleMissionController>("Dreka.Vehicles", 1, 0,
                                                             "VehicleMissionController");
+
+    qmlRegisterType<presentation::MissionsMapController>("Dreka.Missions", 1, 0,
+                                                         "MissionsMapController");
+    qmlRegisterType<presentation::MissionListController>("Dreka.Missions", 1, 0,
+                                                         "MissionListController");
+    qmlRegisterType<presentation::MissionEditController>("Dreka.Missions", 1, 0,
+                                                         "MissionEditController");
+    qmlRegisterType<presentation::MissionRouteController>("Dreka.Missions", 1, 0,
+                                                          "MissionRouteController");
+    qmlRegisterType<presentation::MissionRouteItemController>("Dreka.Missions", 1, 0,
+                                                              "MissionRouteItemController");
+    qmlRegisterType<presentation::MissionsMenuController>("Dreka.Missions", 1, 0,
+                                                          "MissionsMenuController");
 
     QQmlApplicationEngine engine;
     industrialThemeActivate(true, &engine);
@@ -151,8 +171,8 @@ int main(int argc, char* argv[])
     moduleLoader.loadModules();
 
     // TODO: soft caching, read only on demand
-    vehiclesService.readAll();
     missionsService.readAll();
+    vehiclesService.readAll();
 
     engine.rootContext()->setContextProperty("layout", layout.items());
     engine.rootContext()->setContextProperty("applicationDirPath",

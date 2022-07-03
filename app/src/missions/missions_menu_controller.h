@@ -1,5 +1,5 @@
-#ifndef MISSION_MENU_CONTROLLER_H
-#define MISSION_MENU_CONTROLLER_H
+#ifndef MISSIONS_MENU_CONTROLLER_H
+#define MISSIONS_MENU_CONTROLLER_H
 
 #include "i_missions_service.h"
 
@@ -7,19 +7,19 @@
 
 namespace md::presentation
 {
-class MissionMenuController : public QObject
+class MissionsMenuController : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool canGoto READ canGoto NOTIFY routeItemChanged)
-    Q_PROPERTY(QVariant route READ route NOTIFY routeItemChanged)
-    Q_PROPERTY(int inRouteIndex READ inRouteIndex NOTIFY routeItemChanged)
+    Q_PROPERTY(bool canGoto READ canGoto NOTIFY changed)
+    Q_PROPERTY(QVariant mission READ mission NOTIFY changed)
+    Q_PROPERTY(int inRouteIndex READ inRouteIndex NOTIFY changed)
 
 public:
-    explicit MissionMenuController(QObject* parent = nullptr);
+    explicit MissionsMenuController(QObject* parent = nullptr);
 
     bool canGoto() const;
-    QVariant route() const;
+    QVariant mission() const;
     int inRouteIndex() const;
 
 public slots:
@@ -30,7 +30,7 @@ public slots:
     void gotoItem();
 
 signals:
-    void routeItemChanged();
+    void changed();
     void dropped();
 
     void menuInvoked(double x, double y);
@@ -42,4 +42,4 @@ private:
 };
 } // namespace md::presentation
 
-#endif // MISSION_MENU_CONTROLLER_H
+#endif // MISSIONS_MENU_CONTROLLER_H

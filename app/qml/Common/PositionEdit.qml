@@ -9,24 +9,9 @@ GridLayout {
     property int labelWidth: Controls.Theme.baseSize * 3.5
     property bool dms: true
 
-    property string datum: ""
-    property real latitude: 0.0
-    property real longitude: 0.0
-    property real altitude: 0.0
+    property var position: { "datum": "", "latitude": 0.0, "longitude": 0.0, "altitude": 0.0 }
 
-    signal changed(real latitude, real longitude, real altitude)
-
-    onLatitudeChanged: {
-        latCsb.value = latitude;
-        latSb.value = latitude;
-    }
-
-    onLongitudeChanged: {
-        lonCsb.value = longitude;
-        lonSb.value = longitude;
-    }
-
-    onAltitudeChanged: altSb.value = altitude
+    signal modified(var position)
 
     rowSpacing: 1
     columnSpacing: 1
@@ -59,8 +44,11 @@ GridLayout {
         flat: root.flat
         table: true
         isLongitude: false
-        value: latitude
-        onValueModified: root.changed(value, longitude, altitude)
+        Binding on value { value: position ? position.latitude : 0; when: !latCsb.activeFocus }
+        onValueModified: {
+            position.latitude = value;
+            root.modified(position);
+        }
         Layout.fillWidth: true
     }
 
@@ -72,8 +60,11 @@ GridLayout {
         from: -90
         to: 90
         precision: 6
-        value: latitude
-        onValueModified: root.changed(value, longitude, altitude)
+        Binding on value { value: position ? position.latitude : 0; when: !latSb.activeFocus }
+        onValueModified: {
+            position.latitude = value;
+            root.modified(position);
+        }
         Layout.fillWidth: true
     }
 
@@ -99,8 +90,11 @@ GridLayout {
         flat: root.flat
         table: true
         isLongitude: true
-        value: longitude
-        onValueModified: root.changed(latitude, value, altitude)
+        Binding on value { value: position ? position.longitude : 0; when: !lonCsb.activeFocus }
+        onValueModified: {
+            position.longitude = value;
+            root.modified(position);
+        }
         Layout.fillWidth: true
     }
 
@@ -112,8 +106,11 @@ GridLayout {
         from: -180
         to: 180
         precision: 6
-        value: longitude
-        onValueModified: root.changed(latitude, value, altitude)
+        Binding on value { value: position ? position.longitude : 0; when: !lonSb.activeFocus }
+        onValueModified: {
+            position.longitude = value;
+            root.modified(position);
+        }
         Layout.fillWidth: true
     }
 
@@ -128,8 +125,11 @@ GridLayout {
         table: true
         from: -500
         to: 100000
-        value: altitude
-        onValueModified: root.changed(latitude, longitude, value)
+        Binding on value { value: position ? position.altitude : 0; when: !altSb.activeFocus }
+        onValueModified: {
+            position.altitude = value;
+            root.modified(position);
+        }
         Layout.fillWidth: true
         Layout.columnSpan: 2
     }

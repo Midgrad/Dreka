@@ -4,8 +4,9 @@ import Industrial.Controls 1.0 as Controls
 import Dreka 1.0
 
 import "Map"
-import "Missions"
 import "Vehicles"
+import "Missions"
+import "Missions/Menus"
 
 Controls.ApplicationWindow {
     id: main
@@ -14,9 +15,8 @@ Controls.ApplicationWindow {
     width: 1280
     height: 768
 
-    ClipboardController {
-        id: clipboard
-    }
+    // Common controllers
+    ClipboardController { id: clipboardController }
 
     CesiumMap {
         id: map
@@ -28,12 +28,10 @@ Controls.ApplicationWindow {
         anchors.fill: map
     }
 
-    MissionMenuView {
-        id: missionMenu
+    MissionsMenuView {
+        id: missionsMenu
         anchors.fill: map
     }
-
-    MissionPatternView { id: missionPattern }
 
     RowLayout {
         id: menuBar
@@ -52,7 +50,7 @@ Controls.ApplicationWindow {
     }
 
     VehiclesView {
-        id: dashboard
+        id: vehicles
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.margins: Controls.Theme.margins

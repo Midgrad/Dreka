@@ -97,12 +97,12 @@ Row {
 
     Controls.Button {
         id: trackButton
-        enabled: controller.selectedVehicle !== null
+        enabled: selectedVehicle
         flat: true
         leftCropped: true
-        iconSource: controller.tracking ? "qrc:/icons/cancel_track.svg" : "qrc:/icons/center.svg"
-        tipText: controller.tracking ? qsTr("Cancel track") : qsTr("Track")
-        onClicked: controller.setTracking(!controller.tracking)
+        iconSource: vehiclesMapController.tracking ? "qrc:/icons/cancel_track.svg" : "qrc:/icons/center.svg"
+        tipText: vehiclesMapController.tracking ? qsTr("Cancel track") : qsTr("Track")
+        onClicked: vehiclesMapController.setTracking(!vehiclesMapController.tracking)
     }
 }
 

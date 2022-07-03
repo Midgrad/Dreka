@@ -33,7 +33,7 @@ RowLayout {
             }
             return lat + " " + lon;
         }
-        onClicked: clipboard.setText(text)
+        onClicked: clipboardController.setText(text)
         Layout.fillWidth: true
         Layout.minimumWidth: Controls.Theme.baseSize * 8
     }

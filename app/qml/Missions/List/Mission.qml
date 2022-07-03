@@ -5,14 +5,15 @@ import Industrial.Controls 1.0 as Controls
 Item {
     id: root
 
-    property var vehicle
-    readonly property bool selected: controller.selectedVehicle === vehicle.id
+    property var mission
+    property bool selected
 
     signal expand()
+    signal remove()
 
     Connections {
         target: controller
-        onVehicleChanged: if (vehicleId === root.vehicle.id) root.vehicle = vehicle
+        onMissionChanged: if (missionId === root.mission.id) root.mission = mission
     }
 
     implicitWidth: row.implicitWidth
@@ -46,12 +47,12 @@ Item {
             spacing: 1
 
             Controls.Label {
-                text: vehicle ? vehicle.name : ""
+                text: mission ? mission.name : ""
                 Layout.alignment: Qt.AlignVCenter
             }
 
             Controls.Label {
-                text: vehicle ? vehicle.type : ""
+                text: mission ? mission.type : ""
                 type: Controls.Theme.Label
                 Layout.alignment: Qt.AlignVCenter
             }
@@ -59,30 +60,34 @@ Item {
 
         Item { Layout.fillWidth: true }
 
-        Controls.Led {
-            color: vehicle.online ? Controls.Theme.colors.positive : Controls.Theme.colors.disabled
-            Layout.rightMargin: Controls.Theme.margins
+        Controls.Button {
+            flat: true
+            leftCropped: true
+            rightCropped: true
+            iconSource: "qrc:/icons/center.svg"
+            tipText: qsTr("Center mission")
+            onClicked: missionsMapController.centerMission(mission.id)
+            Layout.alignment: Qt.AlignVCenter
         }
 
         Controls.Button {
             flat: true
             leftCropped: true
             rightCropped: true
-            highlightColor: Controls.Theme.colors.negative
-            hoverColor: highlightColor
-            iconSource: "qrc:/icons/remove.svg"
-            enabled: !vehicle.online
-            tipText: qsTr("Remove")
-            onClicked: controller.removeVehicle(vehicle.id)
+            iconSource: mission.visible ? "qrc:/icons/password_show.svg" :
+                                          "qrc:/icons/password_hide.svg"
+            tipText: mission.visible ? qsTr(" mission visible") : qsTr(" mission hidden")
+            onClicked: missionsMapController.updateVisibility(mission.id, !mission.visible);
+            Layout.alignment: Qt.AlignVCenter
         }
 
         Controls.ColoredIcon {
             implicitWidth: Controls.Theme.iconSize
             implicitHeight: width
-            color: selected ? Controls.Theme.colors.disabled : Controls.Theme.colors.text
             source: "qrc:/icons/right.svg"
             Layout.alignment: Qt.AlignVCenter
             Layout.rightMargin: Controls.Theme.padding
         }
     }
 }
+

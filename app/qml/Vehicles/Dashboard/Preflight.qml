@@ -24,6 +24,7 @@ ColumnLayout {
     }
 
     Item {
+        Layout.minimumWidth: Controls.Theme.baseSize * 4
         Layout.minimumHeight: Controls.Theme.padding
         Layout.fillWidth: true
         Layout.fillHeight: true

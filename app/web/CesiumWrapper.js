@@ -52,8 +52,8 @@ class CesiumWrapper {
             }
 
             // TODO: grid and layers optional
-            const grid = new Grid(that.viewer, channel.objects.gridController);
-            const layers = new Layers(that.viewer, channel.objects.layersController);
+            const gridView = new Grid(that.viewer, channel.objects.gridController);
+            const layersView = new Layers(that.viewer, channel.objects.layersController);
 
             var viewportController = channel.objects.viewportController;
             if (viewportController) {
@@ -81,129 +81,123 @@ class CesiumWrapper {
                 that.viewport.tick();
             }
 
-            var missionsController = channel.objects.missionsController;
-            if (missionsController) {
-                const routes = new Routes(that.viewer, that.interaction);
+//                var routePatternController = channel.objects.routePatternController;
+//                if (routePatternController) {
+//                    var routePatternArea = new Area(that.viewer, that.interaction);
+//                    routePatternArea.changedCallback = () => {
+//                        var positions = [];
+//                        routePatternArea.points.forEach(point => {
+//                            var cartographic = Cesium.Cartographic.fromCartesian(point.position);
+//                            var position = {};
+//                            position.latitude = Cesium.Math.toDegrees(cartographic.latitude);
+//                            position.longitude = Cesium.Math.toDegrees(cartographic.longitude);
+//                            position.altitude = cartographic.height;
+//                            positions.push(position);
+//                        });
+//                        routePatternController.setAreaPositions(positions);
+//                    };
 
-                routes.routeItemChangedCallback = (routeId, index, routeItemData) => {
-                    missionsController.updateRouteItemData(routeId, index, routeItemData);
+//                    routePatternController.patternChanged.connect(() => {
+//                        routePatternArea.setEnabled(routePatternController.pattern);
+//                        routePatternController.areaPositions(positions => {
+//                            routePatternArea.setPositions(positions);
+//                        });
+//                    });
+
+//                    var routePatternPath = new Path(that.viewer, Cesium.Color.GOLD);
+//                    routePatternController.pathPositionsChanged.connect(() => {
+//                        routePatternPath.setPositions(routePatternController.pathPositions);
+//                    });
+//                }
+//            }
+
+//            var missionRouteController = channel.objects.missionRouteController;
+//            if (missionRouteController) {
+//                const home = new ComplexSign(that.viewer, that.interaction,
+//                                             "Assets/Images/home.svg", true, true);
+//                home.update(missionRouteController.home);
+//                missionRouteController.homeChanged.connect(homeData => { home.update(homeData); });
+
+//                const target = new ComplexSign(that.viewer, that.interaction,
+//                                               "Assets/Images/target.svg", true, true);
+//                target.editMode = true; // TODO: depend on vehicle's mode
+//                target.changedCallback = () => {
+//                    missionRouteController.navTo(target.data.position.latitude,
+//                                                 target.data.position.longitude);
+//                }
+//                target.update(missionRouteController.target);
+//                missionRouteController.targetChanged.connect(targetData => { target.update(targetData); });
+//            }
+            var missionsMapController = channel.objects.missionsMapController;
+            if (missionsMapController) {
+                const routesView = new Routes(that.viewer, that.interaction);
+
+                routesView.routeItemChangedCallback = (routeId, index, routeItemData) => {
+                    missionsMapController.updateRouteItem(routeId, index, routeItemData);
                 }
 
-                var setRouteItem = (routeId, index) => {
-                    missionsController.routeItemData(routeId, index, routeItemData => {
-                        routes.setRouteItemData(routeId, index, routeItemData);
-                    });
-                }
+                missionsMapController.missions(missions => {
+                    for (const mission of missions) {
+                        missionsMapController.mission(mission.id, mission => { routesView.setRoute(mission.id, mission); });
 
-                var setRoute = routeId => {
-                    missionsController.routeData(routeId, routeData => {
-                        routes.setRouteData(routeId, routeData);
+                        missionsMapController.routeItems(mission.id, routeItems => {
+                            for (var index = 0; index < routeItems.length; ++index) {
+                                routesView.setRouteItem(mission.id, index, routeItems[index]);
+                            }
+                        });
+                    }
+                });
 
-                        if (missionsController.selectedMission === routeId)
-                            routes.selectMission(routeId);
+                missionsMapController.selectedMissionChanged.connect(missionId => { routesView.selectRoute(missionId); });
+                routesView.selectRoute(missionsMapController.selectedMissionId);
+                missionsMapController.highlightItem.connect(index => { routesView.highlightItem(index); });
 
-                        for (var index = 0; index < routeData.items; ++index)
-                            setRouteItem(routeId, index);
-                    });
-                };
+                missionsMapController.missionAdded.connect(mission => { routesView.setRoute(mission.id, mission); });
+                missionsMapController.missionChanged.connect(mission => { routesView.setRoute(mission.id, mission); });
+                missionsMapController.missionRemoved.connect(missionId => { routesView.removeRoute(missionId); });
 
-                missionsController.missionIds.forEach(routeId => setRoute(routeId));
+                missionsMapController.routeItemAdded.connect((routeId, index, data) => { routesView.setRouteItem(routeId, index, data); });
+                missionsMapController.routeItemChanged.connect((routeId, index, data) => { routesView.setRouteItem(routeId, index, data); });
+                missionsMapController.routeItemRemoved.connect((routeId, index) => { routesView.removeRouteItem(routeId, index); });
 
-                missionsController.missionAdded.connect(routeId => setRoute(routeId));
-                missionsController.missionChanged.connect(routeId => setRoute(routeId));
-                missionsController.missionRemoved.connect(routeId => routes.removeMission(routeId));
+                missionsMapController.centerMission.connect(missionId => { routesView.centerRoute(missionId); });
+                missionsMapController.centerRouteItem.connect((routeId, index) => { routesView.centerRouteItem(routeId, index); });
 
-                missionsController.routeItemAdded.connect((routeId, index) => setRouteItem(routeId, index));
-                missionsController.routeItemChanged.connect((routeId, index) => setRouteItem(routeId, index));
-                missionsController.routeItemRemoved.connect((routeId, index) => routes.removeItem(routeId, index));
-
-                missionsController.centerRoute.connect(routeId => { routes.centerRoute(routeId); });
-                missionsController.centerRouteItem.connect((routeId, index) => { routes.centerRouteItem(routeId, index); });
-
-                missionsController.selectedMissionChanged.connect(routeId => { routes.selectMission(routeId); });
-                missionsController.selectedItemIndexChanged.connect(index => { routes.highlightItem(index); });
-
-                var missionMenuController = channel.objects.missionMenuController;
-                if (missionMenuController) {
-                    routes.routeItemClickedCallback = (routeId, index, x, y) => {
-                        missionMenuController.invokeMenu(routeId, index, x, y);
+                var missionsMenuController = channel.objects.missionsMenuController;
+                if (missionsMenuController) {
+                    routesView.routeItemClickedCallback = (routeId, index, x, y) => {
+                        missionsMenuController.invokeMenu(routeId, index, x, y);
                     }
                     that.viewport.subscribeCamera((heading, pitch, cameraPosition, centerPosition,
-                                                   pixelScale, changed) => {
-                        if (changed)
-                            missionMenuController.drop();
-                    });
-                }
-
-                var routePatternController = channel.objects.routePatternController;
-                if (routePatternController) {
-                    var routePatternArea = new Area(that.viewer, that.interaction);
-                    routePatternArea.changedCallback = () => {
-                        var positions = [];
-                        routePatternArea.points.forEach(point => {
-                            var cartographic = Cesium.Cartographic.fromCartesian(point.position);
-                            var position = {};
-                            position.latitude = Cesium.Math.toDegrees(cartographic.latitude);
-                            position.longitude = Cesium.Math.toDegrees(cartographic.longitude);
-                            position.altitude = cartographic.height;
-                            positions.push(position);
-                        });
-                        routePatternController.setAreaPositions(positions);
-                    };
-
-                    routePatternController.patternChanged.connect(() => {
-                        routePatternArea.setEnabled(routePatternController.pattern);
-                        routePatternController.areaPositions(positions => {
-                            routePatternArea.setPositions(positions);
-                        });
-                    });
-
-                    var routePatternPath = new Path(that.viewer, Cesium.Color.GOLD);
-                    routePatternController.pathPositionsChanged.connect(() => {
-                        routePatternPath.setPositions(routePatternController.pathPositions);
-                    });
+                        pixelScale, changed) => { if (changed) missionsMenuController.drop(); }
+                    );
                 }
             }
 
-            var missionRouteController = channel.objects.missionRouteController;
-            if (missionRouteController) {
-                const home = new ComplexSign(that.viewer, that.interaction,
-                                             "Assets/Images/home.svg", true, true);
-                home.update(missionRouteController.home);
-                missionRouteController.homeChanged.connect(homeData => { home.update(homeData); });
+            var vehiclesMapController = channel.objects.vehiclesMapController;
+            if (vehiclesMapController) {
+                const vehiclesView = new Vehicles(that.viewer);
 
-                const target = new ComplexSign(that.viewer, that.interaction,
-                                               "Assets/Images/target.svg", true, true);
-                target.editMode = true; // TODO: depend on vehicle's mode
-                target.changedCallback = () => {
-                    missionRouteController.navTo(target.data.position.latitude,
-                                                 target.data.position.longitude);
-                }
-                target.update(missionRouteController.target);
-                missionRouteController.targetChanged.connect(targetData => { target.update(targetData); });
-            }
-
-            var vehiclesController = channel.objects.vehiclesController;
-            if (vehiclesController) {
-                const vehicles = new Vehicles(that.viewer);
-
-                var selectVehicle = () => { vehicles.selectVehicle(vehiclesController.selectedVehicle); }
-                vehiclesController.selectedVehicleChanged.connect(selectVehicle);
-                selectVehicle();
-
-                vehiclesController.vehicleChanged.connect((vehicleId, vehicle) => { vehicles.setVehicle(vehicleId, vehicle); });
-                vehiclesController.vehicleDataChanged.connect((vehicleId, data) => { vehicles.setVehicleData(vehicleId, data); });
-                vehiclesController.trackingChanged.connect(() => { vehicles.setTracking(vehiclesController.tracking); });
-
-                vehiclesController.vehicles.forEach(vehicle => {
-                    vehiclesController.vehicle(vehicle.id, (vehicle) => { vehicles.setVehicle(vehicle.id, vehicle); });
-                    vehiclesController.vehicleData(vehicle.id, (vehicleData) => { vehicles.setVehicleData(vehicle.id, vehicleData); });
+                vehiclesMapController.vehicles(vehicles => {
+                    for (const vehicle of vehicles) {
+                        vehiclesView.setVehicle(vehicle.id, vehicle);
+                        vehiclesMapController.telemetry(vehicle.id, (telemetry) => {
+                            vehiclesView.setTelemetry(vehicle.id, telemetry);
+                        });
+                    }
                 });
 
-                vehiclesController.trackLengthChanged.connect(trackLength => {
-                    vehicles.setTrackLength(trackLength);
-                });
-                vehicles.setTrackLength(vehiclesController.trackLength);
+                vehiclesMapController.vehicleAdded.connect(vehicle => { vehiclesView.setVehicle(vehicle.id, vehicle); });
+                vehiclesMapController.vehicleChanged.connect(vehicle => { vehiclesView.setVehicle(vehicle.id, vehicle); });
+                vehiclesMapController.vehicleRemoved.connect(vehicleId => { vehiclesView.removeVehicle(vehicleId); });
+                vehiclesMapController.telemetryChanged.connect((vehicleId, data) => { vehiclesView.setTelemetry(vehicleId, data); });
+                vehiclesMapController.trackingChanged.connect(() => { vehiclesView.setTracking(vehiclesMapController.tracking); });
+
+                vehiclesMapController.selectedVehicleChanged.connect(vehicleId => { vehiclesView.selectVehicle(vehicleId); });
+                vehiclesView.selectVehicle(vehiclesMapController.selectedVehicleId);
+
+                vehiclesMapController.trackLengthChanged.connect(trackLength => { vehiclesView.setTrackLength(trackLength); });
+                vehiclesView.setTrackLength(vehiclesMapController.trackLength);
             }
 
             var adsbController = channel.objects.adsbController;
