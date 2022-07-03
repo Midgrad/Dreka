@@ -81,18 +81,6 @@ class CesiumWrapper {
                 that.viewport.tick();
             }
 
-//                var missionMenuController = channel.objects.missionMenuController;
-//                if (missionMenuController) {
-//                    routes.routeItemClickedCallback = (routeId, index, x, y) => {
-//                        missionMenuController.invokeMenu(routeId, index, x, y);
-//                    }
-//                    that.viewport.subscribeCamera((heading, pitch, cameraPosition, centerPosition,
-//                                                   pixelScale, changed) => {
-//                        if (changed)
-//                            missionMenuController.drop();
-//                    });
-//                }
-
 //                var routePatternController = channel.objects.routePatternController;
 //                if (routePatternController) {
 //                    var routePatternArea = new Area(that.viewer, that.interaction);
@@ -150,7 +138,7 @@ class CesiumWrapper {
 
                 missionsMapController.missions(missions => {
                     for (const mission of missions) {
-                        missionsMapController.route(mission.id, route => { routesView.setRoute(mission.id, route); });
+                        missionsMapController.mission(mission.id, mission => { routesView.setRoute(mission.id, mission); });
 
                         missionsMapController.routeItems(mission.id, routeItems => {
                             for (var index = 0; index < routeItems.length; ++index) {
@@ -165,7 +153,7 @@ class CesiumWrapper {
                 missionsMapController.highlightItem.connect(index => { routesView.highlightItem(index); });
 
                 missionsMapController.missionAdded.connect(mission => { routesView.setRoute(mission.id, mission); });
-                // missionsMapController.missionChanged.connect(mission => { routesView.setRoute(mission.id, mission); });
+                missionsMapController.missionChanged.connect(mission => { routesView.setRoute(mission.id, mission); });
                 missionsMapController.missionRemoved.connect(missionId => { routesView.removeRoute(missionId); });
 
                 missionsMapController.routeItemAdded.connect((routeId, index, data) => { routesView.setRouteItem(routeId, index, data); });

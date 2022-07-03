@@ -126,16 +126,16 @@ class Route {
         this.lines.splice(removeIndex, 1);
 
         // FIXME: Update 2 other lines
-//        if (updateIndex > -1) {
-//            var left = this.items[updateIndex];
-//            var right = this.items[updateIndex + 1];
-//            this.lines[updateIndex].polyline.positions = new Cesium.CallbackProperty(() => {
-//                return [left.position, right.position];
-//            }, false);
-//            this.lines[updateIndex].polyline.show =  new Cesium.CallbackProperty(() => {
-//                return left.validPosition && right.validPosition;
-//            }, false);
-//        }
+        if (updateIndex > -1) {
+            var left = this.items[updateIndex];
+            var right = this.items[updateIndex + 1];
+            this.lines[updateIndex].polyline.positions = new Cesium.CallbackProperty(() => {
+                return [left.position, right.position];
+            }, false);
+            this.lines[updateIndex].polyline.show =  new Cesium.CallbackProperty(() => {
+                return left.validPosition && right.validPosition;
+            }, false);
+        }
 
         // Update indices
         for (var i = index; i < this.items.length; ++i) {

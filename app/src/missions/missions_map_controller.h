@@ -20,7 +20,7 @@ public:
     QVariant selectedMissionId() const;
 
     Q_INVOKABLE QJsonArray missions() const;
-    Q_INVOKABLE QJsonObject route(const QVariant& missionId) const;
+    Q_INVOKABLE QJsonObject mission(const QVariant& missionId) const;
     Q_INVOKABLE QJsonArray routeItems(const QVariant& missionId) const;
 
 public slots:
@@ -35,6 +35,7 @@ signals:
     void selectedMissionChanged(QVariant missionId);
 
     void missionAdded(QVariantMap mission);
+    void missionChanged(QVariantMap mission);
     void missionRemoved(QVariant missionId);
 
     void routeItemAdded(QVariant routeId, int index, QVariantMap data);

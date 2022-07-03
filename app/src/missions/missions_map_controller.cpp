@@ -39,13 +39,13 @@ QJsonArray MissionsMapController::missions() const
     return missions;
 }
 
-QJsonObject MissionsMapController::route(const QVariant& missionId) const
+QJsonObject MissionsMapController::mission(const QVariant& missionId) const
 {
     Mission* mission = m_missions->mission(missionId);
     if (!mission)
         return QJsonObject();
 
-    return QJsonObject::fromVariantMap(mission->route()->toVariantMap());
+    return QJsonObject::fromVariantMap(mission->toVariantMap());
 }
 
 QJsonArray MissionsMapController::routeItems(const QVariant& missionId) const
@@ -107,6 +107,9 @@ void MissionsMapController::onMissionAdded(domain::Mission* mission)
             });
     connect(mission->route, &MissionRoute::itemRemoved, this, [this, mission](int index) {
         emit routeItemRemoved(mission->route()->id(), index);
+    });
+    connect(mission, &Mission::changed, this, [this, mission]() {
+        emit missionChanged(mission->toVariantMap());
     });
 
     emit missionAdded(mission->toVariantMap());

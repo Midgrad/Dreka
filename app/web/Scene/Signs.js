@@ -91,8 +91,7 @@ class SvgSign extends SignBase {
                 font: "13px Helvetica",
                 disableDepthTestDistance: Number.POSITIVE_INFINITY,
                 text: new Cesium.CallbackProperty(() => { return sign.name(); }),
-                show: new Cesium.CallbackProperty(() => { return sign.visible && that.hovered
-                                                                 && !that.selected; }, false)
+                show: new Cesium.CallbackProperty(() => { return that.hovered && !that.selected; }, false)
             }
         });
     }
