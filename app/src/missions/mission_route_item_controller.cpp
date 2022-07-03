@@ -32,19 +32,6 @@ QVariantMap MissionRouteItemController::routeItem() const
     return m_routeItem->toVariantMap();
 }
 
-QVariantList MissionRouteItemController::itemTypes() const
-{
-    if (!m_mission)
-        return QVariantList();
-
-    QVariantList list;
-    for (auto itemType : m_mission->type()->itemTypes)
-    {
-        list.append(itemType->toVariantMap());
-    }
-    return list;
-}
-
 QVariantList MissionRouteItemController::typeParameters() const
 {
     if (!m_routeItem)
@@ -64,6 +51,29 @@ QVariantMap MissionRouteItemController::itemParameters() const
         return QVariantMap();
 
     return m_routeItem->parametersMap();
+}
+
+QVariantList MissionRouteItemController::itemTypes(int index) const
+{
+    if (!m_mission)
+        return QVariantList();
+
+    // If first item only HOME item type available
+    auto home = m_mission->type()->homeItemType;
+    if (index == 0)
+    {
+        return { home->toVariantMap() };
+    }
+
+    QVariantList list;
+    for (auto itemType : m_mission->type()->itemTypes)
+    {
+        if (itemType == home)
+            continue;
+
+        list.append(itemType->toVariantMap());
+    }
+    return list;
 }
 
 void MissionRouteItemController::selectMission(const QVariant& missionId)

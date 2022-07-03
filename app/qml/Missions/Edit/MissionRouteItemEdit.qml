@@ -70,15 +70,19 @@ Flickable {
             }
 
             Controls.MenuButton {
+                id: addButton
                 flat: true
                 leftCropped: true
                 iconSource: "qrc:/icons/plus.svg"
                 tipText: qsTr("Add route item")
-                model: itemController.itemTypes
+                model: itemController.itemTypes(inRouteIndex + 1)
                 delegate: Controls.MenuItem {
                     text: modelData.shortName
                     // TODO: type icons iconSource: "qrc:/icons/" + modelData.icon
-                    onTriggered: itemController.addNewItem(modelData.id, map.centerPosition)
+                    onTriggered: {
+                        addButton.close();
+                        itemController.addNewItem(modelData.id, map.centerPosition);
+                    }
                 }
             }
         }
@@ -95,15 +99,14 @@ Flickable {
             Controls.ComboBox {
                 id: itemTypeBox
                 flat: true
-                model: itemController.itemTypes
+                model: itemController.itemTypes(inRouteIndex)
                 textRole: "name"
                 currentIndex: {
                     if (!routeItem)
                         return -1;
 
-                    var types = itemController.itemTypes;
-                    for (var i = 0; i < types.length; ++i) {
-                        if (routeItem.type === types[i].id)
+                    for (var i = 0; i < model.length; ++i) {
+                        if (routeItem.type === model[i].id)
                             return i;
                     }
                     return -1;

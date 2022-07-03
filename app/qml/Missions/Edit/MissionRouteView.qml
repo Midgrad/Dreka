@@ -58,7 +58,7 @@ ColumnLayout {
                 onSelectRequest: selectedIndex = index
             }
             highlight: Item {
-                x: list.currentItem ? list.currentItem.x : 0
+                //x: list.currentItem ? list.currentItem.x : 0
                 width: list.currentItem ? list.currentItem.width : 0
 
                 Rectangle {
