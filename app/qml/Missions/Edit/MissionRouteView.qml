@@ -11,6 +11,13 @@ ColumnLayout {
 
     property int selectedIndex: -1
 
+    onSelectedIndexChanged: missions.selectedRouteItemIndex = selectedIndex
+
+    Connections {
+        target: missions
+        onSelectItem: selectedIndex = inRouteIndex
+    }
+
     MissionRouteController {
         id: routeController
         onSelectItem: {
@@ -19,8 +26,6 @@ ColumnLayout {
             selectedIndex = index;
         }
     }
-
-    onSelectedIndexChanged: missionsMapController.highlightItem(selectedIndex)
 
     RowLayout {
         spacing: 0

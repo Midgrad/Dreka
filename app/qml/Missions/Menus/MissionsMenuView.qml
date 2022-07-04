@@ -23,19 +23,23 @@ Item {
 
         Controls.MenuItem {
             text: qsTr("Goto")
+            iconSource: "qrc:/icons/route.svg"
             enabled: controller.canGoto
             onTriggered: controller.gotoItem();
         }
 
-//        Controls.MenuItem {
-//            text: qsTr("Edit")
-//            enabled: missions.selectedMission != controller.route
-//                     || missions.selectedItemIndex != controller.inRouteIndex
-//            onTriggered: missions.selectMissionItem(controller.route, controller.inRouteIndex)
-//        }
+        Controls.MenuItem {
+            text: qsTr("Edit")
+            iconSource: "qrc:/icons/edit.svg"
+            enabled: !(missions.selectedMission === controller.mission &&
+                       missions.selectedRouteItemIndex === controller.inRouteIndex)
+            onTriggered: missions.selectRouteItem(controller.mission, controller.inRouteIndex)
+        }
 
         Controls.MenuItem {
             text: qsTr("Remove")
+            iconSource: "qrc:/icons/remove.svg"
+            iconColor: Controls.Theme.colors.negative
             enabled: missions.selectedMission === controller.mission
             onTriggered: controller.remove()
         }

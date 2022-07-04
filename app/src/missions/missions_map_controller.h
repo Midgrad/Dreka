@@ -13,6 +13,7 @@ class MissionsMapController : public QObject
 
     Q_PROPERTY(QVariant selectedMissionId READ selectedMissionId WRITE selectMission NOTIFY
                    selectedMissionChanged)
+    // TODO: highlightedRouteItem
 
 public:
     explicit MissionsMapController(QObject* parent = nullptr);

@@ -20,6 +20,9 @@ Flickable {
     boundsBehavior: Flickable.StopAtBounds
     clip: true
 
+    Component.onCompleted: missions.selectedRouteItemIndex = Qt.binding(() => { return inRouteIndex; })
+    Component.onDestruction: missions.selectedRouteItemIndex = -1
+
     MissionRouteItemController { id: itemController }
 
     ColumnLayout {

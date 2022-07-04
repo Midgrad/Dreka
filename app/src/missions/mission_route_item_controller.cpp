@@ -96,17 +96,20 @@ void MissionRouteItemController::selectMission(const QVariant& missionId)
         connect(m_mission->route(), &MissionRoute::itemRemoved, this,
                 [this](int index, domain::MissionRouteItem* item) {
                     if (m_routeItem == item)
-                        this->setRouteIndex(index - 1);
+                        this->setInRouteIndex(index - 1);
                 });
     }
 
     emit missionChanged();
 
-    this->setRouteIndex(mission && mission->route()->count() ? 0 : -1);
+    this->setInRouteIndex(mission && mission->route()->count() ? 0 : -1);
 }
 
-void MissionRouteItemController::setRouteIndex(int inRouteIndex)
+void MissionRouteItemController::setInRouteIndex(int inRouteIndex)
 {
+    if (!m_mission)
+        return;
+
     MissionRouteItem* item = m_mission->route()->item(inRouteIndex);
 
     if (m_inRouteIndex == inRouteIndex && m_routeItem == item)

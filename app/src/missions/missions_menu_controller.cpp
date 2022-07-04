@@ -29,7 +29,7 @@ bool MissionsMenuController::canGoto() const
 
 QVariant MissionsMenuController::mission() const
 {
-    return m_mission ? m_mission->id() : QVariant();
+    return m_mission ? m_mission->toVariantMap() : QVariant();
 }
 
 int MissionsMenuController::inRouteIndex() const

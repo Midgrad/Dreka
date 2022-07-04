@@ -10,7 +10,7 @@ class MissionRouteItemController : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QVariant missionId READ missionId WRITE selectMission NOTIFY missionChanged)
-    Q_PROPERTY(int inRouteIndex READ inRouteIndex WRITE setRouteIndex NOTIFY routeItemChanged)
+    Q_PROPERTY(int inRouteIndex READ inRouteIndex WRITE setInRouteIndex NOTIFY routeItemChanged)
     Q_PROPERTY(QVariantMap routeItem READ routeItem NOTIFY routeItemChanged)
     Q_PROPERTY(QVariantList typeParameters READ typeParameters NOTIFY routeItemChanged)
     Q_PROPERTY(QVariantMap itemParameters READ itemParameters NOTIFY routeItemChanged)
@@ -28,7 +28,7 @@ public:
 
 public slots:
     void selectMission(const QVariant& missionId);
-    void setRouteIndex(int inRouteIndex);
+    void setInRouteIndex(int inRouteIndex);
 
     void remove();
     void rename(const QString& name);

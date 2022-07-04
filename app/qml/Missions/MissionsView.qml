@@ -10,8 +10,19 @@ RowLayout {
     id: root
 
     property var selectedMission: null
+    property int selectedRouteItemIndex: -1
 
+    function selectRouteItem(mission, inRouteIndex) {
+        selectedMission = mission;
+        sidebar.sourceComponent = missionEditComponent;
+        selectItem(inRouteIndex)
+    }
+
+    signal selectItem(int inRouteIndex)
+
+    Component.onCompleted: map.registerController("missionsMapController", missionsMapController)
     onSelectedMissionChanged: {
+        selectedRouteItemIndex = -1;
         if (selectedMission && sidebar.sourceComponent == missionListComponent) {
             sidebar.sourceComponent = missionEditComponent;
         }
@@ -19,7 +30,7 @@ RowLayout {
             sidebar.sourceComponent = missionListComponent;
         }
     }
-    Component.onCompleted: map.registerController("missionsMapController", missionsMapController)
+    onSelectedRouteItemIndexChanged: missionsMapController.highlightItem(selectedRouteItemIndex)
 
     spacing: 1
 
