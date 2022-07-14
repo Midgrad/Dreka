@@ -36,6 +36,9 @@
         <file>Missions/Edit/MissionRouteItem.qml</file>
         <file>Missions/Edit/MissionRouteItemEdit.qml</file>
         <file>Missions/Menus/MissionsMenuView.qml</file>
+        <file>CommLinks/CommLinks.qml</file>
+        <file>CommLinks/List/CommLinkListView.qml</file>
+        <file>CommLinks/List/CommLink.qml</file>
         <file>MainWindow.qml</file>
     </qresource>
 </RCC>

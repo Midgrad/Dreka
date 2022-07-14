@@ -20,12 +20,14 @@
 #include <QtWebEngine>
 
 // Data source
+#include "comm_links_repository_sql.h"
 #include "mission_items_repository_sql.h"
 #include "missions_repository_sql.h"
 #include "sqlite_schema.h"
 #include "vehicles_repository_sql.h"
 
 // Domain
+#include "comm_links_service.h"
 #include "command_service.h"
 #include "gui_layout.h"
 #include "locator.h"
@@ -62,6 +64,8 @@
 #include "missions_map_controller.h"
 #include "missions_menu_controller.h"
 
+#include "comm_link_list_controller.h"
+
 namespace
 {
 constexpr char gitRevision[] = "git_revision";
@@ -91,6 +95,10 @@ int main(int argc, char* argv[])
     schema.setup();
 
     // Domain services initialization
+    data_source::CommLinksRepositorySql linksRepository(schema.db());
+    domain::CommLinksService linksService(&linksRepository);
+    app::Locator::provide<domain::ICommLinksService>(&linksService);
+
     data_source::VehiclesRepositorySql vehiclesRepository(schema.db());
     domain::VehiclesService vehiclesService(&vehiclesRepository);
     app::Locator::provide<domain::IVehiclesService>(&vehiclesService);
@@ -124,6 +132,9 @@ int main(int argc, char* argv[])
     QtWebEngine::initialize();
 
     // TODO: unify registrations
+    qmlRegisterType<presentation::CommLinkListController>("Dreka.CommLinks", 1, 0,
+                                                          "CommLinkListController");
+
     qmlRegisterType<presentation::MapViewportController>("Dreka", 1, 0, "MapViewportController");
     qmlRegisterType<presentation::MapRulerController>("Dreka", 1, 0, "MapRulerController");
     qmlRegisterType<presentation::MapGridController>("Dreka", 1, 0, "MapGridController");
@@ -171,6 +182,7 @@ int main(int argc, char* argv[])
     moduleLoader.loadModules();
 
     // TODO: soft caching, read only on demand
+    linksService.readAll();
     missionsService.readAll();
     vehiclesService.readAll();
 

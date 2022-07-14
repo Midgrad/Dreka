@@ -27,6 +27,8 @@
         <file>pin.svg</file>
         <file>unpin.svg</file>
         <file>fleet.svg</file>
+        <file>connect.svg</file>
+        <file>disconnect.svg</file>
         <file>grid_pattern.svg</file>
         <file>snail_pattern.svg</file>
     </qresource>

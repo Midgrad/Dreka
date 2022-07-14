@@ -4,6 +4,7 @@ import Industrial.Controls 1.0 as Controls
 import Dreka 1.0
 
 import "Map"
+import "CommLinks"
 import "Vehicles"
 import "Missions"
 import "Missions/Menus"
@@ -39,6 +40,8 @@ Controls.ApplicationWindow {
         anchors.left: parent.left
         anchors.margins: Controls.Theme.margins
         spacing: Controls.Theme.spacing
+
+        CommLinks { id: commLinks }
 
         Repeater {
             model: layout.menu
