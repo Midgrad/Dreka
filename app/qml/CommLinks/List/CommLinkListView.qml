@@ -7,6 +7,8 @@ import Dreka.CommLinks 1.0
 Controls.Pane {
     id: root
 
+    signal selectLink(var commLink)
+
     width: Controls.Theme.baseSize * 13
 
     CommLinkListController { id: controller }
@@ -44,8 +46,8 @@ Controls.Pane {
                 height: visible ? implicitHeight : 0
                 visible: commLink && commLink.name.indexOf(filterField.text) > -1
                 commLink: modelData
-                onRemove: controller.remove(commLink.id);
-                // onExpand: TODO
+                onRemove: controller.remove(commLink.id)
+                onExpand: root.selectLink(commLink)
             }
             Layout.fillWidth: true
             Layout.fillHeight: true

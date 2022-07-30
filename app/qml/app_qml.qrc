@@ -39,6 +39,7 @@
         <file>CommLinks/CommLinks.qml</file>
         <file>CommLinks/List/CommLinkListView.qml</file>
         <file>CommLinks/List/CommLink.qml</file>
+        <file>CommLinks/Edit/CommLinkEditView.qml</file>
         <file>MainWindow.qml</file>
     </qresource>
 </RCC>

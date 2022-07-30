@@ -92,7 +92,7 @@ RowLayout {
         leftCropped: true
         visible: selectedMission
         text: selectedMission ? selectedMission.name : ""
-        tipText: highlighted ? qsTr("Close mission viewer") : qsTr("Open mission viewer")
+        tipText: highlighted ? qsTr("Close mission editor") : qsTr("Open mission editor")
         highlighted: sidebar.sourceComponent == missionEditComponent
         onClicked: sidebar.sourceComponent = highlighted ? null : missionEditComponent
     }
@@ -100,12 +100,12 @@ RowLayout {
     Component {
         id: missionListComponent
 
-        MissionListView { onSelectMission: selectedMission = mission }
+        MissionListView { onSelectMission: root.selectedMission = mission }
     }
 
     Component {
         id: missionEditComponent
 
-        MissionEditView { selectedMissionId: selectedMission.id }
+        MissionEditView { selectedMissionId: root.selectedMission.id }
     }
 }
