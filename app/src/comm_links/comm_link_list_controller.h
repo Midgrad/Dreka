@@ -24,9 +24,7 @@ public:
 
 public slots:
     void addCommLink(const QString& typeId);
-    void remove(const QVariant& commLinkId);
-    void connectDiscconectLink(const QVariant& commLinkId, bool connect);
-    void rename(const QVariant& commLinkId, const QString& name);
+    void connectDisconectLink(const QVariant& commLinkId, bool connect);
 
 signals:
     void commLinkTypesChanged();

@@ -46,7 +46,6 @@ Controls.Pane {
                 height: visible ? implicitHeight : 0
                 visible: commLink && commLink.name.indexOf(filterField.text) > -1
                 commLink: modelData
-                onRemove: controller.remove(commLink.id)
                 onExpand: root.selectLink(commLink)
             }
             Layout.fillWidth: true

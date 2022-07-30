@@ -71,32 +71,13 @@ void CommLinkListController::addCommLink(const QString& typeId)
     m_commLinks->saveCommLink(link);
 }
 
-void CommLinkListController::remove(const QVariant& commLinkId)
+void CommLinkListController::connectDisconectLink(const QVariant& commLinkId, bool connect)
 {
     CommLink* commLink = m_commLinks->commLink(commLinkId);
     if (!commLink)
         return;
 
-    m_commLinks->removeCommLink(commLink);
-}
-
-void CommLinkListController::connectDiscconectLink(const QVariant& commLinkId, bool connect)
-{
-    CommLink* commLink = m_commLinks->commLink(commLinkId);
-    if (!commLink)
-        return;
-
-    commLink->connectDisconnectLink(connect);
-}
-
-void CommLinkListController::rename(const QVariant& commLinkId, const QString& name)
-{
-    CommLink* commLink = m_commLinks->commLink(commLinkId);
-    if (!commLink)
-        return;
-
-    commLink->name.set(name);
-    m_commLinks->saveCommLink(commLink);
+    emit commLink->connectDisconnectLink(connect);
 }
 
 void CommLinkListController::onCommLinkAdded(CommLink* commLink)

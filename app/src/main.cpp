@@ -65,6 +65,7 @@
 #include "missions_menu_controller.h"
 
 #include "comm_link_list_controller.h"
+#include "comm_link_edit_controller.h"
 
 namespace
 {
@@ -134,6 +135,8 @@ int main(int argc, char* argv[])
     // TODO: unify registrations
     qmlRegisterType<presentation::CommLinkListController>("Dreka.CommLinks", 1, 0,
                                                           "CommLinkListController");
+    qmlRegisterType<presentation::CommLinkEditController>("Dreka.CommLinks", 1, 0,
+                                                          "CommLinkEditController");
 
     qmlRegisterType<presentation::MapViewportController>("Dreka", 1, 0, "MapViewportController");
     qmlRegisterType<presentation::MapRulerController>("Dreka", 1, 0, "MapRulerController");

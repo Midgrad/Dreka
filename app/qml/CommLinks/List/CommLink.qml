@@ -10,7 +10,6 @@ Item {
     property bool selected
 
     signal expand()
-    signal remove()
 
     Connections {
         target: controller
@@ -70,21 +69,9 @@ Item {
             flat: true
             leftCropped: true
             rightCropped: true
-            highlightColor: Controls.Theme.colors.negative
-            hoverColor: highlightColor
-            iconSource: "qrc:/icons/remove.svg"
-            enabled: !commLink.online
-            tipText: qsTr("Remove")
-            onClicked: remove()
-        }
-
-        Controls.Button {
-            flat: true
-            leftCropped: true
-            rightCropped: true
             iconSource: commLink.connected ? "qrc:/icons/connect.svg" : "qrc:/icons/disconnect.svg"
             tipText: commLink.connected ? qsTr("Comm link connected") : qsTr("Comm link disconnected")
-            onClicked: controller.connectDiscconectLink(commLink.id, !commLink.connected);
+            onClicked: controller.connectDisconectLink(commLink.id, !commLink.connected);
             Layout.alignment: Qt.AlignVCenter
         }
 

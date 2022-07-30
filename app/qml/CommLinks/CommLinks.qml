@@ -57,6 +57,7 @@ RowLayout {
 
         CommLinkEditView {
             selectedLinkId: root.selectedLink.id
+            onCollapse: root.selectedLink = null
             Component.onDestruction: root.selectedLink = null
         }
     }
