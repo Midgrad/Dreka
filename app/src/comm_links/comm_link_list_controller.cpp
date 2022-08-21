@@ -13,8 +13,6 @@ CommLinkListController::CommLinkListController(QObject* parent) :
 {
     Q_ASSERT(m_commLinks);
 
-    connect(m_commLinks, &ICommLinksService::commLinkTypesChanged, this,
-            &CommLinkListController::commLinkTypesChanged);
     connect(m_commLinks, &ICommLinksService::commLinkAdded, this,
             &CommLinkListController::onCommLinkAdded);
     connect(m_commLinks, &ICommLinksService::commLinkRemoved, this,
@@ -68,6 +66,7 @@ void CommLinkListController::addCommLink(const QString& typeId)
     }
 
     auto link = new CommLink(type, utils::nameFromType(type->name, linkNames));
+    link->resertToDefaultParameters();
     m_commLinks->saveCommLink(link);
 }
 

@@ -73,11 +73,29 @@ Item {
         Controls.ComboBox {
             id: comboBox
             flat: root.flat
-            model: parameter.variants
+            horizontalAlignment: Text.AlignHCenter
+            model: parameter.options.split(", ")
             displayText: parameterValue
+            Binding on currentIndex {
+                value: model.indexOf(displayText)
+                when: !comboBox.activeFocus
+            }
             onActivated: root.parameterChanged(parameter.id, model[index])
         }
     }
+
+    Component {
+        id: textEdit
+
+        Controls.TextField {
+            id: textFiled
+            flat: root.flat
+            horizontalAlignment: Text.AlignHCenter
+            text: parameterValue
+            onTextEdited: root.parameterChanged(parameter.id, text)
+        }
+    }
+
 
     ColumnLayout {
         id: grid
@@ -107,6 +125,7 @@ Item {
                         case "Real": return realEdit;
                         case "LatLon": return latLonEdit;
                         case "Combo": return comboEdit;
+                        case "Text": return textEdit;
                         }
                         return undefined;
                     }

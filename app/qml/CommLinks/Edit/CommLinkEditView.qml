@@ -3,6 +3,8 @@ import QtQuick.Layouts 1.12
 import Industrial.Controls 1.0 as Controls
 import Dreka.CommLinks 1.0
 
+import "../../Common"
+
 Controls.Pane {
     id: root
 
@@ -56,6 +58,38 @@ Controls.Pane {
                 onClicked: editController.connectDisconectLink(!link.connected);
                 Layout.alignment: Qt.AlignVCenter
             }
+        }
+
+        RowLayout {
+            spacing: 1
+            visible: root.exist
+
+            Controls.Label {
+                text: qsTr("Protocol")
+                Layout.minimumWidth: parametersEdit.labelWidth
+            }
+
+            Controls.ComboBox {
+                id: protocolBox
+                flat: true
+                model: editController.protocols
+                textRole: "name"
+                displayText: link.protocol
+                Binding on currentIndex {
+                    value: model.indexOf(displayText)
+                    when: !protocolBox.activeFocus
+                }
+                onActivated: itemController.changeProtocol(currentItem.id);
+                Layout.fillWidth: true
+            }
+        }
+
+        ParametersEdit {
+            id: parametersEdit
+            parameters: editController.typeParameters
+            parameterValues: editController.itemParameters
+            onParameterChanged: editController.setParameter(id, value)
+            Layout.fillWidth: true
         }
     }
 }

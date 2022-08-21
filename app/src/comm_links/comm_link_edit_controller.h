@@ -14,11 +14,21 @@ class CommLinkEditController : public QObject
     Q_PROPERTY(QVariant linkId READ linkId WRITE selectLink NOTIFY linkChanged)
     Q_PROPERTY(QVariantMap link READ link NOTIFY linkChanged)
 
+    Q_PROPERTY(QVariantList typeParameters READ typeParameters NOTIFY linkChanged)
+    Q_PROPERTY(QVariantMap itemParameters READ itemParameters NOTIFY linkChanged)
+
+    Q_PROPERTY(QVariantList protocols READ protocols NOTIFY protocolsChanged)
+
 public:
     explicit CommLinkEditController(QObject* parent = nullptr);
 
     QVariant linkId() const;
     QVariantMap link() const;
+
+    QVariantList typeParameters() const;
+    QVariantMap itemParameters() const;
+
+    QVariantList protocols() const;
 
 public slots:
     void selectLink(const QVariant& linkId);
@@ -27,8 +37,11 @@ public slots:
     void connectDisconectLink(bool connect);
     void rename(const QString& newName);
 
+    void setParameter(const QString& parameterId, const QVariant& value);
+
 signals:
     void linkChanged();
+    void protocolsChanged();
 
 private:
     domain::ICommLinksService* const m_commLinks;

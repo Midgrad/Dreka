@@ -21,6 +21,7 @@
 
 // Data source
 #include "comm_links_repository_sql.h"
+#include "comm_link_types_repository_sql.h"
 #include "mission_items_repository_sql.h"
 #include "missions_repository_sql.h"
 #include "sqlite_schema.h"
@@ -77,7 +78,8 @@ using namespace md;
 
 int main(int argc, char* argv[])
 {
-    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--ignore-gpu-blacklist");
+    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--ignore-gpu-blacklist --disable-pinch");
+    QtWebEngine::initialize();
 
     QCoreApplication::setOrganizationName("Midgrad");
     QCoreApplication::setApplicationVersion(
@@ -97,7 +99,8 @@ int main(int argc, char* argv[])
 
     // Domain services initialization
     data_source::CommLinksRepositorySql linksRepository(schema.db());
-    domain::CommLinksService linksService(&linksRepository);
+    data_source::CommLinkTypesRepositorySql linkTypesRepository(schema.db());
+    domain::CommLinksService linksService(&linksRepository, &linkTypesRepository);
     app::Locator::provide<domain::ICommLinksService>(&linksService);
 
     data_source::VehiclesRepositorySql vehiclesRepository(schema.db());
@@ -130,7 +133,6 @@ int main(int argc, char* argv[])
     app::Locator::provide<app::CommunicationService>(&communicationService);
 
     // Presentation initialization
-    QtWebEngine::initialize();
 
     // TODO: unify registrations
     qmlRegisterType<presentation::CommLinkListController>("Dreka.CommLinks", 1, 0,
