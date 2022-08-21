@@ -27,6 +27,9 @@ CommLinkEditController::CommLinkEditController(QObject* parent) :
             emit linkChanged();
         }
     });
+
+    connect(m_commLinks, &ICommLinksService::protocolsChanged, this,
+            &CommLinkEditController::protocolsChanged);
 }
 
 QVariant CommLinkEditController::linkId() const
@@ -63,9 +66,10 @@ QVariantMap CommLinkEditController::itemParameters() const
 QVariantList CommLinkEditController::protocols() const
 {
     QVariantList list;
-
-    // TODO: protocols
-
+    for (const domain::CommProtocol& protocol : m_commLinks->protocols())
+    {
+        list.append(protocol.toVariantMap());
+    }
     return list;
 }
 
@@ -117,5 +121,14 @@ void CommLinkEditController::setParameter(const QString& parameterId, const QVar
         return;
 
     m_link->parameter(parameterId)->setValue(value);
+    m_commLinks->saveCommLink(m_link);
+}
+
+void CommLinkEditController::setProtocol(const QString& protocolId)
+{
+    if (!m_link)
+        return;
+
+    m_link->protocol.set(protocolId);
     m_commLinks->saveCommLink(m_link);
 }

@@ -62,7 +62,6 @@ Controls.Pane {
 
         RowLayout {
             spacing: 1
-            visible: root.exist
 
             Controls.Label {
                 text: qsTr("Protocol")
@@ -74,12 +73,26 @@ Controls.Pane {
                 flat: true
                 model: editController.protocols
                 textRole: "name"
-                displayText: link.protocol
+                displayText: {
+                    const protocols = editController.protocols;
+                    for (let i = 0; i < protocols.length; ++i) {
+                        if (link.protocol === protocols[i].id)
+                            return protocols[i].name;
+                    }
+                    return -1;
+                }
                 Binding on currentIndex {
-                    value: model.indexOf(displayText)
+                    value: {
+                        const protocols = editController.protocols;
+                        for (let i = 0; i < protocols.length; ++i) {
+                            if (link.protocol === protocols[i].id)
+                                return i;
+                        }
+                        return -1;
+                    }
                     when: !protocolBox.activeFocus
                 }
-                onActivated: itemController.changeProtocol(currentItem.id);
+                onActivated: editController.setProtocol(currentItem.id);
                 Layout.fillWidth: true
             }
         }

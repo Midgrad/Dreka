@@ -38,6 +38,7 @@ public slots:
     void rename(const QString& newName);
 
     void setParameter(const QString& parameterId, const QVariant& value);
+    void setProtocol(const QString& protocolId);
 
 signals:
     void linkChanged();
