@@ -82,6 +82,9 @@ int main(int argc, char* argv[])
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
     QGuiApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 
+    // Presentation initialization
+    QtWebEngine::initialize();
+
     QGuiApplication app(argc, argv);
     app.setProperty(::gitRevision, QString(GIT_REVISION));
     app.setWindowIcon(QIcon(":/icons/dreka.svg"));
@@ -120,8 +123,6 @@ int main(int argc, char* argv[])
     app::CommunicationService communicationService("./link_config.json");
     app::Locator::provide<app::CommunicationService>(&communicationService);
 
-    // Presentation initialization
-    QtWebEngine::initialize();
 
     // TODO: unify registrations
     qmlRegisterType<presentation::MapViewportController>("Dreka", 1, 0, "MapViewportController");
